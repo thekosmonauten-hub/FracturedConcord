@@ -1,0 +1,45 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="CharacterCreationUI.uss" />
+    <ui:VisualElement name="main-container" class="main-container">
+        <ui:VisualElement name="Background" class="section">
+            <ui:VisualElement name="name-section" class="section" />
+            <ui:Label text="Character Name" class="section-label" />
+            <ui:TextField name="CharacterNameInput" placeholder="Enter Character Name" class="character-name-input" />
+            <ui:VisualElement name="class-section" class="section" />
+            <ui:Label text="Choose Your Class" class="section-label" />
+            <ui:VisualElement name="class-grid" class="class-grid">
+                <ui:Button name="WitchButton" class="class-button">
+                    <ui:Label text="WITCH" class="class-name" />
+                    <ui:Label text="Intelligence-based spellcaster" class="class-description" />
+                </ui:Button>
+                <ui:Button name="MarauderButton" class="class-button">
+                    <ui:Label text="MARAUDER" class="class-name" />
+                    <ui:Label text="Strength-based warrior" class="class-description" />
+                </ui:Button>
+                <ui:Button name="RangerButton" class="class-button">
+                    <ui:Label text="RANGER" class="class-name" />
+                    <ui:Label text="Dexterity-based archer" class="class-description" />
+                </ui:Button>
+                <ui:Button name="ThiefButton" class="class-button">
+                    <ui:Label text="THIEF" class="class-name" />
+                    <ui:Label text="Dexterity/Intelligence hybrid" class="class-description" />
+                </ui:Button>
+                <ui:Button name="ApostleButton" class="class-button">
+                    <ui:Label text="APOSTLE" class="class-name" />
+                    <ui:Label text="Strength/Intelligence hybrid" class="class-description" />
+                </ui:Button>
+                <ui:Button name="BrawlerButton" class="class-button">
+                    <ui:Label text="BRAWLER" class="class-name" />
+                    <ui:Label text="Strength/Dexterity hybrid" class="class-description" />
+                </ui:Button>
+            </ui:VisualElement>
+            <ui:VisualElement name="preview-section" class="section" />
+            <ui:Label text="Deck Preview" class="section-label" />
+            <ui:VisualElement name="CharacterPreview" class="character-preview" />
+            <ui:VisualElement name="action-buttons" class="action-buttons">
+                <ui:Button name="BackButton" text="Back to Main Menu" class="action-button secondary" />
+                <ui:Button name="CreateCharacterButton" text="Create Character" class="action-button primary" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,533 @@
+fileFormatVersion: 2
+guid: 6369d77d7f9b06347a15ce69d54f594e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8443874894870365733
+    second: Currency_Orbs_1-Sheet_0
+  - first:
+      213: -1176463662525446447
+    second: Currency_Orbs_1-Sheet_1
+  - first:
+      213: -1404985628929053815
+    second: Currency_Orbs_1-Sheet_2
+  - first:
+      213: 7906238097753988397
+    second: Currency_Orbs_1-Sheet_3
+  - first:
+      213: 6879035185737174137
+    second: Currency_Orbs_1-Sheet_4
+  - first:
+      213: -1542002494583470360
+    second: Currency_Orbs_1-Sheet_5
+  - first:
+      213: -8836987471781494078
+    second: Currency_Orbs_1-Sheet_6
+  - first:
+      213: -1028098766436404124
+    second: Currency_Orbs_1-Sheet_7
+  - first:
+      213: 3438012760674874984
+    second: Currency_Orbs_1-Sheet_8
+  - first:
+      213: -1688862635081633124
+    second: Currency_Orbs_1-Sheet_9
+  - first:
+      213: -2234397843895618319
+    second: Currency_Orbs_1-Sheet_10
+  - first:
+      213: 2671625528429907270
+    second: Currency_Orbs_1-Sheet_11
+  - first:
+      213: 7891060945390061197
+    second: Currency_Orbs_1-Sheet_12
+  - first:
+      213: -2255288627455131307
+    second: Currency_Orbs_1-Sheet_13
+  - first:
+      213: -8963243372923170042
+    second: Currency_Orbs_1-Sheet_14
+  - first:
+      213: 7137080680636486513
+    second: Currency_Orbs_1-Sheet_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 783
+        width: 252
+        height: 244
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5264694ba7bae2570800000000000000
+      internalID: 8443874894870365733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 783
+        width: 206
+        height: 204
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d60408388c5cafe0800000000000000
+      internalID: -1176463662525446447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 783
+        width: 203
+        height: 197
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98ba721b30d708ce0800000000000000
+      internalID: -1404985628929053815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 784
+        y: 237
+        width: 243
+        height: 742
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2d594e29a998bd60800000000000000
+      internalID: 7906238097753988397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 541
+        width: 212
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97c07430e0e377f50800000000000000
+      internalID: 6879035185737174137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 526
+        width: 234
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e6069ba6e4b99ae0800000000000000
+      internalID: -1542002494583470360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 539
+        y: 541
+        width: 205
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c203ebf6b6bc5580800000000000000
+      internalID: -8836987471781494078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_7
+      rect:
+        serializedVersion: 2
+        x: 783
+        y: 540
+        width: 205
+        height: 191
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4647a887e957bb1f0800000000000000
+      internalID: -1028098766436404124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_8
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 295
+        width: 212
+        height: 202
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8663945f36646bf20800000000000000
+      internalID: 3438012760674874984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 294
+        width: 197
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c927781a164ff88e0800000000000000
+      internalID: -1688862635081633124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 294
+        width: 202
+        height: 208
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f4f3b3dff2ddf0e0800000000000000
+      internalID: -2234397843895618319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_11
+      rect:
+        serializedVersion: 2
+        x: 783
+        y: 295
+        width: 206
+        height: 191
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64d0ee26345831520800000000000000
+      internalID: 2671625528429907270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_12
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 1
+        width: 251
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d86cee60f1ea28d60800000000000000
+      internalID: 7891060945390061197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_13
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 52
+        width: 206
+        height: 210
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5510f8e31fa93b0e0800000000000000
+      internalID: -2255288627455131307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_14
+      rect:
+        serializedVersion: 2
+        x: 534
+        y: 52
+        width: 217
+        height: 207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6035a8144a92c9380800000000000000
+      internalID: -8963243372923170042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Currency_Orbs_1-Sheet_15
+      rect:
+        serializedVersion: 2
+        x: 782
+        y: 1
+        width: 245
+        height: 250
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17314aea0110c0360800000000000000
+      internalID: 7137080680636486513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Currency_Orbs_1-Sheet_0: 8443874894870365733
+      Currency_Orbs_1-Sheet_1: -1176463662525446447
+      Currency_Orbs_1-Sheet_10: -2234397843895618319
+      Currency_Orbs_1-Sheet_11: 2671625528429907270
+      Currency_Orbs_1-Sheet_12: 7891060945390061197
+      Currency_Orbs_1-Sheet_13: -2255288627455131307
+      Currency_Orbs_1-Sheet_14: -8963243372923170042
+      Currency_Orbs_1-Sheet_15: 7137080680636486513
+      Currency_Orbs_1-Sheet_2: -1404985628929053815
+      Currency_Orbs_1-Sheet_3: 7906238097753988397
+      Currency_Orbs_1-Sheet_4: 6879035185737174137
+      Currency_Orbs_1-Sheet_5: -1542002494583470360
+      Currency_Orbs_1-Sheet_6: -8836987471781494078
+      Currency_Orbs_1-Sheet_7: -1028098766436404124
+      Currency_Orbs_1-Sheet_8: 3438012760674874984
+      Currency_Orbs_1-Sheet_9: -1688862635081633124
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,961 @@
+{
+  "id": "T1lightning_board",
+  "name": "Spark Mastery",
+  "description": "A flicker of light, a restless twitch — the storm begins with a whisper.",
+  "theme": "lightning",
+  "size": {
+    "rows": 7,
+    "columns": 7
+  },
+  "nodes": [
+    [
+      {
+        "id": "spark_board_0_0",
+        "name": "Increased Lightning Damage",
+        "description": "+6% Lightning Damage",
+        "position": {
+          "row": 0,
+          "column": 0
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 6
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_0_1",
+        "name": "Increased Lightning Damage",
+        "description": "+6% Lightning Damage",
+        "position": {
+          "row": 0,
+          "column": 1
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 6
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_0_2",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 0,
+          "column": 2
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_ext_top",
+        "name": "Extension Point",
+        "description": "Connect to another board",
+        "position": {
+          "row": 0,
+          "column": 3
+        },
+        "type": "extension",
+        "stats": {},
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 0,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_0_4",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 0,
+          "column": 4
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_0_5",
+        "name": "Increased Lightning Damage",
+        "description": "+6% Lightning Damage",
+        "position": {
+          "row": 0,
+          "column": 5
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 6
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_0_6",
+        "name": "Increased Lightning Damage",
+        "description": "+6% Lightning Damage",
+        "position": {
+          "row": 0,
+          "column": 6
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 6
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      }
+    ],
+    [
+      {
+        "id": "spark_board_1_0",
+        "name": "Increased Lightning Damage",
+        "description": "+6% Lightning Damage",
+        "position": {
+          "row": 1,
+          "column": 0
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 6
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_notable_1",
+        "name": "Thunder's Wrath",
+        "description": "+24% Lightning Damage, +8% Critical Strike Chance, +12% Critical Strike Multiplier",
+        "position": {
+          "row": 1,
+          "column": 1
+        },
+        "type": "notable",
+        "stats": {
+          "lightningIncrease": 24,
+          "critChanceIncrease": 8,
+          "critMultiplierIncrease": 12
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_1_2",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 1,
+          "column": 2
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_1_3",
+        "name": "+5 Intelligence, +5 Dexterity",
+        "description": "+5 Intelligence, +5 Dexterity",
+        "position": {
+          "row": 1,
+          "column": 3
+        },
+        "type": "travel",
+        "stats": {
+          "intelligence": 5,
+          "dexterity": 5
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_1_4",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 1,
+          "column": 4
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_notable_2",
+        "name": "Storm's Fury",
+        "description": "+24% Lightning Damage, +12% Ailment Effect, +12% Spell Power",
+        "position": {
+          "row": 1,
+          "column": 5
+        },
+        "type": "notable",
+        "stats": {
+          "lightningIncrease": 24,
+          "increasedAilmentEffect": 12,
+          "spellPowerIncrease": 12
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_1_6",
+        "name": "Increased Lightning Damage",
+        "description": "+6% Lightning Damage",
+        "position": {
+          "row": 1,
+          "column": 6
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 6
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      }
+    ],
+    [
+      {
+        "id": "spark_board_crit_ailment_2_0",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 2,
+          "column": 0
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_2_1",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 2,
+          "column": 1
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_2_2",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 2,
+          "column": 2
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_2_3",
+        "name": "+5 Intelligence, +5 Dexterity",
+        "description": "+5 Intelligence, +5 Dexterity",
+        "position": {
+          "row": 2,
+          "column": 3
+        },
+        "type": "travel",
+        "stats": {
+          "intelligence": 5,
+          "dexterity": 5
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_2_4",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 2,
+          "column": 4
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_2_5",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 2,
+          "column": 5
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_2_6",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 2,
+          "column": 6
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      }
+    ],
+    [
+      {
+        "id": "spark_board_crit_ailment_ext_left",
+        "name": "Extension Point",
+        "description": "Connect to another board",
+        "position": {
+          "row": 3,
+          "column": 0
+        },
+        "type": "extension",
+        "stats": {},
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 0,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_3_1",
+        "name": "+5 Intelligence, +5 Dexterity",
+        "description": "+5 Intelligence, +5 Dexterity",
+        "position": {
+          "row": 3,
+          "column": 1
+        },
+        "type": "travel",
+        "stats": {
+          "intelligence": 5,
+          "dexterity": 5
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_3_2",
+        "name": "+5 Intelligence, +5 Dexterity",
+        "description": "+5 Intelligence, +5 Dexterity",
+        "position": {
+          "row": 3,
+          "column": 2
+        },
+        "type": "travel",
+        "stats": {
+          "intelligence": 5,
+          "dexterity": 5
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_3_3",
+        "name": "+5 Intelligence, +5 Dexterity",
+        "description": "+5 Intelligence, +5 Dexterity",
+        "position": {
+          "row": 3,
+          "column": 3
+        },
+        "type": "travel",
+        "stats": {
+          "intelligence": 5,
+          "dexterity": 5
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_3_4",
+        "name": "+5 Intelligence, +5 Dexterity",
+        "description": "+5 Intelligence, +5 Dexterity",
+        "position": {
+          "row": 3,
+          "column": 4
+        },
+        "type": "travel",
+        "stats": {
+          "intelligence": 5,
+          "dexterity": 5
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_3_5",
+        "name": "+5 Intelligence, +5 Dexterity",
+        "description": "+5 Intelligence, +5 Dexterity",
+        "position": {
+          "row": 3,
+          "column": 5
+        },
+        "type": "travel",
+        "stats": {
+          "intelligence": 5,
+          "dexterity": 5
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_ext_right",
+        "name": "Extension Point",
+        "description": "Connect to another board",
+        "position": {
+          "row": 3,
+          "column": 6
+        },
+        "type": "extension",
+        "stats": {},
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 0,
+        "requirements": [],
+        "connections": []
+      }
+    ],
+    [
+      {
+        "id": "spark_board_crit_ailment_4_0",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 4,
+          "column": 0
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_4_1",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 4,
+          "column": 1
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_4_2",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 4,
+          "column": 2
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_4_3",
+        "name": "+5 Intelligence, +5 Dexterity",
+        "description": "+5 Intelligence, +5 Dexterity",
+        "position": {
+          "row": 4,
+          "column": 3
+        },
+        "type": "travel",
+        "stats": {
+          "intelligence": 5,
+          "dexterity": 5
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_4_4",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 4,
+          "column": 4
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_4_5",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 4,
+          "column": 5
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_4_6",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 4,
+          "column": 6
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      }
+    ],
+    [
+      {
+        "id": "spark_board_crit_ailment_5_0",
+        "name": "Increased Lightning Damage",
+        "description": "+6% Lightning Damage",
+        "position": {
+          "row": 5,
+          "column": 0
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 6
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_crit_ailment_notable_3",
+        "name": "Lightning Striker",
+        "description": "+24% Lightning Damage, +12% Melee Damage, +8% Critical Strike Chance",
+        "position": {
+          "row": 5,
+          "column": 1
+        },
+        "type": "notable",
+        "stats": {
+          "lightningIncrease": 24,
+          "increasedMeleeDamage": 12,
+          "critChanceIncrease": 8
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_5_2",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 5,
+          "column": 2
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_5_3",
+        "name": "+5 Intelligence, +5 Dexterity",
+        "description": "+5 Intelligence, +5 Dexterity",
+        "position": {
+          "row": 5,
+          "column": 3
+        },
+        "type": "travel",
+        "stats": {
+          "intelligence": 5,
+          "dexterity": 5
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_5_4",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 5,
+          "column": 4
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_notable_4",
+        "name": "Storm's Edge",
+        "description": "+24% Lightning Damage, +12% Projectile Damage, +12% Ailment Effect, +12% Shock Effect",
+        "position": {
+          "row": 5,
+          "column": 5
+        },
+        "type": "notable",
+        "stats": {
+          "lightningIncrease": 24,
+          "increasedProjectileDamage": 12,
+          "increasedAilmentEffect": 12,
+          "increasedShockEffect": 12
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_5_6",
+        "name": "Increased Lightning Damage",
+        "description": "+6% Lightning Damage",
+        "position": {
+          "row": 5,
+          "column": 6
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 6
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      }
+    ],
+    [
+      {
+        "id": "spark_board_6_0",
+        "name": "Increased Lightning Damage",
+        "description": "+6% Lightning Damage",
+        "position": {
+          "row": 6,
+          "column": 0
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 6
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_6_1",
+        "name": "Increased Lightning Damage",
+        "description": "+6% Lightning Damage",
+        "position": {
+          "row": 6,
+          "column": 1
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 6
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_6_2",
+        "name": "Increased Lightning Damage",
+        "description": "+4% Lightning Damage",
+        "position": {
+          "row": 6,
+          "column": 2
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 4
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_ext_bottom",
+        "name": "Extension Point",
+        "description": "Connect to another board",
+        "position": {
+          "row": 6,
+          "column": 3
+        },
+        "type": "extension",
+        "stats": {},
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 0,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_6_4",
+        "name": "Increased Lightning Damage",
+        "description": "+6% Lightning Damage",
+        "position": {
+          "row": 6,
+          "column": 4
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 6
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_6_5",
+        "name": "Increased Lightning Damage",
+        "description": "+6% Lightning Damage",
+        "position": {
+          "row": 6,
+          "column": 5
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 6
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      },
+      {
+        "id": "spark_board_6_6",
+        "name": "Increased Lightning Damage",
+        "description": "+6% Lightning Damage",
+        "position": {
+          "row": 6,
+          "column": 6
+        },
+        "type": "small",
+        "stats": {
+          "lightningIncrease": 6
+        },
+        "maxRank": 1,
+        "currentRank": 0,
+        "cost": 1,
+        "requirements": [],
+        "connections": []
+      }
+    ]
+  ],
+  "extensionPoints": [
+    {
+      "id": "spark_board_ext_top",
+      "position": {
+        "row": 0,
+        "column": 3
+      },
+      "availableBoards": [],
+      "maxConnections": 1,
+      "currentConnections": 0
+    },
+    {
+      "id": "spark_board_ext_left",
+      "position": {
+        "row": 3,
+        "column": 0
+      },
+      "availableBoards": [],
+      "maxConnections": 1,
+      "currentConnections": 0
+    },
+    {
+      "id": "spark_board_ext_right",
+      "position": {
+        "row": 3,
+        "column": 6
+      },
+      "availableBoards": [],
+      "maxConnections": 1,
+      "currentConnections": 0
+    },
+    {
+      "id": "spark_board_ext_bottom",
+      "position": {
+        "row": 6,
+        "column": 3
+      },
+      "availableBoards": [],
+      "maxConnections": 1,
+      "currentConnections": 0
+    }
+  ],
+  "maxPoints": 15
+}

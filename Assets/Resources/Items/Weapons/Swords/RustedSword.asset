@@ -1,0 +1,129 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acb10ebe3b1fccb4db0460f273da7305, type: 3}
+  m_Name: RustedSword
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponItem
+  itemName: Rusted Sword
+  description: 
+  itemIcon: {fileID: -6219437698638401180, guid: 3fbc628c3c9b72d4c8d2a7b05b9803b1, type: 3}
+  rarity: 0
+  requiredLevel: 1
+  itemType: 0
+  equipmentType: 2
+  isStackable: 0
+  maxStackSize: 1
+  quality: 0
+  implicitModifiers: []
+  prefixes:
+  - name: Polished
+    description: Adds (6-9) to (13-15) Physical Damage
+    affixType: 0
+    tier: 5
+    modifiers:
+    - statName: PhysicalDamage
+      minValue: 6
+      maxValue: 15
+      modifierType: 0
+      damageType: 1
+      scope: 0
+      description: Adds (6-9) to (13-15) Physical Damage
+      originalMinValue: 6
+      originalMaxValue: 15
+      isDualRange: 0
+      firstRangeMin: 0
+      firstRangeMax: 0
+      secondRangeMin: 0
+      secondRangeMax: 0
+      rolledFirstValue: 0
+      rolledSecondValue: 0
+    requiredTags:
+    - weapon
+    - sword
+    - axe
+    - mace
+    - staff
+    - wand
+    - sceptre
+    - dagger
+    - onehand
+    - damage
+    - physical
+    - attack
+    weight: 1000
+    handedness: 1
+    minValue: 6
+    maxValue: 15
+    hasRange: 1
+    rolledValue: 15
+    isRolled: 1
+  - name: Heavy
+    description: (40-49)% increased Physical Damage
+    affixType: 0
+    tier: 8
+    modifiers:
+    - statName: IncreasePhysicalDamage
+      minValue: 40
+      maxValue: 49
+      modifierType: 1
+      damageType: 1
+      scope: 0
+      description: (40-49)% increased Physical Damage
+      originalMinValue: 40
+      originalMaxValue: 49
+      isDualRange: 0
+      firstRangeMin: 0
+      firstRangeMax: 0
+      secondRangeMin: 0
+      secondRangeMax: 0
+      rolledFirstValue: 0
+      rolledSecondValue: 0
+    requiredTags:
+    - weapon
+    - sword
+    - axe
+    - mace
+    - staff
+    - wand
+    - sceptre
+    - dagger
+    - damage
+    - physical
+    - attack
+    weight: 1000
+    handedness: 0
+    minValue: 40
+    maxValue: 49
+    hasRange: 1
+    rolledValue: 42
+    isRolled: 1
+  suffixes: []
+  isUnique: 0
+  itemTags:
+  - weapon
+  - sword
+  - onehanded
+  - melee
+  - attack
+  weaponType: 8
+  handedness: 0
+  attackSpeed: 1
+  criticalStrikeChance: 5
+  criticalStrikeMultiplier: 150
+  minDamage: 6
+  maxDamage: 9
+  primaryDamageType: 1
+  secondaryDamageType: 0
+  secondaryDamageMin: 0
+  secondaryDamageMax: 0
+  requiredStrength: 12
+  requiredDexterity: 8
+  requiredIntelligence: 0

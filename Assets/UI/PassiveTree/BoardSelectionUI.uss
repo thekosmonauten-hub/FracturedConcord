@@ -1,0 +1,107 @@
+/* Board Selection UI Styles */
+
+#BoardSelectionPanel {
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+#SelectionContainer {
+    background-color: rgb(40, 40, 40);
+    border-radius: 10px;
+    padding: 20px;
+    min-width: 600px;
+    min-height: 400px;
+    border-width: 2px;
+    border-color: rgb(100, 100, 100);
+}
+
+#TitleLabel {
+    font-size: 24px;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    margin-bottom: 10px;
+}
+
+#DescriptionLabel {
+    font-size: 14px;
+    color: rgb(200, 200, 200);
+    -unity-text-align: middle-center;
+    margin-bottom: 20px;
+}
+
+#BoardButtonContainer {
+    flex-grow: 1;
+    margin-bottom: 20px;
+}
+
+#ButtonGrid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+#ButtonContainer {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#CloseButton {
+    background-color: rgb(100, 100, 100);
+    color: rgb(255, 255, 255);
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin: 0 10px;
+}
+
+#CloseButton:hover {
+    background-color: rgb(120, 120, 120);
+}
+
+/* Board Button Styles */
+.board-button {
+    background-color: rgb(60, 60, 60);
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px;
+    min-width: 150px;
+    min-height: 120px;
+    border-width: 2px;
+    border-color: rgb(80, 80, 80);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.board-button:hover {
+    background-color: rgb(80, 80, 80);
+    border-color: rgb(100, 100, 100);
+}
+
+.board-button:active {
+    background-color: rgb(100, 100, 100);
+}
+
+.board-button-preview {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.board-button-name {
+    font-size: 14px;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    margin-bottom: 5px;
+}
+
+.board-button-description {
+    font-size: 12px;
+    color: rgb(180, 180, 180);
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+

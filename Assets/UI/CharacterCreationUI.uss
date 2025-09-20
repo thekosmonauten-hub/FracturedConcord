@@ -1,0 +1,246 @@
+.main-container {
+    flex-grow: 1;
+    background-image: url("project://database/Assets/Art/CharCreation/CharCreation_Menu.png?fileID=2800000&guid=8bff638a3d89a8b4191dc68a60bf3b43&type=3#CharCreation_Menu");
+    -unity-background-scale-mode: scale-and-crop;
+    -unity-slice-type: sliced;
+    align-items: center;
+    justify-content: center;
+}
+
+.section {
+    width: 800px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 15px;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.2);
+    border-left-color: rgba(255, 255, 255, 0);
+    border-right-color: rgba(255, 255, 255, 0);
+    border-top-color: rgba(255, 255, 255, 0);
+    border-bottom-color: rgba(255, 255, 255, 0);
+}
+
+/* Specific styling for the Background section */
+.section[name="Background"] {
+    width: 872px;
+    height: 1400px;
+    background-image: none;
+    scale: 1 1;
+}
+
+.header {
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.title {
+    font-size: 72px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Oswald-Bold.ttf?fileID=12800000&guid=c9f6d0e7bc8541498c9a4799ba184ede&type=3#Oswald-Bold");
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    -unity-font-style: bold-and-italic;
+    text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.section {
+    width: 800px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 15px;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.2);
+    border-left-color: rgba(255, 255, 255, 0);
+    border-right-color: rgba(255, 255, 255, 0);
+    border-top-color: rgba(255, 255, 255, 0);
+    border-bottom-color: rgba(255, 255, 255, 0);
+}
+
+.section-label {
+    font-size: 24px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+    margin-top: -57px;
+}
+
+.name-input {
+    width: 300px;
+    height: 50px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    font-size: 18px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    color: rgb(0, 0, 0);
+    -unity-text-align: middle-left;
+}
+
+.name-input:focus {
+    border-color: rgba(255, 255, 255, 0.8);
+    background-color: rgb(255, 255, 255);
+}
+
+.class-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin: 15px;
+    width: 100%;
+    scale: 0.8 0.8;
+}
+
+.class-button {
+    width: 200px;
+    height: 120px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.3);
+    padding: 15px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition-duration: 0.2s;
+    scale: 1;
+}
+
+.class-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.6);
+    scale: 1.05;
+    transition-duration: 0.1s;
+}
+
+.class-button:active {
+    background-color: rgba(255, 255, 255, 0.3);
+    scale: 0.98;
+    transition-duration: 0.1s;
+}
+
+.class-button.selected {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.8);
+    border-width: 3px;
+    scale: 1.02;
+}
+
+.class-name {
+    font-size: 18px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.class-description {
+    font-size: 12px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    color: rgba(255, 255, 255, 0.8);
+    -unity-text-align: middle-center;
+    -unity-font-style: normal;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.character-preview {
+    width: 200px;
+    height: 200px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.3);
+    align-items: center;
+    justify-content: center;
+}
+
+.action-buttons {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 800px;
+    margin-top: 30px;
+}
+
+.action-button {
+    width: 220px;
+    height: 60px;
+    border-radius: 14px;
+    border-width: 0;
+    background-image: url("project://database/Assets/Art/Buttons/Wide_Buttons_Sprites_Sheet.png?fileID=4430055420089451196&guid=53a0f391d9957834a9ea2f7ce63f39c0&type=3#Wide_Buttons_Sprites_Sheet_4");
+    background-color: rgba(255, 255, 255, 0);
+    background-position: center;
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    color: rgb(255, 255, 255);
+    font-size: 18px;
+    -unity-font-style: normal;
+    -unity-text-outline-width: 1px;
+    text-shadow: 4px 4px 0 rgba(0, 0, 0, 0);
+    transition-duration: 0.2s;
+    scale: 1.15 1.15;
+    padding-left: 0;
+}
+
+.action-button:hover {
+    scale: 1.2 1.2;
+    transition-duration: 0.1s;
+    background-image: url("project://database/Assets/Art/Buttons/Wide_Buttons_Sprites_Sheet.png?fileID=2826376979050823069&guid=53a0f391d9957834a9ea2f7ce63f39c0&type=3#Wide_Buttons_Sprites_Sheet_5");
+    transition-timing-function: ease-in;
+    transition-delay: 0s;
+}
+
+.action-button:active {
+    scale: 1 1;
+    transition-duration: 0.1s;
+}
+
+.action-button.primary {
+    background-image: url("project://database/Assets/Art/Buttons/Wide_Buttons_Sprites_Sheet.png?fileID=4430055420089451196&guid=53a0f391d9957834a9ea2f7ce63f39c0&type=3#Wide_Buttons_Sprites_Sheet_4");
+}
+
+.action-button.secondary {
+    background-image: url("project://database/Assets/Art/Buttons/Wide_Buttons_Sprites_Sheet.png?fileID=4430055420089451196&guid=53a0f391d9957834a9ea2f7ce63f39c0&type=3#Wide_Buttons_Sprites_Sheet_4");
+    opacity: 0.8;
+}
+
+.action-button:disabled {
+    opacity: 0.5;
+    scale: 1 1;
+}
+
+/* Remove all the transparent styling classes */
+
+/* Character name input with reduced padding */
+.character-name-input {
+    width: 300px;
+    height: 50px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: rgba(0, 0, 0, 0.3);
+    padding: 0px 0px; /* Reduced padding from 10px to 5px vertical, 8px horizontal */
+    font-size: 18px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    color: rgb(0, 0, 0);
+    -unity-text-align: middle-left;
+}
+
+.character-name-input:focus {
+    border-color: rgba(255, 255, 255, 0.8);
+    background-color: rgb(255, 255, 255);
+}

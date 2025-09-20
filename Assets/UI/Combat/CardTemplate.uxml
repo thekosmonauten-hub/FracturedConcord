@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd">
+
+    <engine:VisualElement name="CardTemplate" class="card-template">
+        <!-- Card Background -->
+        <engine:VisualElement name="CardBackground" class="card-background">
+            
+            <!-- Card Header -->
+            <engine:VisualElement name="CardHeader" class="card-header">
+                <!-- Card Type Icon -->
+                <engine:VisualElement name="CardTypeIcon" class="card-type-icon" />
+                
+                <!-- Card Name -->
+                <engine:Label name="CardName" text="Card Name" class="card-name" />
+                
+                <!-- Mana Cost -->
+                <engine:VisualElement name="ManaCostContainer" class="mana-cost-container">
+                    <engine:Label name="ManaCost" text="1" class="mana-cost" />
+                </engine:VisualElement>
+            </engine:VisualElement>
+            
+            <!-- Card Art Area -->
+            <engine:VisualElement name="CardArtArea" class="card-art-area">
+                <engine:VisualElement name="CardArt" class="card-art" />
+            </engine:VisualElement>
+            
+            <!-- Card Content -->
+            <engine:VisualElement name="CardContent" class="card-content">
+                <!-- Damage/Guard Value -->
+                <engine:VisualElement name="ValueContainer" class="value-container">
+                    <engine:Label name="ValueLabel" text="8" class="value-label" />
+                </engine:VisualElement>
+                
+                <!-- Card Description -->
+                <engine:Label name="CardDescription" text="Card description goes here with dynamic values." class="card-description" />
+                
+                <!-- Card Tags -->
+                <engine:VisualElement name="CardTags" class="card-tags" />
+            </engine:VisualElement>
+            
+            <!-- Card Footer -->
+            <engine:VisualElement name="CardFooter" class="card-footer">
+                <!-- AoE Indicator -->
+                <engine:VisualElement name="AoEIndicator" class="aoe-indicator" style="display: none;">
+                    <engine:Label name="AoELabel" text="AoE" class="aoe-label" />
+                </engine:VisualElement>
+                
+                <!-- Card Type Label -->
+                <engine:Label name="CardTypeLabel" text="ATTACK" class="card-type-label" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+    </engine:VisualElement>
+
+</engine:UXML>
+

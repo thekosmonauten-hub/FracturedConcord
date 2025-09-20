@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07629c3dbb7a09949bdc379c1a33fb57, type: 3}
+  m_Name: CardDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::CardDatabase
+  allCards:
+  - {fileID: 11400000, guid: ccddedf39a135d6458ee292104cdbfc3, type: 2}
+  - {fileID: 11400000, guid: dfa0462ac615d9847847d7ef29c46b6d, type: 2}
+  - {fileID: 11400000, guid: c7bddaa71459de24185c27eb6392299a, type: 2}
+  - {fileID: 11400000, guid: 4560c26d9af95524682c41df04dfbad8, type: 2}
+  - {fileID: 11400000, guid: 8a7c128e70504a146a74bf96e74904bc, type: 2}
+  - {fileID: 11400000, guid: 20f2c2b666f456f41a8f1292b788eec1, type: 2}
+  - {fileID: 11400000, guid: 59837d8705d26c64b9d2339696d2ca58, type: 2}
+  - {fileID: 11400000, guid: f2ff5a09ccacf6c44a2a42ea64cff078, type: 2}
+  - {fileID: 11400000, guid: 52ce09cfa5220a64d9b53d5de44bbf6a, type: 2}
+  - {fileID: 11400000, guid: e87f82e614a8d3d40a664cbb51d14bae, type: 2}
+  attackCards:
+  - {fileID: 11400000, guid: ccddedf39a135d6458ee292104cdbfc3, type: 2}
+  - {fileID: 11400000, guid: c7bddaa71459de24185c27eb6392299a, type: 2}
+  - {fileID: 11400000, guid: 4560c26d9af95524682c41df04dfbad8, type: 2}
+  - {fileID: 11400000, guid: 8a7c128e70504a146a74bf96e74904bc, type: 2}
+  - {fileID: 11400000, guid: 20f2c2b666f456f41a8f1292b788eec1, type: 2}
+  - {fileID: 11400000, guid: f2ff5a09ccacf6c44a2a42ea64cff078, type: 2}
+  - {fileID: 11400000, guid: e87f82e614a8d3d40a664cbb51d14bae, type: 2}
+  skillCards: []
+  powerCards:
+  - {fileID: 11400000, guid: 52ce09cfa5220a64d9b53d5de44bbf6a, type: 2}
+  guardCards:
+  - {fileID: 11400000, guid: dfa0462ac615d9847847d7ef29c46b6d, type: 2}
+  - {fileID: 11400000, guid: 59837d8705d26c64b9d2339696d2ca58, type: 2}
+  basicCards:
+  - {fileID: 11400000, guid: dfa0462ac615d9847847d7ef29c46b6d, type: 2}
+  - {fileID: 11400000, guid: 52ce09cfa5220a64d9b53d5de44bbf6a, type: 2}
+  - {fileID: 11400000, guid: e87f82e614a8d3d40a664cbb51d14bae, type: 2}
+  fireCards:
+  - {fileID: 11400000, guid: 8a7c128e70504a146a74bf96e74904bc, type: 2}
+  coldCards:
+  - {fileID: 11400000, guid: 59837d8705d26c64b9d2339696d2ca58, type: 2}
+  lightningCards:
+  - {fileID: 11400000, guid: f2ff5a09ccacf6c44a2a42ea64cff078, type: 2}
+  physicalCards:
+  - {fileID: 11400000, guid: c7bddaa71459de24185c27eb6392299a, type: 2}
+  - {fileID: 11400000, guid: 4560c26d9af95524682c41df04dfbad8, type: 2}
+  - {fileID: 11400000, guid: 20f2c2b666f456f41a8f1292b788eec1, type: 2}
+  chaosCards:
+  - {fileID: 11400000, guid: ccddedf39a135d6458ee292104cdbfc3, type: 2}
+  commonCards:
+  - {fileID: 11400000, guid: dfa0462ac615d9847847d7ef29c46b6d, type: 2}
+  - {fileID: 11400000, guid: 20f2c2b666f456f41a8f1292b788eec1, type: 2}
+  - {fileID: 11400000, guid: e87f82e614a8d3d40a664cbb51d14bae, type: 2}
+  magicCards:
+  - {fileID: 11400000, guid: 4560c26d9af95524682c41df04dfbad8, type: 2}
+  - {fileID: 11400000, guid: 8a7c128e70504a146a74bf96e74904bc, type: 2}
+  - {fileID: 11400000, guid: 59837d8705d26c64b9d2339696d2ca58, type: 2}
+  - {fileID: 11400000, guid: f2ff5a09ccacf6c44a2a42ea64cff078, type: 2}
+  - {fileID: 11400000, guid: 52ce09cfa5220a64d9b53d5de44bbf6a, type: 2}
+  rareCards:
+  - {fileID: 11400000, guid: ccddedf39a135d6458ee292104cdbfc3, type: 2}
+  - {fileID: 11400000, guid: c7bddaa71459de24185c27eb6392299a, type: 2}
+  uniqueCards: []

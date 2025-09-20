@@ -1,0 +1,472 @@
+.main-container {
+    flex-grow: 1;
+    background-image: url("project://database/Assets/Art/MainMenu_Dexiled.png?fileID=2800000&guid=8665dbab71d092b439661a70e66fd9da&type=3#MainMenu_Dexiled");
+    -unity-background-scale-mode: scale-and-crop;
+    -unity-slice-type: sliced;
+    align-items: center;
+    justify-content: center;
+}
+
+.main-menu-panel {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.content-container {
+    width: 412px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.header {
+    font-size: 96px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Oswald-Bold.ttf?fileID=12800000&guid=c9f6d0e7bc8541498c9a4799ba184ede&type=3#Oswald-Bold");
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    -unity-font-style: bold-and-italic;
+    margin-bottom: 10px;
+    align-self: center;
+    text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.button {
+    width: 220px;
+    height: 60px;
+    margin-top: 12px;
+    align-self: center;
+    border-radius: 14px;
+    border-width: 0;
+    background-image: url("project://database/Assets/Art/Buttons/Wide_Buttons_Sprites_Sheet.png?fileID=4430055420089451196&guid=53a0f391d9957834a9ea2f7ce63f39c0&type=3#Wide_Buttons_Sprites_Sheet_4");
+    background-color: rgba(255, 255, 255, 0);
+    background-position: center;
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    color: rgb(255, 255, 255);
+    font-size: 18px;
+    align-items: center;
+    justify-content: center;
+    -unity-font-style: normal;
+    -unity-text-outline-width: 1px;
+    text-shadow: 4px 4px 0 rgba(0, 0, 0, 0);
+    transition-duration: 0.2s;
+    scale: 1.15 1.15;
+}
+
+.button:hover {
+    scale: 1.2 1.2;
+    transition-duration: 0.1s;
+    background-image: url("project://database/Assets/Art/Buttons/Wide_Buttons_Sprites_Sheet.png?fileID=2826376979050823069&guid=53a0f391d9957834a9ea2f7ce63f39c0&type=3#Wide_Buttons_Sprites_Sheet_5");
+    transition-timing-function: ease-in;
+    transition-delay: 0s;
+}
+
+.button:active {
+    scale: 1 1;
+    transition-duration: 0.1s;
+}
+
+.character-selection-panel {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+
+.character-selection-content {
+    width: 600px;
+    height: 500px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 20px;
+    padding: 30px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.character-selection-header {
+    font-size: 48px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Oswald-Bold.ttf?fileID=12800000&guid=c9f6d0e7bc8541498c9a4799ba184ede&type=3#Oswald-Bold");
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.character-list-view {
+    flex-grow: 1;
+    width: 100%;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.character-selection-buttons {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.character-selection-buttons .button {
+    width: 200px;
+    margin-top: 0;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.character-button {
+    height: 60px;
+    margin: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.3);
+    color: rgb(255, 255, 255);
+    font-size: 16px;
+    align-items: center;
+    justify-content: center;
+    transition-duration: 0.2s;
+}
+
+.character-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    scale: 1.02;
+}
+
+.character-button:active {
+    background-color: rgba(255, 255, 255, 0.3);
+    scale: 0.98;
+}
+/* Add these styles to your existing MainMenuUI.uss file */
+
+.character-item {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin: 5px 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.character-details {
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.character-name {
+    font-size: 18px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    color: rgb(255, 255, 255);
+    -unity-font-style: bold;
+    margin-bottom: 5px;
+}
+
+.character-class {
+    font-size: 14px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.character-actions {
+    flex-direction: row;
+    margin:  10px;
+}
+
+.load-button {
+    width: 100px;
+    height: 35px;
+    background-color: rgba(0, 255, 0, 0.3);
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: rgba(0, 255, 0, 0.5);
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    transition-duration: 0.2s;
+}
+
+.load-button:hover {
+    background-color: rgba(0, 255, 0, 0.5);
+    scale: 1.05;
+}
+
+.delete-button {
+    width: 80px;
+    height: 35px;
+    background-color: rgba(255, 0, 0, 0.3);
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: rgba(255, 0, 0, 0.5);
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    transition-duration: 0.2s;
+}
+
+.delete-button:hover {
+    background-color: rgba(255, 0, 0, 0.5);
+    scale: 1.05;
+}
+
+.confirmation-dialog {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog-content {
+    background-color: rgba(50, 50, 50, 0.95);
+    border-radius: 10px;
+    padding: 30px;
+    min-width: 400px;
+    align-items: center;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.dialog-message {
+    font-size: 18px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    margin-bottom: 20px;
+}
+
+.dialog-buttons {
+    flex-direction: row;
+    margin:  15px;
+}
+
+.confirm-button {
+    width: 100px;
+    height: 40px;
+    background-color: rgba(255, 0, 0, 0.7);
+    border-radius: 5px;
+    border-width: 0;
+    color: rgb(255, 255, 255);
+    font-size: 16px;
+    transition-duration: 0.2s;
+}
+
+.confirm-button:hover {
+    background-color: rgba(255, 0, 0, 0.9);
+    scale: 1.05;
+}
+
+.cancel-button {
+    width: 100px;
+    height: 40px;
+    background-color: rgba(100, 100, 100, 0.7);
+    border-radius: 5px;
+    border-width: 0;
+    color: rgb(255, 255, 255);
+    font-size: 16px;
+    transition-duration: 0.2s;
+}
+
+.cancel-button:hover {
+    background-color: rgba(100, 100, 100, 0.9);
+    scale: 1.05;
+}
+
+/* Character Sidebar */
+.character-sidebar {
+    position: absolute;
+    right: -400px; /* Start off-screen */
+    top: 0;
+    width: 400px;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-left-color: rgba(255, 255, 255, 0.3);
+    border-left-width: 2px;
+    flex-direction: column;
+    transition-property: right;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+    /* z-index: 1000; */
+}
+
+.character-sidebar.open {
+    right: 0px;
+}
+
+.sidebar-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-title {
+    font-size: 24px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-left;
+    -unity-font-style: bold;
+}
+
+.sidebar-close-button {
+    width: 30px;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    border-width: 0;
+    color: rgb(255, 255, 255);
+    font-size: 18px;
+    -unity-font-style: bold;
+    transition-duration: 0.2s;
+}
+
+.sidebar-close-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    scale: 1.1;
+}
+
+.character-scroll-view {
+    flex-grow: 1;
+    padding: 10px;
+}
+
+.character-list {
+    flex-direction: column;
+    /* gap: 10px; */
+}
+
+.character-card {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    margin: 5px;
+    transition-duration: 0.2s;
+}
+
+.character-card:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+    scale: 1.02;
+}
+
+.character-card.selected {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.6);
+    border-width: 2px;
+}
+
+.character-info {
+    flex-direction: column;
+    /* gap: 5px; */
+    margin-bottom: 10px;
+}
+
+.character-name {
+    font-size: 18px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-left;
+    -unity-font-style: bold;
+}
+
+.character-details {
+    font-size: 14px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Regular.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Regular");
+    color: rgba(255, 255, 255, 0.8);
+    -unity-text-align: middle-left;
+}
+
+.character-actions {
+    flex-direction: row;
+    /* gap: 10px; */
+    justify-content: space-between;
+}
+
+.character-action-button {
+    flex-grow: 1;
+    height: 35px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    border-width: 0;
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    transition-duration: 0.2s;
+}
+
+.character-action-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    scale: 1.05;
+}
+
+.character-action-button.primary {
+    background-color: rgba(76, 175, 80, 0.8);
+}
+
+.character-action-button.primary:hover {
+    background-color: rgba(76, 175, 80, 1.0);
+}
+
+.character-action-button.danger {
+    background-color: rgba(244, 67, 54, 0.8);
+}
+
+.character-action-button.danger:hover {
+    background-color: rgba(244, 67, 54, 1.0);
+}
+
+.sidebar-create-button {
+    margin: 20px;
+    height: 50px;
+    background-color: rgba(76, 175, 80, 0.8);
+    border-radius: 8px;
+    border-width: 0;
+    color: rgb(255, 255, 255);
+    font-size: 16px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    transition-duration: 0.2s;
+}
+
+.sidebar-create-button:hover {
+    background-color: rgba(76, 175, 80, 1.0);
+    scale: 1.05;
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle-button {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 120px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.3);
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    transition-duration: 0.2s;
+    /* z-index: 999; */
+}
+
+.sidebar-toggle-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    scale: 1.05;
+}
+
+.sidebar-toggle-button.hidden {
+    display: none;
+}

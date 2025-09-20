@@ -1,0 +1,255 @@
+/* Card Template Styles */
+.card-template {
+    width: 200px;
+    height: 280px;
+    margin: 0px;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Fanning effect classes - will be handled by C# transforms */
+.card-fanned {
+    /* Transform will be applied via C# code */
+}
+
+.card-single {
+    /* Transform will be applied via C# code */
+}
+
+.card-fan-left {
+    /* Transform will be applied via C# code */
+}
+
+.card-fan-center {
+    /* Transform will be applied via C# code */
+}
+
+.card-fan-right {
+    /* Transform will be applied via C# code */
+}
+
+/* Hover effect - will be handled by C# code */
+.card-hovered {
+    /* Transform will be applied via C# code */
+}
+
+.card-background {
+    width: 100%;
+    height: 100%;
+    background-color: rgb(45, 45, 45);
+    border-color: rgb(80, 80, 80);
+    border-width: 2px;
+    border-radius: 10px;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.card-background:hover {
+    border-color: rgb(120, 120, 120);
+}
+
+.card-background.unusable {
+    opacity: 0.5;
+}
+
+.card-background.selected {
+    border-color: rgb(255, 255, 0);
+}
+
+/* Card Header */
+.card-header {
+    height: 60px;
+    background-color: rgb(60, 60, 60);
+    border-bottom-color: rgb(80, 80, 80);
+    border-bottom-width: 1px;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px;
+    justify-content: space-between;
+}
+
+.card-type-icon {
+    width: 20px;
+    height: 20px;
+    background-color: rgb(255, 100, 100);
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.card-name {
+    flex: 1;
+    color: rgb(255, 255, 255);
+    font-size: 12px;
+    -unity-font-style: bold;
+    -unity-text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mana-cost-container {
+    width: 24px;
+    height: 24px;
+    background-color: rgb(100, 150, 255);
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+}
+
+.mana-cost {
+    color: rgb(255, 255, 255);
+    font-size: 12px;
+    -unity-font-style: bold;
+}
+
+/* Card Art Area */
+.card-art-area {
+    height: 120px;
+    background-color: rgb(30, 30, 30);
+    align-items: center;
+    justify-content: center;
+    border-bottom-color: rgb(80, 80, 80);
+    border-bottom-width: 1px;
+}
+
+.card-art {
+    width: 80px;
+    height: 80px;
+    background-color: rgb(60, 60, 60);
+    border-color: rgb(100, 100, 100);
+    border-width: 2px;
+    border-radius: 8px;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Card Content */
+.card-content {
+    flex: 1;
+    padding: 8px;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.value-container {
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.value-label {
+    color: rgb(255, 255, 255);
+    font-size: 18px;
+    -unity-font-style: bold;
+}
+
+.card-description {
+    color: rgb(200, 200, 200);
+    font-size: 10px;
+    -unity-text-align: center;
+    flex: 1;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-tags {
+    height: 16px;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 4px;
+}
+
+/* Card Footer */
+.card-footer {
+    height: 30px;
+    background-color: rgb(60, 60, 60);
+    border-top-color: rgb(80, 80, 80);
+    border-top-width: 1px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+}
+
+.aoe-indicator {
+    background-color: rgb(255, 150, 50);
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.aoe-label {
+    color: rgb(255, 255, 255);
+    font-size: 8px;
+    -unity-font-style: bold;
+}
+
+.card-type-label {
+    color: rgb(200, 200, 200);
+    font-size: 8px;
+    -unity-font-style: bold;
+}
+
+/* Card Type Specific Colors */
+.card-background.attack {
+    border-color: rgb(255, 100, 100);
+}
+
+.card-background.attack .card-type-icon {
+    background-color: rgb(255, 100, 100);
+}
+
+.card-background.attack .card-type-label {
+    color: rgb(255, 150, 150);
+}
+
+.card-background.guard {
+    border-color: rgb(100, 150, 255);
+}
+
+.card-background.guard .card-type-icon {
+    background-color: rgb(100, 150, 255);
+}
+
+.card-background.guard .card-type-label {
+    color: rgb(150, 200, 255);
+}
+
+.card-background.skill {
+    border-color: rgb(150, 255, 150);
+}
+
+.card-background.skill .card-type-icon {
+    background-color: rgb(150, 255, 150);
+}
+
+.card-background.skill .card-type-label {
+    color: rgb(200, 255, 200);
+}
+
+.card-background.power {
+    border-color: rgb(255, 200, 100);
+}
+
+.card-background.power .card-type-icon {
+    background-color: rgb(255, 200, 100);
+}
+
+.card-background.power .card-type-label {
+    color: rgb(255, 220, 150);
+}
+
+.card-background.aura {
+    border-color: rgb(200, 100, 255);
+}
+
+.card-background.aura .card-type-icon {
+    background-color: rgb(200, 100, 255);
+}
+
+.card-background.aura .card-type-label {
+    color: rgb(220, 150, 255);
+}

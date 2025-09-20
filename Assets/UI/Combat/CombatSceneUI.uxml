@@ -1,0 +1,74 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="CombatSceneUI.uss" />
+    <ui:VisualElement name="CombatContainer" class="combat-container">
+        <ui:VisualElement name="StatusBar" class="status-bar">
+            <ui:Label name="TurnIndicator" text="Your Turn" class="turn-indicator" />
+            <ui:Label name="CombatLog" text="Combat started!" class="combat-log" />
+            <ui:Button name="ReturnToMapButton" text="Map" tooltip="Return to Map" class="return-to-map" />
+        </ui:VisualElement>
+        <ui:VisualElement name="BuffBar" class="buff-bar">
+            <ui:Label name="PlayerBuffs" text="Buffs: None" class="buff-text" />
+            <ui:Label name="EnemyBuffs" text="Buffs: None" class="buff-text" />
+        </ui:VisualElement>
+        <ui:VisualElement name="CharacterSection" class="character-section">
+            <ui:VisualElement name="PlayerCharacter" class="character-sprite player-sprite">
+                <ui:VisualElement name="PlayerSpriteArea" class="sprite-area" />
+                <ui:Label name="PlayerName" text="Player" class="character-name" />
+                <ui:VisualElement name="PlayerHealthBar" class="health-bar">
+                    <ui:VisualElement name="PlayerHealthFill" class="health-fill" />
+                </ui:VisualElement>
+                <ui:Label name="PlayerHealthText" text="100/100" class="health-text" />
+                <ui:VisualElement name="PlayerManaBar" class="mana-bar">
+                    <ui:VisualElement name="PlayerManaFill" class="mana-fill" />
+                </ui:VisualElement>
+                <ui:Label name="PlayerManaText" text="Mana: 3/3 (+3/turn)" class="mana-text" />
+            </ui:VisualElement>
+            <ui:VisualElement name="EnemyContainer" class="enemy-container">
+                <ui:VisualElement name="Enemy1" class="enemy-sprite">
+                    <ui:VisualElement name="Enemy1SpriteArea" class="sprite-area" />
+                    <ui:Label name="Enemy1Name" text="Goblin" class="character-name" />
+                    <ui:VisualElement name="Enemy1HealthBar" class="health-bar">
+                        <ui:VisualElement name="Enemy1HealthFill" class="health-fill" />
+                    </ui:VisualElement>
+                    <ui:Label name="Enemy1HealthText" text="50/50" class="health-text" />
+                    <ui:Label name="Enemy1Intent" text="Intent: Attack (8)" class="intent-text" />
+                </ui:VisualElement>
+                <ui:VisualElement name="Enemy2" class="enemy-sprite">
+                    <ui:VisualElement name="Enemy2SpriteArea" class="sprite-area" />
+                    <ui:Label name="Enemy2Name" text="Orc" class="character-name" />
+                    <ui:VisualElement name="Enemy2HealthBar" class="health-bar">
+                        <ui:VisualElement name="Enemy2HealthFill" class="health-fill" />
+                    </ui:VisualElement>
+                    <ui:Label name="Enemy2HealthText" text="75/75" class="health-text" />
+                    <ui:Label name="Enemy2Intent" text="Intent: Defend" class="intent-text" />
+                </ui:VisualElement>
+                <ui:VisualElement name="Enemy3" class="enemy-sprite">
+                    <ui:VisualElement name="Enemy3SpriteArea" class="sprite-area" />
+                    <ui:Label name="Enemy3Name" text="Troll" class="character-name" />
+                    <ui:VisualElement name="Enemy3HealthBar" class="health-bar">
+                        <ui:VisualElement name="Enemy3HealthFill" class="health-fill" />
+                    </ui:VisualElement>
+                    <ui:Label name="Enemy3HealthText" text="100/100" class="health-text" />
+                    <ui:Label name="Enemy3Intent" text="Intent: Attack (12)" class="intent-text" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="CardSection" class="card-section">
+            <ui:VisualElement name="DiscardPile" class="pile-container discard-pile">
+                <ui:Label name="DiscardLabel" text="Discard" class="pile-label" />
+                <ui:Label name="DiscardCount" text="0" class="pile-count" />
+            </ui:VisualElement>
+            <ui:VisualElement name="CardHandSection" class="hand-container">
+                <ui:ScrollView name="CardHand" mode="Horizontal" class="card-hand" />
+                <ui:VisualElement name="HandControls" class="hand-controls">
+                    <ui:Button name="EndTurnButton" text="End Turn" class="end-turn-button" />
+                    <ui:Button name="DrawCardButton" text="Draw Card" class="draw-card-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="DrawPile" class="pile-container draw-pile">
+                <ui:Label name="DrawLabel" text="Draw" class="pile-label" />
+                <ui:Label name="DeckCount" text="20" class="pile-count" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

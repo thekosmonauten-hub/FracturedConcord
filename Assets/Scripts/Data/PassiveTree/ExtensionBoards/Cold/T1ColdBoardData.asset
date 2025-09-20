@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ac7f59631d32954fbf7c95512640f85, type: 3}
+  m_Name: T1ColdBoardData
+  m_EditorClassIdentifier: Assembly-CSharp::PassiveTree.BoardData
+  boardName: Frozen Mastery
+  boardDescription: The first breath of winter chills the air, halting motion and
+    numbing resolve.
+  boardTheme: 1
+  boardSize: {x: 7, y: 7}
+  jsonDataAsset: {fileID: 4900000, guid: 8799b2242161d8742aaf2aeccb3578a1, type: 3}
+  jsonDataPath: 
+  boardPreview: {fileID: 0}
+  boardColor: {r: 1, g: 1, b: 1, a: 1}
+  isUnlocked: 1
+  requiredLevel: 1

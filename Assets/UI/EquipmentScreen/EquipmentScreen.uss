@@ -1,0 +1,969 @@
+.main-container {
+    width: 100%;
+    height: 100%;
+    background-color: rgb(25, 35, 45);
+    flex-direction: column;
+    padding: 20px;
+    border-color: rgb(60, 70, 80);
+    border-width: 3px;
+    border-radius: 8px;
+}
+
+.header-bar {
+    flex-direction: row;
+    height: 60px;
+    margin-bottom: 20px;
+    border-bottom-color: rgb(80, 90, 100);
+    border-bottom-width: 2px;
+    align-items: center;
+}
+
+.header-label {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: rgb(200, 200, 200);
+    -unity-text-align: middle-center;
+    flex: 1;
+    margin-left: 361px;
+}
+
+.equipment-label {
+    color: rgb(150, 200, 255);
+}
+
+.inventory-label {
+    color: rgb(255, 200, 150);
+}
+
+.central-pillar {
+    width: 8px;
+    height: 50px;
+    background-color: rgb(100, 110, 120);
+    border-color: rgb(150, 160, 170);
+    border-width: 1px;
+    margin-left: 20px;
+    margin-right: 20px;
+    border-radius: 4px;
+}
+
+.content-area {
+    flex: 1;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
+.equipment-panel {
+    flex: 1;
+    background-color: rgba(30, 40, 50, 0);
+    border-color: rgb(80, 90, 100);
+    border-width: 2px;
+    border-radius: 8px;
+    padding: 20px;
+    margin-right: 10px;
+    border-left-color: rgba(80, 90, 100, 0);
+    border-right-color: rgba(80, 90, 100, 0);
+    border-top-color: rgba(80, 90, 100, 0);
+    border-bottom-color: rgba(80, 90, 100, 0);
+    margin-left: 64px;
+}
+
+.equipment-slots {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.equipment-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.top-row {
+    margin-bottom: 1px;
+}
+
+.middle-row {
+    margin-bottom: 1px;
+}
+
+.lower-row {
+    margin-bottom: 0;
+}
+
+.equipment-slot {
+    width: 60px;
+    height: 60px;
+    background-color: rgb(25, 30, 35);
+    border-color: rgb(100, 110, 120);
+    border-width: 2px;
+    border-radius: 4px;
+    margin: 2px;
+    align-items: center;
+    justify-content: center;
+    border-width: 2px;
+    border-radius: 6px;
+    margin: 5px;
+    position: relative;
+}
+
+.equipment-slot:hover {
+    border-color: rgb(150, 200, 255);
+    background-color: rgb(35, 45, 55);
+}
+
+.slot-label {
+    font-size: 10px;
+    -unity-font-style: bold;
+    color: rgb(150, 150, 150);
+    -unity-text-align: middle-center;
+    margin: 5px;
+    white-space: pre-wrap;
+}
+
+.helmet-slot {
+    width: 110px;
+    height: 110px;
+    margin-left: 88px;
+}
+
+.amulet-slot {
+    width: 65px;
+    height: 65px;
+    margin-left: 15px;
+    margin-top: 47px;
+}
+
+.mainhand-slot {
+    width: 100px;
+    height: 160px;
+}
+
+.bodyarmour-slot {
+    width: 120px;
+    height: 180px;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.offhand-slot {
+    width: 100px;
+    height: 160px;
+}
+
+.gloves-slot {
+    width: 100px;
+    height: 100px;
+}
+
+.rings-container {
+    flex-direction: row;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.ring-slot {
+    width: 60px;
+    height: 60px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.belt-slot {
+    width: 120px;
+    height: 40px;
+}
+
+.boots-slot {
+    width: 100px;
+    height: 100px;
+}
+
+.currency-section {
+    flex-direction: column;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: rgba(20, 25, 30, 0.7);
+    border-color: rgb(60, 70, 80);
+    border-width: 1px;
+    border-radius: 4px;
+    min-height: 120px;
+}
+
+.currency-section-label {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(255, 215, 100);
+    margin-bottom: 8px;
+    -unity-text-align: middle-left;
+}
+
+.currency-tabs-container {
+    flex-direction: row;
+    gap: 5px;
+    margin-bottom: 10px;
+    padding: 5px;
+    background-color: rgba(40, 50, 60, 0.8);
+    border-radius: 4px;
+}
+
+.currency-tab-button {
+    padding: 8px 12px;
+    background-color: rgba(60, 70, 80, 0.8);
+    border-color: rgb(100, 110, 120);
+    border-width: 1px;
+    border-radius: 4px;
+    color: rgb(200, 200, 200);
+    font-size: 12px;
+    -unity-font-style: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.currency-tab-button:hover {
+    background-color: rgba(80, 90, 100, 0.8);
+    border-color: rgb(150, 160, 170);
+}
+
+.currency-tab-button.active {
+    background-color: rgba(100, 150, 255, 0.8);
+    border-color: rgb(150, 200, 255);
+    color: rgb(255, 255, 255);
+}
+
+.currency-tab-content {
+    display: none;
+}
+
+.currency-tab-content.active {
+    display: flex;
+    flex-direction: column;
+}
+
+.currency-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-start;
+    gap: 12px;
+    margin-right: 2px;
+    margin-left: 2px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.currency-slot {
+    width: 80px;
+    height: 80px;
+    background-color: rgb(30, 35, 40);
+    border-color: rgb(100, 110, 120);
+    border-width: 2px;
+    border-radius: 8px;
+    position: relative;
+    flex-shrink: 0;
+    min-width: 80px;
+    min-height: 80px;
+    align-items: center;
+    justify-content: center;
+    margin: 4.5px;
+}
+
+.currency-slot:hover {
+    border-color: rgb(255, 215, 100);
+    background-color: rgb(40, 45, 50);
+}
+
+.currency-slot.occupied {
+    border-color: rgb(255, 215, 100);
+    background-color: rgb(40, 35, 20);
+}
+
+.currency-slot.common {
+    border-color: rgb(150, 150, 150);
+}
+
+.currency-slot.uncommon {
+    border-color: rgb(100, 150, 255);
+}
+
+.currency-slot.rare {
+    border-color: rgb(255, 200, 100);
+}
+
+.currency-slot.epic {
+    border-color: rgb(255, 150, 200);
+}
+
+.currency-slot.legendary {
+    border-color: rgb(255, 100, 100);
+}
+
+.currency-slot.unique {
+    border-color: rgb(255, 150, 50);
+}
+
+.currency-item-label {
+    font-size: 6px;
+    -unity-text-align: middle-center;
+    color: rgb(255, 255, 255);
+    margin: 1px;
+    white-space: normal;
+    position: absolute;
+    bottom: 1px;
+    left: 1px;
+    right: 1px;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 1px;
+}
+
+.currency-quantity-label {
+    font-size: 8px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(255, 255, 255);
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 2px 4px;
+    border-radius: 2px;
+    min-width: 12px;
+}
+
+.currency-image {
+    width: 60px;
+    height: 60px;
+    align-self: center;
+    justify-self: center;
+    flex-shrink: 0;
+}
+
+.item-image {
+    width: 50px;
+    height: 50px;
+    align-self: center;
+    justify-self: center;
+    flex-shrink: 0;
+}
+
+.equipment-item-image {
+    width: 80px;
+    height: 80px;
+    align-self: center;
+    justify-self: center;
+    flex-shrink: 0;
+}
+
+/* Larger sprites for bigger equipment slots */
+.helmet-slot .equipment-item-image {
+    width: 90px;
+    height: 90px;
+}
+
+.bodyarmour-slot .equipment-item-image {
+    width: 100px;
+    height: 100px;
+}
+
+/* Drag and Drop Styles */
+.inventory-slot, .stash-slot {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.inventory-slot:hover, .stash-slot:hover {
+    border-color: #666;
+    background-color: #3a3a3a;
+}
+
+.inventory-slot.dragging, .stash-slot.dragging {
+    opacity: 0.5;
+    border-color: #888;
+}
+
+.equipment-slot {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.equipment-slot:hover {
+    border-color: #666;
+    background-color: #3a3a3a;
+}
+
+.equipment-slot.dragging {
+    opacity: 0.5;
+    border-color: #888;
+}
+
+.drag-visual {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(42, 42, 42, 0.9);
+    border: 2px solid;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.mainhand-slot .equipment-item-image,
+.offhand-slot .equipment-item-image {
+    width: 80px;
+    height: 120px;
+}
+
+.gloves-slot .equipment-item-image,
+.boots-slot .equipment-item-image {
+    width: 80px;
+    height: 80px;
+}
+
+.amulet-slot .equipment-item-image {
+    width: 50px;
+    height: 50px;
+}
+
+.ring-slot .equipment-item-image {
+    width: 45px;
+    height: 45px;
+}
+
+.belt-slot .equipment-item-image {
+    width: 100px;
+    height: 30px;
+}
+
+.inventory-panel {
+    flex: 1;
+    background-color: rgba(30, 40, 50, 0.8);
+    border-color: rgb(80, 90, 100);
+    border-width: 2px;
+    border-radius: 8px;
+    padding: 15px;
+    margin-left: 10px;
+    flex-direction: column;
+    left: 31px;
+}
+
+.inventory-section {
+    flex: 1;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.inventory-section-label {
+    font-size: 16px;
+    -unity-font-style: bold;
+    color: rgb(255, 200, 150);
+    margin-bottom: 8px;
+    -unity-text-align: middle-left;
+}
+
+.inventory-grid {
+    flex: 1;
+    background-color: rgba(20, 25, 30, 0.5);
+    border-color: rgb(60, 70, 80);
+    border-width: 1px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    padding: 8px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-start;
+    min-height: 335px;
+    margin-left: 20px;
+    margin-right: 60px;
+}
+
+.inventory-controls {
+    flex-direction: row;
+    justify-content: space-around;
+    height: 30px;
+    margin-bottom: 10px;
+}
+
+.stash-section {
+    flex: 1;
+    flex-direction: column;
+}
+
+.stash-section-label {
+    font-size: 16px;
+    -unity-font-style: bold;
+    color: rgb(150, 200, 255);
+    margin-bottom: 8px;
+    -unity-text-align: middle-left;
+}
+
+.stash-tabs-container {
+    flex-direction: row;
+    height: 40px;
+    margin-bottom: 8px;
+    align-items: center;
+    margin-top: 2px;
+}
+
+.stash-tabs {
+    flex-direction: row;
+    height: 100%;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.stash-tab-button {
+    background-color: rgb(35, 45, 55);
+    border-color: rgb(70, 80, 90);
+    border-width: 2px;
+    border-radius: 6px 6px 0 0;
+    color: rgb(150, 150, 150);
+    font-size: 11px;
+    -unity-font-style: bold;
+    padding: 6px 12px;
+    margin-right: 3px;
+    min-width: 60px;
+    max-width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.stash-tab-button:hover {
+    background-color: rgb(55, 65, 75);
+    border-color: rgb(100, 110, 120);
+    color: rgb(200, 200, 200);
+}
+
+.stash-tab-button.active {
+    background-color: rgb(70, 90, 110);
+    border-color: rgb(120, 160, 200);
+    color: rgb(255, 255, 255);
+    border-bottom-color: rgb(70, 90, 110);
+}
+
+.add-stash-tab-button {
+    background-color: rgb(40, 60, 40);
+    border-color: rgb(80, 120, 80);
+    border-width: 2px;
+    border-radius: 6px;
+    color: rgb(150, 255, 150);
+    font-size: 16px;
+    -unity-font-style: bold;
+    padding: 8px 12px;
+    min-width: 30px;
+    height: 30px;
+}
+
+.add-stash-tab-button:hover {
+    background-color: rgb(50, 80, 50);
+    border-color: rgb(100, 150, 100);
+    color: rgb(200, 255, 200);
+}
+
+.add-stash-tab-button:disabled {
+    background-color: rgb(30, 40, 30);
+    border-color: rgb(60, 80, 60);
+    color: rgb(100, 150, 100);
+    opacity: 0.5;
+}
+
+.stash-grid {
+    flex: 1;
+    background-color: rgba(20, 25, 30, 0.5);
+    border-color: rgb(60, 70, 80);
+    border-width: 1px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    padding: 8px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-start;
+    min-height: 335px;
+    margin-left: 20px;
+    margin-right: 60px;
+}
+
+.stash-controls {
+    flex-direction: row;
+    justify-content: space-around;
+    height: 30px;
+}
+
+.inventory-button {
+    background-color: rgb(40, 50, 60);
+    border-color: rgb(100, 110, 120);
+    border-width: 2px;
+    border-radius: 4px;
+    color: rgb(200, 200, 200);
+    font-size: 12px;
+    -unity-font-style: bold;
+    padding: 8px 12px;
+}
+
+.inventory-button:hover {
+    background-color: rgb(60, 70, 80);
+    border-color: rgb(150, 200, 255);
+}
+
+.bottom-controls {
+    flex-direction: row;
+    justify-content: space-between;
+    height: 50px;
+    padding: 10px 0;
+    border-top-color: rgb(80, 90, 100);
+    border-top-width: 2px;
+}
+
+.return-button {
+    background-color: rgb(40, 50, 60);
+    border-color: rgb(100, 110, 120);
+    border-width: 2px;
+    border-radius: 6px;
+    color: rgb(200, 200, 200);
+    font-size: 14px;
+    -unity-font-style: bold;
+    padding: 10px 20px;
+    min-width: 120px;
+}
+
+.character-button {
+    background-color: rgb(40, 50, 60);
+    border-color: rgb(100, 110, 120);
+    border-width: 2px;
+    border-radius: 6px;
+    color: rgb(200, 200, 200);
+    font-size: 14px;
+    -unity-font-style: bold;
+    padding: 10px 20px;
+    min-width: 120px;
+}
+
+.skills-button {
+    background-color: rgb(40, 50, 60);
+    border-color: rgb(100, 110, 120);
+    border-width: 2px;
+    border-radius: 6px;
+    color: rgb(200, 200, 200);
+    font-size: 14px;
+    -unity-font-style: bold;
+    padding: 10px 20px;
+    min-width: 120px;
+}
+
+.return-button:hover {
+    background-color: rgb(60, 70, 80);
+    border-color: rgb(150, 200, 255);
+}
+
+.character-button:hover {
+    background-color: rgb(60, 70, 80);
+    border-color: rgb(150, 200, 255);
+}
+
+.skills-button:hover {
+    background-color: rgb(60, 70, 80);
+    border-color: rgb(150, 200, 255);
+}
+
+.return-button {
+    background-color: rgb(60, 40, 40);
+    border-color: rgb(120, 80, 80);
+}
+
+.return-button:hover {
+    background-color: rgb(80, 50, 50);
+    border-color: rgb(200, 150, 150);
+}
+
+.character-button {
+    background-color: rgb(40, 60, 40);
+    border-color: rgb(80, 120, 80);
+}
+
+.character-button:hover {
+    background-color: rgb(50, 80, 50);
+    border-color: rgb(150, 200, 150);
+}
+
+.skills-button {
+    background-color: rgb(60, 40, 60);
+    border-color: rgb(120, 80, 120);
+}
+
+.skills-button:hover {
+    background-color: rgb(80, 50, 80);
+    border-color: rgb(200, 150, 200);
+}
+
+.inventory-slot {
+    width: 60px;
+    height: 60px;
+    background-color: rgb(30, 35, 40);
+    border-color: rgb(100, 110, 120);
+    border-width: 2px;
+    border-radius: 4px;
+    margin: 1px;
+    position: relative;
+    flex-shrink: 0;
+    min-width: 60px;
+    min-height: 60px;
+    align-items: center;
+    justify-content: center;
+}
+
+.inventory-slot:hover {
+    border-color: rgb(150, 200, 255);
+    background-color: rgb(30, 40, 50);
+}
+
+.inventory-slot.occupied {
+    border-color: rgb(150, 200, 150);
+    background-color: rgb(30, 50, 30);
+    border-width: 2px;
+}
+
+.inventory-slot.common {
+    border-color: rgb(150, 150, 150);
+    background-color: rgb(40, 40, 40);
+}
+
+.inventory-slot.rare {
+    border-color: rgb(200, 150, 255);
+    background-color: rgb(50, 30, 50);
+}
+
+.inventory-slot.epic {
+    border-color: rgb(255, 150, 200);
+    background-color: rgb(50, 30, 40);
+}
+
+.inventory-slot.legendary {
+    border-color: rgb(255, 200, 100);
+    background-color: rgb(50, 40, 20);
+}
+
+.inventory-slot.weapon {
+    background-color: rgb(30, 20, 20);
+}
+
+.inventory-slot.armour {
+    background-color: rgb(20, 30, 20);
+}
+
+.inventory-slot.accessory {
+    background-color: rgb(20, 20, 30);
+}
+
+.inventory-slot.consumable {
+    background-color: rgb(30, 30, 20);
+}
+
+.inventory-slot.material {
+    background-color: rgb(25, 25, 25);
+}
+
+.equipment-slot.occupied {
+    border-color: rgb(150, 200, 150);
+    background-color: rgb(35, 55, 35);
+}
+
+.equipment-slot.rare {
+    border-color: rgb(200, 150, 255);
+    background-color: rgb(55, 35, 55);
+}
+
+.equipment-slot.epic {
+    border-color: rgb(255, 150, 200);
+    background-color: rgb(55, 35, 45);
+}
+
+.equipment-slot.legendary {
+    border-color: rgb(255, 200, 100);
+    background-color: rgb(55, 45, 25);
+}
+
+.tooltip {
+    background-color: rgb(15, 20, 25);
+    border-color: rgb(100, 110, 120);
+    border-width: 2px;
+    border-radius: 6px;
+    padding: 10px;
+    color: rgb(200, 200, 200);
+    font-size: 12px;
+    max-width: 250px;
+    position: absolute;
+}
+
+.tooltip-title {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(255, 255, 255);
+    margin-bottom: 5px;
+}
+
+.tooltip-stats {
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top-color: rgb(80, 90, 100);
+    border-top-width: 1px;
+}
+
+.tooltip-stat {
+    color: rgb(150, 200, 255);
+}
+
+.tooltip-stat-negative {
+    color: rgb(255, 150, 150);
+}
+
+.tooltip-stat-positive {
+    color: rgb(150, 255, 150);
+}
+
+.character-sidebar {
+    position: absolute;
+    right: -400px;
+    top: 0;
+    width: 400px;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-left-color: rgba(255, 255, 255, 0.3);
+    border-left-width: 2px;
+    flex-direction: column;
+}
+
+.tooltip {
+    background-color: rgb(15, 20, 25);
+    border-color: rgb(100, 110, 120);
+    border-width: 2px;
+    border-radius: 6px;
+    padding: 12px;
+    color: rgb(200, 200, 200);
+    font-size: 12px;
+    max-width: 300px;
+    position: absolute;
+}
+
+.tooltip-name {
+    font-size: 16px;
+    -unity-font-style: bold;
+    margin-bottom: 8px;
+}
+
+.tooltip-name.normal {
+    color: rgb(255, 255, 255);
+}
+
+.tooltip-name.magic {
+    color: rgb(100, 150, 255);
+}
+
+.tooltip-name.rare {
+    color: rgb(255, 200, 100);
+}
+
+.tooltip-name.unique {
+    color: rgb(255, 150, 50);
+}
+
+.tooltip-type {
+    color: rgb(150, 200, 255);
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.tooltip-stat {
+    color: rgb(200, 200, 200);
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+.tooltip-separator {
+    height: 1px;
+    background-color: rgb(80, 90, 100);
+    margin: 8px 0;
+}
+
+.tooltip-section-header {
+    color: rgb(150, 200, 255);
+    font-size: 11px;
+    -unity-font-style: bold;
+    margin-bottom: 4px;
+}
+
+.tooltip-requirement {
+    color: rgb(255, 150, 150);
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+.tooltip-implicit {
+    color: rgb(100, 150, 255);
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+.tooltip-prefix {
+    color: rgb(150, 255, 150);
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+.tooltip-suffix {
+    color: rgb(255, 200, 100);
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+.equipment-item-label {
+    font-size: 12px;
+    -unity-text-align: middle-center;
+    color: rgb(255, 255, 255);
+    margin: 2px;
+    white-space: normal;
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    right: 2px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 2px;
+}
+
+.inventory-item-label {
+    font-size: 8px;
+    -unity-text-align: middle-center;
+    color: rgb(255, 255, 255);
+    margin: 1px;
+    white-space: normal;
+    position: absolute;
+    bottom: 1px;
+    left: 1px;
+    right: 1px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 1px;
+}
+
+.currency-panel {
+    flex-grow: 1;
+    flex-direction: row;
+    align-self: center;
+}
+
+.currency-label {
+}
+
+.currency-label {
+    align-self: center;
+    -unity-font-definition: url("project://database/Assets/TextMesh%20Pro/Examples%20&%20Extras/Fonts/Roboto-Bold.ttf?fileID=12800000&guid=4beb055f07aaff244873dec698d0363e&type=3#Roboto-Bold");
+    font-size: 24px;
+    color: rgb(192, 192, 192);
+}

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb758f726cba3034890abfc1a7d29108, type: 3}
+  m_Name: CardVisualAssets
+  m_EditorClassIdentifier: Assembly-CSharp::CardVisualAssets
+  basicCard: {fileID: -4617325986872281354, guid: 2e959bee4c0733543848598a8b58c54d, type: 3}
+  fireCard: {fileID: 1381734087902753438, guid: 8adaf409d5ce67a40a3a0df2dbbf991e, type: 3}
+  coldCard: {fileID: -2393129149489923793, guid: 2c62f48dae4a90646ae21dd2c1632103, type: 3}
+  lightningCard: {fileID: -8592185088838779778, guid: 2450a987963d7e140b40aca64b127d84, type: 3}
+  physCard: {fileID: 4228498701849783176, guid: eee825ce0a975d54aa1636c2147ad035, type: 3}
+  chaosCard: {fileID: 51549632613884826, guid: 12703be397105df429964195116c48bf, type: 3}
+  powerCard: {fileID: -391745626260279021, guid: fea0ba6d09787544d809a4233b94abcc, type: 3}
+  guardCard: {fileID: -1229350797722874020, guid: b9f84ffca29783e4c8708f9397e7e319, type: 3}
+  discardCard: {fileID: 1146250294814445581, guid: 602e227e96bc50c4c9e935737d66ee7e, type: 3}
+  basicBubble: {fileID: 21300000, guid: dfbf9f57ca0ac5244bca34959bd51bd1, type: 3}
+  fireBubble: {fileID: 21300000, guid: 1c154df0a7dc3c440b89e58ec467081e, type: 3}
+  coldBubble: {fileID: 21300000, guid: 9f1fa6cdba17cc148b832078f9c5d5a8, type: 3}
+  lightningBubble: {fileID: 0}
+  physBubble: {fileID: 0}
+  chaosBubble: {fileID: 0}
+  commonFrame: {fileID: 5769561241234559569, guid: cd2e5a8dcb762fe4ab130ab9a299a642, type: 3}
+  magicFrame: {fileID: -1700815554273036111, guid: 10250a8008be1a040b609d97eb8ad065, type: 3}
+  rareFrame: {fileID: 5160106583483535673, guid: 9ad7f6da79ad14541ad6df86e99fef29, type: 3}
+  uniqueFrame: {fileID: -2216308203126864301, guid: 02768fc689bdc274086f1afa84726108, type: 3}
+  cardHighlight: {fileID: -1772228241, guid: 57504fb5ad4ce5d4787a2f9806d8cadd, type: 3}
+  iceBubble: {fileID: 0}

@@ -1,0 +1,112 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="EquipmentScreen.uss" />
+    <ui:VisualElement name="MainContainer" class="main-container" style="background-image: url(&quot;project://database/Assets/Art/EquipmentMenu.png?fileID=2800000&amp;guid=9820fcef423c2dd4bbb5adbdf3aae937&amp;type=3#EquipmentMenu&quot;);">
+        <ui:VisualElement name="HeaderBar" class="header-bar" style="border-left-color: rgba(13, 13, 13, 0); border-right-color: rgba(13, 13, 13, 0); border-top-color: rgba(13, 13, 13, 0); border-bottom-color: rgba(13, 13, 13, 0);">
+            <ui:VisualElement name="CentralPillar" class="central-pillar" style="background-color: rgba(100, 110, 120, 0); border-left-color: rgba(150, 160, 170, 0); border-right-color: rgba(150, 160, 170, 0); border-top-color: rgba(150, 160, 170, 0); border-bottom-color: rgba(150, 160, 170, 0);" />
+        </ui:VisualElement>
+        <ui:VisualElement name="ContentArea" class="content-area">
+            <ui:VisualElement name="EquipmentPanel" class="equipment-panel">
+                <ui:VisualElement name="EquipmentSlots" class="equipment-slots">
+                    <ui:VisualElement name="TopRow" class="equipment-row top-row">
+                        <ui:VisualElement name="HelmetSlot" class="equipment-slot helmet-slot">
+                            <ui:Label text="HELMET" class="slot-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="AmuletSlot" class="equipment-slot amulet-slot">
+                            <ui:Label text="AMULET" class="slot-label" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="MiddleRow" class="equipment-row middle-row">
+                        <ui:VisualElement name="MainHandSlot" class="equipment-slot mainhand-slot">
+                            <ui:Label text="MAIN HAND" class="slot-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="BodyArmourSlot" class="equipment-slot bodyarmour-slot">
+                            <ui:Label text="BODY ARMOUR" class="slot-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="OffHandSlot" class="equipment-slot offhand-slot">
+                            <ui:Label text="OFF HAND" class="slot-label" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="RingsContainer" class="rings-container">
+                        <ui:VisualElement name="LeftRingSlot" class="equipment-slot ring-slot left-ring">
+                            <ui:Label text="LEFT RING" class="slot-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="BeltSlot" class="equipment-slot belt-slot" style="height: 60px;">
+                            <ui:Label text="BELT" class="slot-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="RightRingSlot" class="equipment-slot ring-slot right-ring">
+                            <ui:Label text="RIGHT RING" class="slot-label" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="LowerRow" class="equipment-row lower-row">
+                        <ui:VisualElement name="GlovesSlot" class="equipment-slot gloves-slot">
+                            <ui:Label text="GLOVES" class="slot-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="flex-grow: 1; padding-left: 194px;" />
+                        <ui:VisualElement name="BootsSlot" class="equipment-slot boots-slot">
+                            <ui:Label text="BOOTS" class="slot-label" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                        <ui:VisualElement name="CurrencySection" class="currency-section">
+            <ui:Label name="CurrencySectionLabel" text="CURRENCIES" class="currency-section-label" />
+            
+            <!-- Currency Tabs -->
+            <ui:VisualElement name="CurrencyTabsContainer" class="currency-tabs-container">
+                <ui:Button name="OrbsTabButton" text="ORBS" class="currency-tab-button active" />
+                <ui:Button name="SpiritsTabButton" text="SPIRITS" class="currency-tab-button" />
+                <ui:Button name="SealsTabButton" text="SEALS" class="currency-tab-button" />
+                <ui:Button name="FragmentsTabButton" text="FRAGMENTS" class="currency-tab-button" />
+            </ui:VisualElement>
+            
+            <!-- Orbs Tab Content -->
+            <ui:VisualElement name="OrbsTabContent" class="currency-tab-content active">
+                <ui:VisualElement name="OrbsCurrencyGrid" class="currency-grid" />
+            </ui:VisualElement>
+            
+            <!-- Spirits Tab Content -->
+            <ui:VisualElement name="SpiritsTabContent" class="currency-tab-content">
+                <ui:VisualElement name="SpiritsCurrencyGrid" class="currency-grid" />
+            </ui:VisualElement>
+            
+            <!-- Seals Tab Content -->
+            <ui:VisualElement name="SealsTabContent" class="currency-tab-content">
+                <ui:VisualElement name="SealsCurrencyGrid" class="currency-grid" />
+            </ui:VisualElement>
+            
+            <!-- Fragments Tab Content -->
+            <ui:VisualElement name="FragmentsTabContent" class="currency-tab-content">
+                <ui:VisualElement name="FragmentsCurrencyGrid" class="currency-grid" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="InventoryPanel" class="inventory-panel">
+                <ui:VisualElement name="InventorySection" class="inventory-section">
+                    <ui:Label name="InventorySectionLabel" text="INVENTORY" class="inventory-section-label" />
+                    <ui:VisualElement name="InventoryGrid" class="inventory-grid" />
+                    <ui:VisualElement name="InventoryControls" class="inventory-controls">
+                        <ui:Button name="SortButton" text="SORT" class="inventory-button" />
+                        <ui:Button name="FilterButton" text="FILTER" class="inventory-button" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="StashSection" class="stash-section">
+                    <ui:Label name="StashSectionLabel" text="STASH" class="stash-section-label" />
+                    <ui:VisualElement name="StashTabsContainer" class="stash-tabs-container">
+                        <ui:VisualElement name="StashTabs" class="stash-tabs" />
+                        <ui:Button name="AddStashTabButton" text="+" class="add-stash-tab-button" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="StashGrid" class="stash-grid" />
+                    <ui:VisualElement name="StashControls" class="stash-controls">
+                        <ui:Button name="StashSortButton" text="SORT" class="inventory-button" />
+                        <ui:Button name="StashFilterButton" text="FILTER" class="inventory-button" />
+                        <ui:Button name="RenameTabButton" text="RENAME" class="inventory-button" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="BottomControls" class="bottom-controls" style="border-left-color: rgba(255, 255, 255, 0); border-right-color: rgba(255, 255, 255, 0); border-top-color: rgba(255, 255, 255, 0); border-bottom-color: rgba(255, 255, 255, 0);">
+            <ui:Button name="ReturnButton" text="RETURN TO GAME" class="return-button" />
+            <ui:Button name="CharacterButton" text="CHARACTER" class="character-button" />
+            <ui:Button name="SkillsButton" text="SKILLS" class="skills-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,19 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd">
+    <ui:VisualElement name="BoardSelectionPanel" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.7); justify-content: center; align-items: center;">
+        <ui:VisualElement name="SelectionContainer" style="background-color: rgb(40, 40, 40); border-radius: 10px; padding: 20px; min-width: 600px; min-height: 400px; border-width: 2px; border-color: rgb(100, 100, 100);">
+            <ui:Label name="TitleLabel" text="Select Board Type" style="font-size: 24px; color: rgb(255, 255, 255); -unity-text-align: middle-center; margin-bottom: 10px;" />
+            <ui:Label name="DescriptionLabel" text="Choose a board to create" style="font-size: 14px; color: rgb(200, 200, 200); -unity-text-align: middle-center; margin-bottom: 20px;" />
+            
+            <ui:ScrollView name="BoardButtonContainer" style="flex-grow: 1; margin-bottom: 20px;">
+                <ui:VisualElement name="ButtonGrid" style="flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: center;">
+                    <!-- Board buttons will be dynamically added here -->
+                </ui:VisualElement>
+            </ui:ScrollView>
+            
+            <ui:VisualElement name="ButtonContainer" style="flex-direction: row; justify-content: center; align-items: center;">
+                <ui:Button name="CloseButton" text="Cancel" style="background-color: rgb(100, 100, 100); color: rgb(255, 255, 255); border-radius: 5px; padding: 10px 20px; margin: 0 10px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
+

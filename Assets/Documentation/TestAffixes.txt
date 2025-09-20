@@ -1,0 +1,118 @@
+Affix Slot	Name	Item Level	Stat	Handedness	Tags	Weapon Types	Scope
+Suffix	of the Brute	1	(8-12) to Strength	Both	attribute, Attributes	Ring, Amulet, Belt, str_armour, str_dex_armour, str_int_armour, str_dex_int_armour, Sword, Mace, Sceptre, Staff, Axe, default	Global
+Suffix	of the Wrestler	11	(13-17) to Strength	Both	attribute, Attributes	Ring, Amulet, Belt, str_armour, str_dex_armour, str_int_armour, str_dex_int_armour, Sword, Mace, Sceptre, Staff, Axe, default	Global
+Suffix	of the Bear	22	(18-22) to Strength	Both	attribute, Attributes	Ring, Amulet, Belt, str_armour, str_dex_armour, str_int_armour, str_dex_int_armour, Sword, Mace, Sceptre, Staff, Axe, default	Global
+Suffix	of the Lion	33	(23-27) to Strength	Both	attribute, Attributes	Ring, Amulet, Belt, str_armour, str_dex_armour, str_int_armour, str_dex_int_armour, Sword, Mace, Sceptre, Staff, Axe, default	Global
+Suffix	of the Gorilla	44	(28-32) to Strength	Both	attribute, Attributes	Ring, Amulet, Belt, str_armour, str_dex_armour, str_int_armour, str_dex_int_armour, Sword, Mace, Sceptre, Staff, Axe, default	Global
+Suffix	of the Mongoose	1	(8-12) to Dexterity	Both	attribute, Attributes	Ring, Amulet, Gloves, Quiver, dex_armour, dex_int_armour, str_dex_armour, str_dex_int_armour, Bow, Sword, Axe, Claw, Dagger, default	Global
+Suffix	of the Lynx	11	(13-17) to Dexterity	Both	attribute, Attributes	Ring, Amulet, Gloves, Quiver, dex_armour, dex_int_armour, str_dex_armour, str_dex_int_armour, Bow, Sword, Axe, Claw, Dagger, default	Global
+Suffix	of the Fox	22	(18-22) to Dexterity	Both	attribute, Attributes	Ring, Amulet, Gloves, Quiver, dex_armour, dex_int_armour, str_dex_armour, str_dex_int_armour, Bow, Sword, Axe, Claw, Dagger, default	Global
+Suffix	of the Pupil	1	(8-12) to Intelligence	Both	attribute, Attributes	Ring, Amulet, Helmet, int_armour, str_int_armour, dex_int_armour, str_dex_int_armour, Wand, Dagger, Claw, Staff, Sceptre, default	Global
+Suffix	of the Student	11	(13-17) to Intelligence	Both	attribute, Attributes	Ring, Amulet, Helmet, int_armour, str_int_armour, dex_int_armour, str_dex_int_armour, Wand, Dagger, Claw, Staff, Sceptre, default	Global
+Suffix	of the Prodigy	22	(18-22) to Intelligence	Both	attribute, Attributes	Ring, Amulet, Helmet, int_armour, str_int_armour, dex_int_armour, str_dex_int_armour, Wand, Dagger, Claw, Staff, Sceptre, default	Global
+Suffix	of the Clouds	1	(1-4) to all Attributes	Both	attribute, Attributes	Amulet, Ring, default	Global
+Suffix	of the Sky	11	(5-8) to all Attributes	Both	attribute, Attributes	Amulet, Ring, default	Global
+Suffix	of the Meteor	22	(9-12) to all Attributes	Both	attribute, Attributes	Amulet, Ring, default	Global
+Prefix	Hale	1	(3-9) to maximum Life	Both	resource, life, Increased/Life	fishing_rod, weapon, default	Global
+Prefix	Healthy	5	(10-24) to maximum Life	Both	resource, life, Increased/Life	fishing_rod, weapon, default	Global
+Prefix	Sanguine	11	(25-39) to maximum Life	Both	resource, life, Increased/Life	fishing_rod, weapon, default	Global
+Prefix	Stalwart	18	(40-54) to maximum Life	Both	resource, life, Increased/Life	fishing_rod, weapon, default	Global
+Prefix	Stout	24	(55-69) to maximum Life	Both	resource, life, Increased/Life	fishing_rod, weapon, default	Global
+Prefix	Shining	3	(1-3) to maximum Energy Shield	Both	defences, energy_shield, Jewellery	Ring, Amulet, Belt, default	Global
+Prefix	Glimmering	11	(4-8) to maximum Energy Shield	Both	defences, energy_shield, Jewellery	Ring, Amulet, Belt, default	Global
+Prefix	Glittering	17	(9-12) to maximum Energy Shield	Both	defences, energy_shield, Jewellery	Ring, Amulet, Belt, default	Global
+Prefix	Glowing	23	(13-15) to maximum Energy Shield	Both	defences, energy_shield, Jewellery	Ring, Amulet, Belt, default	Global
+Prefix	Shining	3	(3-5) to maximum Energy Shield	Both	defences, energy_shield, Armour/EnergyShield	int_armour, str_dex_int_armour, default	Local
+Prefix	Glimmering	11	(6-11) to maximum Energy Shield	Both	defences, energy_shield, Armour/EnergyShield	int_armour, str_dex_int_armour, default	Local
+Prefix	Glittering	17	(12-16) to maximum Energy Shield	Both	defences, energy_shield, Armour/EnergyShield	int_armour, str_dex_int_armour, default	Local
+Prefix	Glowing	23	(17-23) to maximum Energy Shield	Both	defences, energy_shield, Armour/EnergyShield	int_armour, str_dex_int_armour, default	Local
+Prefix	Glinting	5	Adds 1 to 2 Physical Damage to Attacks	Both	physical_damage, damage, physical, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Burnished	13	Adds (2-3) to (4-5) Physical Damage to Attacks	Both	physical_damage, damage, physical, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Polished	19	Adds (3-4) to (6-7) Physical Damage to Attacks	Both	physical_damage, damage, physical, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Honed	28	Adds (4-6) to (9-10) Physical Damage to Attacks	Both	physical_damage, damage, physical, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Gleaming	35	Adds (5-7) to (11-12) Physical Damage to Attacks	Both	physical_damage, damage, physical, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Glinting	2	Adds 1 to (2-3) Physical Damage	Both	physical_damage, damage, physical, attack, Local/Physical	one_hand_weapon, default	Local
+Prefix	Burnished	13	Adds (4-5) to (8-9) Physical Damage	Both	physical_damage, damage, physical, attack, Local/Physical	one_hand_weapon, default	Local
+Prefix	Polished	21	Adds (6-9) to (13-15) Physical Damage	Both	physical_damage, damage, physical, attack, Local/Physical	one_hand_weapon, default	Local
+Prefix	Honed	29	Adds (8-12) to (17-20) Physical Damage	Both	physical_damage, damage, physical, attack, Local/Physical	one_hand_weapon, default	Local
+Prefix	Gleaming	36	Adds (11-14) to (21-25) Physical Damage	Both	physical_damage, damage, physical, attack, Local/Physical	one_hand_weapon, default	Local
+Prefix	Glinting	2	Adds 2 to (4-5) Physical Damage	TwoHand	physical_damage, damage, physical, attack, Local/Physical	two_hand_weapon, default	Local
+Prefix	Burnished	13	Adds (6-8) to (12-15) Physical Damage	TwoHand	physical_damage, damage, physical, attack, Local/Physical	two_hand_weapon, default	Local
+Prefix	Polished	21	Adds (10-13) to (21-25) Physical Damage	TwoHand	physical_damage, damage, physical, attack, Local/Physical	two_hand_weapon, default	Local
+Prefix	Honed	29	Adds (13-17) to (28-32) Physical Damage	TwoHand	physical_damage, damage, physical, attack, Local/Physical	two_hand_weapon, default	Local
+Prefix	Gleaming	36	Adds (16-22) to (35-40) Physical Damage	TwoHand	physical_damage, damage, physical, attack, Local/Physical	two_hand_weapon, default	Local
+Prefix	Heated	1	Adds 1 to 2 Fire Damage to Attacks	Both	elemental_damage, damage, elemental, fire, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Smouldering	12	Adds (3-5) to (7-8) Fire Damage to Attacks	Both	elemental_damage, damage, elemental, fire, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Smoking	20	Adds (5-7) to (11-13) Fire Damage to Attacks	Both	elemental_damage, damage, elemental, fire, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Burning	28	Adds (7-10) to (15-18) Fire Damage to Attacks	Both	elemental_damage, damage, elemental, fire, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Flaming	35	Adds (9-12) to (19-22) Fire Damage to Attacks	Both	elemental_damage, damage, elemental, fire, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Heated	1	Adds (1-2) to (3-4) Fire Damage	Both	elemental_damage, damage, elemental, fire, attack, Local/Fire	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Smouldering	11	Adds (8-10) to (15-18) Fire Damage	Both	elemental_damage, damage, elemental, fire, attack, Local/Fire	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Smoking	18	Adds (12-17) to (25-29) Fire Damage	Both	elemental_damage, damage, elemental, fire, attack, Local/Fire	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Burning	26	Adds (17-24) to (35-41) Fire Damage	Both	elemental_damage, damage, elemental, fire, attack, Local/Fire	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Flaming	33	Adds (24-33) to (49-57) Fire Damage	Both	elemental_damage, damage, elemental, fire, attack, Local/Fire	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Heated	1	Adds (3-5) to (6-7) Fire Damage	TwoHand	elemental_damage, damage, elemental, fire, attack, Local/Fire	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Smouldering	11	Adds (14-20) to (29-33) Fire Damage	TwoHand	elemental_damage, damage, elemental, fire, attack, Local/Fire	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Smoking	18	Adds (23-31) to (47-54) Fire Damage	TwoHand	elemental_damage, damage, elemental, fire, attack, Local/Fire	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Burning	26	Adds (32-44) to (65-76) Fire Damage	TwoHand	elemental_damage, damage, elemental, fire, attack, Local/Fire	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Flaming	33	Adds (45-61) to (91-106) Fire Damage	TwoHand	elemental_damage, damage, elemental, fire, attack, Local/Fire	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Frosted	2	Adds 1 to 2 Cold Damage to Attacks	Both	elemental_damage, damage, elemental, cold, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Chilled	13	Adds (3-4) to (7-8) Cold Damage to Attacks	Both	elemental_damage, damage, elemental, cold, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Icy	21	Adds (5-7) to (10-12) Cold Damage to Attacks	Both	elemental_damage, damage, elemental, cold, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Frigid	29	Adds (6-9) to (13-16) Cold Damage to Attacks	Both	elemental_damage, damage, elemental, cold, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Freezing	36	Adds (8-11) to (16-19) Cold Damage to Attacks	Both	elemental_damage, damage, elemental, cold, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Frosted	2	Adds (1-2) to (3-4) Cold Damage	Both	elemental_damage, damage, elemental, cold, attack, Local/Cold	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Chilled	12	Adds (7-9) to (14-16) Cold Damage	Both	elemental_damage, damage, elemental, cold, attack, Local/Cold	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Icy	19	Adds (11-15) to (23-26) Cold Damage	Both	elemental_damage, damage, elemental, cold, attack, Local/Cold	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Frigid	27	Adds (16-21) to (31-37) Cold Damage	Both	elemental_damage, damage, elemental, cold, attack, Local/Cold	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Freezing	34	Adds (22-30) to (44-51) Cold Damage	Both	elemental_damage, damage, elemental, cold, attack, Local/Cold	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Frosted	2	Adds (2-3) to (6-7) Cold Damage	TwoHand	elemental_damage, damage, elemental, cold, attack, Local/Cold	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Chilled	12	Adds (12-17) to (26-30) Cold Damage	TwoHand	elemental_damage, damage, elemental, cold, attack, Local/Cold	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Icy	19	Adds (21-28) to (42-48) Cold Damage	TwoHand	elemental_damage, damage, elemental, cold, attack, Local/Cold	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Frigid	27	Adds (29-40) to (58-68) Cold Damage	TwoHand	elemental_damage, damage, elemental, cold, attack, Local/Cold	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Freezing	34	Adds (41-55) to (81-95) Cold Damage	TwoHand	elemental_damage, damage, elemental, cold, attack, Local/Cold	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Humming	3	Adds 1 to 5 Lightning Damage to Attacks	Both	elemental_damage, damage, elemental, lightning, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Buzzing	13	Adds 1 to (14-15) Lightning Damage to Attacks	Both	elemental_damage, damage, elemental, lightning, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Snapping	22	Adds (1-2) to (22-23) Lightning Damage to Attacks	Both	elemental_damage, damage, elemental, lightning, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Crackling	28	Adds (1-2) to (27-28) Lightning Damage to Attacks	Both	elemental_damage, damage, elemental, lightning, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Sparking	35	Adds (1-3) to (33-34) Lightning Damage to Attacks	Both	elemental_damage, damage, elemental, lightning, attack, Armour/General	Ring, Amulet, Gloves, default	Global
+Prefix	Humming	3	Adds 1 to (5-6) Lightning Damage	Both	elemental_damage, damage, elemental, lightning, attack, Local/Lightning	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Buzzing	13	Adds 2 to (25-29) Lightning Damage	Both	elemental_damage, damage, elemental, lightning, attack, Local/Lightning	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Snapping	19	Adds 2 to (41-48) Lightning Damage	Both	elemental_damage, damage, elemental, lightning, attack, Local/Lightning	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Crackling	31	Adds 3 to (57-67) Lightning Damage	Both	elemental_damage, damage, elemental, lightning, attack, Local/Lightning	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Sparking	34	Adds (4-5) to (80-94) Lightning Damage	Both	elemental_damage, damage, elemental, lightning, attack, Local/Lightning	one_hand_weapon, rapier, Sword, Axe, Sceptre, Mace, Wand, Claw, Dagger, default	Local
+Prefix	Humming	3	Adds 2 to (10-11) Lightning Damage	TwoHand	elemental_damage, damage, elemental, lightning, attack, Local/Lightning	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Buzzing	13	Adds 3 to (46-53) Lightning Damage	TwoHand	elemental_damage, damage, elemental, lightning, attack, Local/Lightning	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Snapping	19	Adds (4-5) to (76-88) Lightning Damage	TwoHand	elemental_damage, damage, elemental, lightning, attack, Local/Lightning	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Crackling	31	Adds (5-8) to (106-123) Lightning Damage	TwoHand	elemental_damage, damage, elemental, lightning, attack, Local/Lightning	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Sparking	34	Adds (8-10) to (148-173) Lightning Damage	TwoHand	elemental_damage, damage, elemental, lightning, attack, Local/Lightning	two_hand_weapon, Bow, Sword, Axe, Mace, Staff, default	Local
+Prefix	Squire's	1	(15-19)% increased Physical Damage	Both	physical_damage, damage, physical, attack, Local/Increased	weapon, default	Local
+Prefix	Journeyman's	11	(20-24)% increased Physical Damage	Both	physical_damage, damage, physical, attack, Local/Increased	weapon, default	Local
+Prefix	Reaver's	23	(25-34)% increased Physical Damage	Both	physical_damage, damage, physical, attack, Local/Increased	weapon, default	Local
+Prefix	Mercenary's	35	(35-44)% increased Physical Damage	Both	physical_damage, damage, physical, attack, Local/Increased	weapon, default	Local
+Prefix	Champion's	46	(45-54)% increased Physical Damage	Both	physical_damage, damage, physical, attack, Local/Increased	weapon, default	Local
+Prefix	Heavy	1	(40-49)% increased Physical Damage	Both	physical_damage, damage, physical, attack, Local/Physical	weapon, default	Local
+Prefix	Serrated	11	(50-64)% increased Physical Damage	Both	physical_damage, damage, physical, attack, Local/Physical	weapon, default	Local
+Prefix	Wicked	23	(65-84)% increased Physical Damage	Both	physical_damage, damage, physical, attack, Local/Physical	weapon, default	Local
+Prefix	Vicious	35	(85-109)% increased Physical Damage	Both	physical_damage, damage, physical, attack, Local/Physical	weapon, default	Local
+Prefix	Bloodthirsty	46	(110-134)% increased Physical Damage	Both	physical_damage, damage, physical, attack, Local/Physical	weapon, default	Local
+Prefix	Heavy	4	(8-12)% increased Global Physical Damage	Both	physical_damage, damage, physical, Physical/Damage	default	Global
+Prefix	Serrated	15	(13-17)% increased Global Physical Damage	Both	physical_damage, damage, physical, Physical/Damage	default	Global
+Prefix	Wicked	30	(18-22)% increased Global Physical Damage	Both	physical_damage, damage, physical, Physical/Damage	default	Global
+Prefix	Cruel	60	(23-28)% increased Global Physical Damage	Both	physical_damage, damage, physical, Physical/Damage	default	Global
+Prefix	Merciless	81	(29-33)% increased Global Physical Damage	Both	physical_damage, damage, physical, Physical/Damage	default	Global
+Prefix	Protective	3	(11-28)% increased Energy Shield	Both	defences, energy_shield, Armour/EnergyShield	int_armour, default	Local
+Prefix	Strong-Willed	18	(27-42)% increased Energy Shield	Both	defences, energy_shield, Armour/EnergyShield	int_armour, default	Local
+Prefix	Resolute	30	(43-55)% increased Energy Shield	Both	defences, energy_shield, Armour/EnergyShield	int_armour, default	Local
+Prefix	Fearless	44	(56-67)% increased Energy Shield	Both	defences, energy_shield, Armour/EnergyShield	int_armour, default	Local
+Prefix	Dauntless	60	(68-79)% increased Energy Shield	Both	defences, energy_shield, Armour/EnergyShield	int_armour, default	Local
+Prefix	Reinforced	3	(15-26)% increased Armour	Both	defences, armour, Armour/Armour	str_armour, default	Local
+Prefix	Layered	17	(27-42)% increased Armour	Both	defences, armour, Armour/Armour	str_armour, default	Local
+Prefix	Lobstered	29	(43-55)% increased Armour	Both	defences, armour, Armour/Armour	str_armour, default	Local
+Prefix	Buttressed	42	(56-67)% increased Armour	Both	defences, armour, Armour/Armour	str_armour, default	Local
+Prefix	Thickened	60	(68-79)% increased Armour	Both	defences, armour, Armour/Armour	str_armour, default	Local
+Prefix	Shade's	3	(15-26)% increased Evasion Rating	Both	defences, evasion, Armour/Evasion	dex_armour, default	Local
+Prefix	Ghost's	19	(27-42)% increased Evasion Rating	Both	defences, evasion, Armour/Evasion	dex_armour, default	Local
+Prefix	Spectre's	30	(43-55)% increased Evasion Rating	Both	defences, evasion, Armour/Evasion	dex_armour, default	Local
+Prefix	Wraith's	44	(56-67)% increased Evasion Rating	Both	defences, evasion, Armour/Evasion	dex_armour, default	Local
+Prefix	Phantasm's	60	(68-79)% increased Evasion Rating	Both	defences, evasion, Armour/Evasion	dex_armour, default	Local

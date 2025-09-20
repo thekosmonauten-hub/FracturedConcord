@@ -1,0 +1,12 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="../UI/MainMenu/MainMenuUI.uss" />
+    <ui:VisualElement name="Container" enabled="true" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Art/MainMenu_Dexiled.png?fileID=2800000&amp;guid=8665dbab71d092b439661a70e66fd9da&amp;type=3#MainMenu_Dexiled&quot;); -unity-background-scale-mode: scale-and-crop; -unity-slice-type: sliced;">
+        <ui:VisualElement style="flex-grow: 1; align-self: center; align-items: flex-start; align-content: auto; width: 412px; justify-content: flex-start; flex-direction: column;">
+            <ui:Label text="DEXILED" name="Header" enable-rich-text="true" class="header" style="border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; margin-bottom: 117px;" />
+            <ui:Button text="Start" name="NewGameButton" class="button" style="width: 220px; height: 60px; align-items: center;" />
+            <ui:Button text="Continue" name="ContinueButton" class="button" style="-unity-text-align: middle-center;" />
+            <ui:Button text="Settings" name="SettingsButton" class="button" />
+            <ui:Button text="Exit&#10;" name="ExitButton" class="button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
