@@ -11,6 +11,7 @@ namespace PassiveTree
     {
         [Header("Prefab References")]
         [SerializeField] private GameObject cellContainerPrefab;
+        [SerializeField] private GameObject cellContainerExtPrefab; // Specific prefab for extension boards
         [SerializeField] private Sprite[] nodeSprites;
         [SerializeField] private Sprite extensionPointSprite;
         
@@ -30,9 +31,9 @@ namespace PassiveTree
         /// </summary>
         public GameObject GenerateExtensionBoard(BoardTheme theme, string boardName)
         {
-            if (cellContainerPrefab == null)
+            if (cellContainerPrefab == null && cellContainerExtPrefab == null)
             {
-                Debug.LogError("[ExtensionBoardGenerator] CellContainer prefab not assigned!");
+                Debug.LogError("[ExtensionBoardGenerator] No cell container prefabs assigned!");
                 return null;
             }
             
@@ -67,35 +68,119 @@ namespace PassiveTree
         /// </summary>
         private void GenerateBoardCells(GameObject board, BoardTheme theme)
         {
-            for (int x = 0; x < boardSize.x; x++)
+            // Check if we have a full-board extension prefab
+            if (cellContainerExtPrefab != null)
             {
-                for (int y = 0; y < boardSize.y; y++)
+                // Use the full-board extension prefab (contains all cells)
+                GameObject fullBoard = Instantiate(cellContainerExtPrefab);
+                fullBoard.name = "ExtensionBoardCells";
+                fullBoard.transform.SetParent(board.transform, false);
+                fullBoard.transform.localPosition = Vector3.zero;
+                // Don't override scale - preserve the prefab's original scale
+                
+                // Configure all cells in the full board
+                ConfigureAllCellsInBoard(fullBoard, theme);
+                
+                if (showDebugInfo)
                 {
-                    Vector2Int cellPosition = new Vector2Int(x, y);
-                    
-                    // Create cell using CellContainer prefab
-                    // Don't set parent during instantiation to avoid scaling issues
-                    GameObject cell = Instantiate(cellContainerPrefab);
-                    cell.name = $"Cell_{x}_{y}";
-                    
-                    // Set parent and position
-                    cell.transform.SetParent(board.transform, false);
-                    cell.transform.localPosition = new Vector3(x, y, 0);
-                    
-                    // Ensure proper scale
-                    cell.transform.localScale = Vector3.one;
-                    
-                    // Fix BoxCollider size to 1.72 on both X/Y axes
-                    var boxCollider = cell.GetComponent<BoxCollider2D>();
-                    if (boxCollider != null)
-                    {
-                        boxCollider.size = new Vector2(1.72f, 1.72f);
-                    }
-                    
-                    // Configure the cell based on position and theme
-                    ConfigureCell(cell, cellPosition, theme);
+                    Debug.Log($"[ExtensionBoardGenerator] Used full-board extension prefab for {board.name}");
                 }
             }
+            else if (cellContainerPrefab != null)
+            {
+                // Use individual cell prefab to create each cell
+                for (int x = 0; x < boardSize.x; x++)
+                {
+                    for (int y = 0; y < boardSize.y; y++)
+                    {
+                        Vector2Int cellPosition = new Vector2Int(x, y);
+                        
+                        // Create cell using regular cell prefab
+                        GameObject cell = Instantiate(cellContainerPrefab);
+                        cell.name = $"Cell_{x}_{y}";
+                        
+                        // Set parent and position
+                        cell.transform.SetParent(board.transform, false);
+                        cell.transform.localPosition = new Vector3(x, y, 0);
+                        
+                        // Don't override scale - preserve the prefab's original scale
+                        
+                        // Fix BoxCollider size to 1.72 on both X/Y axes
+                        var boxCollider = cell.GetComponent<BoxCollider2D>();
+                        if (boxCollider != null)
+                        {
+                            boxCollider.size = new Vector2(1.72f, 1.72f);
+                        }
+                        
+                        // Configure the cell based on position and theme
+                        ConfigureCell(cell, cellPosition, theme);
+                    }
+                }
+                
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[ExtensionBoardGenerator] Created individual cells for {board.name}");
+                }
+            }
+            else
+            {
+                Debug.LogError("[ExtensionBoardGenerator] No cell container prefab assigned!");
+                return;
+            }
+        }
+        
+        /// <summary>
+        /// Configure all cells in a full-board prefab
+        /// </summary>
+        private void ConfigureAllCellsInBoard(GameObject board, BoardTheme theme)
+        {
+            // Find all CellController_EXT components in the board
+            CellController_EXT[] cells = board.GetComponentsInChildren<CellController_EXT>();
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[ExtensionBoardGenerator] Configuring {cells.Length} cells in full-board prefab");
+            }
+            
+            foreach (CellController_EXT cell in cells)
+            {
+                // Extract position from cell name (Cell_X_Y format)
+                Vector2Int position = ExtractPositionFromCellName(cell.gameObject.name);
+                
+                // Set the correct GridPosition on the cell
+                cell.SetGridPosition(position);
+                
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[ExtensionBoardGenerator] Set GridPosition {position} for cell {cell.gameObject.name}");
+                    Debug.Log($"[ExtensionBoardGenerator] Verified GridPosition is now: {cell.GridPosition}");
+                }
+                
+                // Configure the cell based on position and theme
+                ConfigureCell(cell.gameObject, position, theme);
+            }
+        }
+        
+        /// <summary>
+        /// Extract grid position from cell name (Cell_X_Y format)
+        /// </summary>
+        private Vector2Int ExtractPositionFromCellName(string cellName)
+        {
+            // Expected format: "Cell_X_Y"
+            if (cellName.StartsWith("Cell_"))
+            {
+                string[] parts = cellName.Split('_');
+                if (parts.Length >= 3)
+                {
+                    if (int.TryParse(parts[1], out int x) && int.TryParse(parts[2], out int y))
+                    {
+                        return new Vector2Int(x, y);
+                    }
+                }
+            }
+            
+            Debug.LogWarning($"[ExtensionBoardGenerator] Could not extract position from cell name: {cellName}");
+            return Vector2Int.zero;
         }
         
         /// <summary>
@@ -103,28 +188,23 @@ namespace PassiveTree
         /// </summary>
         private void ConfigureCell(GameObject cell, Vector2Int position, BoardTheme theme)
         {
-            // Get CellController component
-            var cellController = cell.GetComponent<CellController>();
+            // Get CellController_EXT component (for extension boards)
+            var cellController = cell.GetComponent<CellController_EXT>();
             if (cellController == null)
             {
-                Debug.LogWarning($"[ExtensionBoardGenerator] CellController not found on cell at {position}");
+                Debug.LogWarning($"[ExtensionBoardGenerator] CellController_EXT not found on cell at {position}");
                 return;
             }
             
             // Set grid position
             cellController.SetGridPosition(position);
             
-            // Determine node type based on position and theme
-            NodeType nodeType = DetermineNodeType(position, theme);
-            cellController.SetNodeType(nodeType);
+            // Don't set node type here - let JSON data determine it
+            // The JsonBoardDataManager will set the correct node type from JSON data
             
-            // Set appropriate sprite
-            SetCellSprite(cell, nodeType, theme);
-            
-            // Configure extension points at board edges
-            if (IsEdgePosition(position))
+            if (showDebugInfo)
             {
-                ConfigureEdgeCell(cell, position, theme);
+                Debug.Log($"[ExtensionBoardGenerator] Configured cell {cell.name} at position {position} - node type will be set by JSON data");
             }
         }
         

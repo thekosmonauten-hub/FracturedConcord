@@ -56,24 +56,22 @@ namespace PassiveTree
         }
         
         /// <summary>
-        /// Set initial state based on node type
+        /// Set initial state based on node type for extension boards
+        /// Extension boards never have Start nodes - they connect to existing boards
         /// </summary>
         public void SetInitialState()
         {
             switch (nodeType)
             {
-                case NodeType.Start:
-                    isUnlocked = true;
-                    isAvailable = true;
-                    isPurchased = true;
-                    break;
                 case NodeType.Extension:
-                    isUnlocked = true;
-                    isAvailable = true;
+                    // Extension points start locked - only the connecting extension point will be made available by BoardPositioningManager
+                    isUnlocked = false;
+                    isAvailable = false;
                     isPurchased = false;
                     isExtensionPoint = true;
                     break;
                 default:
+                    // All other nodes start locked and unavailable
                     isUnlocked = false;
                     isAvailable = false;
                     isPurchased = false;
@@ -103,8 +101,15 @@ namespace PassiveTree
             
             Debug.Log($"✅ [CellController_EXT] Extension board cell {gridPosition} passed interaction validation");
             
-            // Handle extension board cell purchase directly
-            HandleExtensionBoardCellPurchase();
+            // Route to the extension board controller for proper node type handling
+            if (extensionBoardController != null)
+            {
+                extensionBoardController.OnCellClicked(gridPosition);
+            }
+            else
+            {
+                Debug.LogError($"[CellController_EXT] No extension board controller found for cell {gridPosition}");
+            }
             
             Debug.Log($"✅ [CellController_EXT] Extension board cell {gridPosition} button click processing complete - {nodeDescription}");
         }
@@ -135,6 +140,116 @@ namespace PassiveTree
             else
             {
                 Debug.LogWarning($"[CellController_EXT] No extension board controller found for cell {gridPosition}");
+            }
+        }
+        
+        /// <summary>
+        /// Handle initial allocation for extension board cells
+        /// Called when extension board is first created and connected
+        /// </summary>
+        public void HandleInitialAllocation()
+        {
+            if (nodeType == NodeType.Extension)
+            {
+                // Extension points are automatically allocated when board is created
+                SetPurchased(true);
+                isUnlocked = true;
+                isAvailable = true;
+                isExtensionPoint = true;
+                
+                Debug.Log($"[CellController_EXT] ✅ Extension point {gridPosition} automatically allocated");
+            }
+        }
+        
+        /// <summary>
+        /// Unlock this cell for purchasing (called when adjacent cell is purchased)
+        /// </summary>
+        public void UnlockForPurchasing()
+        {
+            if (!isPurchased && !isUnlocked)
+            {
+                isUnlocked = true;
+                isAvailable = true;
+                UpdateVisualState();
+                
+                Debug.Log($"[CellController_EXT] 🔓 Cell {gridPosition} unlocked for purchasing");
+            }
+        }
+        
+        /// <summary>
+        /// Load JSON data for this extension board cell
+        /// Called when the extension board JSON data is loaded
+        /// </summary>
+        public void LoadJsonDataForExtensionBoard()
+        {
+            // Get the CellJsonData component
+            var cellJsonData = GetComponent<CellJsonData>();
+            if (cellJsonData != null && cellJsonData.HasJsonData())
+            {
+                // Update node data from JSON
+                nodeName = cellJsonData.NodeName ?? "Extension Node";
+                nodeDescription = cellJsonData.NodeDescription ?? "Extension board node";
+                
+                // Check if this should be an extension point based on JSON
+                string jsonNodeType = cellJsonData.NodeType?.ToLower();
+                if (jsonNodeType == "extension" || jsonNodeType == "extensionpoint")
+                {
+                    nodeType = NodeType.Extension;
+                    isExtensionPoint = true;
+                }
+                
+                // Update visual state
+                UpdateVisualState();
+                
+                if (autoAssignSprite)
+                {
+                    AssignSpriteBasedOnNodeType();
+                }
+                
+                Debug.Log($"[CellController_EXT] ✅ Loaded JSON data for extension board cell {gridPosition}: {nodeName} ({nodeType})");
+            }
+            else
+            {
+                Debug.LogWarning($"[CellController_EXT] No JSON data found for extension board cell {gridPosition}");
+            }
+        }
+        
+        /// <summary>
+        /// Override button interactable to include adjacency validation for extension points
+        /// </summary>
+        protected override void UpdateButtonInteractable()
+        {
+            if (button != null)
+            {
+                // For extension points, we need to check both basic interaction and adjacency validation
+                if (nodeType == NodeType.Extension)
+                {
+                    // Check basic interaction first
+                    bool canInteract = CanBeInteractedWith();
+                    
+                    if (canInteract)
+                    {
+                        // For extension points, also check if they have adjacent purchased nodes
+                        // This requires access to the ExtensionBoardController
+                        if (extensionBoardController != null)
+                        {
+                            // Use the extension board controller's adjacency validation
+                            canInteract = extensionBoardController.HasAdjacentPurchasedNode(gridPosition);
+                        }
+                    }
+                    
+                    button.interactable = canInteract;
+                    
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"[CellController_EXT] Extension point at {gridPosition}: button interactable = {canInteract}");
+                    }
+                }
+                else
+                {
+                    // For non-extension nodes, use the base class logic
+                    button.interactable = CanBeInteractedWith();
+                }
             }
         }
         

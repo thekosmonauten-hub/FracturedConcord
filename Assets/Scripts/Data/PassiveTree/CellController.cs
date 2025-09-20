@@ -20,7 +20,7 @@ namespace PassiveTree
         
         [Header("Visual")]
         [SerializeField] private SpriteRenderer spriteRenderer;
-        [SerializeField] private Button button;
+        [SerializeField] protected Button button;
         [SerializeField] private Color normalColor = Color.white;
         [SerializeField] private Color hoverColor = Color.yellow;
         [SerializeField] private Color selectedColor = Color.green;
@@ -29,7 +29,7 @@ namespace PassiveTree
         [SerializeField] private Color purchasedColor = Color.blue;
         
         [Header("Auto Sprite Assignment")]
-        [SerializeField] private bool autoAssignSprite = true;
+        [SerializeField] protected bool autoAssignSprite = true;
         [SerializeField] private Sprite defaultSprite;
         [SerializeField] private Sprite startNodeSprite;
         [SerializeField] private Sprite travelNodeSprite;
@@ -404,7 +404,7 @@ namespace PassiveTree
         /// <summary>
         /// Update the button's interactable state
         /// </summary>
-        private void UpdateButtonInteractable()
+        protected virtual void UpdateButtonInteractable()
         {
             if (button != null)
             {
@@ -637,7 +637,7 @@ namespace PassiveTree
         /// <summary>
         /// Assign sprite based on node type (attribute icons are handled separately)
         /// </summary>
-        private void AssignSpriteBasedOnNodeType()
+        protected virtual void AssignSpriteBasedOnNodeType()
         {
             if (spriteRenderer == null) return;
             
@@ -1103,6 +1103,7 @@ namespace PassiveTree
         // Debug helper methods
         public NodeType GetNodeType() => nodeType;
         public string GetNodeName() => nodeName;
+        public string GetNodeDescription() => nodeDescription;
         public Vector2Int GetGridPosition() => gridPosition;
         public bool GetAutoAssignSprite() => autoAssignSprite;
         public Sprite GetExtensionPointSprite() => extensionPointSprite;

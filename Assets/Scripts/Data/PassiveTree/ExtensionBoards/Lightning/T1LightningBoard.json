@@ -1,5 +1,5 @@
 {
-  "id": "T1lightning_board",
+  "id": "T1Lightning_board",
   "name": "Spark Mastery",
   "description": "A flicker of light, a restless twitch — the storm begins with a whisper.",
   "theme": "lightning",
@@ -10,7 +10,7 @@
   "nodes": [
     [
       {
-        "id": "spark_board_0_0",
+        "id": "T1Lightning_board_0_0",
         "name": "Increased Lightning Damage",
         "description": "+6% Lightning Damage",
         "position": {
@@ -28,7 +28,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_0_1",
+        "id": "T1Lightning_board_0_1",
         "name": "Increased Lightning Damage",
         "description": "+6% Lightning Damage",
         "position": {
@@ -46,7 +46,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_0_2",
+        "id": "T1Lightning_board_0_2",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -64,7 +64,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_ext_top",
+        "id": "T1Lightning_board_ext_top",
         "name": "Extension Point",
         "description": "Connect to another board",
         "position": {
@@ -80,7 +80,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_0_4",
+        "id": "T1Lightning_board_0_4",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -98,7 +98,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_0_5",
+        "id": "T1Lightning_board_0_5",
         "name": "Increased Lightning Damage",
         "description": "+6% Lightning Damage",
         "position": {
@@ -116,7 +116,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_0_6",
+        "id": "T1Lightning_board_0_6",
         "name": "Increased Lightning Damage",
         "description": "+6% Lightning Damage",
         "position": {
@@ -136,7 +136,7 @@
     ],
     [
       {
-        "id": "spark_board_1_0",
+        "id": "T1Lightning_board_1_0",
         "name": "Increased Lightning Damage",
         "description": "+6% Lightning Damage",
         "position": {
@@ -154,7 +154,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_notable_1",
+        "id": "T1Lightning_board_notable_1",
         "name": "Thunder's Wrath",
         "description": "+24% Lightning Damage, +8% Critical Strike Chance, +12% Critical Strike Multiplier",
         "position": {
@@ -174,7 +174,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_1_2",
+        "id": "T1Lightning_board_1_2",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -192,7 +192,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_1_3",
+        "id": "T1Lightning_board_1_3",
         "name": "+5 Intelligence, +5 Dexterity",
         "description": "+5 Intelligence, +5 Dexterity",
         "position": {
@@ -211,7 +211,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_1_4",
+        "id": "T1Lightning_board_1_4",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -229,7 +229,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_notable_2",
+        "id": "T1Lightning_board_notable_2",
         "name": "Storm's Fury",
         "description": "+24% Lightning Damage, +12% Ailment Effect, +12% Spell Power",
         "position": {
@@ -249,7 +249,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_1_6",
+        "id": "T1Lightning_board_crit_ailment_1_6",
         "name": "Increased Lightning Damage",
         "description": "+6% Lightning Damage",
         "position": {
@@ -269,7 +269,7 @@
     ],
     [
       {
-        "id": "spark_board_crit_ailment_2_0",
+        "id": "T1Lightning_board_crit_ailment_2_0",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -287,7 +287,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_2_1",
+        "id": "T1Lightning_board_crit_ailment_2_1",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -305,7 +305,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_2_2",
+        "id": "T1Lightning_board_crit_ailment_2_2",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -323,7 +323,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_2_3",
+        "id": "T1Lightning_board_crit_ailment_2_3",
         "name": "+5 Intelligence, +5 Dexterity",
         "description": "+5 Intelligence, +5 Dexterity",
         "position": {
@@ -342,7 +342,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_2_4",
+        "id": "T1Lightning_board_crit_ailment_2_4",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -360,7 +360,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_2_5",
+        "id": "T1Lightning_board_crit_ailment_2_5",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -378,7 +378,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_2_6",
+        "id": "T1Lightning_board_crit_ailment_2_6",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -398,7 +398,7 @@
     ],
     [
       {
-        "id": "spark_board_crit_ailment_ext_left",
+        "id": "T1Lightning_board_crit_ailment_ext_left",
         "name": "Extension Point",
         "description": "Connect to another board",
         "position": {
@@ -414,7 +414,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_3_1",
+        "id": "T1Lightning_board_crit_ailment_3_1",
         "name": "+5 Intelligence, +5 Dexterity",
         "description": "+5 Intelligence, +5 Dexterity",
         "position": {
@@ -433,7 +433,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_3_2",
+        "id": "T1Lightning_board_crit_ailment_3_2",
         "name": "+5 Intelligence, +5 Dexterity",
         "description": "+5 Intelligence, +5 Dexterity",
         "position": {
@@ -452,7 +452,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_3_3",
+        "id": "T1Lightning_board_crit_ailment_3_3",
         "name": "+5 Intelligence, +5 Dexterity",
         "description": "+5 Intelligence, +5 Dexterity",
         "position": {
@@ -471,7 +471,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_3_4",
+        "id": "T1Lightning_board_crit_ailment_3_4",
         "name": "+5 Intelligence, +5 Dexterity",
         "description": "+5 Intelligence, +5 Dexterity",
         "position": {
@@ -490,7 +490,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_3_5",
+        "id": "T1Lightning_board_crit_ailment_3_5",
         "name": "+5 Intelligence, +5 Dexterity",
         "description": "+5 Intelligence, +5 Dexterity",
         "position": {
@@ -509,7 +509,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_ext_right",
+        "id": "T1Lightning_board_crit_ailment_ext_right",
         "name": "Extension Point",
         "description": "Connect to another board",
         "position": {
@@ -527,7 +527,7 @@
     ],
     [
       {
-        "id": "spark_board_crit_ailment_4_0",
+        "id": "T1Lightning_board_crit_ailment_4_0",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -545,7 +545,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_4_1",
+        "id": "T1Lightning_board_crit_ailment_4_1",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -563,7 +563,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_4_2",
+        "id": "T1Lightning_board_crit_ailment_4_2",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -581,7 +581,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_4_3",
+        "id": "T1Lightning_board_crit_ailment_4_3",
         "name": "+5 Intelligence, +5 Dexterity",
         "description": "+5 Intelligence, +5 Dexterity",
         "position": {
@@ -600,7 +600,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_4_4",
+        "id": "T1Lightning_board_crit_ailment_4_4",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -618,7 +618,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_4_5",
+        "id": "T1Lightning_board_crit_ailment_4_5",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -636,7 +636,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_4_6",
+        "id": "T1Lightning_board_crit_ailment_4_6",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -656,7 +656,7 @@
     ],
     [
       {
-        "id": "spark_board_crit_ailment_5_0",
+        "id": "T1Lightning_board_crit_ailment_5_0",
         "name": "Increased Lightning Damage",
         "description": "+6% Lightning Damage",
         "position": {
@@ -674,7 +674,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_crit_ailment_notable_3",
+        "id": "T1Lightning_board_crit_ailment_notable_3",
         "name": "Lightning Striker",
         "description": "+24% Lightning Damage, +12% Melee Damage, +8% Critical Strike Chance",
         "position": {
@@ -694,7 +694,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_5_2",
+        "id": "T1Lightning_board_5_2",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -712,7 +712,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_5_3",
+        "id": "T1Lightning_board_5_3",
         "name": "+5 Intelligence, +5 Dexterity",
         "description": "+5 Intelligence, +5 Dexterity",
         "position": {
@@ -731,7 +731,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_5_4",
+        "id": "T1Lightning_board_5_4",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -749,7 +749,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_notable_4",
+        "id": "T1Lightning_board_notable_4",
         "name": "Storm's Edge",
         "description": "+24% Lightning Damage, +12% Projectile Damage, +12% Ailment Effect, +12% Shock Effect",
         "position": {
@@ -770,7 +770,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_5_6",
+        "id": "T1Lightning_board_5_6",
         "name": "Increased Lightning Damage",
         "description": "+6% Lightning Damage",
         "position": {
@@ -790,7 +790,7 @@
     ],
     [
       {
-        "id": "spark_board_6_0",
+        "id": "T1Lightning_board_6_0",
         "name": "Increased Lightning Damage",
         "description": "+6% Lightning Damage",
         "position": {
@@ -808,7 +808,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_6_1",
+        "id": "T1Lightning_board_6_1",
         "name": "Increased Lightning Damage",
         "description": "+6% Lightning Damage",
         "position": {
@@ -826,7 +826,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_6_2",
+        "id": "T1Lightning_board_6_2",
         "name": "Increased Lightning Damage",
         "description": "+4% Lightning Damage",
         "position": {
@@ -844,7 +844,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_ext_bottom",
+        "id": "T1Lightning_board_ext_bottom",
         "name": "Extension Point",
         "description": "Connect to another board",
         "position": {
@@ -860,7 +860,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_6_4",
+        "id": "T1Lightning_board_6_4",
         "name": "Increased Lightning Damage",
         "description": "+6% Lightning Damage",
         "position": {
@@ -878,7 +878,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_6_5",
+        "id": "T1Lightning_board_6_5",
         "name": "Increased Lightning Damage",
         "description": "+6% Lightning Damage",
         "position": {
@@ -896,7 +896,7 @@
         "connections": []
       },
       {
-        "id": "spark_board_6_6",
+        "id": "T1Lightning_board_6_6",
         "name": "Increased Lightning Damage",
         "description": "+6% Lightning Damage",
         "position": {
@@ -917,7 +917,7 @@
   ],
   "extensionPoints": [
     {
-      "id": "spark_board_ext_top",
+      "id": "T1Lightning_board_ext_top",
       "position": {
         "row": 0,
         "column": 3
@@ -927,7 +927,7 @@
       "currentConnections": 0
     },
     {
-      "id": "spark_board_ext_left",
+      "id": "T1Lightning_board_ext_left",
       "position": {
         "row": 3,
         "column": 0
@@ -937,7 +937,7 @@
       "currentConnections": 0
     },
     {
-      "id": "spark_board_ext_right",
+      "id": "T1Lightning_board_ext_right",
       "position": {
         "row": 3,
         "column": 6
@@ -947,7 +947,7 @@
       "currentConnections": 0
     },
     {
-      "id": "spark_board_ext_bottom",
+      "id": "T1Lightning_board_ext_bottom",
       "position": {
         "row": 6,
         "column": 3

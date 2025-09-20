@@ -107,8 +107,8 @@ namespace PassiveTree
                         Debug.Log($"[WorldSpaceInputHandler] Hit cell: {cellController.GridPosition} at {hit.point}");
                     }
                     
-                    // Notify tree manager
-                    treeManager.OnCellClicked(cellController.GridPosition);
+                    // Let the cell handle its own click logic (this will route to extension board or core board as appropriate)
+                    cellController.OnButtonClick();
                 }
                 else
                 {

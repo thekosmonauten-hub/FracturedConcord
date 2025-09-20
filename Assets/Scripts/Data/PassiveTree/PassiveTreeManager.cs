@@ -349,9 +349,9 @@ namespace PassiveTree
             Debug.Log($"[PassiveTreeManager] enableExtensionBoards: {enableExtensionBoards}");
             Debug.Log($"[PassiveTreeManager] boardPositioningManager: {(boardPositioningManager != null ? "Found" : "Null")}");
             
-            // For extension nodes, we don't need to check CanPurchaseNode
-            // Extension nodes should always be available for board selection
-            if (enableExtensionBoards && boardPositioningManager != null)
+            // Extension nodes now follow the same validation rules as other nodes
+            // They must have an adjacent purchased node to be clickable
+            if (CanPurchaseNode(cell) && enableExtensionBoards && boardPositioningManager != null)
             {
                 Debug.Log($"[PassiveTreeManager] Calling HandleExtensionBoardSpawn for {cell.GridPosition}");
                 HandleExtensionBoardSpawn(cell);
@@ -406,10 +406,59 @@ namespace PassiveTree
                 return false;
             }
             
+            // Check adjacency validation - node must have at least one purchased adjacent node
+            // (except for start nodes which are always available)
+            if (cell.NodeType != NodeType.Start)
+            {
+                if (!HasAdjacentPurchasedNode(cell.GridPosition))
+                {
+                    Debug.Log($"  - ❌ Cannot purchase: no adjacent purchased nodes");
+                    return false;
+                }
+                Debug.Log($"  - ✅ Has adjacent purchased node");
+            }
+            
             // TODO: Add cost validation, prerequisite checks, etc.
             
             Debug.Log($"  - ✅ Can purchase node");
             return true;
+        }
+        
+        /// <summary>
+        /// Check if a node has at least one adjacent purchased node (for pathing validation)
+        /// </summary>
+        private bool HasAdjacentPurchasedNode(Vector2Int centerPosition)
+        {
+            if (showDebugInfo)
+                Debug.Log($"[PassiveTreeManager] HasAdjacentPurchasedNode check for position: {centerPosition}");
+            
+            // Define orthographic directions (up, down, left, right)
+            Vector2Int[] adjacentPositions = new Vector2Int[]
+            {
+                centerPosition + Vector2Int.up,    // North
+                centerPosition + Vector2Int.down,  // South
+                centerPosition + Vector2Int.left,  // West
+                centerPosition + Vector2Int.right  // East
+            };
+            
+            // Check each adjacent position for a purchased node
+            foreach (Vector2Int pos in adjacentPositions)
+            {
+                if (cells.ContainsKey(pos))
+                {
+                    CellController adjacentCell = cells[pos];
+                    if (adjacentCell.IsPurchased)
+                    {
+                        if (showDebugInfo)
+                            Debug.Log($"[PassiveTreeManager] ✅ Found adjacent purchased node at {pos}");
+                        return true;
+                    }
+                }
+            }
+            
+            if (showDebugInfo)
+                Debug.Log($"[PassiveTreeManager] ❌ No adjacent purchased nodes found for {centerPosition}");
+            return false;
         }
         
         /// <summary>

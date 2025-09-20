@@ -45,8 +45,15 @@ namespace PassiveTree
             if (closeButton != null)
                 closeButton.onClick.AddListener(CloseSelection);
                 
-            // Make this GameObject persistent to prevent destruction
-            DontDestroyOnLoad(gameObject);
+            // Make this GameObject persistent to prevent destruction (only if it's a root object)
+            if (transform.parent == null)
+            {
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Debug.LogWarning($"[BoardSelectionUI] Cannot use DontDestroyOnLoad on {gameObject.name} - it's not a root GameObject. Parent: {transform.parent.name}");
+            }
             
             // Auto-populate available boards
             AutoPopulateAvailableBoards();
@@ -66,12 +73,12 @@ namespace PassiveTree
             if (titleText != null)
                 titleText.text = "Select Board Type";
             else if (showDebugInfo)
-                Debug.LogWarning($"[BoardSelectionUI] titleText is null!");
+                Debug.LogWarning($"[BoardSelectionUI] titleText is null! Please assign titleText in the inspector.");
                 
             if (descriptionText != null)
                 descriptionText.text = $"Choose a board to create at position {gridPosition}";
             else if (showDebugInfo)
-                Debug.LogWarning($"[BoardSelectionUI] descriptionText is null!");
+                Debug.LogWarning($"[BoardSelectionUI] descriptionText is null! Please assign descriptionText in the inspector.");
             
             // Clear existing buttons
             ClearBoardButtons();

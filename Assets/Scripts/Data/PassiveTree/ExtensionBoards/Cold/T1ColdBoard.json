@@ -1,5 +1,5 @@
 {
-  "id": "cold_board",
+  "id": "T1cold_board",
   "name": "Frozen Mastery",
   "description": "Master the chilling power of ice and frost",
   "theme": "cold",
@@ -10,7 +10,7 @@
   "nodes": [
     [
       {
-        "id": "cold_0_0",
+        "id": "T1cold_board_0_0",
         "name": "Increased Cold Damage",
         "description": "+6% Cold Damage",
         "position": { "row": 0, "column": 0 },
@@ -23,7 +23,7 @@
         "connections": []
       },
       {
-        "id": "cold_0_1",
+        "id": "T1cold_board_0_1",
         "name": "Increased Cold Damage",
         "description": "+6% Cold Damage",
         "position": { "row": 0, "column": 1 },
@@ -36,7 +36,7 @@
         "connections": []
       },
       {
-        "id": "cold_0_2",
+        "id": "T1cold_board_0_2",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 0, "column": 2 },
@@ -49,7 +49,7 @@
         "connections": []
       },
       {
-        "id": "cold_ext_top",
+        "id": "T1cold_board_ext_top",
         "name": "Extension Point",
         "description": "Connect to another board",
         "position": { "row": 0, "column": 3 },
@@ -62,7 +62,7 @@
         "connections": []
       },
       {
-        "id": "cold_0_4",
+        "id": "T1cold_board_0_4",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 0, "column": 4 },
@@ -75,7 +75,7 @@
         "connections": []
       },
       {
-        "id": "cold_0_5",
+        "id": "T1cold_board_0_5",
         "name": "Increased Cold Damage",
         "description": "+6% Cold Damage",
         "position": { "row": 0, "column": 5 },
@@ -88,7 +88,7 @@
         "connections": []
       },
       {
-        "id": "cold_0_6",
+        "id": "T1cold_board_0_6",
         "name": "Increased Cold Damage",
         "description": "+6% Cold Damage",
         "position": { "row": 0, "column": 6 },
@@ -103,7 +103,7 @@
     ],
     [
       {
-        "id": "cold_1_0",
+        "id": "T1cold_board_1_0",
         "name": "Increased Cold Damage",
         "description": "+6% Cold Damage",
         "position": { "row": 1, "column": 0 },
@@ -116,7 +116,7 @@
         "connections": []
       },
       {
-        "id": "cold_notable_1",
+        "id": "T1cold_board_notable_1",
         "name": "Frozen Heart",
         "description": "+24% increased Cold Damage, +12 Cold Resistance",
         "position": { "row": 1, "column": 1 },
@@ -129,7 +129,7 @@
         "connections": []
       },
       {
-        "id": "cold_1_2",
+        "id": "T1cold_board_1_2",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 1, "column": 2 },
@@ -142,7 +142,7 @@
         "connections": []
       },
       {
-        "id": "cold_1_3",
+        "id": "T1cold_board_1_3",
         "name": "+5 Intelligence",
         "description": "+5 Intelligence",
         "position": { "row": 1, "column": 3 },
@@ -155,7 +155,7 @@
         "connections": []
       },
       {
-        "id": "cold_1_4",
+        "id": "T1cold_board_1_4",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 1, "column": 4 },
@@ -168,7 +168,7 @@
         "connections": []
       },
       {
-        "id": "cold_notable_2",
+        "id": "T1cold_board_notable_2",
         "name": "Ice Mastery",
         "description": "+24% increased Cold Damage, +12% Chance to Freeze",
         "position": { "row": 1, "column": 5 },
@@ -181,7 +181,7 @@
         "connections": []
       },
       {
-        "id": "cold_1_6",
+        "id": "T1cold_board_1_6",
         "name": "Increased Cold Damage",
         "description": "+6% Cold Damage",
         "position": { "row": 1, "column": 6 },
@@ -196,7 +196,7 @@
     ],
     [
       {
-        "id": "cold_2_0",
+        "id": "T1cold_board_2_0",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 2, "column": 0 },
@@ -209,7 +209,7 @@
         "connections": []
       },
       {
-        "id": "cold_2_1",
+        "id": "T1cold_board_2_1",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 2, "column": 1 },
@@ -222,7 +222,7 @@
         "connections": []
       },
       {
-        "id": "cold_2_2",
+        "id": "T1cold_board_2_2",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 2, "column": 2 },
@@ -235,7 +235,7 @@
         "connections": []
       },
       {
-        "id": "cold_2_3",
+        "id": "T1cold_board_2_3",
         "name": "+5 Intelligence",
         "description": "+5 Intelligence",
         "position": { "row": 2, "column": 3 },
@@ -248,7 +248,7 @@
         "connections": []
       },
       {
-        "id": "cold_2_4",
+        "id": "T1cold_board_2_4",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 2, "column": 4 },
@@ -261,7 +261,7 @@
         "connections": []
       },
       {
-        "id": "cold_2_5",
+        "id": "T1cold_board_2_5",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 2, "column": 5 },
@@ -274,7 +274,7 @@
         "connections": []
       },
       {
-        "id": "cold_2_6",
+        "id": "T1cold_board_2_6",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 2, "column": 6 },
@@ -289,7 +289,7 @@
     ],
     [
       {
-        "id": "cold_ext_left",
+        "id": "T1cold_board_ext_left",
         "name": "Extension Point",
         "description": "Connect to another board",
         "position": { "row": 3, "column": 0 },
@@ -302,7 +302,7 @@
         "connections": []
       },
       {
-        "id": "cold_3_1",
+        "id": "T1cold_board_3_1",
         "name": "+5 Intelligence",
         "description": "+5 Intelligence",
         "position": { "row": 3, "column": 1 },
@@ -315,7 +315,7 @@
         "connections": []
       },
       {
-        "id": "cold_3_2",
+        "id": "T1cold_board_3_2",
         "name": "+5 Intelligence",
         "description": "+5 Intelligence",
         "position": { "row": 3, "column": 2 },
@@ -328,7 +328,7 @@
         "connections": []
       },
       {
-        "id": "cold_3_3",
+        "id": "T1cold_board_3_3",
         "name": "+5 Intelligence",
         "description": "+5 Intelligence",
         "position": { "row": 3, "column": 3 },
@@ -341,7 +341,7 @@
         "connections": []
       },
       {
-        "id": "cold_3_4",
+        "id": "T1cold_board_3_4",
         "name": "+5 Intelligence",
         "description": "+5 Intelligence",
         "position": { "row": 3, "column": 4 },
@@ -354,7 +354,7 @@
         "connections": []
       },
       {
-        "id": "cold_3_5",
+        "id": "T1cold_board_3_5",
         "name": "+5 Intelligence",
         "description": "+5 Intelligence",
         "position": { "row": 3, "column": 5 },
@@ -367,7 +367,7 @@
         "connections": []
       },
       {
-        "id": "cold_ext_right",
+        "id": "T1cold_board_ext_right",
         "name": "Extension Point",
         "description": "Connect to another board",
         "position": { "row": 3, "column": 6 },
@@ -382,7 +382,7 @@
     ],
     [
       {
-        "id": "cold_4_0",
+        "id": "T1cold_board_4_0",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 4, "column": 0 },
@@ -395,7 +395,7 @@
         "connections": []
       },
       {
-        "id": "cold_4_1",
+        "id": "T1cold_board_4_1",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 4, "column": 1 },
@@ -408,7 +408,7 @@
         "connections": []
       },
       {
-        "id": "cold_4_2",
+        "id": "T1cold_board_4_2",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 4, "column": 2 },
@@ -421,7 +421,7 @@
         "connections": []
       },
       {
-        "id": "cold_4_3",
+        "id": "T1cold_board_4_3",
         "name": "+5 Intelligence",
         "description": "+5 Intelligence",
         "position": { "row": 4, "column": 3 },
@@ -434,7 +434,7 @@
         "connections": []
       },
       {
-        "id": "cold_4_4",
+        "id": "T1cold_board_4_4",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 4, "column": 4 },
@@ -447,7 +447,7 @@
         "connections": []
       },
       {
-        "id": "cold_4_5",
+        "id": "T1cold_board_4_5",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 4, "column": 5 },
@@ -460,8 +460,8 @@
         "connections": []
       },
       {
-        "id": "cold_4_6",
-        "name": "Glacial Tempest",
+        "id": "T1cold_board_4_6",
+        "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 4, "column": 6 },
         "type": "small",
@@ -475,7 +475,7 @@
     ],
     [
       {
-        "id": "cold_5_0",
+        "id": "T1cold_board_5_0",
         "name": "Increased Cold Damage",
         "description": "+6% Cold Damage",
         "position": { "row": 5, "column": 0 },
@@ -488,7 +488,7 @@
         "connections": []
       },
       {
-        "id": "cold_notable_3",
+        "id": "T1cold_board_notable_3",
         "name": "Frost Conversion",
         "description": "10% of physical damage added as cold",
         "position": { "row": 5, "column": 1 },
@@ -501,7 +501,7 @@
         "connections": []
       },
       {
-        "id": "cold_5_2",
+        "id": "T1cold_board_5_2",
         "name": "+15% Freeze Duration",
         "description": "+15% Freeze Duration",
         "position": { "row": 5, "column": 2 },
@@ -514,7 +514,7 @@
         "connections": []
       },
       {
-        "id": "cold_5_3",
+        "id": "T1cold_board_5_3",
         "name": "+5 Intelligence",
         "description": "+5 Intelligence",
         "position": { "row": 5, "column": 3 },
@@ -527,7 +527,7 @@
         "connections": []
       },
       {
-        "id": "cold_5_4",
+        "id": "T1cold_board_5_4",
         "name": "+15% Freeze Duration",
         "description": "+15% Freeze Duration",
         "position": { "row": 5, "column": 4 },
@@ -540,7 +540,7 @@
         "connections": []
       },
       {
-        "id": "cold_notable_4",
+        "id": "T1cold_board_notable_4",
         "name": "Winter's Grace",
         "description": "18% increased Cold damage and 12% increase Chill magnitude",
         "position": { "row": 5, "column": 5 },
@@ -553,7 +553,7 @@
         "connections": []
       },
       {
-        "id": "cold_5_6",
+        "id": "T1cold_board_5_6",
         "name": "Increased Cold Damage",
         "description": "+6% Cold Damage",
         "position": { "row": 5, "column": 6 },
@@ -568,7 +568,7 @@
     ],
     [
       {
-        "id": "cold_6_0",
+        "id": "T1cold_board_6_0",
         "name": "Increased Cold Damage",
         "description": "+6% Cold Damage",
         "position": { "row": 6, "column": 0 },
@@ -581,7 +581,7 @@
         "connections": []
       },
       {
-        "id": "cold_6_1",
+        "id": "T1cold_board_6_1",
         "name": "Increased Cold Damage",
         "description": "+6% Cold Damage",
         "position": { "row": 6, "column": 1 },
@@ -594,7 +594,7 @@
         "connections": []
       },
       {
-        "id": "cold_6_2",
+        "id": "T1cold_board_6_2",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 6, "column": 2 },
@@ -607,7 +607,7 @@
         "connections": []
       },
       {
-        "id": "cold_ext_bottom",
+        "id": "T1cold_board_ext_bottom",
         "name": "Extension Point",
         "description": "Connect to another board",
         "position": { "row": 6, "column": 3 },
@@ -620,7 +620,7 @@
         "connections": []
       },
       {
-        "id": "cold_6_4",
+        "id": "T1cold_board_6_4",
         "name": "Increased Cold Damage",
         "description": "+4% Cold Damage",
         "position": { "row": 6, "column": 4 },
@@ -633,7 +633,7 @@
         "connections": []
       },
       {
-        "id": "cold_6_5",
+        "id": "T1cold_board_6_5",
         "name": "Increased Cold Damage",
         "description": "+6% Cold Damage",
         "position": { "row": 6, "column": 5 },
@@ -646,7 +646,7 @@
         "connections": []
       },
       {
-        "id": "cold_6_6",
+        "id": "T1cold_board_6_6",
         "name": "Increased Cold Damage",
         "description": "+6% Cold Damage",
         "position": { "row": 6, "column": 6 },
@@ -662,28 +662,28 @@
   ],
   "extensionPoints": [
     {
-      "id": "cold_ext_top",
+      "id": "T1cold_board_ext_top",
       "position": { "row": 0, "column": 3 },
       "availableBoards": [],
       "maxConnections": 1,
       "currentConnections": 0
     },
     {
-      "id": "cold_ext_left",
+      "id": "T1cold_board_ext_left",
       "position": { "row": 3, "column": 0 },
       "availableBoards": [],
       "maxConnections": 1,
       "currentConnections": 0
     },
     {
-      "id": "cold_ext_right",
+      "id": "T1cold_board_ext_right",
       "position": { "row": 3, "column": 6 },
       "availableBoards": [],
       "maxConnections": 1,
       "currentConnections": 0
     },
     {
-      "id": "cold_ext_bottom",
+      "id": "T1cold_board_ext_bottom",
       "position": { "row": 6, "column": 3 },
       "availableBoards": [],
       "maxConnections": 1,

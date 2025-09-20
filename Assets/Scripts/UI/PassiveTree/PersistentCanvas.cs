@@ -10,9 +10,16 @@ namespace PassiveTree
         void Awake()
         {
             Debug.Log($"[PersistentCanvas] Awake called for {gameObject.name}");
-            // Make this canvas persistent across scene loads
-            DontDestroyOnLoad(gameObject);
-            Debug.Log($"[PersistentCanvas] Made {gameObject.name} persistent");
+            // Make this canvas persistent across scene loads (only if it's a root object)
+            if (transform.parent == null)
+            {
+                DontDestroyOnLoad(gameObject);
+                Debug.Log($"[PersistentCanvas] Made {gameObject.name} persistent");
+            }
+            else
+            {
+                Debug.LogWarning($"[PersistentCanvas] Cannot use DontDestroyOnLoad on {gameObject.name} - it's not a root GameObject. Parent: {transform.parent.name}");
+            }
         }
         
         void OnDestroy()

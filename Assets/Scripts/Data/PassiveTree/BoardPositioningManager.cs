@@ -15,6 +15,7 @@ namespace PassiveTree
         [SerializeField] private Transform boardsContainer;
         [SerializeField] private GameObject coreBoardPrefab;
         [SerializeField] private GameObject extensionBoardPrefab;
+        [SerializeField] private ExtensionBoardGenerator extensionBoardGenerator;
         [SerializeField] private float boardSpacing = 7f; // Distance between board centers (7x7 grid + spacing)
         
         [Header("Grid Settings")]
@@ -42,6 +43,7 @@ namespace PassiveTree
         
         [Header("Board Selection UI")]
         [SerializeField] private BoardSelectionUI boardSelectionUI;
+        [SerializeField] private ExtensionBoardSelectionUI extensionBoardSelectionUI;
         [SerializeField] private bool useBoardSelection = true;
         
         [Header("Debug")]
@@ -112,6 +114,9 @@ namespace PassiveTree
             
             // Detect and store the actual world position of the core board
             DetectCoreBoardWorldPosition();
+            
+            // Initialize all cells on the core board with PassiveTreeManager reference
+            InitializeBoardCells(coreBoard);
             
             // Setup extension points for the core board
             SetupCoreBoardExtensionPoints();
@@ -369,6 +374,18 @@ namespace PassiveTree
             // Restore original scale to prevent scaling issues
             board.transform.localScale = originalScale;
             
+            // If this is an extension board, set the grid position in the controller
+            ExtensionBoardController extensionController = board.GetComponent<ExtensionBoardController>();
+            if (extensionController != null)
+            {
+                extensionController.SetBoardGridPosition(gridPosition);
+                
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[BoardPositioningManager] Set grid position {gridPosition} for extension board controller {extensionController.GetBoardName()}");
+                }
+            }
+            
             if (showDebugInfo)
                 Debug.Log($"[BoardPositioningManager] Positioned {board.name} at grid position: {gridPosition}, world position: {worldPosition} (scale: {originalScale})");
         }
@@ -423,43 +440,80 @@ namespace PassiveTree
         {
             if (showDebugInfo)
             {
-                Debug.Log($"[BoardPositioningManager] HandleExtensionPointClick called for extension point at {extensionPoint.position}");
+                Debug.Log($"[BoardPositioningManager] HandleExtensionPointClick called for extension point:");
+                Debug.Log($"  - Extension Point ID: {extensionPoint.id}");
+                Debug.Log($"  - Extension Point Position: {extensionPoint.position}");
+                Debug.Log($"  - Extension Point World Position: {extensionPoint.worldPosition}");
                 Debug.Log($"[BoardPositioningManager] useBoardSelection: {useBoardSelection}");
-                Debug.Log($"[BoardPositioningManager] boardSelectionUI is null: {boardSelectionUI == null}");
-                if (boardSelectionUI != null)
-                {
-                    Debug.Log($"[BoardPositioningManager] boardSelectionUI GameObject active: {boardSelectionUI.gameObject.activeInHierarchy}");
-                    Debug.Log($"[BoardPositioningManager] boardSelectionUI GameObject name: {boardSelectionUI.gameObject.name}");
-                }
             }
             
-            if (useBoardSelection && boardSelectionUI != null)
+            // Determine if this is a core board extension point or extension board extension point
+            bool isCoreBoardExtensionPoint = extensionPoint.id.StartsWith("core_extension");
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[BoardPositioningManager] Extension point type: {(isCoreBoardExtensionPoint ? "Core Board" : "Extension Board")}");
+            }
+            
+            if (useBoardSelection)
             {
                 // Calculate grid position for the extension board
                 Vector2Int extensionGridPosition = new Vector2Int(extensionPoint.worldPosition.x, extensionPoint.worldPosition.y);
                 
-                if (showDebugInfo)
+                if (isCoreBoardExtensionPoint)
                 {
-                    Debug.Log($"[BoardPositioningManager] About to call ShowBoardSelection for extension point at {extensionPoint.position}");
+                    // Use regular board selection UI for core board extension points
+                    if (boardSelectionUI != null)
+                    {
+                        if (showDebugInfo)
+                        {
+                            Debug.Log($"[BoardPositioningManager] Using BoardSelectionUI for core board extension point at {extensionPoint.position}");
+                        }
+                        
+                        // Show board selection UI
+                        boardSelectionUI.ShowBoardSelection(extensionPoint, extensionGridPosition);
+                        
+                        // Subscribe to board selection events
+                        boardSelectionUI.OnBoardSelected += (boardData) => OnBoardSelected(extensionPoint, boardData);
+                        boardSelectionUI.OnSelectionCancelled += OnBoardSelectionCancelled;
+                    }
+                    else
+                    {
+                        Debug.LogError($"[BoardPositioningManager] BoardSelectionUI is null - cannot show selection UI for core board extension point");
+                    }
                 }
-                
-                // Show board selection UI
-                boardSelectionUI.ShowBoardSelection(extensionPoint, extensionGridPosition);
-                
-                // Subscribe to board selection events
-                boardSelectionUI.OnBoardSelected += (boardData) => OnBoardSelected(extensionPoint, boardData);
-                boardSelectionUI.OnSelectionCancelled += OnBoardSelectionCancelled;
-                
-                if (showDebugInfo)
+                else
                 {
-                    Debug.Log($"[BoardPositioningManager] ShowBoardSelection called and events subscribed for extension point at {extensionPoint.position}");
+                    // Use extension board selection UI for extension board extension points
+                    if (extensionBoardSelectionUI != null)
+                    {
+                        // Find the current board name from the extension point ID
+                        string currentBoardName = GetCurrentBoardNameFromExtensionPoint(extensionPoint);
+                        
+                        if (showDebugInfo)
+                        {
+                            Debug.Log($"[BoardPositioningManager] Using ExtensionBoardSelectionUI for extension board extension point at {extensionPoint.position}");
+                            Debug.Log($"[BoardPositioningManager] Current board name: {currentBoardName}");
+                        }
+                        
+                        // Show extension board selection UI
+                        extensionBoardSelectionUI.ShowBoardSelection(extensionPoint, extensionGridPosition, currentBoardName);
+                        
+                        // Subscribe to board selection events
+                        extensionBoardSelectionUI.OnBoardSelected += (boardData) => OnBoardSelected(extensionPoint, boardData);
+                        extensionBoardSelectionUI.OnSelectionCancelled += OnBoardSelectionCancelled;
+                    }
+                    else
+                    {
+                        Debug.LogError($"[BoardPositioningManager] ExtensionBoardSelectionUI is null - cannot show selection UI for extension board extension point");
+                    }
                 }
             }
             else
             {
                 if (showDebugInfo)
                 {
-                    Debug.Log($"[BoardPositioningManager] Falling back to direct spawn - useBoardSelection: {useBoardSelection}, boardSelectionUI null: {boardSelectionUI == null}");
+                    Debug.Log($"[BoardPositioningManager] Falling back to direct spawn - useBoardSelection: {useBoardSelection}");
                 }
                 
                 // WORKAROUND: Mark the extension point as purchased before spawning the board
@@ -468,6 +522,42 @@ namespace PassiveTree
                 // Direct spawn with default board type
                 SpawnExtensionBoard(extensionPoint, "Default");
             }
+        }
+        
+        /// <summary>
+        /// Get the current board name from an extension point ID
+        /// </summary>
+        private string GetCurrentBoardNameFromExtensionPoint(ExtensionPoint extensionPoint)
+        {
+            // For extension board extension points, the ID format is: extension_{gridX}_{gridY}_{directionX}_{directionY}
+            // We need to find the board that corresponds to this grid position
+            if (extensionPoint.id.StartsWith("extension_"))
+            {
+                // Extract grid position from the extension point ID
+                string[] idParts = extensionPoint.id.Split('_');
+                if (idParts.Length >= 3)
+                {
+                    // Parse grid position
+                    if (int.TryParse(idParts[1], out int gridX) && int.TryParse(idParts[2], out int gridY))
+                    {
+                        Vector2Int boardGridPosition = new Vector2Int(gridX, gridY);
+                        
+                        // Find the board at this grid position
+                        if (positionedBoards.ContainsKey(boardGridPosition))
+                        {
+                            GameObject board = positionedBoards[boardGridPosition];
+                            ExtensionBoardController controller = board.GetComponent<ExtensionBoardController>();
+                            if (controller != null)
+                            {
+                                return controller.GetBoardName();
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Fallback: return a generic name
+            return "Unknown Board";
         }
         
         /// <summary>
@@ -580,9 +670,9 @@ namespace PassiveTree
         /// </summary>
         public bool SpawnExtensionBoard(ExtensionPoint extensionPoint, string boardType, TextAsset jsonDataAsset)
         {
-            if (extensionBoardPrefab == null)
+            if (extensionBoardGenerator == null)
             {
-                Debug.LogError("[BoardPositioningManager] Extension board prefab not assigned!");
+                Debug.LogError("[BoardPositioningManager] ExtensionBoardGenerator not assigned!");
                 return false;
             }
             
@@ -591,6 +681,8 @@ namespace PassiveTree
                 Debug.LogWarning($"[BoardPositioningManager] Cannot connect board type '{boardType}' to extension point '{extensionPoint.id}'");
                 Debug.LogWarning($"[BoardPositioningManager] Available boards: [{string.Join(", ", extensionPoint.availableBoards)}]");
                 Debug.LogWarning($"[BoardPositioningManager] Current connections: {extensionPoint.currentConnections}/{extensionPoint.maxConnections}");
+                Debug.LogWarning($"[BoardPositioningManager] CanConnect(): {extensionPoint.CanConnect()}");
+                Debug.LogWarning($"[BoardPositioningManager] Extension point details: {extensionPoint}");
                 return false;
             }
             
@@ -599,6 +691,16 @@ namespace PassiveTree
             // Calculate grid position for the extension board
             Vector2Int extensionGridPosition = new Vector2Int(extensionPoint.worldPosition.x, extensionPoint.worldPosition.y);
             
+            if (showDebugInfo)
+            {
+                Debug.Log($"[BoardPositioningManager] SpawnExtensionBoard - Extension Point Details:");
+                Debug.Log($"  - Extension Point ID: {extensionPoint.id}");
+                Debug.Log($"  - Extension Point Position: {extensionPoint.position}");
+                Debug.Log($"  - Extension Point World Position: {extensionPoint.worldPosition}");
+                Debug.Log($"  - Calculated Grid Position: {extensionGridPosition}");
+                Debug.Log($"  - Board Type: {boardType}");
+            }
+            
             // Check if position is already occupied
             if (positionedBoards.ContainsKey(extensionGridPosition))
             {
@@ -606,10 +708,16 @@ namespace PassiveTree
                 return false;
             }
             
-            // Create extension board
-            // Don't set parent during instantiation to avoid scaling issues
-            GameObject extensionBoard = Instantiate(extensionBoardPrefab);
-            extensionBoard.name = $"ExtensionBoard_{boardType}_{extensionGridPosition.x}_{extensionGridPosition.y}";
+            // Convert board type to theme
+            BoardTheme theme = ConvertBoardTypeToTheme(boardType);
+            
+            // Create extension board using ExtensionBoardGenerator
+            GameObject extensionBoard = extensionBoardGenerator.GenerateExtensionBoard(theme, $"ExtensionBoard_{boardType}_{extensionGridPosition.x}_{extensionGridPosition.y}");
+            if (extensionBoard == null)
+            {
+                Debug.LogError($"[BoardPositioningManager] Failed to generate extension board for type '{boardType}'");
+                return false;
+            }
             
             // Position the board (this will set the parent correctly)
             PositionBoardAtGrid(extensionBoard, extensionGridPosition);
@@ -626,12 +734,24 @@ namespace PassiveTree
                 if (showDebugInfo)
                 {
                     Debug.Log($"[BoardPositioningManager] JSON data loaded, checking extension point cells...");
+                    
+                    // Check both CellController and CellController_EXT components
                     CellController[] allCells = extensionBoard.GetComponentsInChildren<CellController>();
+                    CellController_EXT[] allExtCells = extensionBoard.GetComponentsInChildren<CellController_EXT>();
+                    
                     foreach (CellController cell in allCells)
                     {
                         if (cell.NodeType == NodeType.Extension)
                         {
                             Debug.Log($"[BoardPositioningManager] Found extension point cell at {cell.GridPosition} with type {cell.NodeType}");
+                        }
+                    }
+                    
+                    foreach (CellController_EXT extCell in allExtCells)
+                    {
+                        if (extCell.NodeType == NodeType.Extension)
+                        {
+                            Debug.Log($"[BoardPositioningManager] Found extension point CellController_EXT at {extCell.GridPosition} with type {extCell.NodeType}");
                         }
                     }
                 }
@@ -660,9 +780,9 @@ namespace PassiveTree
         /// </summary>
         public bool SpawnExtensionBoard(ExtensionPoint extensionPoint, string boardType)
         {
-            if (extensionBoardPrefab == null)
+            if (extensionBoardGenerator == null)
             {
-                Debug.LogError("[BoardPositioningManager] Extension board prefab not assigned!");
+                Debug.LogError("[BoardPositioningManager] ExtensionBoardGenerator not assigned!");
                 return false;
             }
             
@@ -682,10 +802,16 @@ namespace PassiveTree
                 return false;
             }
             
-            // Create extension board
-            // Don't set parent during instantiation to avoid scaling issues
-            GameObject extensionBoard = Instantiate(extensionBoardPrefab);
-            extensionBoard.name = $"ExtensionBoard_{boardType}_{extensionGridPosition.x}_{extensionGridPosition.y}";
+            // Convert board type to theme
+            BoardTheme theme = ConvertBoardTypeToTheme(boardType);
+            
+            // Create extension board using ExtensionBoardGenerator
+            GameObject extensionBoard = extensionBoardGenerator.GenerateExtensionBoard(theme, $"ExtensionBoard_{boardType}_{extensionGridPosition.x}_{extensionGridPosition.y}");
+            if (extensionBoard == null)
+            {
+                Debug.LogError($"[BoardPositioningManager] Failed to generate extension board for type '{boardType}'");
+                return false;
+            }
             
             // Position the board (this will set the parent correctly)
             PositionBoardAtGrid(extensionBoard, extensionGridPosition);
@@ -741,10 +867,20 @@ namespace PassiveTree
             );
             
             if (showDebugInfo)
-                Debug.Log($"[BoardPositioningManager] Setting up extension points for board at {gridPosition}, came from direction {fromDirectionNormalized}");
+            {
+                Debug.Log($"[BoardPositioningManager] Setting up extension points for board at {gridPosition}");
+                Debug.Log($"[BoardPositioningManager] Core board at {coreBoardGridPosition}");
+                Debug.Log($"[BoardPositioningManager] From direction: {fromDirection}");
+                Debug.Log($"[BoardPositioningManager] From direction normalized: {fromDirectionNormalized}");
+            }
             
             foreach (Vector2Int direction in extensionDirections)
             {
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[BoardPositioningManager] Processing direction {direction}");
+                }
+                
                 // Skip the direction this board came from
                 if (direction == fromDirectionNormalized) 
                 {
@@ -801,6 +937,11 @@ namespace PassiveTree
                     };
                     
                     availableExtensionPoints.Add(extensionPoint);
+                    
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"[BoardPositioningManager] ✅ Created extension point: ID={extensionPoint.id}, Position={extensionPoint.position}, WorldPosition={extensionPoint.worldPosition}");
+                    }
                     
                     if (showDebugInfo)
                         Debug.Log($"[BoardPositioningManager] Created extension point: {extensionPoint.id} at cell {extensionPoint.position} (forced to NodeType.Extension)");
@@ -927,54 +1068,76 @@ namespace PassiveTree
         }
         
         /// <summary>
-        /// Load JSON data into a board using JsonBoardDataManager
+        /// Load JSON data into a board using the centralized JsonBoardDataManager
         /// </summary>
         private void LoadJsonDataToBoard(GameObject board, TextAsset jsonDataAsset)
         {
-            if (board == null || jsonDataAsset == null) return;
+            if (board == null || jsonDataAsset == null)
+            {
+                Debug.LogError("[BoardPositioningManager] Cannot load JSON data - board or JSON asset is null");
+                return;
+            }
             
-            // Find or add JsonBoardDataManager to the board
-            JsonBoardDataManager jsonManager = board.GetComponent<JsonBoardDataManager>();
+            // Get the centralized JsonBoardDataManager (should be on the scene, not the board)
+            JsonBoardDataManager jsonManager = FindFirstObjectByType<JsonBoardDataManager>();
             if (jsonManager == null)
             {
-                jsonManager = board.AddComponent<JsonBoardDataManager>();
+                Debug.LogError("[BoardPositioningManager] No JsonBoardDataManager found in scene! Please add one to manage JSON data.");
+                return;
             }
             
-            // Set the JSON data asset
-            var jsonManagerField = typeof(JsonBoardDataManager).GetField("boardDataJson", 
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            if (jsonManagerField != null)
-            {
-                jsonManagerField.SetValue(jsonManager, jsonDataAsset);
-            }
-            
-            // Configure CellJsonData components on all cells
-            CellJsonData[] cellJsonDataComponents = board.GetComponentsInChildren<CellJsonData>();
-            foreach (CellJsonData cellJsonData in cellJsonDataComponents)
-            {
-                cellJsonData.SetJsonFile(jsonDataAsset);
-                cellJsonData.SetBoardId(jsonDataAsset.name); // Use JSON file name as board ID
-                
-                // Force update the cell's sprite based on the new JSON data
-                CellController cellController = cellJsonData.GetComponent<CellController>();
-                if (cellController != null)
-                {
-                    cellController.UpdateSpriteForJsonData();
-                }
-                
-                if (showDebugInfo)
-                {
-                    Debug.Log($"[BoardPositioningManager] Configured CellJsonData on {cellJsonData.gameObject.name} with JSON: {jsonDataAsset.name}");
-                }
-            }
-            
-            // Load the data
-            jsonManager.LoadBoardData();
+            // Determine board ID from the JSON asset name
+            string boardId = ExtractBoardIdFromJsonName(jsonDataAsset.name);
             
             if (showDebugInfo)
             {
-                Debug.Log($"[BoardPositioningManager] Loaded JSON data '{jsonDataAsset.name}' into board '{board.name}' and configured {cellJsonDataComponents.Length} CellJsonData components");
+                Debug.Log($"[BoardPositioningManager] Loading JSON data for board '{board.name}'");
+                Debug.Log($"[BoardPositioningManager] JSON Asset Name: '{jsonDataAsset.name}'");
+                Debug.Log($"[BoardPositioningManager] Extracted Board ID: '{boardId}'");
             }
+            
+            // Use the centralized system to load extension board data
+            bool success = jsonManager.LoadExtensionBoardData(board, boardId);
+            
+            if (success)
+            {
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[BoardPositioningManager] ✅ Successfully loaded JSON data for extension board '{board.name}' using centralized system");
+                }
+            }
+            else
+            {
+                Debug.LogError($"[BoardPositioningManager] ❌ Failed to load JSON data for extension board '{board.name}' with board ID: {boardId}");
+            }
+        }
+        
+        /// <summary>
+        /// Extract board ID from JSON file name
+        /// </summary>
+        private string ExtractBoardIdFromJsonName(string jsonFileName)
+        {
+            // Remove .json extension
+            string boardId = jsonFileName;
+            if (boardId.EndsWith(".json"))
+            {
+                boardId = boardId.Substring(0, boardId.Length - 5);
+            }
+            
+            // The board ID should match the JSON filename exactly
+            // Examples: "T1FireBoard.json" -> "T1Fire_board", "T1ColdBoard.json" -> "T1Cold_board"
+            // Convert "Board" to "_board" to match the expected format
+            if (boardId.EndsWith("Board"))
+            {
+                boardId = boardId.Substring(0, boardId.Length - 5) + "_board";
+            }
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[BoardPositioningManager] Extracted board ID '{boardId}' from JSON filename '{jsonFileName}'");
+            }
+            
+            return boardId;
         }
         
         /// <summary>
@@ -992,16 +1155,43 @@ namespace PassiveTree
                 return;
             }
             
-            // Initialize all cells on the board
+            // Initialize all cells on the board (handle both CellController and CellController_EXT)
             CellController[] cells = board.GetComponentsInChildren<CellController>();
+            CellController_EXT[] extCells = board.GetComponentsInChildren<CellController_EXT>();
+            
+            int totalCells = 0;
+            
+            // Initialize regular CellController components
             foreach (CellController cell in cells)
             {
                 cell.Initialize(treeManager);
+                totalCells++;
+            }
+            
+            // Initialize CellController_EXT components
+            foreach (CellController_EXT extCell in extCells)
+            {
+                // For extension board cells, initialize with the ExtensionBoardController
+                ExtensionBoardController extensionController = board.GetComponent<ExtensionBoardController>();
+                if (extensionController != null)
+                {
+                    extCell.Initialize(extensionController);
+                    
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"[BoardPositioningManager] Initialized CellController_EXT at {extCell.GridPosition} with ExtensionBoardController");
+                    }
+                }
+                else
+                {
+                    Debug.LogError($"[BoardPositioningManager] No ExtensionBoardController found for CellController_EXT at {extCell.GridPosition}");
+                }
+                totalCells++;
             }
             
             if (showDebugInfo)
             {
-                Debug.Log($"[BoardPositioningManager] ✅ Initialized {cells.Length} cells on board {board.name} with PassiveTreeManager reference");
+                Debug.Log($"[BoardPositioningManager] ✅ Initialized {totalCells} cells on board {board.name} ({cells.Length} regular, {extCells.Length} extension)");
             }
         }
         
@@ -1013,8 +1203,30 @@ namespace PassiveTree
         {
             if (board == null) return;
             
-            // Find the cell at the specified position on the board
+            // Find the cell at the specified position on the board (check both CellController and CellController_EXT)
             CellController[] cells = board.GetComponentsInChildren<CellController>();
+            CellController_EXT[] extCells = board.GetComponentsInChildren<CellController_EXT>();
+            
+            // First check CellController_EXT components (for extension boards)
+            foreach (CellController_EXT extCell in extCells)
+            {
+                if (extCell.GridPosition == cellPosition)
+                {
+                    // Configure the cell as an allocated extension point (purchased)
+                    extCell.SetAvailable(true);
+                    extCell.SetUnlocked(true);
+                    extCell.SetPurchased(true); // This is the key fix - mark as purchased
+                    extCell.SetAsExtensionPoint(true);
+                    
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"[BoardPositioningManager] ✅ Configured extension board cell at {cellPosition} on board {board.name} as ALLOCATED extension point (purchased)");
+                    }
+                    return;
+                }
+            }
+            
+            // Fallback to regular CellController components
             foreach (CellController cell in cells)
             {
                 if (cell.GridPosition == cellPosition)
@@ -1063,16 +1275,24 @@ namespace PassiveTree
             
             Debug.Log($"[BoardPositioningManager] Adjacent positions to check: {string.Join(", ", adjacentPositions.Select(p => p.ToString()))}");
             
-            // Find all cells on the board
+            // Find all cells on the board (both CellController and CellController_EXT)
             CellController[] allCells = board.GetComponentsInChildren<CellController>();
+            CellController_EXT[] allExtCells = board.GetComponentsInChildren<CellController_EXT>();
             Dictionary<Vector2Int, CellController> cellMap = new Dictionary<Vector2Int, CellController>();
             
+            // Map regular CellController components
             foreach (CellController cell in allCells)
             {
                 cellMap[cell.GridPosition] = cell;
             }
             
-            Debug.Log($"[BoardPositioningManager] Found {allCells.Length} total cells on board");
+            // Map CellController_EXT components (these take precedence for extension boards)
+            foreach (CellController_EXT extCell in allExtCells)
+            {
+                cellMap[extCell.GridPosition] = extCell; // CellController_EXT inherits from CellController
+            }
+            
+            Debug.Log($"[BoardPositioningManager] Found {allCells.Length} CellController and {allExtCells.Length} CellController_EXT components on board");
             
             // Unlock and make purchasable adjacent cells
             foreach (Vector2Int pos in adjacentPositions)
@@ -2183,6 +2403,32 @@ namespace PassiveTree
             }
             
             Debug.Log("=== END EXTENSION POINT ALLOCATION ISSUES DEBUG ===");
+        }
+        
+        #endregion
+        
+        #region Utility Methods
+        
+        /// <summary>
+        /// Convert board type string to BoardTheme enum
+        /// </summary>
+        private BoardTheme ConvertBoardTypeToTheme(string boardType)
+        {
+            if (string.IsNullOrEmpty(boardType))
+                return BoardTheme.General;
+                
+            string lowerType = boardType.ToLower();
+            
+            if (lowerType.Contains("fire") || lowerType.Contains("ember"))
+                return BoardTheme.Fire;
+            else if (lowerType.Contains("cold") || lowerType.Contains("ice"))
+                return BoardTheme.Cold;
+            else if (lowerType.Contains("lightning") || lowerType.Contains("storm"))
+                return BoardTheme.Lightning;
+            else if (lowerType.Contains("physical") || lowerType.Contains("melee"))
+                return BoardTheme.Physical;
+            else
+                return BoardTheme.General;
         }
         
         #endregion

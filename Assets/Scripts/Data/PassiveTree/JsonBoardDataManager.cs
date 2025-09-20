@@ -13,13 +13,23 @@ namespace PassiveTree
         [Header("JSON Data Source")]
         [SerializeField] private TextAsset boardDataJson;
         
+        [Header("Extension Board JSON Data")]
+        [SerializeField] private ExtensionBoardJsonData[] extensionBoardData;
+        
         [Header("Settings")]
         [SerializeField] private bool autoLoadOnStart = true;
+        [SerializeField] private bool isExtensionBoardManager = false; // Flag to indicate if this is for extension boards
         [SerializeField] private bool debugMode = true;
 
         // Runtime data - much simpler structure
         private Dictionary<Vector2Int, JsonNodeData> nodeDataMap = new Dictionary<Vector2Int, JsonNodeData>();
         private Dictionary<Vector2Int, CellController> cellMap = new Dictionary<Vector2Int, CellController>();
+        private Dictionary<Vector2Int, CellController_EXT> extCellMap = new Dictionary<Vector2Int, CellController_EXT>();
+        
+        // Temporary maps for extension board processing
+        private Dictionary<Vector2Int, CellController> tempCellMap = new Dictionary<Vector2Int, CellController>();
+        private Dictionary<Vector2Int, CellController_EXT> tempExtCellMap = new Dictionary<Vector2Int, CellController_EXT>();
+        
         private bool isDataLoaded = false;
 
         // Events
@@ -30,7 +40,34 @@ namespace PassiveTree
         {
             if (autoLoadOnStart)
             {
-                LoadBoardData();
+                if (isExtensionBoardManager)
+                {
+                    if (debugMode)
+                    {
+                        Debug.Log($"[JsonBoardDataManager] Auto-loading disabled for extension board manager - use LoadExtensionBoardData() instead");
+                    }
+                }
+                else
+                {
+                    // Check if this is a core board manager that should auto-load
+                    if (debugMode)
+                    {
+                        Debug.Log($"[JsonBoardDataManager] Core board manager auto-loading JSON data...");
+                        Debug.Log($"[JsonBoardDataManager] GameObject: {gameObject.name}");
+                        Debug.Log($"[JsonBoardDataManager] IsExtensionBoardManager: {isExtensionBoardManager}");
+                        Debug.Log($"[JsonBoardDataManager] BoardDataJson assigned: {boardDataJson != null}");
+                    }
+                    
+                    // Only auto-load if we have JSON data assigned
+                    if (boardDataJson != null)
+                    {
+                        LoadBoardData();
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[JsonBoardDataManager] Core board manager has no JSON data assigned - skipping auto-load");
+                    }
+                }
             }
         }
 
@@ -58,18 +95,53 @@ namespace PassiveTree
             // Clear existing data
             nodeDataMap.Clear();
             cellMap.Clear();
+            extCellMap.Clear();
 
-            // Find CellController components only on this board (children of this GameObject)
+            // Find CellController and CellController_EXT components only on this board (children of this GameObject)
             CellController[] cells = GetComponentsInChildren<CellController>();
-            PassiveTreeLogger.LogCategory($"Found {cells.Length} CellController components on board '{gameObject.name}'", "json");
+            CellController_EXT[] extCells = GetComponentsInChildren<CellController_EXT>();
+            PassiveTreeLogger.LogCategory($"Found {cells.Length} CellController and {extCells.Length} CellController_EXT components on board '{gameObject.name}'", "json");
+            
+            if (debugMode)
+            {
+                Debug.Log($"[JsonBoardDataManager] GameObject hierarchy for '{gameObject.name}':");
+                Debug.Log($"[JsonBoardDataManager] - Transform: {transform.name}");
+                Debug.Log($"[JsonBoardDataManager] - Parent: {(transform.parent != null ? transform.parent.name : "None")}");
+                Debug.Log($"[JsonBoardDataManager] - Child count: {transform.childCount}");
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    Transform child = transform.GetChild(i);
+                    Debug.Log($"[JsonBoardDataManager]   - Child {i}: {child.name}");
+                }
+            }
 
-            // Build cell map
+            // Build cell map for regular CellController components
             foreach (CellController cell in cells)
             {
                 cellMap[cell.GridPosition] = cell;
                 if (debugMode)
                 {
-                    PassiveTreeLogger.LogCategory($"Mapped cell at {cell.GridPosition}", "json");
+                    Debug.Log($"[JsonBoardDataManager] Mapped CellController at {cell.GridPosition} on GameObject '{cell.gameObject.name}'");
+                }
+            }
+            
+            // Build cell map for CellController_EXT components
+            foreach (CellController_EXT extCell in extCells)
+            {
+                extCellMap[extCell.GridPosition] = extCell;
+                if (debugMode)
+                {
+                    Debug.Log($"[JsonBoardDataManager] Mapped CellController_EXT at {extCell.GridPosition} on GameObject '{extCell.gameObject.name}'");
+                }
+            }
+            
+            if (debugMode)
+            {
+                Debug.Log($"[JsonBoardDataManager] Total cells mapped: {cellMap.Count} CellController, {extCellMap.Count} CellController_EXT");
+                Debug.Log($"[JsonBoardDataManager] Cell positions: {string.Join(", ", cellMap.Keys)}");
+                if (extCellMap.Count > 0)
+                {
+                    Debug.Log($"[JsonBoardDataManager] Extension cell positions: {string.Join(", ", extCellMap.Keys)}");
                 }
             }
 
@@ -273,6 +345,11 @@ namespace PassiveTree
                     CellController cell = cellMap[position];
                     AssignNodeDataToCell(cell, nodeData);
                 }
+                else if (extCellMap.ContainsKey(position))
+                {
+                    CellController_EXT extCell = extCellMap[position];
+                    AssignNodeDataToExtCell(extCell, nodeData);
+                }
                 else
                 {
                     Debug.LogWarning($"[JsonBoardDataManager] No cell found at position {position} for node {nodeData?.name ?? "null"}");
@@ -329,6 +406,62 @@ namespace PassiveTree
             if (debugMode)
             {
                 Debug.Log($"[JsonBoardDataManager] Assigned {nodeData.name} to cell at {cell.GridPosition}");
+            }
+        }
+
+        /// <summary>
+        /// Assign JSON node data to a CellController_EXT
+        /// </summary>
+        private void AssignNodeDataToExtCell(CellController_EXT extCell, JsonNodeData nodeData)
+        {
+            if (extCell == null || nodeData == null) 
+            {
+                Debug.LogWarning($"[JsonBoardDataManager] AssignNodeDataToExtCell called with null extCell or nodeData");
+                return;
+            }
+
+            if (debugMode)
+            {
+                Debug.Log($"[JsonBoardDataManager] Assigning data to extension cell at {extCell.GridPosition}:");
+                Debug.Log($"  - nodeData.id: '{nodeData.id}'");
+                Debug.Log($"  - nodeData.name: '{nodeData.name}'");
+                Debug.Log($"  - nodeData.description: '{nodeData.description}'");
+                Debug.Log($"  - nodeData.type: '{nodeData.type}'");
+                Debug.Log($"  - nodeData.position: ({nodeData.position?.column ?? -1}, {nodeData.position?.row ?? -1})");
+                Debug.Log($"  - nodeData.cost: {nodeData.cost}");
+                Debug.Log($"  - nodeData.currentRank: {nodeData.currentRank}");
+            }
+
+            // Convert JSON node type to Unity NodeType
+            NodeType nodeType = ConvertJsonNodeType(nodeData.type);
+            
+            if (debugMode)
+            {
+                Debug.Log($"[JsonBoardDataManager] Setting node type for extension cell at {extCell.GridPosition}: '{nodeData.type}' -> {nodeType}");
+            }
+            
+            // Set cell properties using the base class methods
+            extCell.SetNodeType(nodeType);
+            extCell.SetNodeDescription(nodeData.description);
+            extCell.SetNodeName(nodeData.name);
+            extCell.SetSkillPointsCost(nodeData.cost);
+            extCell.SetUnlocked(nodeData.currentRank > 0);
+            extCell.SetPurchased(nodeData.currentRank > 0);
+            
+            // Set stats if available
+            if (nodeData.stats != null)
+            {
+                Dictionary<string, float> statsDict = ConvertStatsToDictionary(nodeData.stats);
+                extCell.SetNodeStats(statsDict);
+            }
+
+            // Force visual update to ensure changes are reflected
+            extCell.UpdateVisualState();
+            
+            if (debugMode)
+            {
+                Debug.Log($"[JsonBoardDataManager] ✅ Assigned {nodeData.name} to extension cell at {extCell.GridPosition}");
+                Debug.Log($"[JsonBoardDataManager] Final cell state - Name: '{extCell.GetNodeName()}', Description: '{extCell.GetNodeDescription()}', Type: {extCell.GetNodeType()}");
             }
         }
 
@@ -759,6 +892,327 @@ namespace PassiveTree
                 return new System.Collections.Generic.List<JsonExtensionPoint>(); // Return empty list, not null
             }
         }
+
+        #region Extension Board JSON Data Management
+
+        /// <summary>
+        /// Get JSON data for a specific extension board type
+        /// </summary>
+        public TextAsset GetExtensionBoardJsonData(string boardId)
+        {
+            if (extensionBoardData == null || extensionBoardData.Length == 0)
+            {
+                if (debugMode)
+                {
+                    Debug.LogWarning($"[JsonBoardDataManager] No extension board data configured for board ID: {boardId}");
+                }
+                return null;
+            }
+
+            foreach (var boardData in extensionBoardData)
+            {
+                if (boardData != null && boardData.boardId == boardId)
+                {
+                    if (debugMode)
+                    {
+                        Debug.Log($"[JsonBoardDataManager] Found JSON data for extension board: {boardData.GetDescription()}");
+                    }
+                    return boardData.jsonData;
+                }
+            }
+
+            if (debugMode)
+            {
+                Debug.LogWarning($"[JsonBoardDataManager] No JSON data found for extension board ID: {boardId}");
+                Debug.Log($"[JsonBoardDataManager] Available board IDs: [{string.Join(", ", extensionBoardData.Where(b => b != null).Select(b => b.boardId))}]");
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Get all configured extension board data
+        /// </summary>
+        public ExtensionBoardJsonData[] GetAllExtensionBoardData()
+        {
+            return extensionBoardData?.Where(b => b != null && b.IsValid()).ToArray() ?? new ExtensionBoardJsonData[0];
+        }
+
+        /// <summary>
+        /// Get extension board data by board ID
+        /// </summary>
+        public ExtensionBoardJsonData GetExtensionBoardData(string boardId)
+        {
+            if (extensionBoardData == null || extensionBoardData.Length == 0)
+                return null;
+
+            return extensionBoardData.FirstOrDefault(b => b != null && b.boardId == boardId);
+        }
+
+        /// <summary>
+        /// Check if an extension board type is configured
+        /// </summary>
+        public bool HasExtensionBoardData(string boardId)
+        {
+            return GetExtensionBoardData(boardId) != null;
+        }
+
+        /// <summary>
+        /// Load JSON data for a specific extension board and apply it to cells
+        /// </summary>
+        public bool LoadExtensionBoardData(GameObject extensionBoard, string boardId)
+        {
+            TextAsset jsonData = GetExtensionBoardJsonData(boardId);
+            if (jsonData == null)
+            {
+                Debug.LogError($"[JsonBoardDataManager] Cannot load extension board data for board ID: {boardId}");
+                return false;
+            }
+
+            if (debugMode)
+            {
+                Debug.Log($"[JsonBoardDataManager] Loading extension board data for '{boardId}' from JSON: {jsonData.name}");
+            }
+
+            // Parse the JSON data
+            JsonBoardData boardData = ParseJsonData(jsonData.text);
+            if (boardData == null)
+            {
+                Debug.LogError($"[JsonBoardDataManager] Failed to parse JSON data for extension board: {boardId}");
+                return false;
+            }
+
+            // Build cell maps for this specific board
+            BuildExtensionBoardCellMaps(extensionBoard);
+
+            // Apply the JSON data to the cells
+            ApplyJsonDataToExtensionBoard(extensionBoard, boardData);
+
+            if (debugMode)
+            {
+                Debug.Log($"[JsonBoardDataManager] Successfully loaded extension board data for '{boardId}'");
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Parse JSON data into JsonBoardData structure
+        /// </summary>
+        private JsonBoardData ParseJsonData(string jsonText)
+        {
+            try
+            {
+                if (debugMode)
+                {
+                    Debug.Log($"[JsonBoardDataManager] Parsing JSON data for extension board...");
+                }
+
+                // Parse the JSON text into JsonBoardData
+                JsonBoardData boardData = JsonUtility.FromJson<JsonBoardData>(jsonText);
+                
+                if (boardData == null)
+                {
+                    Debug.LogError($"[JsonBoardDataManager] Failed to parse JSON - JsonUtility.FromJson returned null");
+                    return null;
+                }
+
+                if (debugMode)
+                {
+                    Debug.Log($"[JsonBoardDataManager] Successfully parsed JSON data:");
+                    Debug.Log($"  - Board Name: {boardData.name}");
+                    Debug.Log($"  - Theme: {boardData.theme}");
+                    Debug.Log($"  - Size: {boardData.size?.rows ?? -1}x{boardData.size?.columns ?? -1}");
+                    Debug.Log($"  - Nodes: {boardData.nodes?.Length ?? 0}");
+                    Debug.Log($"  - Extension Points: {boardData.extensionPoints?.Length ?? 0}");
+                }
+
+                return boardData;
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[JsonBoardDataManager] Error parsing JSON data: {e.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Build cell maps for a specific extension board
+        /// </summary>
+        private void BuildExtensionBoardCellMaps(GameObject extensionBoard)
+        {
+            if (extensionBoard == null) return;
+
+            // Create temporary maps for this specific board (don't clear global maps)
+            Dictionary<Vector2Int, CellController> tempCellMap = new Dictionary<Vector2Int, CellController>();
+            Dictionary<Vector2Int, CellController_EXT> tempExtCellMap = new Dictionary<Vector2Int, CellController_EXT>();
+
+            // Find CellController and CellController_EXT components on this specific board
+            CellController[] cells = extensionBoard.GetComponentsInChildren<CellController>();
+            CellController_EXT[] extCells = extensionBoard.GetComponentsInChildren<CellController_EXT>();
+
+            if (debugMode)
+            {
+                Debug.Log($"[JsonBoardDataManager] Building cell maps for extension board '{extensionBoard.name}': {cells.Length} CellController, {extCells.Length} CellController_EXT");
+            }
+
+            // Build temporary cell map for regular CellController components
+            foreach (CellController cell in cells)
+            {
+                tempCellMap[cell.GridPosition] = cell;
+                if (debugMode)
+                {
+                    Debug.Log($"[JsonBoardDataManager] Mapped CellController at {cell.GridPosition}");
+                }
+            }
+
+            // Build temporary cell map for CellController_EXT components
+            foreach (CellController_EXT extCell in extCells)
+            {
+                tempExtCellMap[extCell.GridPosition] = extCell;
+                if (debugMode)
+                {
+                    Debug.Log($"[JsonBoardDataManager] Mapped CellController_EXT at {extCell.GridPosition}");
+                }
+            }
+
+            // Store the temporary maps for use in ApplyJsonDataToExtensionBoard
+            this.tempCellMap = tempCellMap;
+            this.tempExtCellMap = tempExtCellMap;
+        }
+
+        /// <summary>
+        /// Apply JSON data to extension board cells
+        /// </summary>
+        private void ApplyJsonDataToExtensionBoard(GameObject extensionBoard, JsonBoardData boardData)
+        {
+            if (boardData?.nodes == null) return;
+
+            int appliedCount = 0;
+            
+            // First, apply node data to all cells
+            foreach (var nodeData in boardData.nodes)
+            {
+                if (nodeData?.position == null) continue;
+
+                Vector2Int position = new Vector2Int(nodeData.position.column, nodeData.position.row);
+
+                if (tempCellMap.ContainsKey(position))
+                {
+                    CellController cell = tempCellMap[position];
+                    AssignNodeDataToCell(cell, nodeData);
+                    appliedCount++;
+                }
+                else if (tempExtCellMap.ContainsKey(position))
+                {
+                    CellController_EXT extCell = tempExtCellMap[position];
+                    AssignNodeDataToExtCell(extCell, nodeData);
+                    appliedCount++;
+                }
+                else if (debugMode)
+                {
+                    Debug.LogWarning($"[JsonBoardDataManager] No cell found at position {position} for node {nodeData?.name ?? "null"} on extension board '{extensionBoard.name}'");
+                }
+            }
+            
+            // Then, mark extension points from JSON as extension points
+            if (boardData.extensionPoints != null && boardData.extensionPoints.Length > 0)
+            {
+                int extensionPointCount = 0;
+                foreach (var extPoint in boardData.extensionPoints)
+                {
+                    if (extPoint?.position == null) continue;
+                    
+                    Vector2Int position = new Vector2Int(extPoint.position.column, extPoint.position.row);
+                    
+                    if (tempExtCellMap.ContainsKey(position))
+                    {
+                        CellController_EXT extCell = tempExtCellMap[position];
+                        
+                        // Override the node type to be Extension
+                        extCell.SetNodeType(NodeType.Extension);
+                        extCell.SetAsExtensionPoint(true);
+                        
+                        if (debugMode)
+                        {
+                            Debug.Log($"[JsonBoardDataManager] Marked cell at {position} as extension point: {extPoint.id}");
+                        }
+                        extensionPointCount++;
+                    }
+                    else if (tempCellMap.ContainsKey(position))
+                    {
+                        CellController cell = tempCellMap[position];
+                        
+                        // Override the node type to be Extension
+                        cell.SetNodeType(NodeType.Extension);
+                        cell.SetAsExtensionPoint(true);
+                        
+                        if (debugMode)
+                        {
+                            Debug.Log($"[JsonBoardDataManager] Marked cell at {position} as extension point: {extPoint.id}");
+                        }
+                        extensionPointCount++;
+                    }
+                    else if (debugMode)
+                    {
+                        Debug.LogWarning($"[JsonBoardDataManager] No cell found at extension point position {position} for {extPoint.id}");
+                    }
+                }
+                
+                if (debugMode)
+                {
+                    Debug.Log($"[JsonBoardDataManager] Marked {extensionPointCount} cells as extension points from JSON");
+                }
+            }
+
+            if (debugMode)
+            {
+                Debug.Log($"[JsonBoardDataManager] Applied JSON data to {appliedCount} cells on extension board '{extensionBoard.name}'");
+            }
+        }
+
+        /// <summary>
+        /// Validate all configured extension board data
+        /// </summary>
+        [ContextMenu("Validate Extension Board Data")]
+        public void ValidateExtensionBoardData()
+        {
+            Debug.Log("=== EXTENSION BOARD DATA VALIDATION ===");
+
+            if (extensionBoardData == null || extensionBoardData.Length == 0)
+            {
+                Debug.LogWarning("[JsonBoardDataManager] No extension board data configured!");
+                return;
+            }
+
+            int validCount = 0;
+            int invalidCount = 0;
+
+            foreach (var boardData in extensionBoardData)
+            {
+                if (boardData == null)
+                {
+                    Debug.LogError("[JsonBoardDataManager] Null extension board data entry found!");
+                    invalidCount++;
+                    continue;
+                }
+
+                if (boardData.IsValid())
+                {
+                    Debug.Log($"[JsonBoardDataManager] ✅ Valid: {boardData.GetDescription()}");
+                    validCount++;
+                }
+                else
+                {
+                    Debug.LogError($"[JsonBoardDataManager] ❌ Invalid: Board ID='{boardData.boardId}', JSON Data={(boardData.jsonData != null ? boardData.jsonData.name : "NULL")}");
+                    invalidCount++;
+                }
+            }
+
+            Debug.Log($"[JsonBoardDataManager] Validation complete: {validCount} valid, {invalidCount} invalid");
+            Debug.Log("=== END VALIDATION ===");
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -851,5 +1305,51 @@ namespace PassiveTree
         public string[] availableBoards;
         public int maxConnections;
         public int currentConnections;
+    }
+
+    /// <summary>
+    /// Configuration data for extension board JSON files
+    /// Allows easy assignment of JSON data for different extension board types
+    /// </summary>
+    [System.Serializable]
+    public class ExtensionBoardJsonData
+    {
+        [Header("Board Identification")]
+        [Tooltip("Unique identifier for this extension board type (e.g., 'fire_board', 'cold_board')")]
+        public string boardId;
+        
+        [Tooltip("Display name for this extension board type")]
+        public string boardName;
+        
+        [Header("JSON Data")]
+        [Tooltip("JSON file containing the board data for this extension board type")]
+        public TextAsset jsonData;
+        
+        [Header("Board Theme")]
+        [Tooltip("Theme associated with this extension board")]
+        public BoardTheme boardTheme = BoardTheme.General;
+        
+        [Header("Settings")]
+        [Tooltip("Whether this board is unlocked by default")]
+        public bool isUnlocked = true;
+        
+        [Tooltip("Required level to unlock this board")]
+        public int requiredLevel = 1;
+        
+        /// <summary>
+        /// Check if this extension board data is valid
+        /// </summary>
+        public bool IsValid()
+        {
+            return !string.IsNullOrEmpty(boardId) && jsonData != null;
+        }
+        
+        /// <summary>
+        /// Get a description of this extension board data
+        /// </summary>
+        public string GetDescription()
+        {
+            return $"Extension Board: {boardName} (ID: {boardId}, Theme: {boardTheme})";
+        }
     }
 }
