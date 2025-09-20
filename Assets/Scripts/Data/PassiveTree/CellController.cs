@@ -229,7 +229,7 @@ namespace PassiveTree
         /// <summary>
         /// Handle button click
         /// </summary>
-        private void OnButtonClick()
+        public virtual void OnButtonClick()
         {
             Debug.Log($"🖱️ [CellController] BUTTON CLICK DETECTED on {gridPosition} - Available: {isAvailable}, Unlocked: {isUnlocked}, Purchased: {isPurchased}, Type: {nodeType}");
             
