@@ -13,10 +13,10 @@ namespace PassiveTree
     public class CellController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         [Header("Cell Settings")]
-        [SerializeField] private Vector2Int gridPosition;
-        [SerializeField] private NodeType nodeType = NodeType.Travel;
-        [SerializeField] private string nodeName = "Basic Node";
-        [SerializeField] private string nodeDescription = "Basic node";
+        [SerializeField] protected Vector2Int gridPosition;
+        [SerializeField] protected NodeType nodeType = NodeType.Travel;
+        [SerializeField] protected string nodeName = "Basic Node";
+        [SerializeField] protected string nodeDescription = "Basic node";
         
         [Header("Visual")]
         [SerializeField] private SpriteRenderer spriteRenderer;
@@ -41,13 +41,13 @@ namespace PassiveTree
         [Header("State")]
         [SerializeField] private bool isSelected = false;
         [SerializeField] private bool isHovered = false;
-        [SerializeField] private bool isAvailable = true;
-        [SerializeField] private bool isUnlocked = false;
-        [SerializeField] private bool isPurchased = false;
-        [SerializeField] private bool isExtensionPoint = false;
+        [SerializeField] protected bool isAvailable = true;
+        [SerializeField] protected bool isUnlocked = false;
+        [SerializeField] protected bool isPurchased = false;
+        [SerializeField] protected bool isExtensionPoint = false;
         
         [Header("Debug")]
-        [SerializeField] private bool showDebugInfo = false;
+        [SerializeField] protected bool showDebugInfo = false;
         
         [Header("Attribute Overlay Sprites")]
         [SerializeField] private bool enableAttributeOverlays = false;
@@ -81,7 +81,7 @@ namespace PassiveTree
         public bool IsPurchased => isPurchased;
         public bool IsExtensionPoint => isExtensionPoint;
         
-        void Awake()
+        protected virtual void Awake()
         {
             // Get sprite renderer if not assigned
             if (spriteRenderer == null)
@@ -297,7 +297,7 @@ namespace PassiveTree
         /// <summary>
         /// Check if this cell can be interacted with
         /// </summary>
-        private bool CanBeInteractedWith()
+        protected virtual bool CanBeInteractedWith()
         {
             Debug.Log($"[CellController] CanBeInteractedWith check for {gridPosition}:");
             

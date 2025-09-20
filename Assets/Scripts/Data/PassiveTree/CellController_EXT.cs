@@ -15,7 +15,7 @@ namespace PassiveTree
     public class CellController_EXT : CellController
     {
         // Extension board specific references
-        private ExtensionBoardController extensionBoardController;
+        public ExtensionBoardController extensionBoardController;
         
         void Awake()
         {
@@ -28,8 +28,15 @@ namespace PassiveTree
         
         void Start()
         {
-            // Call base class Start first
-            base.Start();
+            // Base class doesn't have Start method, so we just do our own initialization
+            // Set initial visual state
+            UpdateVisualState();
+            
+            // Assign sprite based on node type
+            if (autoAssignSprite)
+            {
+                AssignSpriteBasedOnNodeType();
+            }
         }
         
         /// <summary>
@@ -51,7 +58,7 @@ namespace PassiveTree
         /// <summary>
         /// Set initial state based on node type
         /// </summary>
-        private void SetInitialState()
+        public void SetInitialState()
         {
             switch (nodeType)
             {
@@ -105,7 +112,7 @@ namespace PassiveTree
         /// <summary>
         /// Handle purchase for extension board cells
         /// </summary>
-        private void HandleExtensionBoardCellPurchase()
+        public void HandleExtensionBoardCellPurchase()
         {
             Debug.Log($"[CellController_EXT] Handling extension board cell purchase for {gridPosition}");
             
