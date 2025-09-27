@@ -89,6 +89,25 @@ public class CharacterStatsData
     public float spellDodgeChance;
     public float spellBlockChance;
     
+    [Header("Ailments")]
+    // Non-damaging ailments chance
+    public float chanceToShock;
+    public float chanceToChill;
+    public float chanceToFreeze;
+    
+    // Damaging ailments chance
+    public float chanceToIgnite;
+    public float chanceToBleed;
+    public float chanceToPoison;
+    
+    // Increased ailment magnitude/effect
+    public float increasedIgniteMagnitude;
+    public float increasedShockMagnitude;
+    public float increasedChillMagnitude;
+    public float increasedFreezeMagnitude;
+    public float increasedBleedMagnitude;
+    public float increasedPoisonMagnitude;
+    
     [Header("Recovery Stats")]
     public float lifeRegeneration;
     public float energyShieldRegeneration;
@@ -202,6 +221,20 @@ public class CharacterStatsData
         dodgeChance = 0f;
         spellDodgeChance = 0f;
         spellBlockChance = 0f;
+        
+        // Initialize ailment stats
+        chanceToShock = 0f;
+        chanceToChill = 0f;
+        chanceToFreeze = 0f;
+        chanceToIgnite = 0f;
+        chanceToBleed = 0f;
+        chanceToPoison = 0f;
+        increasedIgniteMagnitude = 0f;
+        increasedShockMagnitude = 0f;
+        increasedChillMagnitude = 0f;
+        increasedFreezeMagnitude = 0f;
+        increasedBleedMagnitude = 0f;
+        increasedPoisonMagnitude = 0f;
         
         lifeRegeneration = 0f;
         energyShieldRegeneration = 0f;
@@ -366,6 +399,20 @@ public class CharacterStatsData
             case "spelldodgechance": return spellDodgeChance;
             case "spellblockchance": return spellBlockChance;
             
+            // Ailment stats
+            case "chancetoshock": return chanceToShock;
+            case "chancetochill": return chanceToChill;
+            case "chancetofreeze": return chanceToFreeze;
+            case "chancetoignite": return chanceToIgnite;
+            case "chancetobleed": return chanceToBleed;
+            case "chancetopoison": return chanceToPoison;
+            case "increasedignitemagnitude": return increasedIgniteMagnitude;
+            case "increasedshockmagnitude": return increasedShockMagnitude;
+            case "increasedchillmagnitude": return increasedChillMagnitude;
+            case "increasedfreezemagnitude": return increasedFreezeMagnitude;
+            case "increasedbleedmagnitude": return increasedBleedMagnitude;
+            case "increasedpoisonmagnitude": return increasedPoisonMagnitude;
+            
             // Recovery stats
             case "liferegeneration": return lifeRegeneration;
             case "energyshieldregeneration": return energyShieldRegeneration;
@@ -461,6 +508,21 @@ public class CharacterStatsData
             case "dodgechance": dodgeChance = value; break;
             case "spelldodgechance": spellDodgeChance = value; break;
             case "spellblockchance": spellBlockChance = value; break;
+            
+            // Ailment stats
+            case "chancetoshock": chanceToShock = value; break;
+            case "chancetochill": chanceToChill = value; break;
+            case "chancetofreeze": chanceToFreeze = value; break;
+            case "chancetoignite": chanceToIgnite = value; break;
+            case "chancetobleed": chanceToBleed = value; break;
+            case "chancetopoison": chanceToPoison = value; break;
+            case "increasedignitemagnitude": increasedIgniteMagnitude = value; break;
+            case "increasedshockmagnitude": increasedShockMagnitude = value; break;
+            case "increasedchillmagnitude": increasedChillMagnitude = value; break;
+            case "increasedfreezemagnitude": increasedFreezeMagnitude = value; break;
+            case "increasedbleedmagnitude": increasedBleedMagnitude = value; break;
+            case "increasedpoisonmagnitude": increasedPoisonMagnitude = value; break;
+            
             case "liferegeneration": lifeRegeneration = value; break;
             case "energyshieldregeneration": energyShieldRegeneration = value; break;
             case "manaregeneration": manaRegeneration = value; break;
@@ -685,6 +747,20 @@ public class CharacterStatsData
         clone.energyShield = this.energyShield;
         clone.spellDodgeChance = this.spellDodgeChance;
         clone.spellBlockChance = this.spellBlockChance;
+        
+        // Copy ailment stats
+        clone.chanceToShock = this.chanceToShock;
+        clone.chanceToChill = this.chanceToChill;
+        clone.chanceToFreeze = this.chanceToFreeze;
+        clone.chanceToIgnite = this.chanceToIgnite;
+        clone.chanceToBleed = this.chanceToBleed;
+        clone.chanceToPoison = this.chanceToPoison;
+        clone.increasedIgniteMagnitude = this.increasedIgniteMagnitude;
+        clone.increasedShockMagnitude = this.increasedShockMagnitude;
+        clone.increasedChillMagnitude = this.increasedChillMagnitude;
+        clone.increasedFreezeMagnitude = this.increasedFreezeMagnitude;
+        clone.increasedBleedMagnitude = this.increasedBleedMagnitude;
+        clone.increasedPoisonMagnitude = this.increasedPoisonMagnitude;
         
         clone.lifeRegeneration = this.lifeRegeneration;
         clone.energyShieldRegeneration = this.energyShieldRegeneration;

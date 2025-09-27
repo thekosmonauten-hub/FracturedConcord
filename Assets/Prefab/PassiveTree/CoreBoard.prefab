@@ -318,6 +318,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 530252109748417775, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 530252109748417775, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 530252109748417775, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 1935158205729760189}
@@ -506,6 +514,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 796635621365688604, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 796635621365688604, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 796635621365688604, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 388642073834584886}
@@ -648,6 +664,14 @@ PrefabInstance:
     - target: {fileID: 954645458044330296, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 954645458044330296, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 954645458044330296, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 954645458044330296, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
@@ -926,6 +950,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 1336206212567072496, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1336206212567072496, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1336206212567072496, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 7955634295333756289}
@@ -1046,6 +1078,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 1495997687655228474, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495997687655228474, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1495997687655228474, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 610426370065857534}
@@ -1154,6 +1194,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 1601483076910529397, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1601483076910529397, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1601483076910529397, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 526552182004487050}
@@ -1232,6 +1280,14 @@ PrefabInstance:
     - target: {fileID: 1666690844110423551, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1666690844110423551, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1666690844110423551, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1666690844110423551, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
@@ -1430,6 +1486,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 1915731704663168180, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1915731704663168180, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1915731704663168180, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 2988658887754489734}
@@ -1562,6 +1626,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 2014824357996741411, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2014824357996741411, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2014824357996741411, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 3387456151050297072}
@@ -1640,6 +1712,14 @@ PrefabInstance:
     - target: {fileID: 2030306070195777306, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2030306070195777306, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2030306070195777306, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2030306070195777306, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
@@ -1760,6 +1840,14 @@ PrefabInstance:
     - target: {fileID: 2241268718351455843, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2241268718351455843, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2241268718351455843, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2241268718351455843, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
@@ -1958,6 +2046,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 2655221320931663171, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2655221320931663171, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2655221320931663171, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 2017562289186301685}
@@ -2048,6 +2144,14 @@ PrefabInstance:
     - target: {fileID: 2674911648047830640, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2674911648047830640, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2674911648047830640, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2674911648047830640, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
@@ -2188,6 +2292,14 @@ PrefabInstance:
     - target: {fileID: 2784980866563458201, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2784980866563458201, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2784980866563458201, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2784980866563458201, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
@@ -2410,6 +2522,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 3098550202335367288, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3098550202335367288, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3098550202335367288, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 551498306208446191}
@@ -2616,6 +2736,14 @@ PrefabInstance:
     - target: {fileID: 3375468387061987859, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3375468387061987859, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3375468387061987859, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3375468387061987859, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
@@ -2858,6 +2986,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 3666945473464471256, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3666945473464471256, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3666945473464471256, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 5313383863633469939}
@@ -2950,6 +3086,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 3681883635535955422, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3681883635535955422, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3681883635535955422, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 4409900401056862561}
@@ -3018,6 +3162,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8241392835675809711}
     - target: {fileID: 3757124151204261676, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeName
+      value: Extension_South
+      objectReference: {fileID: 0}
+    - target: {fileID: 3757124151204261676, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: lockedColor.a
       value: 1
       objectReference: {fileID: 0}
@@ -3042,9 +3190,21 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 3757124151204261676, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3757124151204261676, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3757124151204261676, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 1382907069093891061}
+    - target: {fileID: 3757124151204261676, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeDescription
+      value: Allocate to select an extension board.
+      objectReference: {fileID: 0}
     - target: {fileID: 3757124151204261676, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlayOffset.y
       value: 0.4
@@ -3142,6 +3302,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4250493376790203866}
     - target: {fileID: 3835904940813359956, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeName
+      value: Extension_West
+      objectReference: {fileID: 0}
+    - target: {fileID: 3835904940813359956, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: lockedColor.a
       value: 1
       objectReference: {fileID: 0}
@@ -3166,9 +3330,21 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 3835904940813359956, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3835904940813359956, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3835904940813359956, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 4649075320229208362}
+    - target: {fileID: 3835904940813359956, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeDescription
+      value: Allocate to select an extension board.
+      objectReference: {fileID: 0}
     - target: {fileID: 3835904940813359956, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlayOffset.y
       value: 0.4
@@ -3602,6 +3778,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 4177823034056854948, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4177823034056854948, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4177823034056854948, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 5771106014571102806}
@@ -3856,6 +4040,14 @@ PrefabInstance:
     - target: {fileID: 4509465591676143867, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4509465591676143867, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4509465591676143867, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4509465591676143867, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
@@ -4118,6 +4310,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 4865587791628898159, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4865587791628898159, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4865587791628898159, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 8567979400568856837}
@@ -4198,6 +4398,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 4900374779923374334, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4900374779923374334, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4900374779923374334, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 7218404060733061761}
@@ -4266,6 +4474,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 9048385792234792999}
     - target: {fileID: 5011261180688658625, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeName
+      value: Extension_East
+      objectReference: {fileID: 0}
+    - target: {fileID: 5011261180688658625, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: lockedColor.a
       value: 1
       objectReference: {fileID: 0}
@@ -4290,9 +4502,21 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 5011261180688658625, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5011261180688658625, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5011261180688658625, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 5731255119126163580}
+    - target: {fileID: 5011261180688658625, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeDescription
+      value: Allocate to select an extension board.
+      objectReference: {fileID: 0}
     - target: {fileID: 5011261180688658625, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlayOffset.y
       value: 0.4
@@ -4510,6 +4734,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 5139155563442687467, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5139155563442687467, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5139155563442687467, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 3948206764608930436}
@@ -4632,6 +4864,14 @@ PrefabInstance:
     - target: {fileID: 5219082335377658881, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5219082335377658881, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5219082335377658881, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5219082335377658881, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
@@ -5186,6 +5426,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6041896868456907416, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6041896868456907416, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6041896868456907416, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 8301819812075689653}
@@ -5462,6 +5710,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6383010995243360531, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6383010995243360531, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6383010995243360531, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 3814912436078420995}
@@ -5540,6 +5796,14 @@ PrefabInstance:
     - target: {fileID: 6399792254594242716, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6399792254594242716, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6399792254594242716, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6399792254594242716, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
@@ -5858,6 +6122,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6909706173986064658, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6909706173986064658, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6909706173986064658, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 8062188798622136085}
@@ -5962,6 +6234,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6963717904781946571, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6963717904781946571, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6963717904781946571, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 6773102908504698623}
@@ -6040,6 +6320,14 @@ PrefabInstance:
     - target: {fileID: 7025811789585573291, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7025811789585573291, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7025811789585573291, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7025811789585573291, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
@@ -6160,6 +6448,14 @@ PrefabInstance:
     - target: {fileID: 7308812323839422774, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7308812323839422774, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7308812323839422774, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7308812323839422774, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
@@ -6348,6 +6644,14 @@ PrefabInstance:
     - target: {fileID: 7842455155741842267, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7842455155741842267, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7842455155741842267, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7842455155741842267, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
@@ -6594,6 +6898,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 8260997492582077000, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8260997492582077000, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8260997492582077000, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 2560236400066144554}
@@ -6822,6 +7134,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 8645672528970997002, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8645672528970997002, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8645672528970997002, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 3637133077992716015}
@@ -7018,6 +7338,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 8821117252525075272, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8821117252525075272, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8821117252525075272, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 6890878033853145296}
@@ -7130,6 +7458,14 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 8839381341062783218, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8839381341062783218, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8839381341062783218, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 3474795590369911852}
@@ -7218,6 +7554,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5629465197042253998}
     - target: {fileID: 8918022428618546760, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeName
+      value: Extension_North
+      objectReference: {fileID: 0}
+    - target: {fileID: 8918022428618546760, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: lockedColor.a
       value: 1
       objectReference: {fileID: 0}
@@ -7242,9 +7582,21 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 8918022428618546760, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8918022428618546760, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8918022428618546760, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
       value: 
       objectReference: {fileID: 7118529311591141127}
+    - target: {fileID: 8918022428618546760, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeDescription
+      value: Allocate to select an extension board.
+      objectReference: {fileID: 0}
     - target: {fileID: 8918022428618546760, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlayOffset.y
       value: 0.4
@@ -7328,6 +7680,14 @@ PrefabInstance:
     - target: {fileID: 8925315152485750484, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8925315152485750484, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8925315152485750484, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8925315152485750484, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer
@@ -7500,6 +7860,14 @@ PrefabInstance:
     - target: {fileID: 9054999846235085264, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: overlaySize.y
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054999846235085264, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9054999846235085264, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: gridPosition.y
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 9054999846235085264, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: spriteRenderer

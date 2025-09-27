@@ -15,6 +15,9 @@ namespace PassiveTree
         [SerializeField] private Sprite[] nodeSprites;
         [SerializeField] private Sprite extensionPointSprite;
         
+        [Header("Pre-configured Extension Board Prefabs")]
+        [SerializeField] private ExtensionBoardPrefabData[] extensionBoardPrefabs;
+        
         [Header("Board Configuration")]
         [SerializeField] private Vector2Int boardSize = new Vector2Int(7, 7);
         [SerializeField] private float cellSpacing = 1f;
@@ -30,6 +33,74 @@ namespace PassiveTree
         /// Generate an extension board prefab for a specific theme
         /// </summary>
         public GameObject GenerateExtensionBoard(BoardTheme theme, string boardName)
+        {
+            // First, try to find a pre-configured prefab for this board
+            GameObject preConfiguredBoard = GetPreConfiguredBoardPrefab(boardName);
+            if (preConfiguredBoard != null)
+            {
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[ExtensionBoardGenerator] Using pre-configured prefab for board: {boardName}");
+                }
+                return preConfiguredBoard;
+            }
+            
+            // Fall back to dynamic generation if no pre-configured prefab exists
+            if (showDebugInfo)
+            {
+                Debug.Log($"[ExtensionBoardGenerator] No pre-configured prefab found for {boardName}, using dynamic generation");
+            }
+            
+            return GenerateExtensionBoardDynamic(theme, boardName);
+        }
+        
+        /// <summary>
+        /// Get a pre-configured board prefab by name
+        /// </summary>
+        private GameObject GetPreConfiguredBoardPrefab(string boardName)
+        {
+            if (extensionBoardPrefabs == null || extensionBoardPrefabs.Length == 0)
+            {
+                return null;
+            }
+            
+            foreach (var prefabData in extensionBoardPrefabs)
+            {
+                if (prefabData != null && prefabData.boardName == boardName)
+                {
+                    return prefabData.boardPrefab;
+                }
+            }
+            
+            return null;
+        }
+        
+        /// <summary>
+        /// Get all available extension board prefabs for the selection UI
+        /// </summary>
+        public ExtensionBoardPrefabData[] GetAvailableBoardPrefabs()
+        {
+            if (extensionBoardPrefabs == null || extensionBoardPrefabs.Length == 0)
+            {
+                if (showDebugInfo)
+                {
+                    Debug.LogWarning("[ExtensionBoardGenerator] No extension board prefabs configured!");
+                }
+                return new ExtensionBoardPrefabData[0];
+            }
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[ExtensionBoardGenerator] Returning {extensionBoardPrefabs.Length} available board prefabs");
+            }
+            
+            return extensionBoardPrefabs;
+        }
+        
+        /// <summary>
+        /// Generate an extension board dynamically (original method)
+        /// </summary>
+        private GameObject GenerateExtensionBoardDynamic(BoardTheme theme, string boardName)
         {
             if (cellContainerPrefab == null && cellContainerExtPrefab == null)
             {
@@ -472,6 +543,51 @@ namespace PassiveTree
         public Sprite notableSprite;
         public Sprite keystoneSprite;
         public Color themeColor = Color.white;
+    }
+    
+    /// <summary>
+    /// Data structure for pre-configured extension board prefabs
+    /// </summary>
+    [System.Serializable]
+    public class ExtensionBoardPrefabData
+    {
+        [Header("Board Identification")]
+        [Tooltip("Name that matches the board name used in BoardPositioningManager")]
+        public string boardName;
+        
+        [Header("Prefab")]
+        [Tooltip("Pre-configured prefab with all cells and data already set up")]
+        public GameObject boardPrefab;
+        
+        [Header("Board Information")]
+        [Tooltip("Theme of this board")]
+        public BoardTheme boardTheme = BoardTheme.General;
+        
+        [Tooltip("Description of this board")]
+        public string boardDescription = "";
+        
+        [Header("Visual")]
+        [Tooltip("Preview sprite for this board")]
+        public Sprite boardPreview;
+        
+        [Tooltip("Color for this board")]
+        public Color boardColor = Color.white;
+        
+        /// <summary>
+        /// Check if this prefab data is valid
+        /// </summary>
+        public bool IsValid()
+        {
+            return !string.IsNullOrEmpty(boardName) && boardPrefab != null;
+        }
+        
+        /// <summary>
+        /// Get a description of this prefab data
+        /// </summary>
+        public string GetDescription()
+        {
+            return $"Extension Board Prefab: {boardName} (Theme: {boardTheme})";
+        }
     }
     
 }

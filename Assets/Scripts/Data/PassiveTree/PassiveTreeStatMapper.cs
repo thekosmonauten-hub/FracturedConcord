@@ -20,23 +20,49 @@ namespace PassiveTree
             { "maxEnergyShield", "maxenergyshield" },
             
             // Combat stats
-            { "armor", "armor" },
-            { "armorIncrease", "armor" },
+            { "armor", "armour" },
+            { "armorIncrease", "armour" }, // Keep as increase since it's a modifier
             { "evasion", "evasion" },
             { "increasedEvasion", "evasion" },
-            { "elementalResist", "elementalresist" },
+            { "elementalResist", "elementalresistance" },
             { "accuracy", "accuracy" },
             
-            // Damage stats
-            { "spellPowerIncrease", "spellpower" },
-            { "increasedProjectileDamage", "projectiledamage" },
+            // Damage modifiers (Increased)
+            { "fireIncrease", "increasedfiredamage" },
+            { "coldIncrease", "increasedcolddamage" },
+            { "lightningIncrease", "increasedlightningdamage" },
+            { "physicalIncrease", "increasedphysicaldamage" },
+            { "chaosIncrease", "increasedchaosdamage" },
             
-            // Fire-specific stats
-            { "fireIncrease", "firedamage" },
-            { "fire", "fireresist" },
-            { "chanceToIgnite", "ignitechance" },
+            // Resistances (single element names)
+            { "fire", "fireresistance" },
+            { "cold", "coldresistance" },
+            { "lightning", "lightningresistance" },
+            { "chaos", "chaosresistance" },
+            { "physical", "physicalresistance" },
+            
+            // Other damage stats
+            { "spellPowerIncrease", "increasedspelldamage" },
+            { "increasedProjectileDamage", "increasedprojectiledamage" },
+            { "critChanceIncrease", "criticalchance" },
+            { "critMultiplierIncrease", "criticalmultiplier" },
+            
+            // Ailment stats
+            { "chanceToShock", "chancetoshock" },
+            { "chanceToChill", "chancetochill" },
+            { "chanceToFreeze", "chancetofreeze" },
+            { "chanceToIgnite", "chancetoignite" },
+            { "chanceToBleed", "chancetobleed" },
+            { "chanceToPoison", "chancetopoison" },
+            { "increasedIgniteMagnitude", "increasedignitemagnitude" },
+            { "increasedShockMagnitude", "increasedshockmagnitude" },
+            { "increasedChillMagnitude", "increasedchillmagnitude" },
+            { "increasedFreezeMagnitude", "increasedfreezemagnitude" },
+            { "increasedBleedMagnitude", "increasedbleedmagnitude" },
+            { "increasedPoisonMagnitude", "increasedpoisonmagnitude" },
+            
+            // Fire-specific stats (legacy)
             { "addedPhysicalAsFire", "physicalasfire" },
-            { "increasedIgniteMagnitude", "ignitemagnitude" },
             { "addedFireAsCold", "fireascold" },
         };
         

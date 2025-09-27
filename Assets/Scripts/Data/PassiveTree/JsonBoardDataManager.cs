@@ -996,6 +996,50 @@ namespace PassiveTree
         }
 
         /// <summary>
+        /// Load JSON data for a specific extension board from a TextAsset and apply it to cells
+        /// </summary>
+        public bool LoadExtensionBoardDataFromTextAsset(GameObject extensionBoard, TextAsset jsonDataAsset)
+        {
+            if (jsonDataAsset == null)
+            {
+                Debug.LogError($"[JsonBoardDataManager] Cannot load extension board data - TextAsset is null");
+                return false;
+            }
+
+            if (extensionBoard == null)
+            {
+                Debug.LogError($"[JsonBoardDataManager] Cannot load extension board data - Extension board GameObject is null");
+                return false;
+            }
+
+            if (debugMode)
+            {
+                Debug.Log($"[JsonBoardDataManager] Loading extension board data from TextAsset: {jsonDataAsset.name}");
+            }
+
+            // Parse the JSON data
+            JsonBoardData boardData = ParseJsonData(jsonDataAsset.text);
+            if (boardData == null)
+            {
+                Debug.LogError($"[JsonBoardDataManager] Failed to parse JSON data for extension board from TextAsset: {jsonDataAsset.name}");
+                return false;
+            }
+
+            // Build cell maps for this specific board
+            BuildExtensionBoardCellMaps(extensionBoard);
+
+            // Apply the JSON data to the cells
+            ApplyJsonDataToExtensionBoard(extensionBoard, boardData);
+
+            if (debugMode)
+            {
+                Debug.Log($"[JsonBoardDataManager] Successfully loaded extension board data from TextAsset: {jsonDataAsset.name}");
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Parse JSON data into JsonBoardData structure
         /// </summary>
         private JsonBoardData ParseJsonData(string jsonText)
@@ -1264,37 +1308,177 @@ namespace PassiveTree
     [System.Serializable]
     public class JsonStats
     {
-        // Core attributes
+        [Header("Core Attributes")]
         public int strength;
         public int dexterity;
         public int intelligence;
         
-        // Health and resources
+        [Header("Combat Resources")]
+        public int maxHealth;
+        public int maxMana;
+        public int maxReliance;
+        public int maxEnergyShield;
+        public int currentHealth;
+        public int currentMana;
+        public int currentReliance;
+        public int currentEnergyShield;
+        
+        // Legacy resource increase properties
         public int maxHealthIncrease;
         public int maxEnergyShieldIncrease;
-        public int maxEnergyShield;
         
-        // Combat stats
-        public int armor;
+        [Header("Combat Stats")]
+        public int attackPower;
+        public int defense;
+        public float criticalChance;
+        public float criticalMultiplier;
+        public float accuracy;
+        
+        [Header("Damage Modifiers")]
+        public float increasedPhysicalDamage;
+        public float increasedFireDamage;
+        public float increasedColdDamage;
+        public float increasedLightningDamage;
+        public float increasedChaosDamage;
+        public float increasedElementalDamage;
+        public float increasedSpellDamage;
+        public float increasedAttackDamage;
+        public float increasedProjectileDamage;
+        public float increasedAreaDamage;
+        public float increasedMeleeDamage;
+        public float increasedRangedDamage;
+        
+        // Legacy spell power property
+        public float spellPowerIncrease;
+        
+        [Header("More Damage Multipliers")]
+        public float morePhysicalDamage = 1f;
+        public float moreFireDamage = 1f;
+        public float moreColdDamage = 1f;
+        public float moreLightningDamage = 1f;
+        public float moreChaosDamage = 1f;
+        public float moreElementalDamage = 1f;
+        public float moreSpellDamage = 1f;
+        public float moreAttackDamage = 1f;
+        public float moreProjectileDamage = 1f;
+        public float moreAreaDamage = 1f;
+        public float moreMeleeDamage = 1f;
+        public float moreRangedDamage = 1f;
+        
+        [Header("Added Damage")]
+        public float addedPhysicalDamage;
+        public float addedFireDamage;
+        public float addedColdDamage;
+        public float addedLightningDamage;
+        public float addedChaosDamage;
+        public float addedElementalDamage;
+        public float addedSpellDamage;
+        public float addedAttackDamage;
+        public float addedProjectileDamage;
+        public float addedAreaDamage;
+        public float addedMeleeDamage;
+        public float addedRangedDamage;
+        
+        [Header("Resistances")]
+        public float physicalResistance;
+        public float fireResistance;
+        public float coldResistance;
+        public float lightningResistance;
+        public float chaosResistance;
+        public float elementalResistance;
+        public float allResistance;
+        
+        [Header("Defense Stats")]
+        public int armour;
+        public float evasion;
+        public int energyShield;
+        public float blockChance;
+        public float dodgeChance;
+        public float spellDodgeChance;
+        public float spellBlockChance;
+        
+        // Legacy defense increase properties
         public int armorIncrease;
-        public int evasion;
-        public int increasedEvasion;
-        public int elementalResist;
-        public int accuracy;
+        public float increasedEvasion;
+        public float elementalResist;
         
-        // Damage stats
-        public int spellPowerIncrease;
-        public int increasedProjectileDamage;
+        [Header("Ailments")]
+        // Non-damaging ailments chance
+        public float chanceToShock;
+        public float chanceToChill;
+        public float chanceToFreeze;
         
+        // Damaging ailments chance
+        public float chanceToIgnite;
+        public float chanceToBleed;
+        public float chanceToPoison;
+        
+        // Increased ailment magnitude/effect
+        public float increasedIgniteMagnitude;
+        public float increasedShockMagnitude;
+        public float increasedChillMagnitude;
+        public float increasedFreezeMagnitude;
+        public float increasedBleedMagnitude;
+        public float increasedPoisonMagnitude;
+        
+        [Header("Recovery Stats")]
+        public float lifeRegeneration;
+        public float energyShieldRegeneration;
+        public float manaRegeneration;
+        public float relianceRegeneration;
+        public float lifeLeech;
+        public float manaLeech;
+        public float energyShieldLeech;
+        
+        [Header("Combat Mechanics")]
+        public float attackSpeed;
+        public float castSpeed;
+        public float movementSpeed;
+        public float attackRange;
+        public float projectileSpeed;
+        public float areaOfEffect;
+        public float skillEffectDuration;
+        public float statusEffectDuration;
+        
+        [Header("Card System Stats")]
+        public int cardsDrawnPerTurn;
+        public int maxHandSize;
+        public float cardDrawChance;
+        public float cardRetentionChance;
+        public float cardUpgradeChance;
+        public float discardPower;
+        public float manaPerTurn;
+        
+        [Header("Elemental Conversion Stats")]
         // Fire-specific stats
         public int fireIncrease;
         public int fire;
-        public int chanceToIgnite;
         public int addedPhysicalAsFire;
-        public int increasedIgniteMagnitude;
         public int addedFireAsCold;
         
-        // Add more stats as needed from TypeScript
+        // Cold-specific stats
+        public int coldIncrease;
+        public int cold;
+        public int addedPhysicalAsCold;
+        public int addedColdAsFire;
+        
+        // Lightning-specific stats
+        public int lightningIncrease;
+        public int lightning;
+        public int addedPhysicalAsLightning;
+        public int addedLightningAsFire;
+        
+        // Physical-specific stats
+        public int physicalIncrease;
+        public int physical;
+        
+        // Chaos-specific stats
+        public int chaosIncrease;
+        public int chaos;
+        
+        [Header("Critical Strike Stats")]
+        public float critChanceIncrease;
+        public float critMultiplierIncrease;
     }
 
     [System.Serializable]

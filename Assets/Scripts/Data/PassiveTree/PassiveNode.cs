@@ -60,7 +60,13 @@ namespace PassiveTree
         /// </summary>
         public bool IsAdjacentToAllocatedNode()
         {
-            // TODO: Implement adjacency logic
+            // Use the ExtensionBoardDataManager to check adjacency
+            // The CanAllocatePosition method checks all boards for adjacency, so we don't need boardId
+            if (ExtensionBoardDataManager.Instance != null)
+            {
+                return ExtensionBoardDataManager.Instance.CanAllocatePosition(new Vector2Int(GridPosition.x, GridPosition.y), null);
+            }
+            
             return false;
         }
         
@@ -69,8 +75,8 @@ namespace PassiveTree
         /// </summary>
         public bool IsAdjacentToAllocatedNode(string[] allocatedNodeIds, object board)
         {
-            // TODO: Implement adjacency logic with parameters
-            return false;
+            // Use the basic adjacency check
+            return IsAdjacentToAllocatedNode();
         }
         
         /// <summary>
@@ -78,8 +84,8 @@ namespace PassiveTree
         /// </summary>
         public bool IsAdjacentToAllocatedNode(System.Collections.Generic.List<string> allocatedNodeIds, object board)
         {
-            // TODO: Implement adjacency logic with List<string> parameters
-            return false;
+            // Use the basic adjacency check
+            return IsAdjacentToAllocatedNode();
         }
         
         void Awake()

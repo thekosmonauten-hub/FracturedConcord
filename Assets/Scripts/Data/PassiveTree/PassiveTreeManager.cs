@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.InputSystem;
@@ -118,11 +119,10 @@ namespace PassiveTree
             {
                 CellController cell = kvp.Value;
                 
-                // Start node is always unlocked, available, and automatically purchased
+                // Start node is always adjacent and automatically purchased
                 if (cell.NodeType == NodeType.Start)
                 {
-                    cell.SetUnlocked(true);
-                    cell.SetAvailable(true);
+                    cell.SetAdjacent(true);
                     cell.SetPurchased(true); // Auto-allocate the start node
                     
                     if (showDebugInfo)
@@ -130,9 +130,8 @@ namespace PassiveTree
                 }
                 else
                 {
-                    // All other nodes start locked
-                    cell.SetUnlocked(false);
-                    cell.SetAvailable(true);
+                    // All other nodes start non-adjacent
+                    cell.SetAdjacent(false);
                     cell.SetPurchased(false);
                 }
             }
@@ -238,21 +237,71 @@ namespace PassiveTree
         /// </summary>
         public void OnCellClicked(Vector2Int gridPosition)
         {
+            OnCellClicked(gridPosition, null);
+        }
+        
+        /// <summary>
+        /// Handle cell click with explicit board selection
+        /// </summary>
+        public void OnCellClicked(Vector2Int gridPosition, ExtensionBoardController preferredBoard)
+        {
             Debug.Log($"[PassiveTreeManager] Cell clicked: {gridPosition}");
             
             CellController cell = null;
             
-            // First check if it's an extension board cell (priority over core board)
-            cell = FindCellInExtensionBoards(gridPosition);
-            if (cell != null)
+            // Check if there are multiple boards with cells at this position
+            bool hasCoreBoardCell = cells.ContainsKey(gridPosition);
+            CellController extensionBoardCell = FindCellInExtensionBoards(gridPosition);
+            bool hasExtensionBoardCell = extensionBoardCell != null;
+            
+            if (hasCoreBoardCell && hasExtensionBoardCell)
             {
-                Debug.Log($"[PassiveTreeManager] Found cell in extension board at {gridPosition}");
+                // Multiple boards have cells at this position - need to choose which one
+                Debug.Log($"[PassiveTreeManager] ⚠️ Multiple boards have cells at {gridPosition} - need to choose which board to interact with");
+                Debug.Log($"[PassiveTreeManager] Core board cell: {cells[gridPosition].NodeType}, Extension board cell: {extensionBoardCell.NodeType}");
+                
+                // If a preferred board is specified, use it
+                if (preferredBoard != null)
+                {
+                    if (preferredBoard.HasCellAt(gridPosition))
+                    {
+                        cell = preferredBoard.GetCellAt(gridPosition);
+                        Debug.Log($"[PassiveTreeManager] Using preferred extension board cell at {gridPosition}");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[PassiveTreeManager] Preferred board {preferredBoard.GetBoardName()} doesn't have a cell at {gridPosition}, falling back to core board");
+                        cell = cells[gridPosition];
+                    }
+                }
+                else
+                {
+                    // Smart routing: prioritize core board for non-extension nodes, extension board for extension nodes
+                    if (cells[gridPosition].NodeType == NodeType.Extension)
+                    {
+                        // Core board extension point - handle extension board creation
+                        cell = cells[gridPosition];
+                        Debug.Log($"[PassiveTreeManager] Using core board extension point at {gridPosition}");
+                    }
+                    else
+                    {
+                        // Regular core board node - use core board
+                        cell = cells[gridPosition];
+                        Debug.Log($"[PassiveTreeManager] Using core board cell at {gridPosition}");
+                    }
+                }
             }
-            else if (cells.ContainsKey(gridPosition))
+            else if (hasCoreBoardCell)
             {
-                // Fall back to core board cell if no extension board cell found
+                // Only core board has a cell at this position
                 cell = cells[gridPosition];
                 Debug.Log($"[PassiveTreeManager] Found cell in core board at {gridPosition}");
+            }
+            else if (hasExtensionBoardCell)
+            {
+                // Only extension board has a cell at this position
+                cell = extensionBoardCell;
+                Debug.Log($"[PassiveTreeManager] Found cell in extension board at {gridPosition}");
             }
             else
             {
@@ -286,6 +335,97 @@ namespace PassiveTree
                 case NodeType.Keystone:
                     HandleKeystoneNodeClick(cell);
                     break;
+            }
+        }
+        
+        /// <summary>
+        /// Handle extension board cell click (for cells routed through PassiveTreeManager)
+        /// </summary>
+        public void OnExtensionBoardCellClicked(CellController_EXT extensionCell)
+        {
+            Debug.Log($"[PassiveTreeManager] Extension board cell clicked: {extensionCell.GridPosition}");
+            
+            // Check if this is an extension point
+            if (extensionCell.NodeType == NodeType.Extension)
+            {
+                Debug.Log($"[PassiveTreeManager] Processing extension point click for {extensionCell.GridPosition}");
+                HandleExtensionNodeClick(extensionCell);
+            }
+            else
+            {
+                // Handle as a regular node purchase
+                Debug.Log($"[PassiveTreeManager] Processing regular node click for {extensionCell.GridPosition}");
+                HandleRegularNodeClick(extensionCell);
+            }
+        }
+        
+        /// <summary>
+        /// Handle regular node click (non-extension nodes)
+        /// </summary>
+        private void HandleRegularNodeClick(CellController cell)
+        {
+            // Use the appropriate overload based on cell type
+            bool canPurchase = false;
+            if (cell is CellController_EXT extCell)
+            {
+                canPurchase = CanPurchaseNode(extCell);
+            }
+            else
+            {
+                canPurchase = CanPurchaseNode(cell);
+            }
+            
+            if (canPurchase)
+            {
+                cell.SetPurchased(true);
+                
+                // Get the correct position based on cell type
+                Vector2Int correctPosition = cell.GridPosition;
+                if (cell is CellController_EXT extensionCell)
+                {
+                    correctPosition = extensionCell.GridPosition; // Use the overridden property
+                }
+                
+                // Check if this is an extension board cell and use board-specific logic
+                ExtensionBoardController extensionBoard = cell.GetComponentInParent<ExtensionBoardController>();
+                if (extensionBoard != null)
+                {
+                    // Use board-specific adjacency logic for extension board cells
+                    UnlockAdjacentNodesWithinBoard(correctPosition, extensionBoard);
+                    
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"[PassiveTreeManager] ✅ Used board-specific adjacency for extension board cell at {correctPosition} (base GridPosition: {cell.GridPosition})");
+                    }
+                }
+                else
+                {
+                    // Use cross-board logic for core board cells
+                    UnlockAdjacentNodes(correctPosition);
+                    
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"[PassiveTreeManager] ✅ Used cross-board adjacency for core board cell at {correctPosition} (base GridPosition: {cell.GridPosition})");
+                    }
+                }
+                
+                // Trigger cross-board allocation if this is an extension point
+                if (cell.NodeType == NodeType.Extension)
+                {
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"[PassiveTreeManager] Extension point purchased, triggering cross-board allocation for {cell.GridPosition}");
+                    }
+                    HandleCrossBoardExtensionAllocation(cell);
+                }
+                
+                if (showDebugInfo)
+                    Debug.Log($"[PassiveTreeManager] Node purchased: {cell.GridPosition}");
+            }
+            else
+            {
+                if (showDebugInfo)
+                    Debug.Log($"[PassiveTreeManager] Cannot purchase node at {cell.GridPosition}");
             }
         }
         
@@ -349,11 +489,11 @@ namespace PassiveTree
             Debug.Log($"[PassiveTreeManager] enableExtensionBoards: {enableExtensionBoards}");
             Debug.Log($"[PassiveTreeManager] boardPositioningManager: {(boardPositioningManager != null ? "Found" : "Null")}");
             
-            // Extension nodes now follow the same validation rules as other nodes
-            // They must have an adjacent purchased node to be clickable
-            if (CanPurchaseNode(cell) && enableExtensionBoards && boardPositioningManager != null)
+            // Extension points should show board selection UI, not be purchased like regular nodes
+            // Skip the CanPurchaseNode check for extension points - they should always show the board selection UI
+            if (enableExtensionBoards && boardPositioningManager != null)
             {
-                Debug.Log($"[PassiveTreeManager] Calling HandleExtensionBoardSpawn for {cell.GridPosition}");
+                Debug.Log($"[PassiveTreeManager] Extension point clicked - showing board selection UI for {cell.GridPosition}");
                 HandleExtensionBoardSpawn(cell);
             }
             else
@@ -376,14 +516,25 @@ namespace PassiveTree
         }
         
         /// <summary>
+        /// Check if a position can be allocated using the ExtensionBoardDataManager
+        /// </summary>
+        public bool CanAllocatePosition(Vector2Int gridPosition, string boardId = null)
+        {
+            if (ExtensionBoardDataManager.Instance != null)
+            {
+                return ExtensionBoardDataManager.Instance.CanAllocatePosition(gridPosition, boardId);
+            }
+            return false;
+        }
+        
+        /// <summary>
         /// Check if a node can be purchased
         /// </summary>
         private bool CanPurchaseNode(CellController cell)
         {
             Debug.Log($"[PassiveTreeManager] CanPurchaseNode check for {cell.GridPosition}:");
             Debug.Log($"  - IsPurchased: {cell.IsPurchased}");
-            Debug.Log($"  - IsUnlocked: {cell.IsUnlocked}");
-            Debug.Log($"  - IsAvailable: {cell.IsAvailable}");
+            Debug.Log($"  - IsAdjacent: {cell.IsAdjacent} (Available: {cell.IsAvailable}, Unlocked: {cell.IsUnlocked})");
             
             // Can't purchase if already purchased
             if (cell.IsPurchased) 
@@ -392,17 +543,10 @@ namespace PassiveTree
                 return false;
             }
             
-            // Can't purchase if not unlocked
-            if (!cell.IsUnlocked) 
+            // Can't purchase if not adjacent (combines available and unlocked check)
+            if (!cell.IsAdjacent) 
             {
-                Debug.Log($"  - ❌ Cannot purchase: not unlocked");
-                return false;
-            }
-            
-            // Can't purchase if not available
-            if (!cell.IsAvailable) 
-            {
-                Debug.Log($"  - ❌ Cannot purchase: not available");
+                Debug.Log($"  - ❌ Cannot purchase: not adjacent (not available or not unlocked)");
                 return false;
             }
             
@@ -410,7 +554,32 @@ namespace PassiveTree
             // (except for start nodes which are always available)
             if (cell.NodeType != NodeType.Start)
             {
-                if (!HasAdjacentPurchasedNode(cell.GridPosition))
+                // Check if this is an extension board cell and use board-specific logic
+                ExtensionBoardController extensionBoard = cell.GetComponentInParent<ExtensionBoardController>();
+                bool hasAdjacentPurchasedNode;
+                
+                if (extensionBoard != null)
+                {
+                    // Use board-specific adjacency logic for extension board cells
+                    hasAdjacentPurchasedNode = HasAdjacentPurchasedNodeWithinBoard(cell.GridPosition, extensionBoard);
+                    
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"  - 🔍 Using board-specific adjacency check for extension board cell");
+                    }
+                }
+                else
+                {
+                    // Use cross-board logic for core board cells
+                    hasAdjacentPurchasedNode = HasAdjacentPurchasedNode(cell.GridPosition);
+                    
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"  - 🔍 Using cross-board adjacency check for core board cell");
+                    }
+                }
+                
+                if (!hasAdjacentPurchasedNode)
                 {
                     Debug.Log($"  - ❌ Cannot purchase: no adjacent purchased nodes");
                     return false;
@@ -425,7 +594,75 @@ namespace PassiveTree
         }
         
         /// <summary>
+        /// Check if an extension board node can be purchased (overload for CellController_EXT)
+        /// </summary>
+        private bool CanPurchaseNode(CellController_EXT cell)
+        {
+            Vector2Int correctPosition = cell.GridPosition;
+            Debug.Log($"[PassiveTreeManager] CanPurchaseNode (EXT) check for {correctPosition} (base GridPosition: {((CellController)cell).GridPosition}):");
+            Debug.Log($"  - IsPurchased: {cell.IsPurchased}");
+            Debug.Log($"  - IsAdjacent: {cell.IsAdjacent} (Available: {cell.IsAvailable}, Unlocked: {cell.IsUnlocked})");
+            
+            // Can't purchase if already purchased
+            if (cell.IsPurchased) 
+            {
+                Debug.Log($"  - ❌ Cannot purchase: already purchased");
+                return false;
+            }
+            
+            // Can't purchase if not adjacent (combines available and unlocked check)
+            if (!cell.IsAdjacent) 
+            {
+                Debug.Log($"  - ❌ Cannot purchase: not adjacent (not available or not unlocked)");
+                return false;
+            }
+            
+            // Check adjacency validation - node must have at least one purchased adjacent node
+            // (except for start nodes which are always available)
+            if (cell.NodeType != NodeType.Start)
+            {
+                // Use board-specific adjacency logic for extension board cells
+                ExtensionBoardController extensionBoard = cell.GetComponentInParent<ExtensionBoardController>();
+                bool hasAdjacentPurchasedNode;
+                
+                if (extensionBoard != null)
+                {
+                    // Use board-specific adjacency logic for extension board cells
+                    hasAdjacentPurchasedNode = HasAdjacentPurchasedNodeWithinBoard(correctPosition, extensionBoard);
+                    
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"  - 🔍 Using board-specific adjacency check for extension board cell");
+                    }
+                }
+                else
+                {
+                    // Use cross-board logic for core board cells
+                    hasAdjacentPurchasedNode = HasAdjacentPurchasedNode(correctPosition);
+                    
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"  - 🔍 Using cross-board adjacency check for core board cell");
+                    }
+                }
+                
+                if (!hasAdjacentPurchasedNode)
+                {
+                    Debug.Log($"  - ❌ Cannot purchase: no adjacent purchased nodes");
+                    return false;
+                }
+                Debug.Log($"  - ✅ Has adjacent purchased node");
+            }
+            
+            // TODO: Add cost validation, prerequisite checks, etc.
+            
+            Debug.Log($"  - ✅ Can purchase node (EXT)");
+            return true;
+        }
+        
+        /// <summary>
         /// Check if a node has at least one adjacent purchased node (for pathing validation)
+        /// Checks both core board and extension boards
         /// </summary>
         private bool HasAdjacentPurchasedNode(Vector2Int centerPosition)
         {
@@ -444,15 +681,38 @@ namespace PassiveTree
             // Check each adjacent position for a purchased node
             foreach (Vector2Int pos in adjacentPositions)
             {
+                // First check core board
                 if (cells.ContainsKey(pos))
                 {
                     CellController adjacentCell = cells[pos];
                     if (adjacentCell.IsPurchased)
                     {
                         if (showDebugInfo)
-                            Debug.Log($"[PassiveTreeManager] ✅ Found adjacent purchased node at {pos}");
+                            Debug.Log($"[PassiveTreeManager] ✅ Found adjacent purchased node at {pos} in core board");
                         return true;
                     }
+                }
+                
+                // Then check extension boards
+                CellController extensionBoardCell = FindCellInExtensionBoards(pos);
+                if (extensionBoardCell != null && extensionBoardCell.IsPurchased)
+                {
+                    if (showDebugInfo)
+                        Debug.Log($"[PassiveTreeManager] ✅ Found adjacent purchased node at {pos} in extension board");
+                    return true;
+                }
+            }
+            
+            // NEW: Check for cross-board extension point connections
+            // If this is an extension point on an extension board, check if the corresponding
+            // extension point on the core board is purchased
+            if (IsExtensionPointOnExtensionBoard(centerPosition))
+            {
+                if (HasCorrespondingCoreBoardExtensionPointPurchased(centerPosition))
+                {
+                    if (showDebugInfo)
+                        Debug.Log($"[PassiveTreeManager] ✅ Found cross-board extension point connection for {centerPosition}");
+                    return true;
                 }
             }
             
@@ -460,9 +720,249 @@ namespace PassiveTree
                 Debug.Log($"[PassiveTreeManager] ❌ No adjacent purchased nodes found for {centerPosition}");
             return false;
         }
+
+        /// <summary>
+        /// Check if a node has at least one adjacent purchased node within a specific board only
+        /// (prevents cross-board contamination, but allows extension point connections)
+        /// </summary>
+        private bool HasAdjacentPurchasedNodeWithinBoard(Vector2Int centerPosition, ExtensionBoardController targetBoard)
+        {
+            if (showDebugInfo)
+                Debug.Log($"[PassiveTreeManager] HasAdjacentPurchasedNodeWithinBoard check for position: {centerPosition} on board: {targetBoard?.GetBoardName()}");
+            
+            // Define orthographic directions (up, down, left, right)
+            Vector2Int[] adjacentPositions = new Vector2Int[]
+            {
+                centerPosition + Vector2Int.up,    // North
+                centerPosition + Vector2Int.down,  // South
+                centerPosition + Vector2Int.left,  // West
+                centerPosition + Vector2Int.right  // East
+            };
+            
+            // Check each adjacent position for a purchased node within the specified board only
+            foreach (Vector2Int pos in adjacentPositions)
+            {
+                if (targetBoard != null)
+                {
+                    CellController adjacentCell = targetBoard.GetCellAt(pos);
+                    if (adjacentCell != null && adjacentCell.IsPurchased)
+                    {
+                        if (showDebugInfo)
+                            Debug.Log($"[PassiveTreeManager] ✅ Found adjacent purchased node at {pos} in extension board");
+                        return true;
+                    }
+                }
+            }
+            
+            // SPECIAL CASE: Check for extension point connections
+            // If this is an extension point on an extension board, check if the corresponding
+            // extension point on the core board is purchased (this allows pathing from extension points)
+            if (IsExtensionPointOnExtensionBoard(centerPosition, targetBoard))
+            {
+                if (HasCorrespondingCoreBoardExtensionPointPurchased(centerPosition))
+                {
+                    if (showDebugInfo)
+                        Debug.Log($"[PassiveTreeManager] ✅ Found extension point connection for {centerPosition}");
+                    return true;
+                }
+            }
+            
+            // SPECIAL CASE: If this cell is adjacent to an extension point on the same board, 
+            // check if that extension point is purchased (this allows pathing to extension points)
+            foreach (Vector2Int pos in adjacentPositions)
+            {
+                if (targetBoard != null)
+                {
+                    CellController adjacentCell = targetBoard.GetCellAt(pos);
+                    if (adjacentCell != null && adjacentCell.NodeType == NodeType.Extension && adjacentCell.IsPurchased)
+                    {
+                        if (showDebugInfo)
+                            Debug.Log($"[PassiveTreeManager] ✅ Found adjacent purchased extension point at {pos} in extension board");
+                        return true;
+                    }
+                }
+            }
+            
+            if (showDebugInfo)
+                Debug.Log($"[PassiveTreeManager] ❌ No adjacent purchased nodes found for {centerPosition} within board");
+            return false;
+        }
+        
+        /// <summary>
+        /// Check if a position is an extension point on an extension board
+        /// </summary>
+        private bool IsExtensionPointOnExtensionBoard(Vector2Int position)
+        {
+            // Find the cell in extension boards
+            CellController extensionCell = FindCellInExtensionBoards(position);
+            if (extensionCell == null) return false;
+            
+            // Check if it's an extension point
+            return extensionCell.NodeType == NodeType.Extension;
+        }
+        
+        /// <summary>
+        /// Check if a position is an extension point within a specific extension board
+        /// </summary>
+        private bool IsExtensionPointOnExtensionBoard(Vector2Int position, ExtensionBoardController targetBoard)
+        {
+            if (targetBoard == null) return false;
+            
+            // Check if the target board has a cell at this position
+            if (!targetBoard.HasCellAt(position)) return false;
+            
+            // Get the cell and check if it's an extension point
+            CellController cell = targetBoard.GetCellAt(position);
+            return cell != null && cell.NodeType == NodeType.Extension;
+        }
+        
+        /// <summary>
+        /// Manually refresh all extension board controllers - useful for debugging
+        /// </summary>
+        [ContextMenu("Refresh All Extension Board Controllers")]
+        public void RefreshAllExtensionBoardControllers()
+        {
+            Debug.Log("[PassiveTreeManager] Manually refreshing all extension board controllers...");
+            
+            ExtensionBoardController[] extensionBoards = FindObjectsByType<ExtensionBoardController>(FindObjectsSortMode.None);
+            Debug.Log($"[PassiveTreeManager] Found {extensionBoards.Length} extension boards to refresh");
+            
+            foreach (ExtensionBoardController boardController in extensionBoards)
+            {
+                Debug.Log($"[PassiveTreeManager] Refreshing extension board: {boardController.gameObject.name}");
+                boardController.RefreshCellMapping();
+            }
+            
+            Debug.Log("[PassiveTreeManager] All extension board controllers refreshed");
+        }
+        
+        /// <summary>
+        /// Debug method to show board overlap information
+        /// </summary>
+        [ContextMenu("Show Board Overlap Information")]
+        public void ShowBoardOverlapInformation()
+        {
+            Debug.Log("=== BOARD OVERLAP ANALYSIS ===");
+            
+            ExtensionBoardController[] extensionBoards = FindObjectsByType<ExtensionBoardController>(FindObjectsSortMode.None);
+            Debug.Log($"[PassiveTreeManager] Found {extensionBoards.Length} extension boards");
+            
+            // Check for overlapping positions
+            var overlappingPositions = new Dictionary<Vector2Int, List<string>>();
+            
+            // Add core board positions
+            foreach (var kvp in cells)
+            {
+                if (!overlappingPositions.ContainsKey(kvp.Key))
+                {
+                    overlappingPositions[kvp.Key] = new List<string>();
+                }
+                overlappingPositions[kvp.Key].Add($"Core Board ({kvp.Value.NodeType})");
+            }
+            
+            // Add extension board positions
+            foreach (var board in extensionBoards)
+            {
+                var boardCells = board.GetAllCells();
+                foreach (var kvp in boardCells)
+                {
+                    if (!overlappingPositions.ContainsKey(kvp.Key))
+                    {
+                        overlappingPositions[kvp.Key] = new List<string>();
+                    }
+                    overlappingPositions[kvp.Key].Add($"Extension Board: {board.GetBoardName()} ({kvp.Value.NodeType})");
+                }
+            }
+            
+            // Report overlaps
+            int overlapCount = 0;
+            foreach (var kvp in overlappingPositions)
+            {
+                if (kvp.Value.Count > 1)
+                {
+                    overlapCount++;
+                    Debug.Log($"⚠️ Position {kvp.Key} has {kvp.Value.Count} boards: {string.Join(", ", kvp.Value)}");
+                }
+            }
+            
+            if (overlapCount == 0)
+            {
+                Debug.Log("✅ No board overlaps detected - all positions are unique to one board");
+            }
+            else
+            {
+                Debug.Log($"⚠️ Found {overlapCount} overlapping positions - this may cause input routing issues");
+            }
+            
+            Debug.Log("=== BOARD OVERLAP ANALYSIS COMPLETE ===");
+        }
+        
+        /// <summary>
+        /// Check if the corresponding extension point on the core board is purchased
+        /// This checks if the core board extension point that connects to the current extension board is purchased
+        /// </summary>
+        private bool HasCorrespondingCoreBoardExtensionPointPurchased(Vector2Int extensionBoardPosition)
+        {
+            // This method is called when checking if a cell on an extension board is adjacent to an extension point
+            // The extensionBoardPosition is the position of the cell being checked, not the extension point itself
+            // We need to determine which core board extension point connects to this extension board
+            
+            // Find all extension boards to determine which core board extension point connects to the current board
+            ExtensionBoardController[] extensionBoards = FindObjectsByType<ExtensionBoardController>(FindObjectsSortMode.None);
+            
+            foreach (ExtensionBoardController board in extensionBoards)
+            {
+                Vector2Int boardGridPosition = board.GetBoardGridPosition();
+                
+                // Determine which core board extension point connects to this extension board
+                Vector2Int coreBoardExtensionPoint = Vector2Int.zero;
+                
+                if (boardGridPosition == new Vector2Int(1, 0)) // East extension board
+                {
+                    coreBoardExtensionPoint = new Vector2Int(6, 3); // Core board East extension point
+                }
+                else if (boardGridPosition == new Vector2Int(-1, 0)) // West extension board
+                {
+                    coreBoardExtensionPoint = new Vector2Int(0, 3); // Core board West extension point
+                }
+                else if (boardGridPosition == new Vector2Int(0, 1)) // North extension board
+                {
+                    coreBoardExtensionPoint = new Vector2Int(3, 6); // Core board North extension point
+                }
+                else if (boardGridPosition == new Vector2Int(0, -1)) // South extension board
+                {
+                    coreBoardExtensionPoint = new Vector2Int(3, 0); // Core board South extension point
+                }
+                
+                // Check if this extension board contains the position we're checking
+                if (board.HasCellAt(extensionBoardPosition))
+                {
+                    // Check if the corresponding core board extension point is purchased
+                    if (cells.ContainsKey(coreBoardExtensionPoint))
+                    {
+                        CellController coreBoardCell = cells[coreBoardExtensionPoint];
+                        if (coreBoardCell.NodeType == NodeType.Extension && coreBoardCell.IsPurchased)
+                        {
+                            if (showDebugInfo)
+                                Debug.Log($"[PassiveTreeManager] ✅ Found corresponding core board extension point at {coreBoardExtensionPoint} is purchased for board at {boardGridPosition}");
+                            return true;
+                        }
+                    }
+                    
+                    if (showDebugInfo)
+                        Debug.Log($"[PassiveTreeManager] ❌ Core board extension point at {coreBoardExtensionPoint} is not purchased for board at {boardGridPosition}");
+                    return false;
+                }
+            }
+            
+            if (showDebugInfo)
+                Debug.Log($"[PassiveTreeManager] ❌ No extension board found containing position {extensionBoardPosition}");
+            return false;
+        }
         
         /// <summary>
         /// Unlock adjacent nodes when a node is purchased
+        /// Unlocks nodes in both core board and extension boards
         /// </summary>
         private void UnlockAdjacentNodes(Vector2Int centerPosition)
         {
@@ -481,35 +981,108 @@ namespace PassiveTree
             
             foreach (Vector2Int pos in adjacentPositions)
             {
+                // First check core board
                 if (cells.ContainsKey(pos))
                 {
                     CellController adjacentCell = cells[pos];
                     
                     if (showDebugInfo)
-                        Debug.Log($"[PassiveTreeManager] Checking adjacent node at {pos}: Unlocked={adjacentCell.IsUnlocked}, Purchased={adjacentCell.IsPurchased}");
+                        Debug.Log($"[PassiveTreeManager] Checking core board adjacent node at {pos}: Unlocked={adjacentCell.IsUnlocked}, Purchased={adjacentCell.IsPurchased}");
                     
-                    if (!adjacentCell.IsUnlocked && !adjacentCell.IsPurchased)
+                    if (!adjacentCell.IsAdjacent && !adjacentCell.IsPurchased)
                     {
-                        adjacentCell.SetUnlocked(true);
+                        adjacentCell.SetAdjacent(true);
                         unlockedCount++;
                         if (showDebugInfo)
-                            Debug.Log($"[PassiveTreeManager] ✅ Unlocked adjacent node: {pos} (Type: {adjacentCell.NodeType})");
+                            Debug.Log($"[PassiveTreeManager] ✅ Made adjacent core board node: {pos} (Type: {adjacentCell.NodeType})");
                     }
                     else
                     {
                         if (showDebugInfo)
-                            Debug.Log($"[PassiveTreeManager] ⏭️ Skipped adjacent node: {pos} (already unlocked or purchased)");
+                            Debug.Log($"[PassiveTreeManager] ⏭️ Skipped core board adjacent node: {pos} (already unlocked or purchased)");
                     }
                 }
                 else
                 {
-                    if (showDebugInfo)
-                        Debug.Log($"[PassiveTreeManager] ⚠️ Adjacent position {pos} not found in cells dictionary");
+                    // Check extension boards
+                    CellController extensionBoardCell = FindCellInExtensionBoards(pos);
+                    if (extensionBoardCell != null)
+                    {
+                        if (showDebugInfo)
+                            Debug.Log($"[PassiveTreeManager] Checking extension board adjacent node at {pos}: Unlocked={extensionBoardCell.IsUnlocked}, Purchased={extensionBoardCell.IsPurchased}");
+                        
+                        if (!extensionBoardCell.IsAdjacent && !extensionBoardCell.IsPurchased)
+                        {
+                            extensionBoardCell.SetAdjacent(true);
+                            unlockedCount++;
+                            if (showDebugInfo)
+                                Debug.Log($"[PassiveTreeManager] ✅ Made adjacent extension board node: {pos} (Type: {extensionBoardCell.NodeType})");
+                        }
+                        else
+                        {
+                            if (showDebugInfo)
+                                Debug.Log($"[PassiveTreeManager] ⏭️ Skipped extension board adjacent node: {pos} (already unlocked or purchased)");
+                        }
+                    }
+                    else
+                    {
+                        if (showDebugInfo)
+                            Debug.Log($"[PassiveTreeManager] ⚠️ Adjacent position {pos} not found in core board or extension boards");
+                    }
                 }
             }
             
             if (showDebugInfo)
                 Debug.Log($"[PassiveTreeManager] UnlockAdjacentNodes complete: {unlockedCount} nodes unlocked from {centerPosition}");
+        }
+
+        /// <summary>
+        /// Unlock adjacent nodes within a specific board only (prevents cross-board contamination)
+        /// </summary>
+        private void UnlockAdjacentNodesWithinBoard(Vector2Int centerPosition, ExtensionBoardController targetBoard)
+        {
+            if (showDebugInfo)
+                Debug.Log($"[PassiveTreeManager] UnlockAdjacentNodesWithinBoard called for position: {centerPosition} on board: {targetBoard?.GetBoardName()}");
+            
+            Vector2Int[] adjacentPositions = new Vector2Int[]
+            {
+                centerPosition + Vector2Int.up,    // North
+                centerPosition + Vector2Int.down,  // South
+                centerPosition + Vector2Int.left,  // West
+                centerPosition + Vector2Int.right  // East
+            };
+            
+            int unlockedCount = 0;
+            
+            foreach (Vector2Int pos in adjacentPositions)
+            {
+                // Only check within the specified extension board
+                if (targetBoard != null)
+                {
+                    CellController adjacentCell = targetBoard.GetCellAt(pos);
+                    if (adjacentCell != null)
+                    {
+                        if (showDebugInfo)
+                            Debug.Log($"[PassiveTreeManager] Checking extension board adjacent node at {pos}: Unlocked={adjacentCell.IsUnlocked}, Purchased={adjacentCell.IsPurchased}");
+                        
+                        if (!adjacentCell.IsAdjacent && !adjacentCell.IsPurchased)
+                        {
+                            adjacentCell.SetAdjacent(true);
+                            unlockedCount++;
+                            if (showDebugInfo)
+                                Debug.Log($"[PassiveTreeManager] ✅ Made adjacent extension board node: {pos} (Type: {adjacentCell.NodeType})");
+                        }
+                        else
+                        {
+                            if (showDebugInfo)
+                                Debug.Log($"[PassiveTreeManager] ⏭️ Skipped extension board adjacent node: {pos} (already unlocked or purchased)");
+                        }
+                    }
+                }
+            }
+            
+            if (showDebugInfo)
+                Debug.Log($"[PassiveTreeManager] UnlockAdjacentNodesWithinBoard complete: {unlockedCount} nodes unlocked from {centerPosition}");
         }
         
         /// <summary>
@@ -1017,10 +1590,20 @@ namespace PassiveTree
         /// </summary>
         private void HandleExtensionBoardSpawn(CellController extensionCell)
         {
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] 🚀 HandleExtensionBoardSpawn called for cell at {extensionCell.GridPosition}");
+            }
+            
             if (boardPositioningManager == null || boardGenerator == null)
             {
-                Debug.LogWarning("[PassiveTreeManager] Extension board system not properly initialized");
+                Debug.LogWarning("[PassiveTreeManager] ❌ Extension board system not properly initialized");
                 return;
+            }
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] ✅ Board positioning manager and board generator found");
             }
             
             // First, try to find the extension point that corresponds to this cell
@@ -1029,30 +1612,758 @@ namespace PassiveTree
             // Get ALL extension points (not just available ones) to find the one at this position
             var allExtensionPoints = boardPositioningManager.GetAllExtensionPoints();
             
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] 📊 Found {allExtensionPoints.Count} extension points from board positioning manager");
+            }
+            
             foreach (var point in allExtensionPoints)
             {
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[PassiveTreeManager] 🔍 Checking extension point: {point.id} at position {point.position}");
+                }
+                
                 if (point.position == extensionCell.GridPosition)
                 {
                     targetPoint = point;
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"[PassiveTreeManager] ✅ Found matching extension point: {point.id} at {point.position}");
+                    }
                     break;
                 }
             }
             
             if (targetPoint == null)
             {
-                Debug.Log($"[PassiveTreeManager] No extension point found for cell at {extensionCell.GridPosition} - this cell is not an extension point");
+                Debug.LogWarning($"[PassiveTreeManager] ❌ No extension point found for cell at {extensionCell.GridPosition} - this cell is not an extension point");
                 return;
             }
             
             // Check if this extension point can connect (is available)
             if (!targetPoint.CanConnect())
             {
-                Debug.Log($"[PassiveTreeManager] Extension point at {extensionCell.GridPosition} is already allocated and cannot accept new connections");
+                Debug.Log($"[PassiveTreeManager] ❌ Extension point at {extensionCell.GridPosition} is already allocated and cannot accept new connections");
                 return;
             }
             
-            // Use the new board selection system
-            boardPositioningManager.HandleExtensionPointClick(targetPoint);
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] ✅ Extension point can connect, proceeding with board creation");
+            }
+            
+            // Get the source board from the extension cell
+            GameObject sourceBoard = null;
+            ExtensionBoardController extensionBoardController = extensionCell.GetComponentInParent<ExtensionBoardController>();
+            if (extensionBoardController != null)
+            {
+                sourceBoard = extensionBoardController.gameObject;
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[PassiveTreeManager] 🏗️ Extension point click from extension board: {sourceBoard.name}");
+                }
+            }
+            else
+            {
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[PassiveTreeManager] 🏗️ Extension point click from core board");
+                }
+            }
+            
+            // FIRST: Create the extension board
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] 🏗️ Calling boardPositioningManager.HandleExtensionPointClick for {targetPoint.id}");
+            }
+            
+            boardPositioningManager.HandleExtensionPointClick(targetPoint, sourceBoard);
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] 🏗️ Board creation call completed, starting cross-board allocation coroutine");
+            }
+            
+            // NOTE: Cross-board allocation is now handled by BoardPositioningManager
+            // The extension point purchasing is handled in OnBoardSelected method
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] 🏗️ Board creation completed, extension point purchasing handled by BoardPositioningManager");
+            }
+        }
+        
+        
+        /// <summary>
+        /// Public method to trigger cross-board allocation from external controllers
+        /// </summary>
+        public void TriggerCrossBoardAllocation(CellController extensionCell)
+        {
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] TriggerCrossBoardAllocation called for {extensionCell.GridPosition}");
+            }
+            HandleCrossBoardExtensionAllocation(extensionCell);
+        }
+        
+        /// <summary>
+        /// Handle cross-board extension point allocation
+        /// When an extension point is allocated on one board, allocate the corresponding point on connected boards
+        /// </summary>
+        private void HandleCrossBoardExtensionAllocation(CellController extensionCell)
+        {
+            Debug.Log($"[PassiveTreeManager] 🔗 Handling cross-board extension allocation for {extensionCell.GridPosition}");
+            
+            // Get the extension point name from the cell (e.g., "Extension_East")
+            string extensionPointName = GetExtensionPointName(extensionCell);
+            if (string.IsNullOrEmpty(extensionPointName))
+            {
+                if (showDebugInfo)
+                {
+                    Debug.LogWarning($"[PassiveTreeManager] ❌ Could not determine extension point name for cell at {extensionCell.GridPosition}");
+                }
+                return;
+            }
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] 📍 Extension point name: {extensionPointName}");
+            }
+            
+            // Find the corresponding extension point on other boards
+            string correspondingPointName = GetCorrespondingExtensionPointName(extensionPointName);
+            if (string.IsNullOrEmpty(correspondingPointName))
+            {
+                if (showDebugInfo)
+                {
+                    Debug.LogWarning($"[PassiveTreeManager] ❌ No corresponding extension point found for {extensionPointName}");
+                }
+                return;
+            }
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] 🔄 Looking for corresponding extension point: {correspondingPointName}");
+            }
+            
+            // Find and allocate the corresponding extension point
+            AllocateCorrespondingExtensionPoint(correspondingPointName);
+        }
+        
+        /// <summary>
+        /// Get the extension point name from a cell (e.g., "Extension_East")
+        /// Uses GameObject name to determine extension point type
+        /// </summary>
+        private string GetExtensionPointName(CellController cell)
+        {
+            if (cell == null) return null;
+            
+            Debug.Log($"[PassiveTreeManager] 🔍 Getting extension point name for cell at {cell.GridPosition} (GameObject: {cell.gameObject.name})");
+            
+            // First try to get from CellJsonData (for extension boards)
+            var cellJsonData = cell.GetComponent<CellJsonData>();
+            if (cellJsonData != null && !string.IsNullOrEmpty(cellJsonData.NodeName))
+            {
+                Debug.Log($"[PassiveTreeManager] 🔍 CellJsonData NodeName: {cellJsonData.NodeName}");
+                return cellJsonData.NodeName;
+            }
+            
+            // Check if this is an extension point by looking at the GameObject name
+            string gameObjectName = cell.gameObject.name;
+            
+            Debug.Log($"[PassiveTreeManager] 🔍 Checking GameObject name: {gameObjectName} for cell at {cell.GridPosition}");
+            
+            // Map GameObject names to extension point names
+            switch (gameObjectName)
+            {
+                case "Cell_0_3":  // Extension_North (top)
+                    Debug.Log($"[PassiveTreeManager] ✅ Mapped {gameObjectName} to Extension_North");
+                    return "Extension_North";
+                case "Cell_3_0":  // Extension_West (left)
+                    Debug.Log($"[PassiveTreeManager] ✅ Mapped {gameObjectName} to Extension_West");
+                    return "Extension_West";
+                case "Cell_3_6":  // Extension_East (right)
+                    Debug.Log($"[PassiveTreeManager] ✅ Mapped {gameObjectName} to Extension_East");
+                    return "Extension_East";
+                case "Cell_6_3":  // Extension_South (bottom)
+                    Debug.Log($"[PassiveTreeManager] ✅ Mapped {gameObjectName} to Extension_South");
+                    return "Extension_South";
+                default:
+                    Debug.Log($"[PassiveTreeManager] 🔍 No direct mapping for {gameObjectName}, checking NodeName");
+            // Fallback to base class node name
+            if (!string.IsNullOrEmpty(cell.NodeName))
+            {
+                        Debug.Log($"[PassiveTreeManager] ✅ Using NodeName: {cell.NodeName}");
+                return cell.NodeName;
+            }
+                    Debug.Log($"[PassiveTreeManager] ❌ No extension point name found for {gameObjectName}");
+            return null;
+            }
+        }
+        
+        /// <summary>
+        /// Get the corresponding extension point name for cross-board allocation
+        /// </summary>
+        private string GetCorrespondingExtensionPointName(string extensionPointName)
+        {
+            // Return the same extension point name - no swapping needed
+            // When Extension_West is clicked, allocate Extension_West on the new board
+            switch (extensionPointName)
+            {
+                case "Extension_East":
+                    return "Extension_East";
+                case "Extension_West":
+                    return "Extension_West";
+                case "Extension_North":
+                    return "Extension_North";
+                case "Extension_South":
+                    return "Extension_South";
+                default:
+                    return null;
+            }
+        }
+        
+        /// <summary>
+        /// Find and allocate the corresponding extension point on other boards
+        /// </summary>
+        private void AllocateCorrespondingExtensionPoint(string correspondingPointName)
+        {
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] 🔍 Looking for corresponding extension point: {correspondingPointName}");
+            }
+            
+            // Find all extension boards in the scene
+            ExtensionBoardController[] extensionBoards = FindObjectsByType<ExtensionBoardController>(FindObjectsSortMode.None);
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] 📊 Found {extensionBoards.Length} extension boards in scene");
+            }
+            
+            foreach (ExtensionBoardController board in extensionBoards)
+            {
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[PassiveTreeManager] 🔍 Checking board: {board.GetBoardName()} at position {board.GetBoardGridPosition()}");
+                }
+                
+                // Find cells with the corresponding extension point name
+                CellController[] cells = board.GetComponentsInChildren<CellController>();
+                
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[PassiveTreeManager] 📊 Board {board.GetBoardName()} has {cells.Length} cells");
+                }
+                
+                foreach (CellController cell in cells)
+                {
+                    string cellExtensionName = GetExtensionPointName(cell);
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"[PassiveTreeManager] 🔍 Checking cell {cell.gameObject.name} at {cell.GridPosition}: ExtensionName={cellExtensionName}, Target={correspondingPointName}");
+                    }
+                    
+                    if (cellExtensionName == correspondingPointName)
+                    {
+                        if (showDebugInfo)
+                        {
+                            Debug.Log($"[PassiveTreeManager] ✅ Found corresponding extension point {correspondingPointName} at {cell.GridPosition} on board {board.GetBoardName()}");
+                            Debug.Log($"[PassiveTreeManager] 📊 Cell state before allocation - IsPurchased: {cell.IsPurchased}, IsUnlocked: {cell.IsUnlocked}, IsAvailable: {cell.IsAvailable}");
+                        }
+                        
+                        // Allocate the corresponding extension point
+                        AllocateExtensionPoint(cell);
+                        
+                        if (showDebugInfo)
+                        {
+                            Debug.Log($"[PassiveTreeManager] 📊 Cell state after allocation - IsPurchased: {cell.IsPurchased}, IsUnlocked: {cell.IsUnlocked}, IsAvailable: {cell.IsAvailable}");
+                        }
+                        
+                        return; // Only allocate the first matching point
+                    }
+                }
+            }
+            
+            if (showDebugInfo)
+            {
+                Debug.LogWarning($"[PassiveTreeManager] ❌ No corresponding extension point {correspondingPointName} found on any extension board");
+            }
+        }
+        
+        /// <summary>
+        /// Allocate an extension point (mark as purchased and unlocked)
+        /// </summary>
+        private void AllocateExtensionPoint(CellController extensionCell)
+        {
+            if (extensionCell == null) return;
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] 🎯 Allocating extension point {extensionCell.gameObject.name} at {extensionCell.GridPosition}");
+                Debug.Log($"[PassiveTreeManager] 📊 Cell type: {extensionCell.GetType().Name}");
+            }
+            
+            // Mark the extension point as purchased and adjacent
+            extensionCell.SetPurchased(true);
+            extensionCell.SetAdjacent(true);
+            
+            // IMPORTANT: Set this cell as an extension point
+            extensionCell.SetAsExtensionPoint(true);
+            
+            // Force update visual state
+            extensionCell.UpdateVisualState();
+            
+            // If this is a CellController_EXT, force a refresh
+            if (extensionCell is CellController_EXT extCell)
+            {
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[PassiveTreeManager] 🔄 Forcing CellController_EXT refresh for {extCell.gameObject.name}");
+                }
+                
+                // Force the extension cell to refresh its state
+                extCell.UpdateVisualState();
+                
+                // Also try to force the extension board controller to refresh
+                var boardController = extCell.GetComponentInParent<ExtensionBoardController>();
+                if (boardController != null)
+                {
+            if (showDebugInfo)
+            {
+                        Debug.Log($"[PassiveTreeManager] 🔄 Notifying extension board controller of cell purchase");
+                    }
+                    boardController.OnCellPurchased(extCell.GridPosition);
+                }
+            }
+            
+            // For cross-board extension points, we need to unlock the correct adjacent nodes
+            // based on the world grid position, not the local board position
+            UnlockCrossBoardAdjacentNodes(extensionCell);
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] ✅ Successfully allocated extension point {extensionCell.gameObject.name} at {extensionCell.GridPosition}");
+                Debug.Log($"[PassiveTreeManager] 📊 Final state - IsPurchased: {extensionCell.IsPurchased}, IsUnlocked: {extensionCell.IsUnlocked}, IsAvailable: {extensionCell.IsAvailable}, IsExtensionPoint: {extensionCell.IsExtensionPoint}");
+            }
+        }
+
+        /// <summary>
+        /// Allocate an extension point within a specific board only (prevents cross-board contamination)
+        /// </summary>
+        private void AllocateExtensionPointWithinBoard(CellController extensionCell, ExtensionBoardController targetBoard)
+        {
+            if (extensionCell == null)
+            {
+                Debug.LogError("[PassiveTreeManager] Cannot allocate extension point - cell is null");
+                return;
+            }
+            
+            if (targetBoard == null)
+            {
+                Debug.LogError("[PassiveTreeManager] Cannot allocate extension point - target board is null");
+                return;
+            }
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] 🎯 Allocating extension point within board: {extensionCell.gameObject.name} at {extensionCell.GridPosition} on board {targetBoard.GetBoardName()}");
+                Debug.Log($"[PassiveTreeManager] 📊 Cell type: {extensionCell.GetType().Name}");
+            }
+            
+            // Mark the extension point as purchased and adjacent
+            extensionCell.SetPurchased(true);
+            extensionCell.SetAdjacent(true);
+            
+            // IMPORTANT: Set this cell as an extension point
+            extensionCell.SetAsExtensionPoint(true);
+            
+            // Force update visual state
+            extensionCell.UpdateVisualState();
+            
+            // If this is a CellController_EXT, force a refresh
+            if (extensionCell is CellController_EXT extCell)
+            {
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[PassiveTreeManager] 🔄 Forcing CellController_EXT refresh for {extCell.gameObject.name}");
+                }
+                
+                // Force the extension cell to refresh its state
+                extCell.UpdateVisualState();
+                
+                // Also try to force the extension board controller to refresh
+                var boardController = extCell.GetComponentInParent<ExtensionBoardController>();
+                if (boardController != null)
+                {
+                    if (showDebugInfo)
+                    {
+                        Debug.Log($"[PassiveTreeManager] 🔄 Notifying extension board controller of cell purchase");
+                    }
+                    boardController.OnCellPurchased(extCell.GridPosition);
+                }
+            }
+            
+            // Unlock adjacent nodes only within the target board
+            UnlockAdjacentNodesWithinBoard(extensionCell.GridPosition, targetBoard);
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] ✅ Successfully allocated extension point within board: {extensionCell.gameObject.name} at {extensionCell.GridPosition}");
+                Debug.Log($"[PassiveTreeManager] 📊 Final state - IsPurchased: {extensionCell.IsPurchased}, IsUnlocked: {extensionCell.IsUnlocked}, IsAvailable: {extensionCell.IsAvailable}, IsExtensionPoint: {extensionCell.IsExtensionPoint}");
+            }
+        }
+        
+        /// <summary>
+        /// Unlock adjacent nodes for cross-board extension points
+        /// This handles the world grid positioning correctly for extension boards
+        /// </summary>
+        private void UnlockCrossBoardAdjacentNodes(CellController extensionCell)
+        {
+            if (extensionCell == null) return;
+            
+            // Get the extension board controller to find the world position
+            ExtensionBoardController boardController = extensionCell.GetComponentInParent<ExtensionBoardController>();
+            if (boardController == null)
+            {
+                if (showDebugInfo)
+                    Debug.LogWarning($"[PassiveTreeManager] ❌ Could not find ExtensionBoardController for extension cell at {extensionCell.GridPosition}");
+                return;
+            }
+            
+            // Get the world grid position of the board
+            Vector2Int boardWorldPosition = boardController.GetBoardGridPosition();
+            if (showDebugInfo)
+                Debug.Log($"[PassiveTreeManager] 📍 Board world position: {boardWorldPosition}, Extension cell local position: {extensionCell.GridPosition}");
+            
+            // Calculate the world position of the extension point
+            Vector2Int extensionWorldPosition = boardWorldPosition + extensionCell.GridPosition;
+            if (showDebugInfo)
+                Debug.Log($"[PassiveTreeManager] 🌍 Extension point world position: {extensionWorldPosition}");
+            
+            // Cross-board adjacency is now handled by board-specific logic
+            // No need to unlock nodes in the world grid as this causes cross-board contamination
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] ⏭️ Skipping world grid adjacency unlock to prevent cross-board contamination");
+            }
+        }
+        
+        /// <summary>
+        /// Check if a cell is an extension point by GameObject name
+        /// </summary>
+        private bool IsExtensionPointByGameObjectName(CellController cell)
+        {
+            if (cell == null) return false;
+            
+            string gameObjectName = cell.gameObject.name;
+            return gameObjectName == "Cell_0_3" ||  // Extension_North (top)
+                   gameObjectName == "Cell_3_0" ||  // Extension_West (left)
+                   gameObjectName == "Cell_3_6" ||  // Extension_East (right)
+                   gameObjectName == "Cell_6_3";    // Extension_South (bottom)
+        }
+        
+        /// <summary>
+        /// Unlock adjacent nodes at a specific world grid position
+        /// This ensures we're unlocking the correct nodes in the world grid
+        /// </summary>
+        private void UnlockAdjacentNodesAtWorldPosition(Vector2Int worldPosition)
+        {
+            if (showDebugInfo)
+                Debug.Log($"[PassiveTreeManager] UnlockAdjacentNodesAtWorldPosition called for world position: {worldPosition}");
+            
+            Vector2Int[] adjacentPositions = new Vector2Int[]
+            {
+                worldPosition + Vector2Int.up,    // North
+                worldPosition + Vector2Int.down,  // South
+                worldPosition + Vector2Int.left,  // West
+                worldPosition + Vector2Int.right  // East
+            };
+            
+            int unlockedCount = 0;
+            
+            foreach (Vector2Int pos in adjacentPositions)
+            {
+                // First check core board
+                if (cells.ContainsKey(pos))
+                {
+                    CellController adjacentCell = cells[pos];
+                    
+                    if (showDebugInfo)
+                        Debug.Log($"[PassiveTreeManager] Checking core board adjacent node at {pos}: Unlocked={adjacentCell.IsUnlocked}, Purchased={adjacentCell.IsPurchased}");
+                    
+                    if (!adjacentCell.IsAdjacent && !adjacentCell.IsPurchased)
+                    {
+                        adjacentCell.SetAdjacent(true);
+                        unlockedCount++;
+                        if (showDebugInfo)
+                            Debug.Log($"[PassiveTreeManager] ✅ Made adjacent core board node: {pos} (Type: {adjacentCell.NodeType})");
+                    }
+                    else
+                    {
+                        if (showDebugInfo)
+                            Debug.Log($"[PassiveTreeManager] ⏭️ Skipped core board adjacent node: {pos} (already unlocked or purchased)");
+                    }
+                }
+                else
+                {
+                    // Check extension boards for adjacent nodes
+                    CellController extensionBoardCell = FindCellInExtensionBoards(pos);
+                    if (extensionBoardCell != null)
+                    {
+                        if (showDebugInfo)
+                            Debug.Log($"[PassiveTreeManager] Checking extension board adjacent node at {pos}: Unlocked={extensionBoardCell.IsUnlocked}, Purchased={extensionBoardCell.IsPurchased}");
+                        
+                        if (!extensionBoardCell.IsAdjacent && !extensionBoardCell.IsPurchased)
+                        {
+                            extensionBoardCell.SetAdjacent(true);
+                            unlockedCount++;
+                            if (showDebugInfo)
+                                Debug.Log($"[PassiveTreeManager] ✅ Made adjacent extension board node: {pos} (Type: {extensionBoardCell.NodeType})");
+                        }
+                        else
+                        {
+                            if (showDebugInfo)
+                                Debug.Log($"[PassiveTreeManager] ⏭️ Skipped extension board adjacent node: {pos} (already unlocked or purchased)");
+                        }
+                    }
+                    else
+                    {
+                        if (showDebugInfo)
+                            Debug.Log($"[PassiveTreeManager] ⚠️ Adjacent position {pos} not found in core board or extension boards");
+                    }
+                }
+            }
+            
+            if (showDebugInfo)
+                Debug.Log($"[PassiveTreeManager] UnlockAdjacentNodesAtWorldPosition complete: {unlockedCount} nodes unlocked from {worldPosition}");
+        }
+        
+        /// <summary>
+        /// Test cross-board extension point allocation
+        /// This method can be used to test the cross-board allocation system
+        /// </summary>
+        [ContextMenu("Test Cross-Board Extension Allocation")]
+        public void TestCrossBoardExtensionAllocation()
+        {
+            Debug.Log("=== TESTING CROSS-BOARD EXTENSION ALLOCATION ===");
+            
+            // Find all extension boards
+            ExtensionBoardController[] extensionBoards = FindObjectsByType<ExtensionBoardController>(FindObjectsSortMode.None);
+            Debug.Log($"[PassiveTreeManager] Found {extensionBoards.Length} extension boards");
+            
+            foreach (ExtensionBoardController board in extensionBoards)
+            {
+                Debug.Log($"[PassiveTreeManager] Testing board: {board.GetBoardName()} at position {board.GetBoardGridPosition()}");
+                
+                // Find extension points on this board
+                CellController[] cells = board.GetComponentsInChildren<CellController>();
+                foreach (CellController cell in cells)
+                {
+                    // Check if this is an extension point by GameObject name or NodeType
+                    if (IsExtensionPointByGameObjectName(cell) || cell.NodeType == NodeType.Extension)
+                    {
+                        string extensionName = GetExtensionPointName(cell);
+                        if (!string.IsNullOrEmpty(extensionName))
+                        {
+                            Debug.Log($"[PassiveTreeManager] 🎯 Found extension point: {extensionName} at {cell.GridPosition} (GameObject: {cell.gameObject.name})");
+                            
+                            // Test the cross-board allocation
+                            HandleCrossBoardExtensionAllocation(cell);
+                        }
+                    }
+                }
+            }
+            
+            Debug.Log("=== CROSS-BOARD EXTENSION ALLOCATION TEST COMPLETE ===");
+        }
+        
+        /// <summary>
+        /// Test coordinate system fixes
+        /// This method validates that coordinates are correctly mapped
+        /// </summary>
+        [ContextMenu("Test Coordinate System Fixes")]
+        public void TestCoordinateSystemFixes()
+        {
+            Debug.Log("=== TESTING COORDINATE SYSTEM FIXES ===");
+            
+            // Test Extension_West should be at (0,3) not (3,0)
+            Debug.Log("[PassiveTreeManager] 🎯 Testing Extension_West coordinate mapping...");
+            
+            // Find Extension_West on core board
+            if (cells.ContainsKey(new Vector2Int(0, 3)))
+            {
+                CellController extensionWest = cells[new Vector2Int(0, 3)];
+                Debug.Log($"[PassiveTreeManager] ✅ Found Extension_West at correct position (0,3): {extensionWest.gameObject.name}");
+                
+                if (extensionWest.NodeType == NodeType.Extension)
+                {
+                    Debug.Log($"[PassiveTreeManager] ✅ Extension_West has correct NodeType: Extension");
+                }
+                else
+                {
+                    Debug.LogWarning($"[PassiveTreeManager] ❌ Extension_West has incorrect NodeType: {extensionWest.NodeType}");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[PassiveTreeManager] ❌ Extension_West not found at position (0,3)");
+            }
+            
+            // Test other extension points
+            Vector2Int[] expectedExtensionPositions = {
+                new Vector2Int(0, 3), // Extension_West
+                new Vector2Int(3, 0), // Extension_South  
+                new Vector2Int(3, 6), // Extension_East
+                new Vector2Int(6, 3)  // Extension_North
+            };
+            
+            foreach (Vector2Int pos in expectedExtensionPositions)
+            {
+                if (cells.ContainsKey(pos))
+                {
+                    CellController cell = cells[pos];
+                    Debug.Log($"[PassiveTreeManager] ✅ Found extension point at {pos}: {cell.gameObject.name} (Type: {cell.NodeType})");
+                }
+                else
+                {
+                    Debug.LogWarning($"[PassiveTreeManager] ❌ No extension point found at {pos}");
+                }
+            }
+            
+            Debug.Log("=== COORDINATE SYSTEM FIXES TEST COMPLETE ===");
+        }
+        
+        /// <summary>
+        /// Check extension board creation status
+        /// </summary>
+        [ContextMenu("Check Extension Board Status")]
+        public void CheckExtensionBoardStatus()
+        {
+            Debug.Log("=== CHECKING EXTENSION BOARD STATUS ===");
+            
+            // Check if board positioning manager exists
+            if (boardPositioningManager == null)
+            {
+                Debug.LogWarning("[PassiveTreeManager] ❌ Board positioning manager is null");
+                return;
+            }
+            
+            // Check if board generator exists
+            if (boardGenerator == null)
+            {
+                Debug.LogWarning("[PassiveTreeManager] ❌ Board generator is null");
+                return;
+            }
+            
+            Debug.Log("[PassiveTreeManager] ✅ Board positioning manager and board generator found");
+            
+            // Check extension points
+            var allExtensionPoints = boardPositioningManager.GetAllExtensionPoints();
+            Debug.Log($"[PassiveTreeManager] 📊 Found {allExtensionPoints.Count} extension points");
+            
+            foreach (var point in allExtensionPoints)
+            {
+                Debug.Log($"[PassiveTreeManager] 🔍 Extension point: {point.id} at {point.position}, CanConnect: {point.CanConnect()}");
+            }
+            
+            // Check for existing extension boards
+            ExtensionBoardController[] extensionBoards = FindObjectsByType<ExtensionBoardController>(FindObjectsSortMode.None);
+            Debug.Log($"[PassiveTreeManager] 📊 Found {extensionBoards.Length} extension boards in scene");
+            
+            foreach (ExtensionBoardController board in extensionBoards)
+            {
+                Debug.Log($"[PassiveTreeManager] 🎯 Extension board: {board.GetBoardName()} at position {board.GetBoardGridPosition()}");
+            }
+            
+            Debug.Log("=== EXTENSION BOARD STATUS CHECK COMPLETE ===");
+        }
+        
+        /// <summary>
+        /// Test core board extension points
+        /// </summary>
+        [ContextMenu("Test Core Board Extension Points")]
+        public void TestCoreBoardExtensionPoints()
+        {
+            Debug.Log("=== TESTING CORE BOARD EXTENSION POINTS ===");
+            
+            int extensionPointsFound = 0;
+            
+            foreach (var kvp in cells)
+            {
+                CellController cell = kvp.Value;
+                if (cell.NodeType == NodeType.Extension || IsExtensionPointByGameObjectName(cell))
+                {
+                    extensionPointsFound++;
+                    string extensionName = GetExtensionPointName(cell);
+                    Debug.Log($"[PassiveTreeManager] 🎯 Found core board extension point: {extensionName} at {cell.GridPosition} (GameObject: {cell.gameObject.name})");
+                    Debug.Log($"[PassiveTreeManager] 📊 State - IsPurchased: {cell.IsPurchased}, IsUnlocked: {cell.IsUnlocked}, IsAvailable: {cell.IsAvailable}");
+                }
+            }
+            
+            Debug.Log($"[PassiveTreeManager] 📊 Total core board extension points found: {extensionPointsFound}");
+            Debug.Log("=== CORE BOARD EXTENSION POINTS TEST COMPLETE ===");
+        }
+        
+        /// <summary>
+        /// Manually allocate a specific extension point for testing
+        /// </summary>
+        [ContextMenu("Manually Allocate Extension Points")]
+        public void ManuallyAllocateAllExtensionPoints()
+        {
+            Debug.Log("=== MANUALLY ALLOCATING ALL EXTENSION POINTS ===");
+            
+            // Find all extension boards
+            ExtensionBoardController[] extensionBoards = FindObjectsByType<ExtensionBoardController>(FindObjectsSortMode.None);
+            
+            if (extensionBoards.Length == 0)
+            {
+                Debug.LogWarning("[PassiveTreeManager] ❌ No extension boards found in scene. You need to create an extension board first.");
+                Debug.Log("[PassiveTreeManager] 💡 To create an extension board:");
+                Debug.Log("   1. Click on an extension point (Extension_East, Extension_West, etc.) on the core board");
+                Debug.Log("   2. Select a board from the board selection UI");
+                Debug.Log("   3. The extension board will be created and then you can test allocation");
+                return;
+            }
+            
+            Debug.Log($"[PassiveTreeManager] 📊 Found {extensionBoards.Length} extension boards in scene");
+            
+            foreach (ExtensionBoardController board in extensionBoards)
+            {
+                Debug.Log($"[PassiveTreeManager] 🔍 Checking board: {board.GetBoardName()} at position {board.GetBoardGridPosition()}");
+                
+                CellController[] cells = board.GetComponentsInChildren<CellController>();
+                Debug.Log($"[PassiveTreeManager] 📊 Board has {cells.Length} cells");
+                
+                // Find all extension points on this board
+                foreach (CellController cell in cells)
+                {
+                    if (cell.NodeType == NodeType.Extension && cell.IsExtensionPoint)
+                    {
+                        if (showDebugInfo)
+                        {
+                            Debug.Log($"[PassiveTreeManager] 🔍 Found extension point: {cell.gameObject.name} at {cell.GridPosition}");
+                        }
+                        
+                        if (!cell.IsPurchased)
+                        {
+                            Debug.Log($"[PassiveTreeManager] 🎯 Allocating extension point at {cell.GridPosition} on board {board.GetBoardName()}");
+                            Debug.Log($"[PassiveTreeManager] 📊 Before allocation - IsPurchased: {cell.IsPurchased}, IsUnlocked: {cell.IsUnlocked}, IsAvailable: {cell.IsAvailable}");
+                            
+                            // Use board-specific allocation to prevent cross-board contamination
+                            AllocateExtensionPointWithinBoard(cell, board);
+                            
+                            Debug.Log($"[PassiveTreeManager] 📊 After allocation - IsPurchased: {cell.IsPurchased}, IsUnlocked: {cell.IsUnlocked}, IsAvailable: {cell.IsAvailable}");
+                        }
+                        else
+                        {
+                            Debug.Log($"[PassiveTreeManager] ⏭️ Extension point at {cell.GridPosition} already purchased");
+                        }
+                    }
+                }
+            }
+            
+            Debug.Log("[PassiveTreeManager] ✅ Manual extension point allocation complete");
         }
         
         /// <summary>
@@ -1082,21 +2393,6 @@ namespace PassiveTree
                 Debug.Log($"[PassiveTreeManager] Extension boards {(enabled ? "enabled" : "disabled")}");
         }
         
-        /// <summary>
-        /// Spawn a test extension board
-        /// </summary>
-        [ContextMenu("Spawn Test Extension Board")]
-        public void SpawnTestExtensionBoard()
-        {
-            if (boardPositioningManager != null)
-            {
-                boardPositioningManager.SpawnTestExtensionBoards();
-            }
-            else
-            {
-                Debug.LogWarning("[PassiveTreeManager] Board positioning manager not available");
-            }
-        }
         
         #endregion
     }

@@ -19,7 +19,7 @@ namespace PassiveTree
         [SerializeField] protected string nodeDescription = "Basic node";
         
         [Header("Visual")]
-        [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] protected SpriteRenderer spriteRenderer;
         [SerializeField] protected Button button;
         [SerializeField] private Color normalColor = Color.white;
         [SerializeField] private Color hoverColor = Color.yellow;
@@ -80,6 +80,12 @@ namespace PassiveTree
         public bool IsUnlocked => isUnlocked;
         public bool IsPurchased => isPurchased;
         public bool IsExtensionPoint => isExtensionPoint;
+        
+        /// <summary>
+        /// Combined adjacency state - node can be purchased if it has adjacent purchased nodes
+        /// This combines the logic of IsAvailable and IsUnlocked for adjacency
+        /// </summary>
+        public bool IsAdjacent => isAvailable && isUnlocked;
         
         protected virtual void Awake()
         {
@@ -164,36 +170,22 @@ namespace PassiveTree
         /// </summary>
         private void DebugComponentSetup()
         {
-            Debug.Log($"[CellController] Component setup for {gridPosition}:");
-            
             // Check for required components
             var collider2D = GetComponent<Collider2D>();
-            if (collider2D != null)
-            {
-                PassiveTreeLogger.LogCategory($"Collider2D: {collider2D.GetType().Name} (enabled: {collider2D.enabled})", "input");
-            }
-            else
+            if (collider2D == null)
             {
                 Debug.LogError($"  ❌ Missing Collider2D on {gridPosition}");
             }
             
             var spriteRenderer = GetComponent<SpriteRenderer>();
-            if (spriteRenderer != null)
-            {
-                PassiveTreeLogger.LogCategory($"SpriteRenderer: present (enabled: {spriteRenderer.enabled})", "sprite");
-            }
-            else
+            if (spriteRenderer == null)
             {
                 Debug.LogError($"  ❌ Missing SpriteRenderer on {gridPosition}");
             }
             
             // Check for Button component
             var buttonComponent = GetComponent<Button>();
-            if (buttonComponent != null)
-            {
-                PassiveTreeLogger.LogCategory($"Button: present (enabled: {buttonComponent.enabled}, interactable: {buttonComponent.interactable})", "input");
-            }
-            else
+            if (buttonComponent == null)
             {
                 Debug.LogError($"  ❌ Missing Button component on {gridPosition}");
             }
@@ -231,41 +223,25 @@ namespace PassiveTree
         /// </summary>
         public virtual void OnButtonClick()
         {
-            Debug.Log($"🖱️ [CellController] BUTTON CLICK DETECTED on {gridPosition} - Available: {isAvailable}, Unlocked: {isUnlocked}, Purchased: {isPurchased}, Type: {nodeType}");
-            
-            // Always log the interaction validation steps
-            Debug.Log($"[CellController] Interaction validation for {gridPosition}:");
-            Debug.Log($"  - isAvailable: {isAvailable}");
-            Debug.Log($"  - isUnlocked: {isUnlocked}");
-            Debug.Log($"  - isPurchased: {isPurchased}");
-            Debug.Log($"  - nodeType: {nodeType}");
-            
             if (!CanBeInteractedWith()) 
             {
-                Debug.LogWarning($"❌ [CellController] Cell {gridPosition} cannot be interacted with - validation failed");
                 return;
             }
-            
-            Debug.Log($"✅ [CellController] Cell {gridPosition} passed interaction validation");
             
             // Check if this cell is on an extension board
             ExtensionBoardController extensionBoard = GetComponentInParent<ExtensionBoardController>();
             if (extensionBoard != null)
             {
-                Debug.Log($"🔄 [CellController] Cell {gridPosition} is on extension board, handling purchase directly");
                 HandleExtensionBoardCellPurchase();
             }
             else if (treeManager != null)
             {
-                Debug.Log($"🔄 [CellController] Calling treeManager.OnCellClicked({gridPosition})");
                 treeManager.OnCellClicked(gridPosition);
             }
             else
             {
                 Debug.LogError($"❌ [CellController] No tree manager reference for cell {gridPosition}");
             }
-            
-            Debug.Log($"✅ [CellController] Cell {gridPosition} button click processing complete - {nodeDescription}");
         }
         
         /// <summary>
@@ -273,18 +249,14 @@ namespace PassiveTree
         /// </summary>
         private void HandleExtensionBoardCellPurchase()
         {
-            Debug.Log($"[CellController] Handling extension board cell purchase for {gridPosition}");
-            
             // Check if we can purchase this cell
             if (!CanBeInteractedWith())
             {
-                Debug.Log($"[CellController] ❌ Cannot purchase extension board cell {gridPosition} - failed interaction check");
                 return;
             }
             
             // Purchase the cell
             SetPurchased(true);
-            Debug.Log($"[CellController] ✅ Successfully purchased extension board cell {gridPosition}");
             
             // Notify the extension board controller
             ExtensionBoardController extensionBoard = GetComponentInParent<ExtensionBoardController>();
@@ -299,33 +271,18 @@ namespace PassiveTree
         /// </summary>
         protected virtual bool CanBeInteractedWith()
         {
-            Debug.Log($"[CellController] CanBeInteractedWith check for {gridPosition}:");
-            
-            // Can't interact if not available
-            if (!isAvailable) 
+            // Can't interact if not adjacent (combines available and unlocked check)
+            if (!IsAdjacent) 
             {
-                Debug.Log($"  ❌ Failed: Not available");
                 return false;
             }
-            Debug.Log($"  ✅ Available: {isAvailable}");
-            
-            // Can't interact if locked
-            if (!isUnlocked) 
-            {
-                Debug.Log($"  ❌ Failed: Not unlocked");
-                return false;
-            }
-            Debug.Log($"  ✅ Unlocked: {isUnlocked}");
             
             // Can't interact if already purchased (unless it's a toggleable node)
             if (isPurchased && nodeType != NodeType.Start) 
             {
-                Debug.Log($"  ❌ Failed: Already purchased and not start node");
                 return false;
             }
-            Debug.Log($"  ✅ Purchase check passed: purchased={isPurchased}, type={nodeType}");
             
-            Debug.Log($"  ✅ All checks passed - can interact");
             return true;
         }
         
@@ -380,12 +337,20 @@ namespace PassiveTree
         /// </summary>
         public void SetUnlocked(bool unlocked)
         {
-            bool wasUnlocked = isUnlocked;
             isUnlocked = unlocked;
             UpdateVisualState();
             UpdateButtonInteractable();
-            
-            Debug.Log($"[CellController] SetUnlocked({unlocked}) for {gridPosition} - was: {wasUnlocked}, now: {isUnlocked}, Type: {nodeType}");
+        }
+        
+        /// <summary>
+        /// Set both available and unlocked states together (adjacent state)
+        /// </summary>
+        public void SetAdjacent(bool adjacent)
+        {
+            isAvailable = adjacent;
+            isUnlocked = adjacent;
+            UpdateVisualState();
+            UpdateButtonInteractable();
         }
         
         /// <summary>
@@ -393,12 +358,9 @@ namespace PassiveTree
         /// </summary>
         public void SetPurchased(bool purchased)
         {
-            bool wasPurchased = isPurchased;
             isPurchased = purchased;
             UpdateVisualState();
             UpdateButtonInteractable();
-            
-            Debug.Log($"[CellController] SetPurchased({purchased}) for {gridPosition} - was: {wasPurchased}, now: {isPurchased}");
         }
         
         /// <summary>
@@ -421,18 +383,14 @@ namespace PassiveTree
             
             Color targetColor = normalColor;
             
-            // Priority order: purchased > locked > unavailable > selected > hovered > normal
+            // Priority order: purchased > not adjacent > selected > hovered > normal
             if (isPurchased)
             {
                 targetColor = purchasedColor;
             }
-            else if (!isUnlocked)
+            else if (!IsAdjacent)
             {
-                targetColor = lockedColor;
-            }
-            else if (!isAvailable)
-            {
-                targetColor = unavailableColor;
+                targetColor = unavailableColor; // Use unavailable color for non-adjacent nodes
             }
             else if (isSelected)
             {
@@ -532,12 +490,6 @@ namespace PassiveTree
                 return;
             }
 
-            Debug.Log($"🔧 [CellController] Setting node data for cell at {gridPosition}:");
-            Debug.Log($"  - Node Name: '{nodeData.NodeName}'");
-            Debug.Log($"  - Description: '{nodeData.Description}'");
-            Debug.Log($"  - Node Type: {nodeData.NodeType}");
-            Debug.Log($"  - Is Unlocked: {nodeData.IsUnlocked}");
-
             // Update cell properties from node data
             nodeType = nodeData.NodeType;
             nodeDescription = nodeData.Description;
@@ -557,8 +509,11 @@ namespace PassiveTree
             }
             else
             {
-                // Fall back to auto-assignment
-                AssignSpriteBasedOnNodeType();
+                // Only auto-assign if no sprite is currently set (preserve prefab sprites)
+                if (spriteRenderer.sprite == null && autoAssignSprite)
+                {
+                    AssignSpriteBasedOnNodeType();
+                }
             }
 
             // Update visual state
@@ -572,8 +527,6 @@ namespace PassiveTree
 
             // Check if this is an extension point based on JSON data
             CheckExtensionPointStatus();
-
-            Debug.Log($"[CellController] Set node data for {gridPosition}: {nodeData.NodeName} ({nodeData.NodeType})");
         }
 
         /// <summary>
@@ -636,20 +589,25 @@ namespace PassiveTree
         
         /// <summary>
         /// Assign sprite based on node type (attribute icons are handled separately)
+        /// Only override if no sprite is currently assigned (preserve prefab sprites)
         /// </summary>
         protected virtual void AssignSpriteBasedOnNodeType()
         {
             if (spriteRenderer == null) return;
             
-            Sprite targetSprite = GetSpriteForNodeType(nodeType);
-            
-            if (targetSprite != null)
+            // Only assign sprite if none is currently set (preserve prefab sprites)
+            if (spriteRenderer.sprite == null)
             {
-                spriteRenderer.sprite = targetSprite;
-            }
-            else if (defaultSprite != null)
-            {
-                spriteRenderer.sprite = defaultSprite;
+                Sprite targetSprite = GetSpriteForNodeType(nodeType);
+                
+                if (targetSprite != null)
+                {
+                    spriteRenderer.sprite = targetSprite;
+                }
+                else if (defaultSprite != null)
+                {
+                    spriteRenderer.sprite = defaultSprite;
+                }
             }
         }
         

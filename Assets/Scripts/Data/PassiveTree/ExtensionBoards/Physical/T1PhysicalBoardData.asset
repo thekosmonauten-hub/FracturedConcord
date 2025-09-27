@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ac7f59631d32954fbf7c95512640f85, type: 3}
-  m_Name: T1FireBoard
+  m_Name: T1PhysicalBoardData
   m_EditorClassIdentifier: Assembly-CSharp::PassiveTree.BoardData
-  boardName: Ember Mastery
-  boardDescription: A spark catches, warmth spreads, hunger grows. Fire is patient
-    in its devouring.
-  boardTheme: 0
+  boardName: Savage Mastery
+  boardDescription: Strength is the bedrock. Every swing a foundation, every step
+    a claim upon the earth.
+  boardTheme: 4
   boardSize: {x: 7, y: 7}
-  jsonDataAsset: {fileID: 4900000, guid: 835c9fb82e86c1f44b36e0e6041507de, type: 3}
+  jsonDataAsset: {fileID: 4900000, guid: 28b8ed764928b2040896f8c62632d146, type: 3}
   jsonDataPath: 
   boardPreview: {fileID: 0}
   boardColor: {r: 1, g: 1, b: 1, a: 1}
