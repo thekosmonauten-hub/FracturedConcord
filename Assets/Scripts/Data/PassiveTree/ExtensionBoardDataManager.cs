@@ -128,6 +128,114 @@ namespace PassiveTree
                     Debug.Log($"[ExtensionBoardDataManager] ✅ Registered extension board: {boardName} at {gridPosition}");
                 }
             }
+            
+            // Notify the board selection tracker about the created board
+            NotifyBoardSelectionTracker(boardName, boardId);
+        }
+        
+        /// <summary>
+        /// Notify the board selection tracker about a created board
+        /// </summary>
+        private void NotifyBoardSelectionTracker(string boardName, string boardId)
+        {
+            var tracker = BoardSelectionTracker.Instance;
+            if (tracker != null)
+            {
+                // Try to find the corresponding BoardData for this board
+                BoardData boardData = FindBoardDataByName(boardName);
+                if (boardData != null)
+                {
+                    // Extract tier and theme from board name or use defaults
+                    int tier = ExtractTierFromBoardName(boardName);
+                    BoardTheme theme = ExtractThemeFromBoardName(boardName);
+                    
+                    tracker.RegisterCreatedBoard(boardName, boardData, tier, theme);
+                }
+                else if (showDebugInfo)
+                {
+                    Debug.LogWarning($"[ExtensionBoardDataManager] Could not find BoardData for board: {boardName}");
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Find BoardData by board name
+        /// </summary>
+        private BoardData FindBoardDataByName(string boardName)
+        {
+            // Search for BoardData assets in the project
+            BoardData[] allBoardData = Resources.FindObjectsOfTypeAll<BoardData>();
+            
+            foreach (BoardData boardData in allBoardData)
+            {
+                if (boardData != null && boardData.BoardName.Equals(boardName, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    return boardData;
+                }
+            }
+            
+            return null;
+        }
+        
+        /// <summary>
+        /// Extract tier from board name (e.g., "T1_Fire_Board" -> 1)
+        /// </summary>
+        private int ExtractTierFromBoardName(string boardName)
+        {
+            // Look for T1, T2, T3, etc. in the board name
+            if (boardName.ToLower().Contains("t1")) return 1;
+            if (boardName.ToLower().Contains("t2")) return 2;
+            if (boardName.ToLower().Contains("t3")) return 3;
+            if (boardName.ToLower().Contains("t4")) return 4;
+            if (boardName.ToLower().Contains("t5")) return 5;
+            
+            // Default to tier 1 if no tier found
+            return 1;
+        }
+        
+        /// <summary>
+        /// Extract theme from board name
+        /// </summary>
+        private BoardTheme ExtractThemeFromBoardName(string boardName)
+        {
+            string lowerName = boardName.ToLower();
+            
+            // Check for specific theme keywords
+            if (lowerName.Contains("fire")) return BoardTheme.Fire;
+            if (lowerName.Contains("cold") || lowerName.Contains("frozen")) return BoardTheme.Cold;
+            if (lowerName.Contains("lightning")) return BoardTheme.Lightning;
+            if (lowerName.Contains("chaos")) return BoardTheme.Chaos;
+            if (lowerName.Contains("physical")) return BoardTheme.Physical;
+            if (lowerName.Contains("life")) return BoardTheme.Life;
+            if (lowerName.Contains("armor")) return BoardTheme.Armor;
+            if (lowerName.Contains("evasion")) return BoardTheme.Evasion;
+            if (lowerName.Contains("critical")) return BoardTheme.Critical;
+            if (lowerName.Contains("speed")) return BoardTheme.Speed;
+            if (lowerName.Contains("utility")) return BoardTheme.Utility;
+            if (lowerName.Contains("elemental")) return BoardTheme.Elemental;
+            if (lowerName.Contains("keystone")) return BoardTheme.Keystone;
+            
+            // Check for mastery themes (common in passive trees)
+            if (lowerName.Contains("mastery")) 
+            {
+                // Try to determine the mastery type
+                if (lowerName.Contains("frozen") || lowerName.Contains("cold")) return BoardTheme.Cold;
+                if (lowerName.Contains("fire") || lowerName.Contains("burning")) return BoardTheme.Fire;
+                if (lowerName.Contains("lightning") || lowerName.Contains("electric")) return BoardTheme.Lightning;
+                if (lowerName.Contains("chaos") || lowerName.Contains("void")) return BoardTheme.Chaos;
+                if (lowerName.Contains("physical") || lowerName.Contains("strength")) return BoardTheme.Physical;
+                if (lowerName.Contains("life") || lowerName.Contains("vitality")) return BoardTheme.Life;
+                if (lowerName.Contains("armor") || lowerName.Contains("defense")) return BoardTheme.Armor;
+                if (lowerName.Contains("evasion") || lowerName.Contains("dodge")) return BoardTheme.Evasion;
+                if (lowerName.Contains("critical") || lowerName.Contains("crit")) return BoardTheme.Critical;
+                if (lowerName.Contains("speed") || lowerName.Contains("haste")) return BoardTheme.Speed;
+                if (lowerName.Contains("utility") || lowerName.Contains("support")) return BoardTheme.Utility;
+                if (lowerName.Contains("elemental")) return BoardTheme.Elemental;
+                if (lowerName.Contains("keystone")) return BoardTheme.Keystone;
+            }
+            
+            // Default to General if no theme found
+            return BoardTheme.General;
         }
         
         /// <summary>
@@ -137,6 +245,8 @@ namespace PassiveTree
         {
             if (extensionBoards.ContainsKey(boardId))
             {
+                string boardName = extensionBoards[boardId].boardName;
+                
                 // Remove all extension points for this board
                 var pointsToRemove = extensionPoints.Values.Where(p => p.parentBoardId == boardId).ToList();
                 foreach (var point in pointsToRemove)
@@ -146,9 +256,16 @@ namespace PassiveTree
                 
                 extensionBoards.Remove(boardId);
                 
+                // Notify the board selection tracker about the removed board
+                var tracker = BoardSelectionTracker.Instance;
+                if (tracker != null)
+                {
+                    tracker.UnregisterBoard(boardName);
+                }
+                
                 if (showDebugInfo)
                 {
-                    Debug.Log($"[ExtensionBoardDataManager] ✅ Unregistered extension board: {boardId}");
+                    Debug.Log($"[ExtensionBoardDataManager] ✅ Unregistered extension board: {boardId} ({boardName})");
                 }
             }
         }
@@ -365,5 +482,6 @@ namespace PassiveTree
         #endregion
     }
 }
+
 
 

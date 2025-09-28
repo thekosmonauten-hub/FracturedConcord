@@ -3855,7 +3855,7 @@ GameObject:
   - component: {fileID: 8633164981803263458}
   - component: {fileID: 2522300032258254949}
   m_Layer: 0
-  m_Name: Cell_0_3
+  m_Name: Cell_3_0_Extension_South
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4039,8 +4039,8 @@ MonoBehaviour:
   jsonFile: {fileID: 4900000, guid: 28b8ed764928b2040896f8c62632d146, type: 3}
   boardId: Savage Mastery
   nodeId: 
-  nodeName: 
-  nodeDescription: 
+  nodeName: Extension_South
+  nodeDescription: Allocate to select an extension board.
   nodeType: 
   nodePosition: {x: 3, y: 0}
   nodeCost: 0
@@ -5007,7 +5007,7 @@ GameObject:
   - component: {fileID: 9014729551759124135}
   - component: {fileID: 6358908865319170345}
   m_Layer: 0
-  m_Name: Cell_3_0
+  m_Name: Cell_0_3_Extension_West
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5191,8 +5191,8 @@ MonoBehaviour:
   jsonFile: {fileID: 4900000, guid: 28b8ed764928b2040896f8c62632d146, type: 3}
   boardId: Savage Mastery
   nodeId: 
-  nodeName: 
-  nodeDescription: 
+  nodeName: Extension_West
+  nodeDescription: Allocate to select an extension board.
   nodeType: 
   nodePosition: {x: 0, y: 3}
   nodeCost: 0
@@ -5391,7 +5391,7 @@ GameObject:
   - component: {fileID: 5260282745156324952}
   - component: {fileID: 6512907449971777909}
   m_Layer: 0
-  m_Name: Cell_3_6
+  m_Name: Cell_6_3_Extension_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5575,8 +5575,8 @@ MonoBehaviour:
   jsonFile: {fileID: 4900000, guid: 28b8ed764928b2040896f8c62632d146, type: 3}
   boardId: Savage Mastery
   nodeId: 
-  nodeName: 
-  nodeDescription: 
+  nodeName: Extension_East
+  nodeDescription: Allocate to select an extension board.
   nodeType: 
   nodePosition: {x: 6, y: 3}
   nodeCost: 0
@@ -13535,7 +13535,7 @@ GameObject:
   - component: {fileID: 936554298838678804}
   - component: {fileID: 2477364109446601081}
   m_Layer: 0
-  m_Name: Cell_6_3
+  m_Name: Cell_3_6_Extension_North
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13719,8 +13719,8 @@ MonoBehaviour:
   jsonFile: {fileID: 4900000, guid: 28b8ed764928b2040896f8c62632d146, type: 3}
   boardId: Savage Mastery
   nodeId: 
-  nodeName: 
-  nodeDescription: 
+  nodeName: Extension_North
+  nodeDescription: Allocate to select an extension board.
   nodeType: 
   nodePosition: {x: 3, y: 6}
   nodeCost: 0

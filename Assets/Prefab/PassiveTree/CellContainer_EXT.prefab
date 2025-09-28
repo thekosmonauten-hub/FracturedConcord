@@ -210,10 +210,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -231,6 +237,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -269,6 +276,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -286,20 +308,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -316,18 +329,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &850530794669212208
 MonoBehaviour:
@@ -591,10 +594,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -612,6 +621,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -650,6 +660,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -667,20 +692,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -697,18 +713,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &9047960120214977673
 MonoBehaviour:
@@ -972,10 +978,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -993,6 +1005,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -1031,6 +1044,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -1048,20 +1076,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -1078,18 +1097,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &2851012287909100052
 MonoBehaviour:
@@ -1353,10 +1362,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -1374,6 +1389,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -1412,6 +1428,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -1429,20 +1460,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -1459,18 +1481,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &5575529274382669520
 MonoBehaviour:
@@ -1484,7 +1496,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b9b374f7cfa00d4c92b34d2133106b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PassiveTree.CellController_EXT
-  gridPosition: {x: 0, y: 0}
+  gridPosition: {x: 0, y: 1}
   nodeType: 9
   nodeName: 
   nodeDescription: 
@@ -1734,10 +1746,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -1755,6 +1773,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -1793,6 +1812,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -1810,20 +1844,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -1840,18 +1865,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &8062597463303514516
 MonoBehaviour:
@@ -2115,10 +2130,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -2136,6 +2157,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -2174,6 +2196,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -2191,20 +2228,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -2221,18 +2249,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &9144857692734720538
 MonoBehaviour:
@@ -2496,10 +2514,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -2517,6 +2541,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -2555,6 +2580,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -2572,20 +2612,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -2602,18 +2633,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &8220744824701335539
 MonoBehaviour:
@@ -2877,10 +2898,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -2898,6 +2925,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -2936,6 +2964,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -2953,20 +2996,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -2983,18 +3017,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &8109071706750537900
 MonoBehaviour:
@@ -3258,10 +3282,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -3279,6 +3309,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -3317,6 +3348,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -3334,20 +3380,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -3364,18 +3401,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &402400817155086349
 MonoBehaviour:
@@ -3639,10 +3666,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -3660,6 +3693,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -3698,6 +3732,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -3715,20 +3764,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -3745,18 +3785,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &6209128069305704898
 MonoBehaviour:
@@ -3825,7 +3855,7 @@ GameObject:
   - component: {fileID: 8633164981803263458}
   - component: {fileID: 2522300032258254949}
   m_Layer: 0
-  m_Name: Cell_0_3
+  m_Name: Cell_3_0_Extension_South
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4009,10 +4039,10 @@ MonoBehaviour:
   jsonFile: {fileID: 0}
   boardId: 
   nodeId: 
-  nodeName: 
+  nodeName: Extension_South
   nodeDescription: 
-  nodeType: 
-  nodePosition: {x: 0, y: 0}
+  nodeType: Extension
+  nodePosition: {x: 3, y: 0}
   nodeCost: 0
   maxRank: 0
   currentRank: 0
@@ -4020,10 +4050,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -4041,6 +4077,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -4079,6 +4116,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -4096,20 +4148,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -4126,18 +4169,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &2522300032258254949
 MonoBehaviour:
@@ -4151,7 +4184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b9b374f7cfa00d4c92b34d2133106b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PassiveTree.CellController_EXT
-  gridPosition: {x: 0, y: 0}
+  gridPosition: {x: 3, y: 0}
   nodeType: 2
   nodeName: Extension_South
   nodeDescription: Allocate to select an extension board.
@@ -4401,10 +4434,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -4422,6 +4461,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -4460,6 +4500,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -4477,20 +4532,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -4507,18 +4553,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &8614054499376971328
 MonoBehaviour:
@@ -4782,10 +4818,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -4803,6 +4845,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -4841,6 +4884,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -4858,20 +4916,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -4888,18 +4937,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &3173711839344431499
 MonoBehaviour:
@@ -4968,7 +5007,7 @@ GameObject:
   - component: {fileID: 9014729551759124135}
   - component: {fileID: 6358908865319170345}
   m_Layer: 0
-  m_Name: Cell_3_0
+  m_Name: Cell_0_3_Extension_West
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5152,10 +5191,10 @@ MonoBehaviour:
   jsonFile: {fileID: 0}
   boardId: 
   nodeId: 
-  nodeName: 
-  nodeDescription: 
+  nodeName: Extension_West
+  nodeDescription: Allocate to select an extension board.
   nodeType: 
-  nodePosition: {x: 0, y: 0}
+  nodePosition: {x: 0, y: 3}
   nodeCost: 0
   maxRank: 0
   currentRank: 0
@@ -5163,10 +5202,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -5184,6 +5229,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -5222,6 +5268,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -5239,20 +5300,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -5269,18 +5321,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &6358908865319170345
 MonoBehaviour:
@@ -5294,7 +5336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b9b374f7cfa00d4c92b34d2133106b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PassiveTree.CellController_EXT
-  gridPosition: {x: 0, y: 0}
+  gridPosition: {x: 0, y: 3}
   nodeType: 2
   nodeName: Extension_West
   nodeDescription: Allocate to select an extension board.
@@ -5349,7 +5391,7 @@ GameObject:
   - component: {fileID: 5260282745156324952}
   - component: {fileID: 6512907449971777909}
   m_Layer: 0
-  m_Name: Cell_3_6
+  m_Name: Cell_6_3_Extension_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5533,10 +5575,10 @@ MonoBehaviour:
   jsonFile: {fileID: 0}
   boardId: 
   nodeId: 
-  nodeName: 
-  nodeDescription: 
+  nodeName: Extension_East
+  nodeDescription: Allocate to select an extension board.
   nodeType: 
-  nodePosition: {x: 0, y: 0}
+  nodePosition: {x: 6, y: 3}
   nodeCost: 0
   maxRank: 0
   currentRank: 0
@@ -5544,10 +5586,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -5565,6 +5613,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -5603,6 +5652,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -5620,20 +5684,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -5650,18 +5705,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &6512907449971777909
 MonoBehaviour:
@@ -5675,7 +5720,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b9b374f7cfa00d4c92b34d2133106b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PassiveTree.CellController_EXT
-  gridPosition: {x: 0, y: 0}
+  gridPosition: {x: 6, y: 3}
   nodeType: 2
   nodeName: Extension_East
   nodeDescription: Allocate to select an extension board.
@@ -5925,10 +5970,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -5946,6 +5997,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -5984,6 +6036,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -6001,20 +6068,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -6031,18 +6089,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &8107697316816510764
 MonoBehaviour:
@@ -6306,10 +6354,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -6327,6 +6381,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -6365,6 +6420,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -6382,20 +6452,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -6412,18 +6473,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &6464171863293991878
 MonoBehaviour:
@@ -6687,10 +6738,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -6708,6 +6765,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -6746,6 +6804,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -6763,20 +6836,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -6793,18 +6857,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &9004720911796856705
 MonoBehaviour:
@@ -7068,10 +7122,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -7089,6 +7149,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -7127,6 +7188,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -7144,20 +7220,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -7174,18 +7241,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &909910211300706942
 MonoBehaviour:
@@ -7449,10 +7506,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -7470,6 +7533,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -7508,6 +7572,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -7525,20 +7604,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -7555,18 +7625,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &5724109084210753100
 MonoBehaviour:
@@ -7830,10 +7890,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -7851,6 +7917,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -7889,6 +7956,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -7906,20 +7988,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -7936,18 +8009,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &6773749990316568979
 MonoBehaviour:
@@ -8211,10 +8274,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -8232,6 +8301,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -8270,6 +8340,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -8287,20 +8372,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -8317,18 +8393,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &2738795430654920139
 MonoBehaviour:
@@ -8592,10 +8658,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -8613,6 +8685,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -8651,6 +8724,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -8668,20 +8756,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -8698,18 +8777,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &2300435739349444717
 MonoBehaviour:
@@ -8973,10 +9042,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -8994,6 +9069,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -9032,6 +9108,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -9049,20 +9140,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -9079,18 +9161,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &8429664339788761115
 MonoBehaviour:
@@ -9354,10 +9426,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -9375,6 +9453,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -9413,6 +9492,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -9430,20 +9524,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -9460,18 +9545,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &5296604227161004838
 MonoBehaviour:
@@ -9735,10 +9810,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -9756,6 +9837,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -9794,6 +9876,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -9811,20 +9908,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -9841,18 +9929,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &3830104411680866130
 MonoBehaviour:
@@ -10116,10 +10194,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -10137,6 +10221,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -10175,6 +10260,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -10192,20 +10292,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -10222,18 +10313,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &5552178890360301260
 MonoBehaviour:
@@ -10497,10 +10578,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -10518,6 +10605,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -10556,6 +10644,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -10573,20 +10676,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -10603,18 +10697,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &6789307872257069691
 MonoBehaviour:
@@ -10878,10 +10962,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -10899,6 +10989,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -10937,6 +11028,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -10954,20 +11060,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -10984,18 +11081,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &8784672004618917545
 MonoBehaviour:
@@ -11259,10 +11346,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -11280,6 +11373,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -11318,6 +11412,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -11335,20 +11444,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -11365,18 +11465,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &2150046534761395686
 MonoBehaviour:
@@ -11640,10 +11730,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -11661,6 +11757,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -11699,6 +11796,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -11716,20 +11828,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -11746,18 +11849,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &8272662164241718266
 MonoBehaviour:
@@ -12021,10 +12114,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -12042,6 +12141,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -12080,6 +12180,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -12097,20 +12212,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -12127,18 +12233,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &375477732147734976
 MonoBehaviour:
@@ -12402,10 +12498,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -12423,6 +12525,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -12461,6 +12564,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -12478,20 +12596,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -12508,18 +12617,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &4985874061440128881
 MonoBehaviour:
@@ -12783,10 +12882,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -12804,6 +12909,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -12842,6 +12948,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -12859,20 +12980,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -12889,18 +13001,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &248736115938519977
 MonoBehaviour:
@@ -13244,10 +13346,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -13265,6 +13373,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -13303,6 +13412,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -13320,20 +13444,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -13350,18 +13465,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &5246252386578680187
 MonoBehaviour:
@@ -13430,7 +13535,7 @@ GameObject:
   - component: {fileID: 936554298838678804}
   - component: {fileID: 2477364109446601081}
   m_Layer: 0
-  m_Name: Cell_6_3
+  m_Name: Cell_3_6_Extension_North
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13614,10 +13719,10 @@ MonoBehaviour:
   jsonFile: {fileID: 0}
   boardId: 
   nodeId: 
-  nodeName: 
-  nodeDescription: 
+  nodeName: Extension_North
+  nodeDescription: Allocate to select an extension board.
   nodeType: 
-  nodePosition: {x: 0, y: 0}
+  nodePosition: {x: 3, y: 6}
   nodeCost: 0
   maxRank: 0
   currentRank: 0
@@ -13625,10 +13730,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -13646,6 +13757,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -13684,6 +13796,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -13701,20 +13828,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -13731,18 +13849,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &2477364109446601081
 MonoBehaviour:
@@ -13756,7 +13864,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b9b374f7cfa00d4c92b34d2133106b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PassiveTree.CellController_EXT
-  gridPosition: {x: 0, y: 0}
+  gridPosition: {x: 3, y: 6}
   nodeType: 2
   nodeName: Extension_North
   nodeDescription: Allocate to select an extension board.
@@ -14006,10 +14114,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -14027,6 +14141,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -14065,6 +14180,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -14082,20 +14212,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -14112,18 +14233,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &2854647961958198441
 MonoBehaviour:
@@ -14387,10 +14498,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -14408,6 +14525,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -14446,6 +14564,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -14463,20 +14596,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -14493,18 +14617,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &8252541957495257009
 MonoBehaviour:
@@ -14768,10 +14882,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -14789,6 +14909,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -14827,6 +14948,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -14844,20 +14980,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -14874,18 +15001,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &4820438084551436919
 MonoBehaviour:
@@ -15149,10 +15266,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -15170,6 +15293,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -15208,6 +15332,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -15225,20 +15364,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -15255,18 +15385,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &7851112294744823393
 MonoBehaviour:
@@ -15530,10 +15650,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -15551,6 +15677,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -15589,6 +15716,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -15606,20 +15748,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -15636,18 +15769,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &7124365590102649065
 MonoBehaviour:
@@ -15911,10 +16034,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -15932,6 +16061,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -15970,6 +16100,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -15987,20 +16132,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -16017,18 +16153,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &1477318311512282439
 MonoBehaviour:
@@ -16292,10 +16418,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -16313,6 +16445,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -16351,6 +16484,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -16368,20 +16516,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -16398,18 +16537,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &3009783652325801631
 MonoBehaviour:
@@ -16673,10 +16802,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -16694,6 +16829,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -16732,6 +16868,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -16749,20 +16900,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -16779,18 +16921,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &7507763711224663755
 MonoBehaviour:
@@ -17054,10 +17186,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -17075,6 +17213,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -17113,6 +17252,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -17130,20 +17284,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -17160,18 +17305,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &2732526275066107819
 MonoBehaviour:
@@ -17435,10 +17570,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -17456,6 +17597,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -17494,6 +17636,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -17511,20 +17668,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -17541,18 +17689,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &3508777935791657220
 MonoBehaviour:
@@ -17816,10 +17954,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -17837,6 +17981,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -17875,6 +18020,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -17892,20 +18052,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -17922,18 +18073,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &5642482573969640886
 MonoBehaviour:
@@ -18197,10 +18338,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -18218,6 +18365,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -18256,6 +18404,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -18273,20 +18436,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -18303,18 +18457,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &8438560183738165998
 MonoBehaviour:
@@ -18578,10 +18722,16 @@ MonoBehaviour:
     strength: 0
     dexterity: 0
     intelligence: 0
-    maxHealthIncrease: 0
-    maxEnergyShieldIncrease: 0
+    maxHealth: 0
     maxMana: 0
     maxReliance: 0
+    maxEnergyShield: 0
+    currentHealth: 0
+    currentMana: 0
+    currentReliance: 0
+    currentEnergyShield: 0
+    maxHealthIncrease: 0
+    maxEnergyShieldIncrease: 0
     attackPower: 0
     defense: 0
     criticalChance: 0
@@ -18599,6 +18749,7 @@ MonoBehaviour:
     increasedAreaDamage: 0
     increasedMeleeDamage: 0
     increasedRangedDamage: 0
+    spellPowerIncrease: 0
     morePhysicalDamage: 1
     moreFireDamage: 1
     moreColdDamage: 1
@@ -18637,6 +18788,21 @@ MonoBehaviour:
     dodgeChance: 0
     spellDodgeChance: 0
     spellBlockChance: 0
+    armorIncrease: 0
+    increasedEvasion: 0
+    elementalResist: 0
+    chanceToShock: 0
+    chanceToChill: 0
+    chanceToFreeze: 0
+    chanceToIgnite: 0
+    chanceToBleed: 0
+    chanceToPoison: 0
+    increasedIgniteMagnitude: 0
+    increasedShockMagnitude: 0
+    increasedChillMagnitude: 0
+    increasedFreezeMagnitude: 0
+    increasedBleedMagnitude: 0
+    increasedPoisonMagnitude: 0
     lifeRegeneration: 0
     energyShieldRegeneration: 0
     manaRegeneration: 0
@@ -18654,20 +18820,11 @@ MonoBehaviour:
     statusEffectDuration: 0
     cardsDrawnPerTurn: 0
     maxHandSize: 0
-    discardPileSize: 0
-    exhaustPileSize: 0
     cardDrawChance: 0
     cardRetentionChance: 0
     cardUpgradeChance: 0
     discardPower: 0
     manaPerTurn: 0
-    armor: 0
-    armorIncrease: 0
-    increasedEvasion: 0
-    elementalResist: 0
-    spellPowerIncrease: 0
-    critChanceIncrease: 0
-    critMultiplierIncrease: 0
     fireIncrease: 0
     fire: 0
     addedPhysicalAsFire: 0
@@ -18684,18 +18841,8 @@ MonoBehaviour:
     physical: 0
     chaosIncrease: 0
     chaos: 0
-    chanceToShock: 0
-    chanceToChill: 0
-    chanceToFreeze: 0
-    chanceToIgnite: 0
-    chanceToBleed: 0
-    chanceToPoison: 0
-    increasedIgniteMagnitude: 0
-    increasedShockMagnitude: 0
-    increasedChillMagnitude: 0
-    increasedFreezeMagnitude: 0
-    increasedBleedMagnitude: 0
-    increasedPoisonMagnitude: 0
+    critChanceIncrease: 0
+    critMultiplierIncrease: 0
   showDebugInfo: 1
 --- !u!114 &5237442142032359094
 MonoBehaviour:

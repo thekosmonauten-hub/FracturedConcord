@@ -26,6 +26,7 @@ namespace PassiveTree
         
         [Header("Settings")]
         [SerializeField] private bool showDebugInfo = true;
+        [SerializeField] private int boardTier = 1; // Default tier for board selection
         
         // Events
         public System.Action<BoardData> OnBoardSelected;
@@ -57,6 +58,15 @@ namespace PassiveTree
             
             // Auto-populate available boards
             AutoPopulateAvailableBoards();
+            
+            // Subscribe to board selection events to refresh UI
+            SubscribeToBoardSelectionEvents();
+        }
+        
+        void OnDestroy()
+        {
+            // Unsubscribe from events
+            UnsubscribeFromBoardSelectionEvents();
         }
         
         /// <summary>
@@ -64,19 +74,28 @@ namespace PassiveTree
         /// </summary>
         public void ShowBoardSelection(ExtensionPoint extensionPoint, Vector2Int gridPosition)
         {
-            Debug.Log($"[BoardSelectionUI] Showing board selection for extension point at {extensionPoint.position}");
+            ShowBoardSelection(extensionPoint, gridPosition, boardTier);
+        }
+        
+        /// <summary>
+        /// Show the board selection UI for a specific extension point with tier
+        /// </summary>
+        public void ShowBoardSelection(ExtensionPoint extensionPoint, Vector2Int gridPosition, int tier)
+        {
+            Debug.Log($"[BoardSelectionUI] Showing board selection for extension point at {extensionPoint.position}, tier {tier}");
             
             currentExtensionPoint = extensionPoint;
             targetGridPosition = gridPosition;
+            boardTier = tier;
             
             // Update UI text
             if (titleText != null)
-                titleText.text = "Select Board Type";
+                titleText.text = $"Select Board Type (Tier {tier})";
             else if (showDebugInfo)
                 Debug.LogWarning($"[BoardSelectionUI] titleText is null! Please assign titleText in the inspector.");
                 
             if (descriptionText != null)
-                descriptionText.text = $"Choose a board to create at position {gridPosition}";
+                descriptionText.text = $"Choose a board to create at position {gridPosition} (Tier {tier})";
             else if (showDebugInfo)
                 Debug.LogWarning($"[BoardSelectionUI] descriptionText is null! Please assign descriptionText in the inspector.");
             
@@ -148,14 +167,42 @@ namespace PassiveTree
                 return;
             }
             
-            // Filter available boards (for now, show all unlocked boards)
-            var selectableBoards = availableBoards.Where(board => board.IsUnlocked).ToList();
+            // Get the board selection tracker
+            var tracker = BoardSelectionTracker.Instance;
+            if (tracker == null)
+            {
+                Debug.LogError($"[BoardSelectionUI] BoardSelectionTracker not found!");
+                return;
+            }
             
-            Debug.Log($"[BoardSelectionUI] Creating {selectableBoards.Count} board selection buttons");
+            // Filter available boards using the tracker - check each board individually
+            var selectableBoards = new List<BoardData>();
+            
+            foreach (var boardData in availableBoards)
+            {
+                if (boardData == null || !boardData.IsUnlocked) continue;
+                
+                // Check if this specific board is already selected
+                if (tracker.IsBoardSelected(boardData)) continue;
+                
+                // Check if this theme is already selected for this tier
+                if (tracker.IsThemeSelectedForTier(boardTier, boardData.BoardTheme)) continue;
+                
+                selectableBoards.Add(boardData);
+            }
+            
+            Debug.Log($"[BoardSelectionUI] Creating {selectableBoards.Count} board selection buttons for tier {boardTier}");
+            Debug.Log($"[BoardSelectionUI] Filtered out {availableBoards.Count - selectableBoards.Count} unavailable boards");
             
             foreach (var boardData in selectableBoards)
             {
                 CreateBoardButton(boardData);
+            }
+            
+            // If no boards are available, show a message
+            if (selectableBoards.Count == 0)
+            {
+                CreateNoBoardsMessage();
             }
         }
         
@@ -222,6 +269,18 @@ namespace PassiveTree
         private void SelectBoard(BoardData boardData)
         {
             Debug.Log($"[BoardSelectionUI] Board selected: {boardData.BoardName}");
+            
+            // Register the board selection with the tracker
+            var tracker = BoardSelectionTracker.Instance;
+            if (tracker != null)
+            {
+                bool success = tracker.SelectBoard(boardData, boardTier, boardData.BoardTheme);
+                if (!success)
+                {
+                    Debug.LogWarning($"[BoardSelectionUI] Failed to register board selection: {boardData.BoardName}");
+                    return;
+                }
+            }
             
             // Hide the UI
             HideBoardSelection();
@@ -291,6 +350,120 @@ namespace PassiveTree
         public Vector2Int GetTargetGridPosition()
         {
             return targetGridPosition;
+        }
+        
+        /// <summary>
+        /// Create a message when no boards are available
+        /// </summary>
+        private void CreateNoBoardsMessage()
+        {
+            if (boardButtonPrefab == null) return;
+            
+            // Create a disabled button to show the message
+            GameObject messageObj = Instantiate(boardButtonPrefab, boardButtonContainer);
+            Button button = messageObj.GetComponent<Button>();
+            
+            if (button != null)
+            {
+                button.interactable = false;
+            }
+            
+            // Setup message text
+            TextMeshProUGUI messageText = messageObj.GetComponentInChildren<TextMeshProUGUI>();
+            if (messageText != null)
+            {
+                messageText.text = "No boards available for this tier";
+                messageText.color = Color.gray;
+            }
+            
+            // Setup button appearance
+            Image buttonImage = messageObj.GetComponent<Image>();
+            if (buttonImage != null)
+            {
+                buttonImage.color = new Color(0.5f, 0.5f, 0.5f, 0.3f); // Semi-transparent gray
+            }
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[BoardSelectionUI] No boards available for tier {boardTier}");
+            }
+        }
+        
+        /// <summary>
+        /// Subscribe to board selection events
+        /// </summary>
+        private void SubscribeToBoardSelectionEvents()
+        {
+            var tracker = BoardSelectionTracker.Instance;
+            if (tracker != null)
+            {
+                tracker.OnBoardSelected += HandleBoardSelected;
+                tracker.OnBoardDeselected += HandleBoardDeselected;
+            }
+        }
+        
+        /// <summary>
+        /// Unsubscribe from board selection events
+        /// </summary>
+        private void UnsubscribeFromBoardSelectionEvents()
+        {
+            var tracker = BoardSelectionTracker.Instance;
+            if (tracker != null)
+            {
+                tracker.OnBoardSelected -= HandleBoardSelected;
+                tracker.OnBoardDeselected -= HandleBoardDeselected;
+            }
+        }
+        
+        /// <summary>
+        /// Handle board selection event
+        /// </summary>
+        private void HandleBoardSelected(BoardData boardData, int tier, BoardTheme theme)
+        {
+            if (showDebugInfo)
+            {
+                Debug.Log($"[BoardSelectionUI] Board selected: {boardData.BoardName} for tier {tier}, theme {theme}");
+            }
+            
+            // Refresh the UI if it's currently visible
+            if (selectionPanel != null && selectionPanel.activeInHierarchy)
+            {
+                RefreshBoardSelection();
+            }
+        }
+        
+        /// <summary>
+        /// Handle board deselection event
+        /// </summary>
+        private void HandleBoardDeselected(BoardData boardData, int tier, BoardTheme theme)
+        {
+            if (showDebugInfo)
+            {
+                Debug.Log($"[BoardSelectionUI] Board deselected: {boardData.BoardName} for tier {tier}, theme {theme}");
+            }
+            
+            // Refresh the UI if it's currently visible
+            if (selectionPanel != null && selectionPanel.activeInHierarchy)
+            {
+                RefreshBoardSelection();
+            }
+        }
+        
+        /// <summary>
+        /// Refresh the board selection UI
+        /// </summary>
+        public void RefreshBoardSelection()
+        {
+            if (showDebugInfo)
+            {
+                Debug.Log($"[BoardSelectionUI] Refreshing board selection UI");
+            }
+            
+            // Clear existing buttons
+            ClearBoardButtons();
+            
+            // Create new buttons with updated filtering
+            CreateBoardButtons();
         }
     }
 }

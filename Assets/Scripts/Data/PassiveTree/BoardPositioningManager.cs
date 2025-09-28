@@ -1060,6 +1060,20 @@ namespace PassiveTree
                 }
             }
             
+            // Check for duplicate theme restrictions before creating the board
+            var tracker = BoardSelectionTracker.Instance;
+            if (tracker != null)
+            {
+                int tier = ExtractTierFromBoardName(boardData.boardName);
+                BoardTheme theme = ExtractThemeFromBoardName(boardData.boardName);
+                
+                if (!tracker.CanCreateBoard(boardData.boardName, tier, theme))
+                {
+                    Debug.LogError($"[BoardPositioningManager] ❌ Cannot create board '{boardData.boardName}' - Theme {theme} is already selected for tier {tier}!");
+                    return;
+                }
+            }
+            
             // Instantiate the board prefab
             GameObject newBoard = Instantiate(boardData.boardPrefab);
             
@@ -1777,6 +1791,8 @@ namespace PassiveTree
                 if (showDebugInfo)
                 {
                     Debug.Log($"[BoardPositioningManager] Processing direction {direction}");
+                    Debug.Log($"[BoardPositioningManager] From direction normalized: {fromDirectionNormalized}");
+                    Debug.Log($"[BoardPositioningManager] Will skip direction {direction}? {direction == fromDirectionNormalized}");
                 }
                 
                 // Skip the direction this board came from
@@ -1824,6 +1840,7 @@ namespace PassiveTree
                 // Get the cell position for this extension point
                 Vector2Int cellPosition = GetBoardEdgePosition(direction);
                 Debug.Log($"[BoardPositioningManager] 🔍 SETUP: Checking for extension point at direction {direction}, cell position {cellPosition}");
+                Debug.Log($"[BoardPositioningManager] 🔍 SETUP: GetBoardEdgePosition({direction}) = {cellPosition}");
                 
                 CellController[] allCells = board.GetComponentsInChildren<CellController>();
                 Debug.Log($"[BoardPositioningManager] 🔍 SETUP: Found {allCells.Length} cells in board {board.name}");
@@ -1842,6 +1859,7 @@ namespace PassiveTree
                 if (extensionCell != null)
                 {
                     Debug.Log($"[BoardPositioningManager] ✅ SETUP: Found cell at {cellPosition}, creating extension point");
+                    Debug.Log($"[BoardPositioningManager] ✅ SETUP: Cell found for direction {direction} at position {cellPosition}");
                     
                     if (showDebugInfo)
                     {
@@ -1891,6 +1909,11 @@ namespace PassiveTree
                 else
                 {
                     Debug.LogWarning($"[BoardPositioningManager] ❌ SETUP: No cell found at position {cellPosition} for extension point");
+                    Debug.Log($"[BoardPositioningManager] ❌ SETUP: Available cell positions:");
+                    foreach (CellController c in allCells)
+                    {
+                        Debug.Log($"[BoardPositioningManager] ❌ SETUP:   - Cell at {c.GridPosition} (GameObject: {c.gameObject.name})");
+                    }
                     
                     if (showDebugInfo)
                         Debug.Log($"[BoardPositioningManager] No cell found at position {cellPosition} for extension point");
@@ -4211,6 +4234,71 @@ namespace PassiveTree
                 Vector3 worldPos = boardsContainer.TransformPoint(new Vector3(extensionPoint.worldPosition.x, extensionPoint.worldPosition.y, 0));
                 Gizmos.DrawWireSphere(worldPos, 0.5f);
             }
+        }
+        
+        #endregion
+        
+        #region Helper Methods
+        
+        /// <summary>
+        /// Extract tier from board name (e.g., "T1_Fire_Board" -> 1)
+        /// </summary>
+        private int ExtractTierFromBoardName(string boardName)
+        {
+            // Look for T1, T2, T3, etc. in the board name
+            if (boardName.ToLower().Contains("t1")) return 1;
+            if (boardName.ToLower().Contains("t2")) return 2;
+            if (boardName.ToLower().Contains("t3")) return 3;
+            if (boardName.ToLower().Contains("t4")) return 4;
+            if (boardName.ToLower().Contains("t5")) return 5;
+            
+            // Default to tier 1 if no tier found
+            return 1;
+        }
+        
+        /// <summary>
+        /// Extract theme from board name
+        /// </summary>
+        private BoardTheme ExtractThemeFromBoardName(string boardName)
+        {
+            string lowerName = boardName.ToLower();
+            
+            // Check for specific theme keywords
+            if (lowerName.Contains("fire")) return BoardTheme.Fire;
+            if (lowerName.Contains("cold") || lowerName.Contains("frozen")) return BoardTheme.Cold;
+            if (lowerName.Contains("lightning")) return BoardTheme.Lightning;
+            if (lowerName.Contains("chaos")) return BoardTheme.Chaos;
+            if (lowerName.Contains("physical")) return BoardTheme.Physical;
+            if (lowerName.Contains("life")) return BoardTheme.Life;
+            if (lowerName.Contains("armor")) return BoardTheme.Armor;
+            if (lowerName.Contains("evasion")) return BoardTheme.Evasion;
+            if (lowerName.Contains("critical")) return BoardTheme.Critical;
+            if (lowerName.Contains("speed")) return BoardTheme.Speed;
+            if (lowerName.Contains("utility")) return BoardTheme.Utility;
+            if (lowerName.Contains("elemental")) return BoardTheme.Elemental;
+            if (lowerName.Contains("keystone")) return BoardTheme.Keystone;
+            
+            // Check for mastery themes (common in passive trees)
+            if (lowerName.Contains("mastery")) 
+            {
+                // Try to determine the mastery type
+                if (lowerName.Contains("frozen") || lowerName.Contains("cold")) return BoardTheme.Cold;
+                if (lowerName.Contains("fire") || lowerName.Contains("burning")) return BoardTheme.Fire;
+                if (lowerName.Contains("lightning") || lowerName.Contains("electric")) return BoardTheme.Lightning;
+                if (lowerName.Contains("chaos") || lowerName.Contains("void")) return BoardTheme.Chaos;
+                if (lowerName.Contains("physical") || lowerName.Contains("strength")) return BoardTheme.Physical;
+                if (lowerName.Contains("life") || lowerName.Contains("vitality")) return BoardTheme.Life;
+                if (lowerName.Contains("armor") || lowerName.Contains("defense")) return BoardTheme.Armor;
+                if (lowerName.Contains("evasion") || lowerName.Contains("dodge")) return BoardTheme.Evasion;
+                if (lowerName.Contains("critical") || lowerName.Contains("crit")) return BoardTheme.Critical;
+                if (lowerName.Contains("speed") || lowerName.Contains("haste")) return BoardTheme.Speed;
+                if (lowerName.Contains("utility") || lowerName.Contains("support")) return BoardTheme.Utility;
+                if (lowerName.Contains("elemental")) return BoardTheme.Elemental;
+                if (lowerName.Contains("keystone")) return BoardTheme.Keystone;
+            }
+            
+            // Default to General if no theme found
+            return BoardTheme.General;
         }
         
         #endregion

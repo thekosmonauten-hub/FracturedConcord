@@ -459,10 +459,17 @@ namespace PassiveTree
             // Get all extension points from the BoardPositioningManager
             var allExtensionPoints = boardPositioningManager.GetAllExtensionPoints();
             
+            // Ensure board grid position is set
+            if (boardGridPosition == Vector2Int.zero)
+            {
+                Debug.LogWarning($"[ExtensionBoardController] Board grid position not set for {boardName}! This may cause extension point matching issues.");
+            }
+            
             if (showDebugInfo)
             {
                 Debug.Log($"[ExtensionBoardController] Searching for extension point for cell at {cell.GridPosition} on board {boardName} (grid position: {boardGridPosition})");
                 Debug.Log($"[ExtensionBoardController] Total extension points available: {allExtensionPoints.Count}");
+                Debug.Log($"[ExtensionBoardController] Looking for extension points with ID pattern: extension_{boardGridPosition.x}_{boardGridPosition.y}_*");
             }
             
             // Look for an extension point at the same position as the cell
@@ -472,6 +479,7 @@ namespace PassiveTree
                 if (showDebugInfo)
                 {
                     Debug.Log($"[ExtensionBoardController] Checking extension point: ID={point.id}, Position={point.position}, WorldPosition={point.worldPosition}");
+                    Debug.Log($"[ExtensionBoardController] Board grid position: {boardGridPosition}, Cell position: {cell.GridPosition}");
                 }
                 
                 // Check if this extension point matches the cell position
@@ -493,7 +501,8 @@ namespace PassiveTree
                     
                     // For extension boards, we need to be more specific about which extension point we want
                     // The extension point should have a world position that indicates it belongs to this board
-                    if (point.id.Contains($"extension_{boardGridPosition.x}_{boardGridPosition.y}"))
+                    // Extension point ID format: extension_{gridX}_{gridY}_{directionX}_{directionY}
+                    if (point.id.StartsWith($"extension_{boardGridPosition.x}_{boardGridPosition.y}_"))
                     {
                         if (showDebugInfo)
                         {
@@ -507,6 +516,25 @@ namespace PassiveTree
             if (showDebugInfo)
             {
                 Debug.Log($"[ExtensionBoardController] ❌ No extension point found at position {cell.GridPosition} on board {boardName}");
+                Debug.Log($"[ExtensionBoardController] Board grid position: {boardGridPosition}");
+                Debug.Log($"[ExtensionBoardController] Looking for extension points with ID pattern: extension_{boardGridPosition.x}_{boardGridPosition.y}_*");
+                
+                // Show all available extension points for debugging
+                Debug.Log($"[ExtensionBoardController] All available extension points:");
+                foreach (var point in allExtensionPoints)
+                {
+                    Debug.Log($"  - {point.id} at position {point.position} (world: {point.worldPosition})");
+                }
+                
+                // Show specifically extension points for this board
+                Debug.Log($"[ExtensionBoardController] Extension points for this board (grid {boardGridPosition}):");
+                foreach (var point in allExtensionPoints)
+                {
+                    if (point.id.StartsWith($"extension_{boardGridPosition.x}_{boardGridPosition.y}_"))
+                    {
+                        Debug.Log($"  - MATCH: {point.id} at position {point.position} (world: {point.worldPosition})");
+                    }
+                }
             }
             
             return null;

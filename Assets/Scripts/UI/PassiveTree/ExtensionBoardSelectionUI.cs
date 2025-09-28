@@ -27,6 +27,7 @@ namespace PassiveTree
         
         [Header("Settings")]
         [SerializeField] private bool showDebugInfo = true;
+        [SerializeField] private int boardTier = 1; // Default tier for board selection
         
         // Events
         public System.Action<BoardData> OnBoardSelected;
@@ -59,6 +60,15 @@ namespace PassiveTree
             
             // Auto-populate available boards
             AutoPopulateAvailableBoards();
+            
+            // Subscribe to board selection events to refresh UI
+            SubscribeToBoardSelectionEvents();
+        }
+        
+        void OnDestroy()
+        {
+            // Unsubscribe from events
+            UnsubscribeFromBoardSelectionEvents();
         }
         
         /// <summary>
@@ -66,24 +76,33 @@ namespace PassiveTree
         /// </summary>
         public void ShowBoardSelection(ExtensionPoint extensionPoint, Vector2Int gridPosition, string currentBoardName)
         {
+            ShowBoardSelection(extensionPoint, gridPosition, currentBoardName, boardTier);
+        }
+        
+        /// <summary>
+        /// Show the board selection UI for a specific extension point on an extension board with tier
+        /// </summary>
+        public void ShowBoardSelection(ExtensionPoint extensionPoint, Vector2Int gridPosition, string currentBoardName, int tier)
+        {
             if (showDebugInfo)
             {
                 Debug.Log($"[ExtensionBoardSelectionUI] Showing board selection for extension point at {extensionPoint.position}");
-                Debug.Log($"[ExtensionBoardSelectionUI] Current board: {currentBoardName}, Target position: {gridPosition}");
+                Debug.Log($"[ExtensionBoardSelectionUI] Current board: {currentBoardName}, Target position: {gridPosition}, Tier: {tier}");
             }
             
             currentExtensionPoint = extensionPoint;
             targetGridPosition = gridPosition;
             this.currentBoardName = currentBoardName;
+            boardTier = tier;
             
             // Update UI text
             if (titleText != null)
-                titleText.text = "Select Extension Board";
+                titleText.text = $"Select Extension Board (Tier {tier})";
             else if (showDebugInfo)
                 Debug.LogWarning($"[ExtensionBoardSelectionUI] titleText is null! Please assign titleText in the inspector.");
                 
             if (descriptionText != null)
-                descriptionText.text = $"Choose a new extension board to create from {currentBoardName}";
+                descriptionText.text = $"Choose a new extension board to create from {currentBoardName} (Tier {tier})";
             else if (showDebugInfo)
                 Debug.LogWarning($"[ExtensionBoardSelectionUI] descriptionText is null! Please assign descriptionText in the inspector.");
             
@@ -156,30 +175,50 @@ namespace PassiveTree
                 return;
             }
             
-            // Filter available boards to exclude:
-            // 1. Core boards
-            // 2. The current board (to prevent duplicates)
-            // 3. Already created boards (optional - could be added later)
-            var selectableBoards = availableBoards.Where(board => 
-                board.IsUnlocked && 
-                !board.BoardName.ToLower().Contains("core") &&
-                !board.BoardName.Equals(currentBoardName, System.StringComparison.OrdinalIgnoreCase)
-            ).ToList();
+            // Get the board selection tracker
+            var tracker = BoardSelectionTracker.Instance;
+            if (tracker == null)
+            {
+                Debug.LogError($"[ExtensionBoardSelectionUI] BoardSelectionTracker not found!");
+                return;
+            }
+            
+            // Filter available boards using the tracker and additional filters
+            var finalSelectableBoards = new List<BoardData>();
+            
+            foreach (var board in availableBoards)
+            {
+                if (board == null || !board.IsUnlocked) continue;
+                
+                // Skip core boards
+                if (board.BoardName.ToLower().Contains("core")) continue;
+                
+                // Skip current board
+                if (board.BoardName.Equals(currentBoardName, System.StringComparison.OrdinalIgnoreCase)) continue;
+                
+                // Check if this specific board is already selected
+                if (tracker.IsBoardSelected(board)) continue;
+                
+                // Check if this theme is already selected for this tier
+                if (tracker.IsThemeSelectedForTier(boardTier, board.BoardTheme)) continue;
+                
+                finalSelectableBoards.Add(board);
+            }
             
             if (showDebugInfo)
             {
-                Debug.Log($"[ExtensionBoardSelectionUI] Creating {selectableBoards.Count} board selection buttons");
+                Debug.Log($"[ExtensionBoardSelectionUI] Creating {finalSelectableBoards.Count} board selection buttons for tier {boardTier}");
                 Debug.Log($"[ExtensionBoardSelectionUI] Current board '{currentBoardName}' excluded from selection");
-                Debug.Log($"[ExtensionBoardSelectionUI] Available boards: {string.Join(", ", selectableBoards.Select(b => b.BoardName))}");
+                Debug.Log($"[ExtensionBoardSelectionUI] Available boards: {string.Join(", ", finalSelectableBoards.Select(b => b.BoardName))}");
             }
             
-            foreach (var boardData in selectableBoards)
+            foreach (var boardData in finalSelectableBoards)
             {
                 CreateBoardButton(boardData);
             }
             
             // If no boards are available, show a message
-            if (selectableBoards.Count == 0)
+            if (finalSelectableBoards.Count == 0)
             {
                 CreateNoBoardsMessage();
             }
@@ -294,6 +333,18 @@ namespace PassiveTree
                 Debug.Log($"[ExtensionBoardSelectionUI] Board selected: {boardData.BoardName} for extension point at {currentExtensionPoint?.position}");
             }
             
+            // Register the board selection with the tracker
+            var tracker = BoardSelectionTracker.Instance;
+            if (tracker != null)
+            {
+                bool success = tracker.SelectBoard(boardData, boardTier, boardData.BoardTheme);
+                if (!success)
+                {
+                    Debug.LogWarning($"[ExtensionBoardSelectionUI] Failed to register board selection: {boardData.BoardName}");
+                    return;
+                }
+            }
+            
             // Hide the UI
             HideBoardSelection();
             
@@ -378,6 +429,83 @@ namespace PassiveTree
         public string GetCurrentBoardName()
         {
             return currentBoardName;
+        }
+        
+        /// <summary>
+        /// Subscribe to board selection events
+        /// </summary>
+        private void SubscribeToBoardSelectionEvents()
+        {
+            var tracker = BoardSelectionTracker.Instance;
+            if (tracker != null)
+            {
+                tracker.OnBoardSelected += HandleBoardSelected;
+                tracker.OnBoardDeselected += HandleBoardDeselected;
+            }
+        }
+        
+        /// <summary>
+        /// Unsubscribe from board selection events
+        /// </summary>
+        private void UnsubscribeFromBoardSelectionEvents()
+        {
+            var tracker = BoardSelectionTracker.Instance;
+            if (tracker != null)
+            {
+                tracker.OnBoardSelected -= HandleBoardSelected;
+                tracker.OnBoardDeselected -= HandleBoardDeselected;
+            }
+        }
+        
+        /// <summary>
+        /// Handle board selection event
+        /// </summary>
+        private void HandleBoardSelected(BoardData boardData, int tier, BoardTheme theme)
+        {
+            if (showDebugInfo)
+            {
+                Debug.Log($"[ExtensionBoardSelectionUI] Board selected: {boardData.BoardName} for tier {tier}, theme {theme}");
+            }
+            
+            // Refresh the UI if it's currently visible
+            if (selectionPanel != null && selectionPanel.activeInHierarchy)
+            {
+                RefreshBoardSelection();
+            }
+        }
+        
+        /// <summary>
+        /// Handle board deselection event
+        /// </summary>
+        private void HandleBoardDeselected(BoardData boardData, int tier, BoardTheme theme)
+        {
+            if (showDebugInfo)
+            {
+                Debug.Log($"[ExtensionBoardSelectionUI] Board deselected: {boardData.BoardName} for tier {tier}, theme {theme}");
+            }
+            
+            // Refresh the UI if it's currently visible
+            if (selectionPanel != null && selectionPanel.activeInHierarchy)
+            {
+                RefreshBoardSelection();
+            }
+        }
+        
+        /// <summary>
+        /// Refresh the board selection UI
+        /// </summary>
+        public void RefreshBoardSelection()
+        {
+            if (showDebugInfo)
+            {
+                Debug.Log($"[ExtensionBoardSelectionUI] Refreshing board selection UI");
+            }
+            
+            // Clear existing buttons
+            ClearBoardButtons();
+            
+            // Create new buttons with updated filtering
+            CreateBoardButtons();
         }
     }
 }
