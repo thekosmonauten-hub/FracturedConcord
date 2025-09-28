@@ -1875,6 +1875,13 @@ namespace PassiveTree
                         // Allocate the corresponding extension point
                         AllocateExtensionPoint(cell);
                         
+                        // Handle world board adjacency logic (only for new board creation)
+                        // This should only be called when creating new boards, not when allocating on existing boards
+                        if (IsNewBoardCreation(cell))
+                        {
+                            HandleWorldBoardAdjacency(cell);
+                        }
+                        
                         if (showDebugInfo)
                         {
                             Debug.Log($"[PassiveTreeManager] 📊 Cell state after allocation - IsPurchased: {cell.IsPurchased}, IsUnlocked: {cell.IsUnlocked}, IsAvailable: {cell.IsAvailable}");
@@ -1894,7 +1901,7 @@ namespace PassiveTree
         /// <summary>
         /// Allocate an extension point (mark as purchased and unlocked)
         /// </summary>
-        private void AllocateExtensionPoint(CellController extensionCell)
+        public void AllocateExtensionPoint(CellController extensionCell)
         {
             if (extensionCell == null) return;
             
@@ -1947,7 +1954,69 @@ namespace PassiveTree
                 Debug.Log($"[PassiveTreeManager] 📊 Final state - IsPurchased: {extensionCell.IsPurchased}, IsUnlocked: {extensionCell.IsUnlocked}, IsAvailable: {extensionCell.IsAvailable}, IsExtensionPoint: {extensionCell.IsExtensionPoint}");
             }
         }
-
+        
+        /// <summary>
+        /// Check if this is a new board creation (not just allocating on existing board)
+        /// </summary>
+        private bool IsNewBoardCreation(CellController cell)
+        {
+            // Adjacency logic should run when:
+            // 1. The cell is an extension point
+            // 2. The cell is being allocated for the first time
+            // 3. There are adjacent boards that need corresponding extension points allocated
+            
+            // For now, enable adjacency logic for extension points
+            // This will handle the case where Extension_North on (0,-1) should allocate Extension_South on (0,0)
+            return cell.IsExtensionPoint;
+        }
+        
+        /// <summary>
+        /// Handle world board adjacency logic when an extension point is allocated
+        /// </summary>
+        private void HandleWorldBoardAdjacency(CellController extensionCell)
+        {
+            Debug.Log($"[PassiveTreeManager] 🌍 ADJACENCY: Starting adjacency logic for cell at {extensionCell.GridPosition}");
+            
+            if (WorldBoardAdjacencyManager.Instance == null)
+            {
+                Debug.LogWarning($"[PassiveTreeManager] ❌ ADJACENCY: WorldBoardAdjacencyManager not available, skipping adjacency logic");
+                return;
+            }
+            
+            // Get the board controller to find the world position
+            ExtensionBoardController boardController = extensionCell.GetComponentInParent<ExtensionBoardController>();
+            if (boardController == null)
+            {
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[PassiveTreeManager] Could not find ExtensionBoardController for adjacency logic");
+                }
+                return;
+            }
+            
+            // Get the board's world position (this needs to be implemented in ExtensionBoardController)
+            Vector2Int boardWorldPosition = GetBoardWorldPosition(boardController);
+            Vector2Int cellPosition = extensionCell.GridPosition;
+            string extensionPointName = GetExtensionPointName(extensionCell);
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[PassiveTreeManager] 🌍 Handling adjacency for extension point '{extensionPointName}' at cell {cellPosition} on board at world position {boardWorldPosition}");
+            }
+            
+            // Delegate to the WorldBoardAdjacencyManager
+            WorldBoardAdjacencyManager.Instance.HandleExtensionPointAllocation(boardWorldPosition, cellPosition, extensionPointName);
+        }
+        
+        /// <summary>
+        /// Get the world position of a board
+        /// </summary>
+        private Vector2Int GetBoardWorldPosition(ExtensionBoardController boardController)
+        {
+            return boardController.GetWorldGridPosition();
+        }
+        
+        
         /// <summary>
         /// Allocate an extension point within a specific board only (prevents cross-board contamination)
         /// </summary>

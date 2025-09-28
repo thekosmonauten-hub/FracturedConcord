@@ -753,6 +753,14 @@ namespace PassiveTree
         }
         
         /// <summary>
+        /// Get the world grid position of this board
+        /// </summary>
+        public Vector2Int GetWorldGridPosition()
+        {
+            return boardGridPosition;
+        }
+        
+        /// <summary>
         /// Get board description
         /// </summary>
         public string GetBoardDescription()

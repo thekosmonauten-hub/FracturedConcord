@@ -593,6 +593,18 @@ PrefabInstance:
       propertyPath: m_Color.g
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 936554298838678804, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeName
+      value: Extension_North
+      objectReference: {fileID: 0}
+    - target: {fileID: 936554298838678804, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodePosition.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 936554298838678804, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodePosition.y
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 938490446902695980, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeId
       value: Cell_0_1
@@ -2455,7 +2467,7 @@ PrefabInstance:
       objectReference: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
     - target: {fileID: 2824780855778468433, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_0_3_Ext_South
+      value: Cell_3_0_Extension_South
       objectReference: {fileID: 0}
     - target: {fileID: 2936093800338821092, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
@@ -2583,11 +2595,11 @@ PrefabInstance:
       objectReference: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
     - target: {fileID: 3150814157699421852, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_3_0_Ext_West
+      value: Cell_0_3_Extension_West
       objectReference: {fileID: 0}
     - target: {fileID: 3224908865716484304, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_3_6_East
+      value: Cell_6_3_Extension_East
       objectReference: {fileID: 0}
     - target: {fileID: 3228322038492807522, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
@@ -4937,6 +4949,18 @@ PrefabInstance:
       propertyPath: m_Offset.y
       value: 0.86
       objectReference: {fileID: 0}
+    - target: {fileID: 5260282745156324952, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeName
+      value: Extension_East
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260282745156324952, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodePosition.x
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260282745156324952, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodePosition.y
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5279867347459711526, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
       value: Cell_0_4_Strength
@@ -6203,7 +6227,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6947163549693016337, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_6_3_Ext_North
+      value: Cell_3_6_Extension_North
       objectReference: {fileID: 0}
     - target: {fileID: 6963717904781946571, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: button
@@ -7105,6 +7129,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cell_6_6_Increased Evasion
       objectReference: {fileID: 0}
+    - target: {fileID: 8633164981803263458, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeName
+      value: Extension_South
+      objectReference: {fileID: 0}
+    - target: {fileID: 8633164981803263458, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodePosition.x
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8645672528970997002, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: button
       value: 
@@ -7824,6 +7856,14 @@ PrefabInstance:
     - target: {fileID: 8994158266574454370, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Offset.y
       value: 0.86
+      objectReference: {fileID: 0}
+    - target: {fileID: 9014729551759124135, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeName
+      value: Extension_West
+      objectReference: {fileID: 0}
+    - target: {fileID: 9014729551759124135, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodePosition.y
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9037224683577888164, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Color.b

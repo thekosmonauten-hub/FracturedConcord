@@ -122,7 +122,12 @@ namespace PassiveTree
             // Create core board at grid position (0,0)
             // Don't set parent during instantiation to avoid scaling issues
             coreBoard = Instantiate(coreBoardPrefab);
-            coreBoard.name = "CoreBoard";
+            coreBoard.name = $"CoreBoard_{coreBoardGridPosition.x}_{coreBoardGridPosition.y}";
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"[BoardPositioningManager] 🌍 Created Coreboard GameObject with name: '{coreBoard.name}' at grid position {coreBoardGridPosition}");
+            }
             
             // Position using grid system (this will set the parent correctly)
             PositionBoardAtGrid(coreBoard, coreBoardGridPosition);
@@ -140,6 +145,16 @@ namespace PassiveTree
             
             // Setup extension points for the core board
             SetupCoreBoardExtensionPoints();
+            
+            // Register the core board with WorldBoardAdjacencyManager
+            if (WorldBoardAdjacencyManager.Instance != null)
+            {
+                WorldBoardAdjacencyManager.Instance.RegisterBoard(coreBoardGridPosition, coreBoard, coreBoard.name);
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[BoardPositioningManager] 🌍 Registered {coreBoard.name} with WorldBoardAdjacencyManager at world position {coreBoardGridPosition}");
+                }
+            }
             
             // Center camera on the core board's center cell (3,3)
             if (autoCenterCameraOnCoreBoard)
@@ -289,26 +304,26 @@ namespace PassiveTree
             
             foreach (Vector2Int direction in extensionDirections)
             {
-                // Calculate extension board grid position with swapped coordinates
+                // Calculate extension board grid position
                 Vector2Int extensionGridPosition;
                 Vector2Int edgeCellPosition = GetBoardEdgePosition(direction);
                 
-                // Swap the extension board creation coordinates
+                // Create extension boards at the correct positions (no coordinate swapping)
                 if (direction == Vector2Int.up) // North extension point
-                {
-                    extensionGridPosition = coreBoardGridPosition + Vector2Int.right; // Create at East position
-                }
-                else if (direction == Vector2Int.down) // South extension point
-                {
-                    extensionGridPosition = coreBoardGridPosition + Vector2Int.left; // Create at West position
-                }
-                else if (direction == Vector2Int.right) // East extension point
                 {
                     extensionGridPosition = coreBoardGridPosition + Vector2Int.up; // Create at North position
                 }
-                else // West extension point
+                else if (direction == Vector2Int.down) // South extension point
                 {
                     extensionGridPosition = coreBoardGridPosition + Vector2Int.down; // Create at South position
+                }
+                else if (direction == Vector2Int.right) // East extension point
+                {
+                    extensionGridPosition = coreBoardGridPosition + Vector2Int.right; // Create at East position
+                }
+                else // West extension point
+                {
+                    extensionGridPosition = coreBoardGridPosition + Vector2Int.left; // Create at West position
                 }
                 
                 // Create extension point
@@ -328,7 +343,7 @@ namespace PassiveTree
                 MarkCellAsExtensionPoint(edgeCellPosition);
                 
             if (showDebugInfo)
-                Debug.Log($"[BoardPositioningManager] Created extension point: {extensionPoint.id} at cell position {edgeCellPosition}, grid position {extensionGridPosition} (swapped coordinates)");
+                Debug.Log($"[BoardPositioningManager] Created extension point: {extensionPoint.id} at cell position {edgeCellPosition}, grid position {extensionGridPosition}");
             }
         }
         
@@ -1126,6 +1141,12 @@ namespace PassiveTree
             // Register the board in the positionedBoards dictionary
             positionedBoards[extensionGridPosition] = newBoard;
             
+            // Register with WorldBoardAdjacencyManager
+            if (WorldBoardAdjacencyManager.Instance != null)
+            {
+                WorldBoardAdjacencyManager.Instance.RegisterBoard(extensionGridPosition, newBoard, boardData.boardName);
+            }
+            
             if (showDebugInfo)
             {
                 Debug.Log($"[BoardPositioningManager] 📝 Registered board in positionedBoards at {extensionGridPosition}");
@@ -1806,27 +1827,27 @@ namespace PassiveTree
                 // Calculate extension board grid position - use coordinate swapping for proper orthographic positioning
                 Vector2Int extensionGridPosition;
                 
-                // Apply the same coordinate swapping logic used for core board extension points
+                // Create extension boards at the correct positions (no coordinate swapping)
                 if (direction == Vector2Int.up) // North extension point
-                {
-                    extensionGridPosition = gridPosition + Vector2Int.right; // Create at East position
-                }
-                else if (direction == Vector2Int.down) // South extension point
-                {
-                    extensionGridPosition = gridPosition + Vector2Int.left; // Create at West position
-                }
-                else if (direction == Vector2Int.right) // East extension point
                 {
                     extensionGridPosition = gridPosition + Vector2Int.up; // Create at North position
                 }
-                else // West extension point
+                else if (direction == Vector2Int.down) // South extension point
                 {
                     extensionGridPosition = gridPosition + Vector2Int.down; // Create at South position
+                }
+                else if (direction == Vector2Int.right) // East extension point
+                {
+                    extensionGridPosition = gridPosition + Vector2Int.right; // Create at East position
+                }
+                else // West extension point
+                {
+                    extensionGridPosition = gridPosition + Vector2Int.left; // Create at West position
                 }
                 
                 if (showDebugInfo)
                 {
-                    Debug.Log($"[BoardPositioningManager] Extension board coordinate swapping: Direction {direction} → Grid position {extensionGridPosition} (from base {gridPosition})");
+                    Debug.Log($"[BoardPositioningManager] Extension board positioning: Direction {direction} → Grid position {extensionGridPosition} (from base {gridPosition})");
                 }
                 
                 // Check if this position is already occupied
