@@ -38,40 +38,33 @@ public class CardDisplayTest : MonoBehaviour
     [ContextMenu("Refresh Card Database")]
     public void RefreshCardDatabase()
     {
-        // Find the existing CardDatabase in Resources
+        // Editor-only refresh implementation
+        #if UNITY_EDITOR
         CardDatabase existingDatabase = Resources.Load<CardDatabase>("CardDatabase");
-        if (existingDatabase != null)
-        {
-            // Clear existing cards
-            existingDatabase.allCards.Clear();
-            
-            // Find all CardData assets in the project
-            string[] guids = UnityEditor.AssetDatabase.FindAssets("t:CardData");
-            
-            foreach (string guid in guids)
-            {
-                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
-                CardData cardData = UnityEditor.AssetDatabase.LoadAssetAtPath<CardData>(path);
-                if (cardData != null)
-                {
-                    existingDatabase.allCards.Add(cardData);
-                    Debug.Log($"Added card to database: {cardData.cardName}");
-                }
-            }
-            
-            // Auto-categorize the cards
-            existingDatabase.CategorizeCards();
-            
-            // Mark as dirty and save
-            UnityEditor.EditorUtility.SetDirty(existingDatabase);
-            UnityEditor.AssetDatabase.SaveAssets();
-            
-            Debug.Log($"CardDatabase refreshed with {existingDatabase.allCards.Count} cards");
-        }
-        else
+        if (existingDatabase == null)
         {
             Debug.LogError("CardDatabase not found in Resources folder!");
+            return;
         }
+        existingDatabase.allCards.Clear();
+        string[] guids = UnityEditor.AssetDatabase.FindAssets("t:CardData");
+        foreach (string guid in guids)
+        {
+            string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+            CardData cardData = UnityEditor.AssetDatabase.LoadAssetAtPath<CardData>(path);
+            if (cardData != null)
+            {
+                existingDatabase.allCards.Add(cardData);
+                Debug.Log($"Added card to database: {cardData.cardName}");
+            }
+        }
+        existingDatabase.CategorizeCards();
+        UnityEditor.EditorUtility.SetDirty(existingDatabase);
+        UnityEditor.AssetDatabase.SaveAssets();
+        Debug.Log($"CardDatabase refreshed with {existingDatabase.allCards.Count} cards");
+        #else
+        Debug.LogWarning("RefreshCardDatabase is editor-only.");
+        #endif
     }
     
     [ContextMenu("Create Test Cards")]

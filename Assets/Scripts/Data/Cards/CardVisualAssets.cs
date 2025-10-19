@@ -31,4 +31,11 @@ public class CardVisualAssets : ScriptableObject
     [Header("Special Effects")]
     public Sprite cardHighlight;
     public Sprite iceBubble;
+    
+    [Header("Category Icons")]
+    public Sprite attackIcon;
+    public Sprite guardIcon;
+    public Sprite skillIcon;
+    public Sprite powerIcon;
+    public Sprite auraIcon;
 }

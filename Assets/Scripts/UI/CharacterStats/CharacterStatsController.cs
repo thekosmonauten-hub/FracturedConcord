@@ -60,6 +60,8 @@ public class CharacterStatsController : MonoBehaviour
     [Header("Defense Section")]
     public TextMeshProUGUI ArmourText;
     public TextMeshProUGUI EvasionText;
+    public TextMeshProUGUI AccuracyText;
+    public TextMeshProUGUI EvasionIncText;
     public TextMeshProUGUI EnergyShieldText;
     
     [Header("Resistance Section")]
@@ -322,6 +324,10 @@ public class CharacterStatsController : MonoBehaviour
         
         if (EvasionText != null)
             EvasionText.text = currentStats.evasion.ToString("F0");
+        if (AccuracyText != null)
+            AccuracyText.text = currentStats.accuracy.ToString("F0");
+        if (EvasionIncText != null)
+            EvasionIncText.text = (currentStats.evasionIncreased * 100f).ToString("F0") + "%";
         
         if (EnergyShieldText != null)
             EnergyShieldText.text = $"{currentStats.currentEnergyShield} / {currentStats.maxEnergyShield}";

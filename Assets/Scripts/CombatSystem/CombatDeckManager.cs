@@ -6,6 +6,7 @@ using System.Linq;
 /// Manages the card deck during combat.
 /// Handles loading, shuffling, drawing, and discarding cards.
 /// Integrates with CardRuntimeManager for visual display.
+/// Now uses CardData ScriptableObjects instead of JSON for better reliability.
 /// </summary>
 public class CombatDeckManager : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class CombatDeckManager : MonoBehaviour
     [Header("Deck Settings")]
     [SerializeField] private bool loadDeckOnStart = true;
     [SerializeField] private int initialHandSize = 5;
+    private bool hasDrawnInitialHand = false; // Track if initial hand has been drawn
     [SerializeField] private bool autoShuffleOnStart = true;
     
     [Header("Testing (Quick Test Mode)")]
@@ -26,6 +28,7 @@ public class CombatDeckManager : MonoBehaviour
     [SerializeField] private CombatAnimationManager animationManager;
     [SerializeField] private CardEffectProcessor cardEffectProcessor;
     [SerializeField] private EnemyTargetingManager targetingManager;
+    [SerializeField] private CombatEffectManager combatEffectManager;
     
     [Header("UI References")]
     [SerializeField] private TMPro.TextMeshProUGUI deckCountText;
@@ -42,17 +45,21 @@ public class CombatDeckManager : MonoBehaviour
     [SerializeField] private int debugHandCount = 0;
     [SerializeField] private int debugDiscardCount = 0;
     
-    // Deck piles
-    private List<Card> drawPile = new List<Card>();
-    private List<Card> hand = new List<Card>();
-    private List<Card> discardPile = new List<Card>();
+    // Deck piles - NOW USING CardDataExtended (no conversion!)
+    private List<CardDataExtended> drawPile = new List<CardDataExtended>();
+    private List<CardDataExtended> hand = new List<CardDataExtended>();
+    private List<CardDataExtended> discardPile = new List<CardDataExtended>();
     private List<GameObject> handVisuals = new List<GameObject>();
     
     // Events
-    public System.Action<Card> OnCardDrawn;
-    public System.Action<Card> OnCardPlayed;
-    public System.Action<Card> OnCardDiscarded;
+    public System.Action<CardDataExtended> OnCardDrawn;
+    public System.Action<CardDataExtended> OnCardPlayed;
+    public System.Action<CardDataExtended> OnCardDiscarded;
     public System.Action OnDeckShuffled;
+    
+    // Combat Manager Integration
+    private CombatDisplayManager combatDisplayManager;
+    private ComboSystem comboSystem;
     
     #region Initialization
     
@@ -77,12 +84,33 @@ public class CombatDeckManager : MonoBehaviour
         
         if (animationManager == null)
             animationManager = CombatAnimationManager.Instance;
+            
+        if (combatEffectManager == null)
+            combatEffectManager = CombatEffectManager.Instance;
         
         if (cardEffectProcessor == null)
             cardEffectProcessor = CardEffectProcessor.Instance;
         
         if (targetingManager == null)
             targetingManager = EnemyTargetingManager.Instance;
+        
+        // Debug manager initialization
+        Debug.Log($"<color=yellow>CombatDeckManager Initialization:</color>");
+        Debug.Log($"  CardEffectProcessor: {(cardEffectProcessor != null ? "Found" : "NULL")}");
+        Debug.Log($"  TargetingManager: {(targetingManager != null ? "Found" : "NULL")}");
+        Debug.Log($"  CombatEffectManager: {(combatEffectManager != null ? "Found" : "NULL")}");
+        
+        // Auto-find CombatDisplayManager
+        combatDisplayManager = FindFirstObjectByType<CombatDisplayManager>();
+        
+        // Auto-find ComboSystem
+        comboSystem = ComboSystem.Instance;
+        if (comboSystem == null)
+        {
+            // Create ComboSystem if it doesn't exist
+            GameObject comboSystemObj = new GameObject("ComboSystem");
+            comboSystem = comboSystemObj.AddComponent<ComboSystem>();
+        }
     }
     
     private void Start()
@@ -176,14 +204,24 @@ public class CombatDeckManager : MonoBehaviour
         }
         handVisuals.Clear();
         
-        // Load deck from JSON
-        List<Card> loadedDeck = DeckLoader.LoadStarterDeck(characterClass);
+        // Load deck from CardDatabase as CardDataExtended - NO CONVERSION!
+        List<CardDataExtended> cardDataDeck = LoadDeckFromCardDatabase(characterClass);
         
-        if (loadedDeck != null && loadedDeck.Count > 0)
+        if (cardDataDeck != null && cardDataDeck.Count > 0)
         {
-            // Add cards to draw pile (don't reassign reference!)
-            drawPile.AddRange(loadedDeck);
-            Debug.Log($"<color=green>✓ Loaded {characterClass} deck:</color> {drawPile.Count} cards");
+            // NO CONVERSION NEEDED! Use CardDataExtended directly!
+            foreach (CardDataExtended card in cardDataDeck)
+            {
+                // Add multiple copies based on typical deck composition
+                int copies = GetCardCopies(card.cardName);
+                for (int i = 0; i < copies; i++)
+                {
+                    drawPile.Add(card);
+                }
+                Debug.Log($"[CardDataExtended] Added {copies} copies of {card.cardName} to deck");
+            }
+            
+            Debug.Log($"<color=green>✓ Loaded {characterClass} deck from CardDatabase:</color> {drawPile.Count} cards");
             Debug.Log($"Draw pile now contains: {drawPile.Count} cards");
             
             // Verify cards are actually in the list
@@ -204,7 +242,7 @@ public class CombatDeckManager : MonoBehaviour
     {
         Dictionary<string, int> cardCounts = new Dictionary<string, int>();
         
-        foreach (Card card in drawPile)
+        foreach (CardDataExtended card in drawPile)
         {
             if (!cardCounts.ContainsKey(card.cardName))
             {
@@ -222,6 +260,183 @@ public class CombatDeckManager : MonoBehaviour
         Debug.Log(composition);
     }
     
+    /// <summary>
+    /// Load deck from CardDatabase as CardDataExtended (no conversion!)
+    /// </summary>
+    private List<CardDataExtended> LoadDeckFromCardDatabase(string characterClass)
+    {
+        Debug.Log($"<color=cyan>[CardDataExtended] Loading {characterClass} deck from CardDatabase...</color>");
+        
+        CardDatabase database = CardDatabase.Instance;
+        if (database == null)
+        {
+            Debug.LogError($"[CardDataExtended] CardDatabase not found! Cannot load {characterClass} deck.");
+            return null;
+        }
+        
+        Debug.Log($"[CardDataExtended] CardDatabase loaded with {database.allCards.Count} total cards");
+        
+        // Get class cards from database as CardDataExtended
+        List<CardDataExtended> classCards = GetClassCardsFromDatabase(database, characterClass);
+        
+        if (classCards.Count == 0)
+        {
+            Debug.LogWarning($"[CardDataExtended] No {characterClass} cards found in CardDatabase. Run migration tool: Tools > Cards > Migrate to CardDataExtended");
+            return null;
+        }
+        
+        Debug.Log($"[CardDataExtended] Found {classCards.Count} {characterClass} cards in CardDatabase");
+        return classCards;
+    }
+    
+    /// <summary>
+    /// Get class cards from database as CardDataExtended
+    /// </summary>
+    private List<CardDataExtended> GetClassCardsFromDatabase(CardDatabase database, string characterClass)
+    {
+        List<CardDataExtended> classCards = new List<CardDataExtended>();
+        
+        // Get card names for this class
+        string[] cardNames = GetCardNamesForClass(characterClass);
+        
+        foreach (string cardName in cardNames)
+        {
+            // Try to find CardDataExtended first (preferred)
+            CardData cardData = database.allCards.Find(c => c.cardName == cardName);
+            
+            if (cardData != null)
+            {
+                // Check if it's already CardDataExtended
+                CardDataExtended cardExtended = cardData as CardDataExtended;
+                
+                if (cardExtended != null)
+                {
+                    classCards.Add(cardExtended);
+                    Debug.Log($"[CardDataExtended] ✓ Found extended card: {cardExtended.cardName}");
+                }
+                else
+                {
+                    // It's a regular CardData - log warning that migration is needed
+                    Debug.LogWarning($"[CardDataExtended] ⚠ Card '{cardName}' is CardData, not CardDataExtended! Run migration tool.");
+                    
+                    // For backward compatibility during migration, try to load the _Extended version directly
+                    CardDataExtended migratedCard = LoadCardDataExtendedDirectly(cardName);
+                    if (migratedCard != null)
+                    {
+                        classCards.Add(migratedCard);
+                        Debug.Log($"[CardDataExtended] ✓ Found migrated version: {cardName}_Extended");
+                    }
+                }
+            }
+            else
+            {
+                // Try direct load as fallback
+                CardDataExtended directCard = LoadCardDataExtendedDirectly(cardName);
+                if (directCard != null)
+                {
+                    classCards.Add(directCard);
+                    Debug.Log($"[CardDataExtended] ✓ Loaded directly: {cardName}");
+                }
+                else
+                {
+                    Debug.LogError($"[CardDataExtended] ✗ Card '{cardName}' not found in database or Resources!");
+                }
+            }
+        }
+        
+        return classCards;
+    }
+    
+    /// <summary>
+    /// Get card names for a specific class
+    /// </summary>
+    private string[] GetCardNamesForClass(string characterClass)
+    {
+        switch (characterClass)
+        {
+            case "Marauder":
+                return new string[] {
+                    "Heavy Strike",
+                    "Brace",
+                    "Ground Slam",
+                    "Cleave",
+                    "Endure",
+                    "Intimidating Shout"
+                };
+            case "Witch":
+                return new string[] { 
+                    // TODO: Add Witch cards
+                };
+            case "Ranger":
+                return new string[] { 
+                    // TODO: Add Ranger cards
+                };
+            case "Brawler":
+                return new string[] {
+                    // TODO: Add Brawler cards
+                };
+            case "Thief":
+                return new string[] {
+                    // TODO: Add Thief cards
+                };
+            case "Apostle":
+                return new string[] {
+                    // TODO: Add Apostle cards
+                };
+            default:
+                Debug.LogWarning($"No card list defined for class: {characterClass}");
+                return new string[] { };
+        }
+    }
+    
+    /// <summary>
+    /// Load CardDataExtended directly from Resources folder (fallback method)
+    /// </summary>
+    private CardDataExtended LoadCardDataExtendedDirectly(string cardName)
+    {
+        // Try different possible paths, including _Extended suffix
+        string[] possiblePaths = {
+            $"Cards/Marauder/{cardName.Replace(" ", "")}_Extended",
+            $"Cards/Marauder/{cardName}_Extended",
+            $"Cards/Marauder/{cardName.Replace(" ", "")}",
+            $"Cards/Marauder/{cardName}",
+            $"Cards/{cardName.Replace(" ", "")}_Extended",
+            $"Cards/{cardName}_Extended",
+            $"Cards/{cardName.Replace(" ", "")}",
+            $"Cards/{cardName}"
+        };
+        
+        foreach (string path in possiblePaths)
+        {
+            CardDataExtended card = Resources.Load<CardDataExtended>(path);
+            if (card != null)
+            {
+                Debug.Log($"[CardDataExtended] Successfully loaded card from: {path}");
+                return card;
+            }
+        }
+        
+        Debug.LogWarning($"[CardDataExtended] Could not find CardDataExtended at any path for: {cardName}");
+        return null;
+    }
+    
+    /// <summary>
+    /// Get number of copies for each card (replicating JSON deck composition)
+    /// </summary>
+    private int GetCardCopies(string cardName)
+    {
+        switch (cardName)
+        {
+            case "Heavy Strike": return 6;  // 6 copies in JSON
+            case "Brace": return 4;         // 4 copies in JSON
+            case "Ground Slam": return 2;   // 2 copies in JSON
+            case "Cleave": return 2;        // 2 copies in JSON
+            case "Endure": return 2;        // 2 copies in JSON
+            case "Intimidating Shout": return 2; // 2 copies in JSON
+            default: return 1; // Default to 1 copy
+        }
+    }
+    
     #endregion
     
     #region Deck Management
@@ -235,7 +450,7 @@ public class CombatDeckManager : MonoBehaviour
         for (int i = drawPile.Count - 1; i > 0; i--)
         {
             int j = Random.Range(0, i + 1);
-            Card temp = drawPile[i];
+            CardDataExtended temp = drawPile[i]; // NOW USING CardDataExtended!
             drawPile[i] = drawPile[j];
             drawPile[j] = temp;
         }
@@ -249,7 +464,16 @@ public class CombatDeckManager : MonoBehaviour
     /// </summary>
     public void DrawInitialHand()
     {
-        DrawCards(initialHandSize);
+        if (!hasDrawnInitialHand)
+        {
+            DrawCards(initialHandSize);
+            hasDrawnInitialHand = true;
+            Debug.Log($"<color=green>Initial hand drawn: {initialHandSize} cards</color>");
+        }
+        else
+        {
+            Debug.Log($"<color=yellow>Initial hand already drawn, skipping</color>");
+        }
     }
     
     /// <summary>
@@ -306,14 +530,14 @@ public class CombatDeckManager : MonoBehaviour
             
             if (drawPile.Count > 0)
             {
-                // Draw card from deck
-                Card drawnCard = drawPile[0];
+                // Draw card from deck - NOW USING CardDataExtended!
+                CardDataExtended drawnCard = drawPile[0];
                 drawPile.RemoveAt(0);
                 hand.Add(drawnCard);
                 
                 Debug.Log($"<color=cyan>Drawing card #{i+1}: {drawnCard.cardName}</color>");
                 
-                // Create visual card with draw animation!
+                // Create visual card with draw animation - NO CONVERSION!
                 Debug.Log($"Creating visual for: {drawnCard.cardName}...");
                 GameObject cardObj = CreateAnimatedCard(drawnCard, player, i);
                 
@@ -381,6 +605,9 @@ public class CombatDeckManager : MonoBehaviour
                         Debug.Log($"  Re-enabled interaction for {cardObj.name}");
                     }
                 }
+                
+                // Update combo glow states after draw completes
+                UpdateComboHighlights();
             }
         });
     }
@@ -396,8 +623,59 @@ public class CombatDeckManager : MonoBehaviour
             return;
         }
         
-        Card card = hand[handIndex];
+        CardDataExtended card = hand[handIndex]; // NOW USING CardDataExtended!
         GameObject cardObj = handVisuals[handIndex];
+        
+        // Check if player has enough mana to play this card
+        Character player = CharacterManager.Instance?.GetCurrentCharacter();
+        if (player == null)
+        {
+            Debug.LogError("No player character found!");
+            return;
+        }
+        
+        if (player.mana < card.playCost) // Use playCost from CardDataExtended
+        {
+            Debug.Log($"<color=red>Cannot play {card.cardName}: Not enough mana! Required: {card.playCost}, Available: {player.mana}</color>");
+            
+            // Animate the card to show it can't be played
+            AnimateInsufficientManaCard(cardObj);
+            
+            // Flash the End Turn button to indicate player can't afford cards
+            FlashEndTurnButton();
+            return;
+        }
+        
+        // Deduct mana cost before playing the card
+        bool manaSpent = player.UseMana(card.playCost); // Use playCost from CardDataExtended
+        if (!manaSpent)
+        {
+            Debug.LogError($"Failed to spend mana for {card.cardName}!");
+            return;
+        }
+        
+        Debug.Log($"<color=green>Spent {card.playCost} mana to play {card.cardName}. Remaining mana: {player.mana}</color>");
+        
+        // Build combo application (if any) BEFORE applying effects
+        ComboSystem.ComboApplication comboApp = null;
+        if (ComboSystem.Instance != null)
+        {
+            Character comboPlayer = characterManager != null && characterManager.HasCharacter() ? 
+                characterManager.GetCurrentCharacter() : null;
+            comboApp = ComboSystem.Instance.BuildComboApplication(card, comboPlayer);
+            if (comboApp != null)
+            {
+                Debug.Log($"<color=yellow>[Combo] Combo will apply to {card.cardName}: Logic={comboApp.logic}, +Atk={comboApp.attackIncrease}, +Guard={comboApp.guardIncrease}, AoE={comboApp.isAoEOverride}, ManaRefund={comboApp.manaRefund}</color>");
+            }
+        }
+        
+        // Update mana display and card usability
+        var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        if (playerDisplay != null)
+        {
+            playerDisplay.UpdateManaDisplay();
+        }
+        UpdateCardUsability();
         
         // Remove from hand and visuals IMMEDIATELY
         // This prevents the card from being repositioned while animating
@@ -461,7 +739,7 @@ public class CombatDeckManager : MonoBehaviour
         {
             // Get target enemy for the card
             Enemy targetEnemy = GetTargetEnemy();
-            Character player = characterManager != null && characterManager.HasCharacter() ? 
+            Character playerCharacter = characterManager != null && characterManager.HasCharacter() ? 
                 characterManager.GetCurrentCharacter() : null;
             
             Debug.Log($"  Animation manager found. Flying card to enemy...");
@@ -474,18 +752,205 @@ public class CombatDeckManager : MonoBehaviour
                 Debug.Log($"  Card still exists? {cardObj != null}, Active? {(cardObj != null ? cardObj.activeInHierarchy.ToString() : "null")}");
                 
                 // Step 2: Apply card effect (DEAL DAMAGE!)
-                if (cardEffectProcessor != null && targetEnemy != null)
+                Debug.Log($"<color=cyan>Applying card effects for {card.cardName}...</color>");
+                Debug.Log($"  CardEffectProcessor: {(cardEffectProcessor != null ? "Found" : "NULL")}");
+                Debug.Log($"  TargetingManager: {(targetingManager != null ? "Found" : "NULL")}");
+                Debug.Log($"  Target Enemy: {(targetEnemy != null ? targetEnemy.enemyName : "NULL")}");
+                Debug.Log($"  Player Character: {(playerCharacter != null ? playerCharacter.characterName : "NULL")}");
+                Debug.Log($"  Is AoE Card: {card.isAoE}");
+                
+                if (cardEffectProcessor != null)
                 {
-                    cardEffectProcessor.ApplyCardToEnemy(card, targetEnemy, player, targetPosition);
+                    // TEMPORARY: Convert CardDataExtended to Card for CardEffectProcessor
+                    // (CardEffectProcessor will be updated to use CardDataExtended in the future)
+                    #pragma warning disable CS0618 // Type or member is obsolete
+                    Card cardForProcessor = card.ToCard();
+                    #pragma warning restore CS0618
+                    
+                    // Apply combo logic modifications to the runtime Card passed to processor
+                    if (comboApp != null)
+                    {
+                        if (comboApp.logic == ComboLogicType.Instead)
+                        {
+                            // Replace base values entirely
+                            cardForProcessor.baseDamage = Mathf.Max(0f, comboApp.attackIncrease);
+                            cardForProcessor.baseGuard = Mathf.Max(0f, comboApp.guardIncrease);
+                            cardForProcessor.isAoE = comboApp.isAoEOverride;
+                        }
+                        else // Additive
+                        {
+                            cardForProcessor.baseDamage = Mathf.Max(0f, cardForProcessor.baseDamage + comboApp.attackIncrease);
+                            cardForProcessor.baseGuard = Mathf.Max(0f, cardForProcessor.baseGuard + comboApp.guardIncrease);
+                            // Only override AoE if true, otherwise keep original
+                            cardForProcessor.isAoE = comboApp.isAoEOverride || cardForProcessor.isAoE;
+                        }
+                        
+                        // Pass ailment fields from combo override
+                        cardForProcessor.comboAilmentId = comboApp.comboAilmentId;
+                        cardForProcessor.comboAilmentPortion = comboApp.comboAilmentPortion;
+                        cardForProcessor.comboAilmentDuration = comboApp.comboAilmentDuration;
+                        
+                        // If combo-specific consume enabled on asset, propagate it for this play
+                        if (card.comboConsumeAilment && card.comboConsumeAilmentId != AilmentId.None)
+                        {
+                            cardForProcessor.consumeAilmentEnabled = true;
+                            cardForProcessor.consumeAilmentId = card.comboConsumeAilmentId;
+                        }
+                    }
+                    else
+                    {
+                        // No combo override: allow per-card ailment application on play
+                        if (card.comboAilment != AilmentId.None && card.comboAilmentPortion > 0f && card.comboAilmentDuration > 0)
+                        {
+                            cardForProcessor.comboAilmentId = card.comboAilment;
+                            cardForProcessor.comboAilmentPortion = card.comboAilmentPortion;
+                            cardForProcessor.comboAilmentDuration = card.comboAilmentDuration;
+                        }
+                    }
+                    
+                    // Always pass consume fields directly from the asset (not combo-only)
+                    cardForProcessor.consumeAilmentEnabled = card.consumeAilment;
+                    cardForProcessor.consumeAilmentId = card.consumeAilmentId;
+                    
+                    // For AoE cards, we don't need a specific target enemy
+                    if (cardForProcessor.isAoE)
+                    {
+                        Debug.Log($"  → Calling cardEffectProcessor.ApplyCardToEnemy for AoE card...");
+                        cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, null, playerCharacter, targetPosition);
+                    }
+                    else if (targetEnemy != null)
+                    {
+                        Debug.Log($"  → Calling cardEffectProcessor.ApplyCardToEnemy for single target...");
+                        cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, targetEnemy, playerCharacter, targetPosition);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Cannot apply {card.cardName}: No target enemy for single-target card!");
+                        return;
+                    }
+                    
+                    // Play combat effects based on card type
+                    if (combatEffectManager != null)
+                    {
+                        Debug.Log($"  → Calling PlayCardEffects...");
+                        // Pass CardDataExtended to visual effects (legacy Card not needed here)
+                        PlayCardEffects(card, targetEnemy, playerCharacter);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"  → CombatEffectManager is NULL!");
+                    }
                 }
                 else
                 {
-                    Debug.LogWarning($"Cannot apply {card.cardName}: No target enemy or effect processor!");
+                    Debug.LogWarning($"Cannot apply {card.cardName}: No effect processor!");
                 }
                 
                 // Trigger event for other systems
                 OnCardPlayed?.Invoke(card);
                 Debug.Log($"  → Card effect triggered: {card.cardName}");
+                
+                // Apply combo post-effects: mana refund, draw, ailments, buffs
+                if (comboApp != null)
+                {
+                    // Mana refund
+                    if (comboApp.manaRefund > 0 && playerCharacter != null)
+                    {
+                        playerCharacter.RestoreMana(comboApp.manaRefund);
+                        Debug.Log($"<color=green>[Combo] Refunded {comboApp.manaRefund} mana</color>");
+                        var playerDisplayRefund = FindFirstObjectByType<PlayerCombatDisplay>();
+                        if (playerDisplayRefund != null) playerDisplayRefund.UpdateManaDisplay();
+                    }
+                    
+                    // Draw cards on combo
+                    if (comboApp.comboDrawCards > 0)
+                    {
+                        Debug.Log($"<color=green>[Combo] Draw {comboApp.comboDrawCards} card(s)</color>");
+                        DrawCards(comboApp.comboDrawCards);
+                    }
+                    
+                    // Ailment (hook into status/effect manager)
+                    if (!string.IsNullOrEmpty(comboApp.ailmentId) && targetEnemy != null)
+                    {
+                        Debug.Log($"[Combo] Apply ailment: {comboApp.ailmentId} to {targetEnemy.enemyName}");
+                        // TODO: integrate with StatusEffectManager once ailment mapping is defined
+                    }
+                    
+                    // Buffs on player (list)
+                    if (comboApp.buffIds != null && comboApp.buffIds.Count > 0)
+                    {
+                        Debug.Log($"[Combo] Apply buffs to player: {string.Join(", ", comboApp.buffIds)}");
+                        // Simple integration: support Bolster stacks (2-turn default)
+                        var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+                        var statusManager = playerDisplay != null ? playerDisplay.GetStatusEffectManager() : null;
+                        if (statusManager != null)
+                        {
+                            foreach (var buff in comboApp.buffIds)
+                            {
+                                if (string.Equals(buff, "Bolster", System.StringComparison.OrdinalIgnoreCase))
+                                {
+                                    int stacks = 1; // base stack
+                                    if (playerCharacter != null && card != null)
+                                    {
+                                        switch (card.comboScaling)
+                                        {
+                                            case ComboScalingType.Strength:
+                                                if (card.comboScalingDivisor > 0f)
+                                                {
+                                                    stacks += Mathf.FloorToInt(playerCharacter.strength / card.comboScalingDivisor);
+                                                }
+                                                break;
+                                            case ComboScalingType.Dexterity:
+                                                if (card.comboScalingDivisor > 0f)
+                                                {
+                                                    stacks += Mathf.FloorToInt(playerCharacter.dexterity / card.comboScalingDivisor);
+                                                }
+                                                break;
+                                            case ComboScalingType.Intelligence:
+                                                if (card.comboScalingDivisor > 0f)
+                                                {
+                                                    stacks += Mathf.FloorToInt(playerCharacter.intelligence / card.comboScalingDivisor);
+                                                }
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                    // Clamp effective benefit elsewhere, but ensure at least 1
+                                    stacks = Mathf.Max(1, stacks);
+                                    var effect = new StatusEffect(StatusEffectType.Bolster, "Bolster", stacks, 2, false);
+                                    statusManager.AddStatusEffect(effect);
+                                    Debug.Log($"[Combo] Applied Bolster ({stacks} stack(s), 2 turns)");
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Trigger player sprite animations based on card type
+                TriggerPlayerAnimation(card);
+                
+                // Notify combat manager that a card was played
+                if (combatDisplayManager != null)
+                {
+                    combatDisplayManager.OnCardPlayed();
+                }
+                
+                // Notify combo system that a card was played (legacy), and register last played for new system
+                if (comboSystem != null)
+                {
+                    // TEMPORARY: Convert CardDataExtended to Card for ComboSystem
+                    #pragma warning disable CS0618
+                    Card cardForCombo = card.ToCard();
+                    #pragma warning restore CS0618
+                    comboSystem.OnCardPlayed(cardForCombo);
+                }
+                if (ComboSystem.Instance != null)
+                {
+                    ComboSystem.Instance.RegisterLastPlayed(card.GetCardTypeEnum(), card.cardName);
+                    // Refresh highlights after registering last played
+                    UpdateComboHighlights();
+                }
                 
                 // Step 3: After a brief pause, animate to discard pile
                 float effectDuration = 0.3f; // Time to show the card effect
@@ -546,6 +1011,22 @@ public class CombatDeckManager : MonoBehaviour
             OnCardPlayed?.Invoke(card);
             OnCardDiscarded?.Invoke(card);
             
+            // Notify combat manager that a card was played
+            if (combatDisplayManager != null)
+            {
+                combatDisplayManager.OnCardPlayed();
+            }
+            
+            // Notify combo system that a card was played
+            if (comboSystem != null)
+            {
+                // TEMPORARY: Convert CardDataExtended to Card for ComboSystem
+                #pragma warning disable CS0618 // Type or member is obsolete
+                Card cardForCombo = card.ToCard();
+                #pragma warning restore CS0618
+                comboSystem.OnCardPlayed(cardForCombo);
+            }
+            
             if (cardObj != null)
             {
                 Destroy(cardObj);
@@ -559,6 +1040,7 @@ public class CombatDeckManager : MonoBehaviour
             
             Debug.Log($"Played (instant): {card.cardName}");
         }
+        UpdateComboHighlights(); // Update highlights after playing
     }
     
     /// <summary>
@@ -572,7 +1054,7 @@ public class CombatDeckManager : MonoBehaviour
             return;
         }
         
-        Card card = hand[handIndex];
+        CardDataExtended card = hand[handIndex]; // NOW USING CardDataExtended!
         GameObject cardObj = handVisuals[handIndex];
         
         // Remove from hand
@@ -604,6 +1086,9 @@ public class CombatDeckManager : MonoBehaviour
         }
         
         Debug.Log($"Discarded: {card.cardName}");
+        
+        // Refresh highlights after discard
+        UpdateComboHighlights();
     }
     
     /// <summary>
@@ -665,8 +1150,8 @@ public class CombatDeckManager : MonoBehaviour
             return;
         }
         
-        // Get the card data
-        Card clickedCard = hand[handIndex];
+        // Get the card data - NOW USING CardDataExtended!
+        CardDataExtended clickedCard = hand[handIndex];
         
         // Get target position from first available enemy
         Vector3 targetPos = GetTargetScreenPosition();
@@ -680,6 +1165,72 @@ public class CombatDeckManager : MonoBehaviour
         Debug.Log($"<color=cyan>═══ END CLICK DEBUG ═══</color>");
     }
     
+    /// <summary>
+    /// Update combo highlight glow for all cards in hand.
+    /// Requires each card visual prefab to contain a child Image named "GlowEffect" or "ComboGlow".
+    /// </summary>
+    private void UpdateComboHighlights()
+    {
+        if (ComboSystem.Instance == null) return;
+        Character player = characterManager != null && characterManager.HasCharacter() ? characterManager.GetCurrentCharacter() : null;
+        
+        int count = Mathf.Min(hand.Count, handVisuals.Count);
+        for (int i = 0; i < count; i++)
+        {
+            var cardData = hand[i];
+            var cardObj = handVisuals[i];
+            if (cardData == null || cardObj == null) continue;
+            
+            var app = ComboSystem.Instance.BuildComboApplication(cardData, player);
+            bool eligible = app != null;
+            
+            // Find GlowEffect child recursively (it's nested under VisualRoot)
+            Transform t = FindChildRecursive(cardObj.transform, "GlowEffect");
+            if (t == null)
+            {
+                t = FindChildRecursive(cardObj.transform, "ComboGlow");
+            }
+            
+            if (t != null)
+            {
+                var img = t.GetComponent<UnityEngine.UI.Image>();
+                if (img != null && ComboSystem.Instance != null)
+                {
+                    img.color = ComboSystem.Instance.comboHighlightColor;
+                }
+                t.gameObject.SetActive(eligible);
+                Debug.Log($"[ComboGlow] {cardData.cardName}: GlowEffect set to {(eligible ? "ACTIVE" : "INACTIVE")}");
+                
+                // Attach pulse effect if present
+                var pulse = t.GetComponent<ComboGlowPulse>();
+                if (pulse == null)
+                {
+                    pulse = t.gameObject.AddComponent<ComboGlowPulse>();
+                }
+                // Component will handle enable/disable
+                pulse.enabled = eligible;
+            }
+            else
+            {
+                Debug.LogWarning($"[ComboGlow] GlowEffect not found on {cardObj.name} for card {cardData.cardName}");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Recursively search for a child transform by name
+    /// </summary>
+    private Transform FindChildRecursive(Transform parent, string name)
+    {
+        if (parent.name == name) return parent;
+        foreach (Transform child in parent)
+        {
+            Transform result = FindChildRecursive(child, name);
+            if (result != null) return result;
+        }
+        return null;
+    }
+    
     #endregion
     
     #region Helper Methods
@@ -687,10 +1238,10 @@ public class CombatDeckManager : MonoBehaviour
     /// <summary>
     /// Create a card with draw animation from deck pile.
     /// </summary>
-    private GameObject CreateAnimatedCard(Card cardData, Character player, int cardIndex)
+    private GameObject CreateAnimatedCard(CardDataExtended cardData, Character player, int cardIndex)
     {
-        // Create the card visual
-        GameObject cardObj = cardRuntimeManager.CreateCardFromData(cardData, player);
+        // Create the card visual - NO CONVERSION! Use CardDataExtended directly
+        GameObject cardObj = cardRuntimeManager.CreateCardFromCardDataExtended(cardData, player);
         if (cardObj == null) return null;
         
         // IMMEDIATELY disable interaction BEFORE positioning
@@ -852,7 +1403,7 @@ public class CombatDeckManager : MonoBehaviour
     /// <summary>
     /// Animate card flying to discard pile and disappearing.
     /// </summary>
-    private void AnimateToDiscardPile(GameObject cardObj, Card card)
+    private void AnimateToDiscardPile(GameObject cardObj, CardDataExtended card)
     {
         if (cardObj == null)
         {
@@ -951,19 +1502,19 @@ public class CombatDeckManager : MonoBehaviour
     
     #region Getters
     
-    public List<Card> GetHand()
+    public List<CardDataExtended> GetHand()
     {
-        return new List<Card>(hand);
+        return new List<CardDataExtended>(hand);
     }
     
-    public List<Card> GetDrawPile()
+    public List<CardDataExtended> GetDrawPile()
     {
-        return new List<Card>(drawPile);
+        return new List<CardDataExtended>(drawPile);
     }
     
-    public List<Card> GetDiscardPile()
+    public List<CardDataExtended> GetDiscardPile()
     {
-        return new List<Card>(discardPile);
+        return new List<CardDataExtended>(discardPile);
     }
     
     public int GetHandCount()
@@ -979,6 +1530,62 @@ public class CombatDeckManager : MonoBehaviour
     public int GetDiscardPileCount()
     {
         return discardPile.Count;
+    }
+    
+    public List<GameObject> GetHandVisuals()
+    {
+        return new List<GameObject>(handVisuals);
+    }
+    
+    /// <summary>
+    /// Get the current character for tooltip calculations
+    /// </summary>
+    public Character GetCurrentCharacter()
+    {
+        if (characterManager != null && characterManager.HasCharacter())
+        {
+            return characterManager.GetCurrentCharacter();
+        }
+        return null;
+    }
+    
+    /// <summary>
+    /// Update card visuals when mana changes
+    /// </summary>
+    public void UpdateCardUsability()
+    {
+        Character player = characterManager != null && characterManager.HasCharacter() ? 
+            characterManager.GetCurrentCharacter() : null;
+        
+        if (player == null) return;
+        
+        // Update each card visual's usability
+        for (int i = 0; i < handVisuals.Count; i++)
+        {
+            if (i < hand.Count && handVisuals[i] != null)
+            {
+                GameObject cardObj = handVisuals[i];
+                CardDataExtended card = hand[i]; // NOW USING CardDataExtended!
+                
+                // Update card visual components - use new CardDataExtended methods
+                CombatCardAdapter adapter = cardObj.GetComponent<CombatCardAdapter>();
+                if (adapter != null)
+                {
+                    adapter.SetCardDataExtended(card, player);
+                }
+                else
+                {
+                    // Fallback to DeckBuilderCardUI directly
+                    DeckBuilderCardUI deckBuilderCard = cardObj.GetComponent<DeckBuilderCardUI>();
+                    if (deckBuilderCard != null)
+                    {
+                        // Pass player for dynamic descriptions!
+                        deckBuilderCard.Initialize(card, null, player);
+                        Debug.Log($"Updated DeckBuilderCardUI for {card.cardName}");
+                    }
+                }
+            }
+        }
     }
     
     #endregion
@@ -1126,6 +1733,304 @@ public class CombatDeckManager : MonoBehaviour
                   $"Hand: {hand.Count} cards\n" +
                   $"Discard Pile: {discardPile.Count} cards\n" +
                   $"Total: {drawPile.Count + hand.Count + discardPile.Count} cards");
+    }
+    
+    [ContextMenu("Test Mana Cost Validation")]
+    private void TestManaCostValidation()
+    {
+        Character player = characterManager != null && characterManager.HasCharacter() ?
+            characterManager.GetCurrentCharacter() : null;
+
+        if (player == null)
+        {
+            Debug.LogWarning("No character found for mana cost validation test!");
+            return;
+        }
+
+        Debug.Log($"<color=yellow>=== MANA COST VALIDATION TEST ===</color>");
+        Debug.Log($"Player mana: {player.mana}/{player.maxMana}");
+        Debug.Log($"Cards in hand: {hand.Count}");
+
+        for (int i = 0; i < hand.Count; i++)
+        {
+            CardDataExtended card = hand[i]; // NOW USING CardDataExtended!
+            bool canAfford = player.mana >= card.playCost; // Use playCost from CardDataExtended
+            string status = canAfford ? "✓ Can afford" : "✗ Cannot afford";
+            Debug.Log($"  Card {i + 1}: {card.cardName} (Cost: {card.playCost}) - {status}");
+        }
+
+        // Update card visuals
+        UpdateCardUsability();
+        
+        // Check if player can afford any cards
+        bool canAffordAnyCard = false;
+        for (int i = 0; i < hand.Count; i++)
+        {
+            if (player.mana >= hand[i].playCost) // Use playCost from CardDataExtended
+            {
+                canAffordAnyCard = true;
+                break;
+            }
+        }
+        
+        // Flash End Turn button if player can't afford any cards
+        if (!canAffordAnyCard && hand.Count > 0)
+        {
+            FlashEndTurnButton();
+        }
+        
+        Debug.Log("Card visuals updated with mana cost validation");
+    }
+    
+    /// <summary>
+    /// Flash the End Turn button to indicate player can't afford any cards
+    /// </summary>
+    private void FlashEndTurnButton()
+    {
+        // Find the End Turn button in the UI
+        var combatUI = FindFirstObjectByType<CombatUI>();
+        if (combatUI != null)
+        {
+            combatUI.FlashEndTurnButton();
+        }
+        else
+        {
+            // Fallback: try to find AnimatedCombatUI
+            var animatedUI = FindFirstObjectByType<AnimatedCombatUI>();
+            if (animatedUI != null)
+            {
+                animatedUI.FlashEndTurnButton();
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Animate a card when player has insufficient mana
+    /// </summary>
+    private void AnimateInsufficientManaCard(GameObject cardObj)
+    {
+        if (cardObj == null) return;
+        
+        // Cancel any existing animations on this card
+        LeanTween.cancel(cardObj);
+        
+        // Get the card's Image component for color changes
+        UnityEngine.UI.Image cardImage = cardObj.GetComponent<UnityEngine.UI.Image>();
+        if (cardImage == null) return;
+        
+        // Store original color
+        Color originalColor = cardImage.color;
+        
+        // Create animation sequence: Flash red + wiggle
+        LeanTween.sequence()
+            // Flash red
+            .append(LeanTween.color(cardObj, Color.red, 0.15f).setEase(LeanTweenType.easeOutQuad))
+            .append(LeanTween.color(cardObj, originalColor, 0.15f).setEase(LeanTweenType.easeOutQuad))
+            // Wiggle left
+            .append(LeanTween.moveLocalX(cardObj, cardObj.transform.localPosition.x - 10f, 0.1f).setEase(LeanTweenType.easeInOutQuad))
+            // Wiggle right
+            .append(LeanTween.moveLocalX(cardObj, cardObj.transform.localPosition.x + 10f, 0.1f).setEase(LeanTweenType.easeInOutQuad))
+            // Return to center
+            .append(LeanTween.moveLocalX(cardObj, cardObj.transform.localPosition.x, 0.1f).setEase(LeanTweenType.easeInOutQuad))
+            // Final flash red
+            .append(LeanTween.color(cardObj, Color.red, 0.1f).setEase(LeanTweenType.easeOutQuad))
+            .append(LeanTween.color(cardObj, originalColor, 0.1f).setEase(LeanTweenType.easeOutQuad));
+        
+        Debug.Log($"<color=orange>Animated insufficient mana for {cardObj.name}</color>");
+    }
+    
+    #region Context Menu Debug Methods
+    
+    [ContextMenu("Test Insufficient Mana Animation")]
+    private void TestInsufficientManaAnimation()
+    {
+        if (handVisuals.Count > 0 && handVisuals[0] != null)
+        {
+            AnimateInsufficientManaCard(handVisuals[0]);
+            Debug.Log("Testing insufficient mana animation on first card in hand");
+        }
+        else
+        {
+            Debug.LogWarning("No cards in hand to test animation");
+        }
+    }
+    
+    #endregion
+    
+    /// <summary>
+    /// Flash a Unity UI Button with a pulsing effect
+    /// </summary>
+    private void FlashButton(UnityEngine.UI.Button button)
+    {
+        if (button == null) return;
+        
+        // Get the button's image component
+        var buttonImage = button.GetComponent<UnityEngine.UI.Image>();
+        if (buttonImage == null) return;
+        
+        // Store original color
+        Color originalColor = buttonImage.color;
+        
+        // Flash red twice
+        LeanTween.sequence()
+            .append(LeanTween.color(buttonImage.rectTransform, Color.red, 0.2f).setEase(LeanTweenType.easeOutQuad))
+            .append(LeanTween.color(buttonImage.rectTransform, originalColor, 0.2f).setEase(LeanTweenType.easeOutQuad))
+            .append(LeanTween.color(buttonImage.rectTransform, Color.red, 0.2f).setEase(LeanTweenType.easeOutQuad))
+            .append(LeanTween.color(buttonImage.rectTransform, originalColor, 0.2f).setEase(LeanTweenType.easeOutQuad));
+    }
+    
+    /// <summary>
+    /// Play combat effects based on card type and effects
+    /// </summary>
+    private void PlayCardEffects(CardDataExtended card, Enemy targetEnemy, Character player)
+    {
+        if (combatEffectManager == null) return;
+        
+        // Get target enemy display for positioning
+        EnemyCombatDisplay targetDisplay = null;
+        EnemyCombatDisplay[] enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+        foreach (var display in enemyDisplays)
+        {
+            if (display.GetCurrentEnemy() == targetEnemy)
+            {
+                targetDisplay = display;
+                break;
+            }
+        }
+        
+        // Play effects based on card category
+        CardType cardType = card.GetCardTypeEnum(); // Get CardType from CardDataExtended
+        
+        switch (cardType)
+        {
+            case CardType.Attack:
+                if (targetDisplay != null)
+                {
+                    // Check for critical hit (10% chance)
+                    bool isCritical = Random.Range(0f, 1f) < 0.1f;
+                    
+                    // Get damage type from card effects
+                    DamageType damageType = GetCardDamageType(card);
+                    
+                    // Play elemental damage effect
+                    combatEffectManager.PlayElementalDamageEffectOnTarget(targetDisplay.transform, damageType, isCritical);
+                }
+                break;
+                
+            case CardType.Guard:
+                // Guard effect on player
+                PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+                if (playerDisplay != null)
+                {
+                    combatEffectManager.PlayGuardEffectOnTarget(playerDisplay.transform);
+                }
+                break;
+                
+            case CardType.Skill:
+                // Check if it's a heal skill
+                if (card.cardName.ToLower().Contains("heal"))
+                {
+                    PlayerCombatDisplay playerDisplay2 = FindFirstObjectByType<PlayerCombatDisplay>();
+                    if (playerDisplay2 != null)
+                    {
+                        combatEffectManager.PlayHealEffectOnTarget(playerDisplay2.transform);
+                    }
+                }
+                else if (targetDisplay != null)
+                {
+                    // Other skill effects on target
+                    DamageType damageType = GetCardDamageType(card);
+                    combatEffectManager.PlayElementalDamageEffectOnTarget(targetDisplay.transform, damageType);
+                }
+                break;
+                
+            case CardType.Power:
+            case CardType.Aura:
+                // Status effect or buff
+                PlayerCombatDisplay playerDisplay3 = FindFirstObjectByType<PlayerCombatDisplay>();
+                if (playerDisplay3 != null)
+                {
+                    combatEffectManager.PlayStatusEffectOnTarget(playerDisplay3.transform, card.cardName);
+                }
+                break;
+        }
+        
+        Debug.Log($"Played combat effects for {card.cardName} ({cardType})");
+    }
+    
+    /// <summary>
+    /// Get the damage type from a card's effects
+    /// </summary>
+    private DamageType GetCardDamageType(CardDataExtended card)
+    {
+        // Check if card has effects
+        if (card.effects != null && card.effects.Count > 0)
+        {
+            // Look for damage effects and get their damage type
+            foreach (var effect in card.effects)
+            {
+                if (effect.effectType == EffectType.Damage)
+                {
+                    return effect.damageType;
+                }
+            }
+        }
+        
+        // Check card name for elemental keywords
+        string cardName = card.cardName.ToLower();
+        if (cardName.Contains("fire") || cardName.Contains("burn"))
+            return DamageType.Fire;
+        else if (cardName.Contains("ice") || cardName.Contains("frost") || cardName.Contains("freeze") || cardName.Contains("cold"))
+            return DamageType.Cold;
+        else if (cardName.Contains("lightning") || cardName.Contains("thunder") || cardName.Contains("shock"))
+            return DamageType.Lightning;
+        else if (cardName.Contains("poison") || cardName.Contains("toxic") || cardName.Contains("venom") || cardName.Contains("chaos"))
+            return DamageType.Chaos;
+        else if (cardName.Contains("magic") || cardName.Contains("arcane") || cardName.Contains("spell"))
+            return DamageType.Chaos; // Use Chaos as magic equivalent
+        else if (cardName.Contains("dark") || cardName.Contains("shadow") || cardName.Contains("void"))
+            return DamageType.Chaos; // Use Chaos as dark equivalent
+        else if (cardName.Contains("light") || cardName.Contains("holy") || cardName.Contains("divine"))
+            return DamageType.Lightning; // Use Lightning as light equivalent
+        
+        // Default to physical damage
+        return DamageType.Physical;
+    }
+    
+    /// <summary>
+    /// Trigger player sprite animations based on card type
+    /// </summary>
+    private void TriggerPlayerAnimation(CardDataExtended card)
+    {
+        PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        if (playerDisplay == null)
+        {
+            Debug.LogWarning("PlayerCombatDisplay not found for sprite animation!");
+            return;
+        }
+        
+        // Trigger animations based on card category
+        CardType cardType = card.GetCardTypeEnum(); // Get CardType from CardDataExtended
+        
+        switch (cardType)
+        {
+            case CardType.Attack:
+                playerDisplay.TriggerAttackNudge();
+                Debug.Log($"<color=red>Triggered attack nudge for {card.cardName}</color>");
+                break;
+                
+            case CardType.Guard:
+                playerDisplay.TriggerGuardSheen();
+                Debug.Log($"<color=blue>Triggered guard sheen for {card.cardName}</color>");
+                break;
+                
+            case CardType.Skill:
+            case CardType.Power:
+            case CardType.Aura:
+                // No specific animation for these types yet
+                Debug.Log($"<color=purple>Played {cardType} card: {card.cardName}</color>");
+                break;
+        }
     }
     
     #endregion

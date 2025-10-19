@@ -186,3 +186,16 @@ public class StaticTooltipPanel : MonoBehaviour
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+

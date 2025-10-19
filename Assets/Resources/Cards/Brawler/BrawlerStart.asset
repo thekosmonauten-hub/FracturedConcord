@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc97289223b8f943b58c307b0877854, type: 3}
+  m_Name: BrawlerStart
+  m_EditorClassIdentifier: Assembly-CSharp::StarterDeckDefinition
+  characterClass: Brawler
+  cards:
+  - card: {fileID: 11400000, guid: 8b27fcf2b97d4de41903e9fbe9b1ee9f, type: 2}
+    count: 4
+  - card: {fileID: 11400000, guid: 4bb5bb53d00227249a38cc31f44ce1da, type: 2}
+    count: 2
+  - card: {fileID: 11400000, guid: f8915b3d7f7c53b4aae292937dcc051c, type: 2}
+    count: 4
+  - card: {fileID: 11400000, guid: ec96bb907de35194db1d7aaf32800762, type: 2}
+    count: 2
+  - card: {fileID: 11400000, guid: d921982614333f341b04b0d26bd49cc3, type: 2}
+    count: 2
+  - card: {fileID: 11400000, guid: b7e63892d48843641b9d9a3bed8080dd, type: 2}
+    count: 2
+  - card: {fileID: 11400000, guid: 01f32fea64c69ee4cb4d849dcdce6b0a, type: 2}
+    count: 1
+  - card: {fileID: 11400000, guid: 0843fa1df8dd5384aa3c770dfa23bb3c, type: 2}
+    count: 1

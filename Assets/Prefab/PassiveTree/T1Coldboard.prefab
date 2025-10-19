@@ -332,6 +332,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &850530794669212208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -381,7 +382,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &792492345338544097
@@ -716,6 +717,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &9047960120214977673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -765,7 +767,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &801654578813304106
@@ -1100,6 +1102,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &2851012287909100052
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1149,7 +1152,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &1542292915623630441
@@ -1484,6 +1487,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &5575529274382669520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1533,7 +1537,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &1679735156299228335
@@ -1868,6 +1872,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &8062597463303514516
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1917,7 +1922,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &1870640938094068133
@@ -2252,6 +2257,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &9144857692734720538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2301,7 +2307,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &1955652236554884786
@@ -2636,6 +2642,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &8220744824701335539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2685,7 +2692,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &2058422259780926345
@@ -3020,6 +3027,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &8109071706750537900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3069,7 +3077,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &2237537826916900777
@@ -3404,6 +3412,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &402400817155086349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3453,7 +3462,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &2723722094178182986
@@ -3788,6 +3797,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &6209128069305704898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3837,7 +3847,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &2824780855778468433
@@ -4172,6 +4182,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &2522300032258254949
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4221,7 +4232,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &2936093800338821092
@@ -4556,6 +4567,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &8614054499376971328
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4605,7 +4617,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &3054324955190210522
@@ -4940,6 +4952,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &3173711839344431499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4989,7 +5002,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &3150814157699421852
@@ -5324,6 +5337,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &6358908865319170345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5373,7 +5387,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &3224908865716484304
@@ -5708,6 +5722,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &6512907449971777909
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5757,7 +5772,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &3228322038492807522
@@ -6092,6 +6107,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &8107697316816510764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6141,7 +6157,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &3379154419512416444
@@ -6476,6 +6492,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &6464171863293991878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6525,7 +6542,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &3684271947387075051
@@ -6860,6 +6877,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &9004720911796856705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6909,7 +6927,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &3817769770057781408
@@ -7244,6 +7262,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &909910211300706942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7293,7 +7312,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &3856854088861014866
@@ -7628,6 +7647,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &5724109084210753100
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7677,7 +7697,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &4033181154002608987
@@ -8012,6 +8032,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &6773749990316568979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8061,7 +8082,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &4904510433902146545
@@ -8396,6 +8417,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &2738795430654920139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8445,7 +8467,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &4938272558170634988
@@ -8780,6 +8802,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &2300435739349444717
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8829,7 +8852,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &4979967920507159198
@@ -9164,6 +9187,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &8429664339788761115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9213,7 +9237,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &5027656628552776530
@@ -9548,6 +9572,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &5296604227161004838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9597,7 +9622,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &5054379995495410462
@@ -9932,6 +9957,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &3830104411680866130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9981,7 +10007,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &5279867347459711526
@@ -10316,6 +10342,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &5552178890360301260
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10365,7 +10392,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &5406924431273288718
@@ -10700,6 +10727,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &6789307872257069691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10749,7 +10777,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &5432461754171463649
@@ -11084,6 +11112,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &8784672004618917545
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11133,7 +11162,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &5918047856299305001
@@ -11468,6 +11497,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &2150046534761395686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11517,7 +11547,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &5952364266937703289
@@ -11852,6 +11882,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &8272662164241718266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11901,7 +11932,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &6289648609706547179
@@ -12236,6 +12267,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &375477732147734976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12285,7 +12317,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &6590829409586192999
@@ -12620,6 +12652,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &4985874061440128881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12669,7 +12702,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &6604133647499216413
@@ -13004,6 +13037,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &248736115938519977
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13053,7 +13087,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &6800070406457730380
@@ -13065,6 +13099,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4118383917947522256}
+  - component: {fileID: 4898178436836726366}
   m_Layer: 0
   m_Name: T1Coldboard
   m_TagString: Untagged
@@ -13136,6 +13171,23 @@ Transform:
   - {fileID: 6514225184148005520}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4898178436836726366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6800070406457730380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4709e052c1b607644b83c5dad2014024, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PassiveTree.BoardJSONData
+  boardId: T1cold_board
+  autoUpdateOnStart: 1
+  enableDebugLogging: 1
+  allocatedCells: []
+  totalAllocatedNodes: 0
 --- !u!1 &6813810783243521470
 GameObject:
   m_ObjectHideFlags: 0
@@ -13468,6 +13520,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &5246252386578680187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13517,7 +13570,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &6947163549693016337
@@ -13852,6 +13905,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &2477364109446601081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13901,7 +13955,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &7058487840273445825
@@ -14236,6 +14290,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &2854647961958198441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14285,7 +14340,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &7078863269990708149
@@ -14620,6 +14675,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &8252541957495257009
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14669,7 +14725,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &7124238929369379619
@@ -15004,6 +15060,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &4820438084551436919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15053,7 +15110,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &7147004224104683003
@@ -15388,6 +15445,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &7851112294744823393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15437,7 +15495,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &7238228723924882302
@@ -15772,6 +15830,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &7124365590102649065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15821,7 +15880,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &7508153335622482237
@@ -16156,6 +16215,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &1477318311512282439
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16205,7 +16265,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &7660360217342870729
@@ -16540,6 +16600,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &3009783652325801631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16589,7 +16650,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &7941166916382212177
@@ -16924,6 +16985,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &7507763711224663755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16973,7 +17035,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &8081474990143979670
@@ -17308,6 +17370,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &2732526275066107819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17357,7 +17420,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &8430169351309503225
@@ -17692,6 +17755,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &3508777935791657220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17741,7 +17805,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &8507231948118093640
@@ -18076,6 +18140,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &5642482573969640886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18125,7 +18190,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &8778742099522844191
@@ -18460,6 +18525,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &8438560183738165998
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18509,7 +18575,7 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}
 --- !u!1 &8896536103340051598
@@ -18844,6 +18910,7 @@ MonoBehaviour:
     critChanceIncrease: 0
     critMultiplierIncrease: 0
   showDebugInfo: 1
+  manuallySetName: 0
 --- !u!114 &5237442142032359094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18893,6 +18960,6 @@ MonoBehaviour:
   dexterityIntelligenceOverlay: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
   allAttributesOverlay: {fileID: -5283916237460282487, guid: 954a0e018b5ec8647a790c91c0146d16, type: 3}
   overlaySize: {x: 1.5, y: 1.5}
-  overlayOffset: {x: 0, y: 0}
+  overlayOffset: {x: 0, y: 0.4}
   overlayTint: {r: 1, g: 1, b: 1, a: 1}
   extensionBoardController: {fileID: 0}

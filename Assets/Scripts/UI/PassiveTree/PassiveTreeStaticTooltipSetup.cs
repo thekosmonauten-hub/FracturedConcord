@@ -124,38 +124,22 @@ public class PassiveTreeStaticTooltipSetup : MonoBehaviour
         // Add GraphicRaycaster
         tooltipCanvasObject.AddComponent<UnityEngine.UI.GraphicRaycaster>();
         
-        // Make the canvas persistent only in play mode
-        if (Application.isPlaying)
-        {
-            DontDestroyOnLoad(tooltipCanvasObject);
-            Debug.Log("[PassiveTreeStaticTooltipSetup] Created dedicated persistent tooltip canvas (play mode)");
-        }
-        else
-        {
-            Debug.Log("[PassiveTreeStaticTooltipSetup] Created tooltip canvas (edit mode - will be persistent in play mode)");
-        }
+        // DO NOT make canvas persistent - it should be destroyed when leaving the scene
+        // Otherwise it blocks backgrounds in other scenes with its high sortingOrder (1000)
+        Debug.Log("[PassiveTreeStaticTooltipSetup] Created tooltip canvas (scene-local, will be cleaned up on scene exit)");
         
         return canvasComponent;
     }
     
     /// <summary>
     /// Make the tooltip persistent when the game starts
+    /// DISABLED: Persistent tooltip canvases block backgrounds in other scenes
     /// </summary>
     private void MakeTooltipPersistent()
     {
-        if (!Application.isPlaying) return;
-        
-        // Find the tooltip canvas
-        GameObject tooltipCanvas = GameObject.Find("PassiveTreeTooltipCanvas");
-        if (tooltipCanvas != null)
-        {
-            // Check if it's already persistent
-            if (tooltipCanvas.scene.name != "DontDestroyOnLoad")
-            {
-                DontDestroyOnLoad(tooltipCanvas);
-                Debug.Log("[PassiveTreeStaticTooltipSetup] Made tooltip canvas persistent in play mode");
-            }
-        }
+        // DO NOT make tooltip persistent - it blocks other scene backgrounds
+        // The tooltip will be recreated if needed when returning to PassiveTreeScene
+        Debug.Log("[PassiveTreeStaticTooltipSetup] MakeTooltipPersistent() disabled to prevent background blocking.");
     }
     
     /// <summary>

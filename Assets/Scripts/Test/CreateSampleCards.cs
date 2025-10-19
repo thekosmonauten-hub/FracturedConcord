@@ -1,5 +1,7 @@
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 public class CreateSampleCards : MonoBehaviour
 {
@@ -44,17 +46,19 @@ public class CreateSampleCards : MonoBehaviour
         cardData.ifDiscardedEffect = discardEffect;
         cardData.dualWieldEffect = dualEffect;
         
+        #if UNITY_EDITOR
         // Create the folder if it doesn't exist
         if (!AssetDatabase.IsValidFolder("Assets/SampleCards"))
         {
             AssetDatabase.CreateFolder("Assets", "SampleCards");
         }
-        
         // Save the asset
         string assetPath = $"Assets/SampleCards/{name}.asset";
         AssetDatabase.CreateAsset(cardData, assetPath);
         AssetDatabase.SaveAssets();
-        
         Debug.Log($"Created card: {name} at {assetPath}");
+        #else
+        Debug.LogWarning("CreateCard asset creation is editor-only.");
+        #endif
     }
 }

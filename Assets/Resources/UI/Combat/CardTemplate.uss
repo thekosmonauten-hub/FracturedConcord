@@ -58,6 +58,17 @@
     border-color: rgb(255, 255, 0);
 }
 
+.card-background.combo-highlighted {
+    border-color: rgb(255, 200, 0);
+    border-width: 3px;
+    background-color: rgba(255, 255, 0, 0.1);
+}
+
+.card-background.mana-insufficient {
+    border-color: rgb(255, 100, 100);
+    background-color: rgba(255, 100, 100, 0.1);
+}
+
 /* Card Header */
 .card-header {
     height: 60px;

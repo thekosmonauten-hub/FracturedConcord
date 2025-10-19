@@ -1,0 +1,468 @@
+{
+  "deckName": "Thief (Preparation) Starter Deck",
+  "characterClass": "Thief",
+  "description": "A strategic deck focused on preparing cards for powerful follow-up attacks and dual-wielding daggers",
+  "cards": [
+    {
+      "cardName": "Twin Strike",
+      "count": 6,
+      "data": {
+        "cardName": "Twin Strike",
+        "description": "Deal 5 physical damage (+Dex/4). Dual: Deal 1(+Dex/4) off-hand damage to all enemies. Prepare: Instead of playing, prepare this card. When triggered, deal +2 damage.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 5.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 20,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["WeaponAttack", "Attack", "Physical", "Dual", "Preparation"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.25,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "Damage",
+            "effectName": "Dual Wield Off-Hand",
+            "description": "Deal off-hand damage to all enemies when dual wielding",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "Physical",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": "isDualWielding"
+          },
+          {
+            "effectType": "Damage",
+            "effectName": "Preparation Bonus",
+            "description": "+2 damage per prepared card",
+            "value": 2.0,
+            "duration": 1,
+            "damageType": "Physical",
+            "targetsSelf": false,
+            "targetsEnemy": true,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "hasPreparedCards"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Shadow Step",
+      "count": 4,
+      "data": {
+        "cardName": "Shadow Step",
+        "description": "Gain 4 Guard (+Dex/6). Dual: Gain 6 Guard (+Dex/6) and 250(+Dex*2) evasion. Prepare: Instead of playing, prepare this card. When triggered, gain +2 Guard and 1 temporary Dexterity.",
+        "cardType": "Guard",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 4.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 18,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Guard", "Stealth", "Dexterity", "Preparation"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.166,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "Guard",
+            "effectName": "Dual Wield Guard Bonus",
+            "description": "Gain 6 Guard instead of 4 when dual wielding",
+            "value": 6.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "isDualWielding"
+          },
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Dual Wield Evasion",
+            "description": "Gain 250 + (Dex*2) evasion when dual wielding",
+            "value": 250.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "isDualWielding"
+          },
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Preparation Dexterity",
+            "description": "Gain 1 temporary Dexterity when triggered from preparation",
+            "value": 1.0,
+            "duration": -1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "hasPreparedCards"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Guard"
+      }
+    },
+    {
+      "cardName": "Ambush",
+      "count": 3,
+      "data": {
+        "cardName": "Ambush",
+        "description": "Deal 6 physical damage (+Dex/3). If you have prepared cards, deal +1 damage per prepared card. Dual: Deal +2 damage per prepared card instead.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 6.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 22,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["WeaponAttack", "Attack", "Physical", "Dual", "Preparation"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.33,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "Damage",
+            "effectName": "Preparation Scaling",
+            "description": "+1 damage per prepared card (+2 if dual wielding)",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "Physical",
+            "targetsSelf": false,
+            "targetsEnemy": true,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "hasPreparedCards"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Perfect Strike",
+      "count": 2,
+      "data": {
+        "cardName": "Perfect Strike",
+        "description": "Deal 10 physical damage (+Dex/2). Consume all prepared cards. Deal +2 damage per consumed card. Dual: Deal +3 damage per consumed card instead.",
+        "cardType": "Attack",
+        "manaCost": 2,
+        "baseDamage": 10.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 25,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["WeaponAttack", "Attack", "Physical", "Dual", "Preparation"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.5,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "Damage",
+            "effectName": "Consume Prepared Cards",
+            "description": "Consume all prepared cards for +2 damage each (+3 if dual wielding)",
+            "value": 2.0,
+            "duration": 1,
+            "damageType": "Physical",
+            "targetsSelf": false,
+            "targetsEnemy": true,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "consumesPreparedCards"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Feint",
+      "count": 2,
+      "data": {
+        "cardName": "Feint",
+        "description": "Prepare 1 card from your hand. Draw 1 card. Dual: Prepare 2 cards from your hand instead.",
+        "cardType": "Skill",
+        "manaCost": 0,
+        "baseDamage": 0.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 20,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Skill", "Stealth", "Dexterity", "Preparation"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "Draw",
+            "effectName": "Draw Card",
+            "description": "Draw 1 card",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Skill"
+      }
+    },
+    {
+      "cardName": "Poisoned Blade",
+      "count": 1,
+      "data": {
+        "cardName": "Poisoned Blade",
+        "description": "Deal 4 physical damage (+Dex/3). Apply 2 Poison. If you have prepared cards, apply +1 Poison per prepared card. Dual: Apply 3 Poison and gain 1 temporary Dexterity.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 4.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 21,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["WeaponAttack", "Attack", "Physical", "Dual", "Preparation", "Poison"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.33,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "ApplyStatus",
+            "effectName": "Poison",
+            "description": "Apply 2 Poison stacks (3 if dual wielding, +1 per prepared card)",
+            "value": 2.0,
+            "duration": 3,
+            "damageType": "Physical",
+            "targetsSelf": false,
+            "targetsEnemy": true,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Dual Wield Dexterity",
+            "description": "Gain 1 temporary Dexterity when dual wielding",
+            "value": 1.0,
+            "duration": -1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "isDualWielding"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    }
+  ]
+}
+

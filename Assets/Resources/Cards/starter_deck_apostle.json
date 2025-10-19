@@ -1,0 +1,520 @@
+{
+  "deckName": "Apostle Starter Deck",
+  "characterClass": "Apostle",
+  "description": "A chaos-focused deck that benefits from discarding cards, dealing damage to packs, and applying chaos effects",
+  "cards": [
+    {
+      "cardName": "Sacred Strike",
+      "count": 6,
+      "data": {
+        "cardName": "Sacred Strike",
+        "description": "Deal {damage} physical damage to targetted Pack. If discarded: Deal {discardPower} chaos damage to a random pack.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 8.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": true,
+          "aoeTargets": 3
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["WeaponAttack", "Attack", "Physical", "Chaos", "Combo", "AoE"],
+        
+        "additionalDamageTypes": ["Chaos"],
+        
+        "damageScaling": {
+          "strengthScaling": 0.5,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "Damage",
+            "effectName": "Discard Bonus",
+            "description": "If any cards were discarded this turn, deal +5 damage + Discard Power",
+            "value": 5.0,
+            "duration": 1,
+            "damageType": "Physical",
+            "targetsSelf": false,
+            "targetsEnemy": true,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "hasDiscarded"
+          },
+          {
+            "effectType": "Damage",
+            "effectName": "If Discarded",
+            "description": "Deal 8 + Discard Power chaos damage to a random pack",
+            "value": 8.0,
+            "duration": 1,
+            "damageType": "Chaos",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": "ifDiscarded"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Divine Ward",
+      "count": 4,
+      "data": {
+        "cardName": "Divine Ward",
+        "description": "Gain 8 Guard (+Str/3). If discarded: Gain {discardPower} Guard.",
+        "cardType": "Guard",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 8.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Guard", "Chaos", "Combo"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.33,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "Guard",
+            "effectName": "Discard Bonus",
+            "description": "If any cards were discarded this turn, gain +4 Guard + Discard Power",
+            "value": 4.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "hasDiscarded"
+          },
+          {
+            "effectType": "Guard",
+            "effectName": "If Discarded",
+            "description": "Gain 5 + (Discard Power / 2) Guard",
+            "value": 5.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "ifDiscarded"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Guard"
+      }
+    },
+    {
+      "cardName": "Divine Wrath",
+      "count": 2,
+      "data": {
+        "cardName": "Divine Wrath",
+        "description": "Deal {damage} chaos damage to all enemies. If discarded: Deal {discardPower} chaos damage to all enemies.",
+        "cardType": "Attack",
+        "manaCost": 2,
+        "baseDamage": 8.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Chaos",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": true
+        },
+        
+        "aoe": {
+          "isAoE": true,
+          "aoeTargets": 3
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Attack", "Chaos", "AoE", "Combo", "Spell"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.33
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "Damage",
+            "effectName": "Discard Bonus",
+            "description": "If any cards were discarded this turn, deal +4 damage + Discard Power",
+            "value": 4.0,
+            "duration": 1,
+            "damageType": "Chaos",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": "hasDiscarded"
+          },
+          {
+            "effectType": "Damage",
+            "effectName": "If Discarded",
+            "description": "Deal 4 + (Discard Power / 2) chaos damage to all enemies",
+            "value": 4.0,
+            "duration": 1,
+            "damageType": "Chaos",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": "ifDiscarded"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Chaos",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Scripture Burn",
+      "count": 2,
+      "data": {
+        "cardName": "Scripture Burn",
+        "description": "Discard 1 card. Gain 6 Guard (+Int/2 + Discard Power) and 3 temporary Intelligence. If discarded: Draw {discardPower} card(s).",
+        "cardType": "Skill",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 6.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Skill", "Chaos", "Discard", "Combo"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.5
+        },
+        
+        "effects": [
+          {
+            "effectType": "Discard",
+            "effectName": "Discard Card",
+            "description": "Discard 1 card",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Temporary Intelligence",
+            "description": "Gain 3 temporary Intelligence for rest of combat",
+            "value": 3.0,
+            "duration": -1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "Draw",
+            "effectName": "If Discarded",
+            "description": "Draw 1 + (Discard Power / 6) cards",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "ifDiscarded"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Chaos",
+        "category": "Skill"
+      }
+    },
+    {
+      "cardName": "Divine Favor",
+      "count": 2,
+      "data": {
+        "cardName": "Divine Favor",
+        "description": "The next card you play applies their 'discarded' effect. If discarded: Gain {discardPower} Discard Power.",
+        "cardType": "Power",
+        "manaCost": 2,
+        "baseDamage": 0.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Power", "Chaos", "Combo", "Spell"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Divine Favor Buff",
+            "description": "Next card you play applies their 'discarded' effect",
+            "value": 1.0,
+            "duration": -1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "If Discarded",
+            "description": "Gain 3 + (Discard Power / 3) temporary Discard Power",
+            "value": 3.0,
+            "duration": -1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "ifDiscarded"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Chaos",
+        "category": "Power"
+      }
+    },
+    {
+      "cardName": "Forbidden Prayer",
+      "count": 2,
+      "data": {
+        "cardName": "Forbidden Prayer",
+        "description": "Discard 1 card: draw 3 cards. If discarded: Increase spell power by {intelligence}.",
+        "cardType": "Skill",
+        "manaCost": 0,
+        "baseDamage": 0.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Skill", "Discard", "Chaos"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "Discard",
+            "effectName": "Discard Card",
+            "description": "Discard 1 card",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "Draw",
+            "effectName": "Draw Cards",
+            "description": "Draw 3 cards",
+            "value": 3.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "If Discarded",
+            "description": "Gain 2 + (Int/10) + (Discard Power/4) temporary Spell Power",
+            "value": 2.0,
+            "duration": -1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "ifDiscarded"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Chaos",
+        "category": "Skill"
+      }
+    }
+  ]
+}
+

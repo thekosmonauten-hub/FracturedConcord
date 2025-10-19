@@ -37,7 +37,7 @@ public class CombatSceneManager : MonoBehaviour
         
         if (currentEncounter != null)
         {
-            Debug.Log($"Combat Scene initialized for: {currentEncounter.encounterName} (ID: {currentEncounter.encounterID})");
+            Debug.Log($"Combat Scene initialized for: {currentEncounter.encounterName} (ID: {currentEncounter.encounterID}) AreaLevel={currentEncounter.areaLevel}");
             
             // Update UI with encounter info
             if (encounterNameText != null)

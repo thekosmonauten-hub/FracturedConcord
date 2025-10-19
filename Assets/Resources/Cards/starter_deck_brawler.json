@@ -1,0 +1,656 @@
+{
+  "deckName": "Brawler (Momentum) Starter Deck",
+  "characterClass": "Brawler",
+  "description": "A high-tempo deck that builds and spends Momentum for powerful threshold effects",
+  "cards": [
+    {
+      "cardName": "One-Two Punch",
+      "count": 6,
+      "data": {
+        "cardName": "One-Two Punch",
+        "description": "Deal 4 physical damage twice. Gain 1 Momentum. If you have 3+ Momentum: Deal damage to 2 random enemies instead of just the target. If you have 5+ Momentum: Gain 2 Momentum instead of 1.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 4.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 18,
+          "requiredDexterity": 18,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Attack", "Combo", "Physical", "Momentum"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.33,
+          "dexterityScaling": 0.33,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "GainReliance",
+            "effectName": "Gain Momentum",
+            "description": "Gain 1 Momentum (2 at 5+ Momentum threshold)",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "Damage",
+            "effectName": "Multi-Hit",
+            "description": "Deal damage twice (hits 2 random enemies at 3+ Momentum)",
+            "value": 4.0,
+            "duration": 1,
+            "damageType": "Physical",
+            "targetsSelf": false,
+            "targetsEnemy": true,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Momentum Spike",
+      "count": 1,
+      "data": {
+        "cardName": "Momentum Spike",
+        "description": "Spend all Momentum. Deal 3 physical damage to all enemies per Momentum spent. If you spent 5+ Momentum: Apply 1 Bleed to all enemies. If you spent 7+ Momentum: Gain 1 Energy next turn.",
+        "cardType": "Attack",
+        "manaCost": 2,
+        "baseDamage": 3.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": true,
+          "aoeTargets": 3
+        },
+        
+        "requirements": {
+          "requiredStrength": 20,
+          "requiredDexterity": 16,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Attack", "Momentum", "AoE", "Physical"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.33,
+          "dexterityScaling": 0.33,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "ApplyStatus",
+            "effectName": "Bleed (5+ Momentum)",
+            "description": "Apply 1 Bleed to all enemies if 5+ Momentum spent",
+            "value": 1.0,
+            "duration": 2,
+            "damageType": "Physical",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": "momentum>=5"
+          },
+          {
+            "effectType": "GainMana",
+            "effectName": "Energy (7+ Momentum)",
+            "description": "Gain 1 Energy next turn if 7+ Momentum spent",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "momentum>=7"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Guardbreaker",
+      "count": 2,
+      "data": {
+        "cardName": "Guardbreaker",
+        "description": "Spend up to 2 Momentum. Gain 4 Guard per Momentum spent. If you have 4+ Momentum: Gain 2 additional Guard. If you spend 3+ Momentum: Gain 1 temporary Strength.",
+        "cardType": "Skill",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 16,
+          "requiredDexterity": 16,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Skill", "Momentum", "Guard"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "Guard",
+            "effectName": "Momentum Guard",
+            "description": "Gain 4 Guard per Momentum spent (up to 2, +2 bonus at 4+ Momentum)",
+            "value": 4.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Temporary Strength",
+            "description": "Gain 1 temporary Strength if spending 3+ Momentum",
+            "value": 1.0,
+            "duration": -1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "spendMomentum>=3"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Skill"
+      }
+    },
+    {
+      "cardName": "Rapid Strike",
+      "count": 2,
+      "data": {
+        "cardName": "Rapid Strike",
+        "description": "Deal 2 physical damage. Gain 1 Momentum. If you have 3+ Momentum: This card costs 0. If you have 5+ Momentum: Deal damage to all enemies.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 2.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 16,
+          "requiredDexterity": 16,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Attack", "Momentum", "Physical"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.165,
+          "dexterityScaling": 0.165,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "GainReliance",
+            "effectName": "Gain Momentum",
+            "description": "Gain 1 Momentum",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Berserker's Fury",
+      "count": 1,
+      "data": {
+        "cardName": "Berserker's Fury",
+        "description": "Gain 3 Momentum. For the rest of combat, when you gain Momentum, gain 1 additional. If you have 5+ Momentum: Your next Attack deals double damage.",
+        "cardType": "Power",
+        "manaCost": 2,
+        "baseDamage": 0.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 20,
+          "requiredDexterity": 20,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Power", "Momentum", "Buff"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "GainReliance",
+            "effectName": "Gain Momentum",
+            "description": "Gain 3 Momentum",
+            "value": 3.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "PermanentStatBoost",
+            "effectName": "Momentum Multiplier",
+            "description": "Gain 1 additional Momentum whenever gaining Momentum (rest of combat)",
+            "value": 1.0,
+            "duration": -1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Power"
+      }
+    },
+    {
+      "cardName": "Steadfast Guard",
+      "count": 2,
+      "data": {
+        "cardName": "Steadfast Guard",
+        "description": "Gain 6 Guard. If you have Momentum, gain +1 Guard per Momentum. If you have 4+ Momentum: Gain 1 temporary Dexterity.",
+        "cardType": "Guard",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 6.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 16,
+          "requiredDexterity": 16,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Guard", "Combo", "Momentum"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "Guard",
+            "effectName": "Momentum Scaling Guard",
+            "description": "+1 Guard per Momentum",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "hasMomentum"
+          },
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Temporary Dexterity",
+            "description": "Gain 1 temporary Dexterity at 4+ Momentum",
+            "value": 1.0,
+            "duration": -1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "momentum>=4"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Guard"
+      }
+    },
+    {
+      "cardName": "Adrenaline Rush",
+      "count": 2,
+      "data": {
+        "cardName": "Adrenaline Rush",
+        "description": "Gain 2 Momentum. If you have 8+ Momentum: Draw 2 cards and gain 1 temporary Strength. If you have 10 Momentum: Trigger Adrenaline Burst (deal 3 damage to all enemies).",
+        "cardType": "Skill",
+        "manaCost": 0,
+        "baseDamage": 0.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 18,
+          "requiredDexterity": 18,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Skill", "Momentum", "Draw"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "GainReliance",
+            "effectName": "Gain Momentum",
+            "description": "Gain 2 Momentum",
+            "value": 2.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "Draw",
+            "effectName": "Draw Cards (8+ Momentum)",
+            "description": "Draw 2 cards at 8+ Momentum",
+            "value": 2.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "momentum>=8"
+          },
+          {
+            "effectType": "Damage",
+            "effectName": "Adrenaline Burst (10 Momentum)",
+            "description": "Deal 3 damage to all enemies at 10 Momentum",
+            "value": 3.0,
+            "duration": 1,
+            "damageType": "Physical",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": "momentum>=10"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Skill"
+      }
+    },
+    {
+      "cardName": "Devastating Blow",
+      "count": 2,
+      "data": {
+        "cardName": "Devastating Blow",
+        "description": "Deal 8 physical damage. Gain 2 Momentum. If you have 6+ Momentum: This card costs 1 less. If you have 8+ Momentum: Deal damage to all enemies. If you have 10 Momentum: Gain 1 Energy.",
+        "cardType": "Attack",
+        "manaCost": 2,
+        "baseDamage": 8.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 22,
+          "requiredDexterity": 20,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Attack", "Momentum", "Physical", "AoE"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.33,
+          "dexterityScaling": 0.33,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "GainReliance",
+            "effectName": "Gain Momentum",
+            "description": "Gain 2 Momentum",
+            "value": 2.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "GainMana",
+            "effectName": "Energy Gain (10 Momentum)",
+            "description": "Gain 1 Energy at 10 Momentum",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "momentum>=10"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    }
+  ]
+}
+

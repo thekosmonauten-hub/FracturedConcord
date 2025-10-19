@@ -33,3 +33,8 @@ MonoBehaviour:
   uniqueFrame: {fileID: -2216308203126864301, guid: 02768fc689bdc274086f1afa84726108, type: 3}
   cardHighlight: {fileID: -1772228241, guid: 57504fb5ad4ce5d4787a2f9806d8cadd, type: 3}
   iceBubble: {fileID: 0}
+  attackIcon: {fileID: -3539581920564666531, guid: 4ab3c0ff8868c854b9f542b08ace6a03, type: 3}
+  guardIcon: {fileID: -276164428068367175, guid: 6f129c6fab37f83428761ae8c00d5246, type: 3}
+  skillIcon: {fileID: -3241448281215707898, guid: 103624908a885374b97386a082c6423f, type: 3}
+  powerIcon: {fileID: -9070235804125796706, guid: 32f64b2951c6d8a4c97f9ccd3871db66, type: 3}
+  auraIcon: {fileID: 4752059317055427323, guid: 49115d67ca4795447916bbbe7ab9163b, type: 3}

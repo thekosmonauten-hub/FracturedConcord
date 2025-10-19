@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc97289223b8f943b58c307b0877854, type: 3}
+  m_Name: MarauderStarterDeck
+  m_EditorClassIdentifier: Assembly-CSharp::StarterDeckDefinition
+  characterClass: Marauder
+  cards:
+  - card: {fileID: 11400000, guid: a5a7231e6ebc9b248afa4a89353f53df, type: 2}
+    count: 6
+  - card: {fileID: 11400000, guid: 9906af518ea033940acd5fce4098f622, type: 2}
+    count: 4
+  - card: {fileID: 11400000, guid: 1d8722901964fd7499cb2ceeaa4ecac5, type: 2}
+    count: 2
+  - card: {fileID: 11400000, guid: c60e127a5afd6614d8579b759e71f195, type: 2}
+    count: 2
+  - card: {fileID: 11400000, guid: 236b1135eda2a75468941235e378fef7, type: 2}
+    count: 2
+  - card: {fileID: 11400000, guid: d1b335900cb1a6a478f67e7b42c15495, type: 2}
+    count: 2

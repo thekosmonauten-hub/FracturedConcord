@@ -17,6 +17,9 @@ namespace PassiveTree
         [SerializeField] private Button closeButton;
         [SerializeField] private TextMeshProUGUI titleText;
         [SerializeField] private TextMeshProUGUI descriptionText;
+        [SerializeField] private Button backgroundBlocker; // Background panel to block clicks
+        [SerializeField] private UnityEngine.UI.ScrollRect scrollRect; // Reference to your Scroll Rect
+        [SerializeField] private GameObject boardsContainer; // Reference to the BoardsContainer GameObject
         
         [Header("Board Button Prefab")]
         [SerializeField] private GameObject boardButtonPrefab;
@@ -45,6 +48,10 @@ namespace PassiveTree
             // Setup close button
             if (closeButton != null)
                 closeButton.onClick.AddListener(CloseSelection);
+                
+            // Setup background blocker to prevent click-through
+            if (backgroundBlocker != null)
+                backgroundBlocker.onClick.AddListener(CloseSelection);
                 
             // Make this GameObject persistent to prevent destruction (only if it's a root object)
             if (transform.parent == null)
@@ -105,6 +112,13 @@ namespace PassiveTree
             // Create buttons for available boards
             CreateBoardButtons();
             
+        // Disable passive tree to prevent click-through
+        Debug.Log("[BoardSelectionUI] 🎯 ShowBoardSelection called - about to disable passive tree");
+        DisablePassiveTree();
+            
+            // Create background blocker if needed
+            CreateBackgroundBlocker();
+            
             // Show the panel
             if (selectionPanel != null)
             {
@@ -128,6 +142,9 @@ namespace PassiveTree
             if (selectionPanel != null)
                 selectionPanel.SetActive(false);
                 
+        // Re-enable passive tree
+        EnablePassiveTree();
+                
             currentExtensionPoint = null;
         }
         
@@ -138,6 +155,162 @@ namespace PassiveTree
         {
             HideBoardSelection();
             OnSelectionCancelled?.Invoke();
+        }
+        
+        /// <summary>
+        /// Disable passive tree interaction to prevent click-through
+        /// </summary>
+        private void DisablePassiveTree()
+        {
+            Debug.Log("[BoardSelectionUI] 🔒 Starting to disable passive tree...");
+            
+            // Method 1: Try to find BoardsContainer if not assigned
+            if (boardsContainer == null)
+            {
+                boardsContainer = GameObject.Find("BoardsContainer");
+                if (boardsContainer != null)
+                {
+                    Debug.Log($"[BoardSelectionUI] Found BoardsContainer: {boardsContainer.name}");
+                }
+                else
+                {
+                    Debug.LogWarning("[BoardSelectionUI] ❌ BoardsContainer not found! Searching for alternatives...");
+                }
+            }
+            
+            // Method 1: Disable the entire BoardsContainer
+            if (boardsContainer != null)
+            {
+                boardsContainer.SetActive(false);
+                Debug.Log($"[BoardSelectionUI] ✅ Disabled BoardsContainer: {boardsContainer.name}");
+            }
+            else
+            {
+                Debug.LogWarning("[BoardSelectionUI] ❌ BoardsContainer is null, cannot disable it");
+            }
+            
+            // Method 2: Disable all passive tree cells/buttons as backup
+            CellController[] allCells = FindObjectsOfType<CellController>();
+            Debug.Log($"[BoardSelectionUI] Found {allCells.Length} CellController components");
+            foreach (CellController cell in allCells)
+            {
+                cell.enabled = false; // Disable the cell controller
+            }
+            
+            // Method 3: Disable all colliders on passive tree objects
+            Collider[] allColliders = FindObjectsOfType<Collider>();
+            int disabledColliders = 0;
+            foreach (Collider collider in allColliders)
+            {
+                // Only disable colliders that are part of passive tree (not UI)
+                if (collider.gameObject.name.Contains("Board") || 
+                    collider.gameObject.name.Contains("Cell") ||
+                    collider.gameObject.name.Contains("Node"))
+                {
+                    collider.enabled = false;
+                    disabledColliders++;
+                }
+            }
+            
+            Debug.Log($"[BoardSelectionUI] ✅ Disabled {allCells.Length} cells and {disabledColliders} colliders to prevent click-through");
+        }
+        
+        /// <summary>
+        /// Re-enable passive tree interaction
+        /// </summary>
+        private void EnablePassiveTree()
+        {
+            Debug.Log("[BoardSelectionUI] 🔓 Starting to re-enable passive tree...");
+            
+            // Method 1: Re-enable the entire BoardsContainer
+            if (boardsContainer != null)
+            {
+                boardsContainer.SetActive(true);
+                Debug.Log($"[BoardSelectionUI] ✅ Re-enabled BoardsContainer: {boardsContainer.name}");
+            }
+            else
+            {
+                Debug.LogWarning("[BoardSelectionUI] ❌ BoardsContainer is null, cannot re-enable it");
+            }
+            
+            // Method 2: Re-enable all passive tree cells/buttons
+            CellController[] allCells = FindObjectsOfType<CellController>();
+            Debug.Log($"[BoardSelectionUI] Found {allCells.Length} CellController components to re-enable");
+            foreach (CellController cell in allCells)
+            {
+                cell.enabled = true; // Re-enable the cell controller
+            }
+            
+            // Method 3: Re-enable all colliders on passive tree objects
+            Collider[] allColliders = FindObjectsOfType<Collider>();
+            int enabledColliders = 0;
+            foreach (Collider collider in allColliders)
+            {
+                // Only re-enable colliders that are part of passive tree (not UI)
+                if (collider.gameObject.name.Contains("Board") || 
+                    collider.gameObject.name.Contains("Cell") ||
+                    collider.gameObject.name.Contains("Node"))
+                {
+                    collider.enabled = true;
+                    enabledColliders++;
+                }
+            }
+            
+            Debug.Log($"[BoardSelectionUI] ✅ Re-enabled BoardsContainer, {allCells.Length} cells, and {enabledColliders} colliders");
+        }
+        
+        /// <summary>
+        /// Test method to manually disable passive tree (for debugging)
+        /// </summary>
+        [ContextMenu("Test Disable Passive Tree")]
+        public void TestDisablePassiveTree()
+        {
+            Debug.Log("[BoardSelectionUI] 🧪 Testing disable passive tree...");
+            DisablePassiveTree();
+        }
+        
+        /// <summary>
+        /// Test method to manually enable passive tree (for debugging)
+        /// </summary>
+        [ContextMenu("Test Enable Passive Tree")]
+        public void TestEnablePassiveTree()
+        {
+            Debug.Log("[BoardSelectionUI] 🧪 Testing enable passive tree...");
+            EnablePassiveTree();
+        }
+        
+        /// <summary>
+        /// Create a background blocker panel if it doesn't exist
+        /// </summary>
+        private void CreateBackgroundBlocker()
+        {
+            if (backgroundBlocker != null) return; // Already exists
+            
+            // Create a new GameObject for the background
+            GameObject blockerObject = new GameObject("BackgroundBlocker");
+            blockerObject.transform.SetParent(transform, false);
+            
+            // Add Image component for visual background
+            var image = blockerObject.AddComponent<UnityEngine.UI.Image>();
+            image.color = new Color(0, 0, 0, 0.5f); // Semi-transparent black
+            
+            // Add Button component for click handling
+            backgroundBlocker = blockerObject.AddComponent<Button>();
+            
+            // Set up RectTransform to cover full screen
+            var rectTransform = blockerObject.GetComponent<RectTransform>();
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = Vector2.zero;
+            rectTransform.offsetMax = Vector2.zero;
+            
+            // Make sure it's behind the selection panel
+            blockerObject.transform.SetAsFirstSibling();
+            
+            // Setup the click listener
+            backgroundBlocker.onClick.AddListener(CloseSelection);
+            
+            Debug.Log("[BoardSelectionUI] Created background blocker panel");
         }
         
         /// <summary>

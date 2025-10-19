@@ -1,0 +1,500 @@
+{
+  "deckName": "Elemental Fury",
+  "characterClass": "Witch",
+  "description": "A deck focused on elemental magic and devastating spells",
+  "cards": [
+    {
+      "cardName": "Fireball",
+      "count": 2,
+      "data": {
+        "cardName": "Fireball",
+        "description": "Deal {damage} fire damage to all {aoeTargets} enemies.",
+        "cardType": "Attack",
+        "manaCost": 2,
+        "baseDamage": 12.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Fire",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": true
+        },
+        "aoe": {
+          "isAoE": true,
+          "aoeTargets": 3
+        },
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 35,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Attack", "Fire", "Spell", "AoE"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.75
+        },
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "effects": [],
+        "rarity": "Magic",
+        "element": "Fire",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Frost Bolt",
+      "count": 2,
+      "data": {
+        "cardName": "Frost Bolt",
+        "description": "Deal {damage} cold damage. Has a chance to chill the enemy.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 8.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Cold",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": true
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 30,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Attack", "Cold", "Spell", "Projectile"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.6
+        },
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "effects": [],
+        "rarity": "Common",
+        "element": "Cold",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Spark",
+      "count": 1,
+      "data": {
+        "cardName": "Spark",
+        "description": "Deal {damage} lightning damage. Chains to nearby enemies.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 6.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Lightning",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": true
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 25,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Attack", "Lightning", "Spell", "Chain"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.5
+        },
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "effects": [],
+        "rarity": "Common",
+        "element": "Lightning",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Arc",
+      "count": 1,
+      "data": {
+        "cardName": "Arc",
+        "description": "Deal {damage} lightning damage to all {aoeTargets} enemies.",
+        "cardType": "Attack",
+        "manaCost": 2,
+        "baseDamage": 10.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Lightning",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": true
+        },
+        "aoe": {
+          "isAoE": true,
+          "aoeTargets": 3
+        },
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 32,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Attack", "Lightning", "Spell", "AoE"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.66
+        },
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "effects": [],
+        "rarity": "Magic",
+        "element": "Lightning",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Flame Shield",
+      "count": 1,
+      "data": {
+        "cardName": "Flame Shield",
+        "description": "Gain {guard} Guard. Scales with Intelligence.",
+        "cardType": "Guard",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 6.0,
+        "primaryDamageType": "None",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 20,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Guard", "Fire", "Shield"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.3
+        },
+        "effects": [],
+        "rarity": "Common",
+        "element": "Fire",
+        "category": "Guard"
+      }
+    },
+    {
+      "cardName": "Ice Barrier",
+      "count": 1,
+      "data": {
+        "cardName": "Ice Barrier",
+        "description": "Gain {guard} Guard. Scales with Intelligence.",
+        "cardType": "Guard",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 7.0,
+        "primaryDamageType": "None",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 22,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Guard", "Cold", "Shield"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.35
+        },
+        "effects": [],
+        "rarity": "Common",
+        "element": "Cold",
+        "category": "Guard"
+      }
+    },
+    {
+      "cardName": "Arcane Cloak",
+      "count": 1,
+      "data": {
+        "cardName": "Arcane Cloak",
+        "description": "Gain {guard} Guard. Draw a card.",
+        "cardType": "Guard",
+        "manaCost": 2,
+        "baseDamage": 0.0,
+        "baseGuard": 10.0,
+        "primaryDamageType": "None",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 25,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Guard", "Shield", "Draw"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.4
+        },
+        "effects": [
+          {
+            "effectType": "Draw",
+            "effectName": "Draw Card",
+            "description": "Draw 1 card",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        "rarity": "Magic",
+        "element": "Basic",
+        "category": "Guard"
+      }
+    },
+    {
+      "cardName": "Mana Surge",
+      "count": 1,
+      "data": {
+        "cardName": "Mana Surge",
+        "description": "Gain 2 Mana this turn.",
+        "cardType": "Skill",
+        "manaCost": 0,
+        "baseDamage": 0.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "None",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 20,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Skill", "Mana", "Resource"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "effects": [
+          {
+            "effectType": "GainMana",
+            "effectName": "Gain Mana",
+            "description": "Gain 2 Mana",
+            "value": 2.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Skill"
+      }
+    },
+    {
+      "cardName": "Elemental Focus",
+      "count": 1,
+      "data": {
+        "cardName": "Elemental Focus",
+        "description": "Gain +15% increased Elemental Damage for 3 turns.",
+        "cardType": "Power",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "None",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 25,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Power", "Buff", "Elemental"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "effects": [
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Elemental Focus",
+            "description": "+15% increased Elemental Damage",
+            "value": 15.0,
+            "duration": 3,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        "rarity": "Magic",
+        "element": "Basic",
+        "category": "Power"
+      }
+    },
+    {
+      "cardName": "Spell Echo",
+      "count": 1,
+      "data": {
+        "cardName": "Spell Echo",
+        "description": "The next spell you cast this turn is cast twice.",
+        "cardType": "Power",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "None",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 28,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Power", "Spell", "Echo"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "effects": [],
+        "rarity": "Rare",
+        "element": "Basic",
+        "category": "Power"
+      }
+    }
+  ]
+}
+

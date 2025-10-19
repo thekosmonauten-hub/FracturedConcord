@@ -12,6 +12,7 @@ public class CharacterCreationController : MonoBehaviour
     private Button createCharacterButton;
     private Button backButton;
     private VisualElement characterPreview;
+    private VisualElement deckPreview;
     
     // Class Buttons - connected to your class selection buttons
     private Button witchButton;
@@ -57,6 +58,7 @@ public class CharacterCreationController : MonoBehaviour
         createCharacterButton = root.Q<Button>("CreateCharacterButton");
         backButton = root.Q<Button>("BackButton");
         characterPreview = root.Q<VisualElement>("CharacterPreview");
+        deckPreview = root.Q<VisualElement>("StarterDeckPreview");
         
         // Connect to class buttons
         witchButton = root.Q<Button>("WitchButton");
@@ -187,6 +189,30 @@ public class CharacterCreationController : MonoBehaviour
             // You can add preview images or styling here
             characterPreview.style.backgroundColor = GetClassColor(selectedClass);
         }
+
+        // Update starter deck preview
+        UpdateStarterDeckPreview();
+    }
+
+    private void UpdateStarterDeckPreview()
+    {
+        if (deckPreview == null) return;
+        deckPreview.Clear();
+
+        if (string.IsNullOrEmpty(selectedClass)) return;
+
+        var sdm = starterDeckManager != null ? starterDeckManager : StarterDeckManager.Instance;
+        var def = sdm != null ? sdm.GetDefinitionForClass(selectedClass) : null;
+        if (def == null || def.cards == null || def.cards.Count == 0) return;
+
+        // Simple list: "xN Card Name" entries
+        foreach (var entry in def.cards)
+        {
+            if (entry == null || entry.card == null || entry.count <= 0) continue;
+            var row = new Label($"x{entry.count}  {entry.card.cardName}");
+            row.AddToClassList("deck-preview-row");
+            deckPreview.Add(row);
+        }
     }
     
     private Color GetClassColor(string className)
@@ -242,14 +268,18 @@ public class CharacterCreationController : MonoBehaviour
         // Create new character using CharacterManager
         CharacterManager.Instance.CreateCharacter(characterName, selectedClass);
         
-        // Assign starter deck
-        if (starterDeckManager != null)
+        // Initialize starter collection/deckData using CardDataExtended-only definitions
+        var sdm = starterDeckManager != null ? starterDeckManager : StarterDeckManager.Instance;
+        if (sdm != null)
         {
-            CharacterManager.Instance.GetCurrentCharacter().AssignStarterDeck(starterDeckManager);
+            sdm.AssignStarterToCharacterDeckData(CharacterManager.Instance.GetCurrentCharacter());
         }
         
         Debug.Log($"Created new character: {characterName} ({selectedClass})");
         
+        // Persist last character for scene continuity
+        PlayerPrefs.SetString("LastCharacterName", characterName);
+        PlayerPrefs.Save();
         // Transition to main game
         SceneManager.LoadScene("MainGameUI");
     }

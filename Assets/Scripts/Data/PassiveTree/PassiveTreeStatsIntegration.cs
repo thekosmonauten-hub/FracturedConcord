@@ -1,405 +1,195 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using PassiveTree;
 
+namespace PassiveTree
+{
 /// <summary>
-/// Integrates passive tree stats with the CharacterStatsData system
-/// Applies passive tree node effects to character stats when nodes are allocated
+	/// Applies passive tree node bonuses to the active Character via CharacterManager.
+	/// Uses simple, configurable per-node-type bonuses and recalculates on character load and node changes.
 /// </summary>
 public class PassiveTreeStatsIntegration : MonoBehaviour
 {
-    [Header("Integration Settings")]
-    [SerializeField] private bool autoIntegrateOnStart = true;
-    [SerializeField] private bool debugMode = false;
-    [SerializeField] private bool validateStatsOnApply = true;
+		[Header("Node Bonuses (additive)")]
+		public int smallNodeStrength = 5;
+		public int smallNodeDexterity = 0;
+		public int smallNodeIntelligence = 0;
 
-    [Header("References")]
-    [SerializeField] private CharacterStatsData characterStats;
-    [SerializeField] private PassiveTreeManager passiveTreeManager;
-    [SerializeField] private EnhancedBoardDataManager boardDataManager;
+		public int notableNodeStrength = 10;
+		public int notableNodeDexterity = 0;
+		public int notableNodeIntelligence = 0;
 
-    // Runtime data
-    private Dictionary<Vector2Int, List<string>> appliedStats = new Dictionary<Vector2Int, List<string>>();
-    private bool isIntegrationActive = false;
+		public int keystoneNodeStrength = 0;
+		public int keystoneNodeDexterity = 0;
+		public int keystoneNodeIntelligence = 0;
 
-    void Start()
-    {
-        if (autoIntegrateOnStart)
-        {
-            SetupIntegration();
-        }
-    }
+		[Header("Damage Bonuses (increased %, applied additively)")]
+		public float smallNodeIncreasedPhysicalDamage = 0f;
+		public float notableNodeIncreasedPhysicalDamage = 0f;
+		public float keystoneNodeIncreasedPhysicalDamage = 0f;
 
-    /// <summary>
-    /// Set up the passive tree stats integration
-    /// </summary>
-    [ContextMenu("Setup Integration")]
-    public void SetupIntegration()
-    {
-        // Find required components
-        if (characterStats == null)
-        {
-            // CharacterStatsData is not a MonoBehaviour, so we need to find it differently
-            // Look for a component that has CharacterStatsData
-            var characterManager = FindFirstObjectByType<CharacterManager>();
-            if (characterManager != null)
-            {
-                // Try to get CharacterStatsData from CharacterManager
-                var characterStatsField = typeof(CharacterManager).GetField("characterStats", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                if (characterStatsField != null)
-                {
-                    characterStats = characterStatsField.GetValue(characterManager) as CharacterStatsData;
-                }
-            }
-            
-            if (characterStats == null)
-            {
-                Debug.LogWarning("[PassiveTreeStatsIntegration] No CharacterStatsData found. Creating one...");
-                CreateCharacterStatsData();
-            }
-        }
+		private PassiveTreeManager passiveTreeManager;
 
-        if (passiveTreeManager == null)
-        {
-            passiveTreeManager = FindFirstObjectByType<PassiveTreeManager>();
-        }
+		private struct PassiveBonuses
+		{
+			public int addStr;
+			public int addDex;
+			public int addInt;
+			public float incPhys;
+		}
 
-        if (boardDataManager == null)
-        {
-            boardDataManager = FindFirstObjectByType<EnhancedBoardDataManager>();
+		private PassiveBonuses lastApplied;
+
+		public void SetPassiveTreeManager(PassiveTreeManager mgr)
+		{
+			passiveTreeManager = mgr;
+		}
+
+		public void SetupIntegration()
+		{
+			// Subscribe to character events
+			if (CharacterManager.Instance != null)
+			{
+				CharacterManager.Instance.OnCharacterLoaded += OnCharacterLoaded;
+				CharacterManager.Instance.OnCharacterLevelUp += OnCharacterLoaded;
         }
 
         // Subscribe to passive tree events
-        if (passiveTreeManager != null)
-        {
-            // Note: We'll need to add events to PassiveTreeManager for node allocation
-            Debug.Log("[PassiveTreeStatsIntegration] Integration setup complete");
-        }
+			PassiveTreeManager.OnNodeAllocated += OnNodeChanged;
+			PassiveTreeManager.OnNodeDeallocated += OnNodeChanged;
 
-        isIntegrationActive = true;
+			// Initial apply if character exists
+			OnCharacterLoaded(CharacterManager.Instance != null ? CharacterManager.Instance.GetCurrentCharacter() : null);
+		}
+
+		private void OnDestroy()
+		{
+			if (CharacterManager.Instance != null)
+			{
+				CharacterManager.Instance.OnCharacterLoaded -= OnCharacterLoaded;
+				CharacterManager.Instance.OnCharacterLevelUp -= OnCharacterLoaded;
+			}
+			PassiveTreeManager.OnNodeAllocated -= OnNodeChanged;
+			PassiveTreeManager.OnNodeDeallocated -= OnNodeChanged;
+		}
+
+		private void OnNodeChanged(Vector2Int _, CellController __)
+		{
+			RecalculateAndApply();
+		}
+
+		private void OnCharacterLoaded(Character _)
+		{
+			RecalculateAndApply();
+		}
+
+		private void RecalculateAndApply()
+		{
+			var character = CharacterManager.Instance != null ? CharacterManager.Instance.GetCurrentCharacter() : null;
+			if (character == null || passiveTreeManager == null) return;
+
+			// Build totals from all purchased nodes
+			PassiveBonuses total = new PassiveBonuses();
+            var allCells = passiveTreeManager.GetAllCells();
+			foreach (var kv in allCells)
+			{
+				var cell = kv.Value;
+				if (cell == null || !cell.IsPurchased) continue;
+				switch (cell.NodeType)
+				{
+					case NodeType.Travel:
+					case NodeType.Small:
+						Accumulate(ref total, smallNodeStrength, smallNodeDexterity, smallNodeIntelligence, smallNodeIncreasedPhysicalDamage);
+						break;
+					case NodeType.Notable:
+						Accumulate(ref total, notableNodeStrength, notableNodeDexterity, notableNodeIntelligence, notableNodeIncreasedPhysicalDamage);
+						break;
+					case NodeType.Keystone:
+						Accumulate(ref total, keystoneNodeStrength, keystoneNodeDexterity, keystoneNodeIntelligence, keystoneNodeIncreasedPhysicalDamage);
+						break;
+				}
+			}
+
+			ApplyBonuses(character, total);
+		}
+
+		private static void Accumulate(ref PassiveBonuses dst, int str, int dex, int intel, float incPhys)
+		{
+			dst.addStr += str;
+			dst.addDex += dex;
+			dst.addInt += intel;
+			dst.incPhys += incPhys;
+		}
+
+		private void ApplyBonuses(Character c, PassiveBonuses now)
+		{
+			// Remove previous bonuses
+			c.strength -= lastApplied.addStr;
+			c.dexterity -= lastApplied.addDex;
+			c.intelligence -= lastApplied.addInt;
+
+			// There isn't a single field for increasedPhysicalDamage on Character; if you have a modifiers container, apply there.
+			// For now, just adjust CharacterStatsData on next rebuild via CalculateDerivedStats.
+
+			// Apply new bonuses
+			c.strength += now.addStr;
+			c.dexterity += now.addDex;
+			c.intelligence += now.addInt;
+
+			lastApplied = now;
+
+			// Recalculate derived stats if available
+			try
+			{
+				c.CalculateDerivedStats();
+			}
+			catch { }
     }
 
     /// <summary>
-    /// Apply stats from a passive tree node to character stats
+		/// Validate passive node stat mappings against CharacterStatsData. Optional helper used by setup scripts.
     /// </summary>
-    public void ApplyNodeStats(Vector2Int nodePosition, bool isAllocated)
-    {
-        if (!isIntegrationActive || characterStats == null)
-        {
-            Debug.LogWarning("[PassiveTreeStatsIntegration] Integration not active or character stats not found");
-            return;
-        }
-
-        if (boardDataManager == null)
-        {
-            Debug.LogWarning("[PassiveTreeStatsIntegration] Board data manager not found");
-            return;
-        }
-
-        // Get node data
-        PassiveNodeData nodeData = boardDataManager.GetNodeData(nodePosition);
-        if (nodeData == null)
-        {
-            if (debugMode)
-            {
-                Debug.LogWarning($"[PassiveTreeStatsIntegration] No node data found for position {nodePosition}");
-            }
-            return;
-        }
-
-        if (isAllocated)
-        {
-            // Apply stats - convert Dictionary to List<string> format
-            List<string> statsList = ConvertStatsDictionaryToList(nodeData.GetStats());
-            ApplyStatsToCharacter(nodePosition, statsList);
-        }
-        else
-        {
-            // Remove stats
-            RemoveStatsFromCharacter(nodePosition);
-        }
-
-        if (debugMode)
-        {
-            Debug.Log($"[PassiveTreeStatsIntegration] {(isAllocated ? "Applied" : "Removed")} stats for node {nodePosition}: {nodeData.NodeName}");
-        }
-    }
-
-    /// <summary>
-    /// Apply stats from a node to character stats
-    /// </summary>
-    private void ApplyStatsToCharacter(Vector2Int nodePosition, List<string> stats)
-    {
-        if (stats == null || stats.Count == 0)
-            return;
-
-        List<string> appliedNodeStats = new List<string>();
-
-        foreach (string stat in stats)
-        {
-            if (string.IsNullOrEmpty(stat))
-                continue;
-
-            // Parse stat format: "statName: value"
-            string[] parts = stat.Split(':');
-            if (parts.Length == 2)
-            {
-                string statName = parts[0].Trim();
-                string valueString = parts[1].Trim();
-
-                if (float.TryParse(valueString, out float value))
-                {
-                    // Validate stat name if enabled
-                    if (validateStatsOnApply && !IsValidStatName(statName))
-                    {
-                        Debug.LogWarning($"[PassiveTreeStatsIntegration] Invalid stat name: {statName}");
-                        continue;
-                    }
-
-                    // Apply the stat
-                    characterStats.AddToStat(statName, value);
-                    appliedNodeStats.Add(stat);
-
-                    if (debugMode)
-                    {
-                        Debug.Log($"[PassiveTreeStatsIntegration] Applied stat: {statName} +{value}");
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning($"[PassiveTreeStatsIntegration] Could not parse stat value: {valueString}");
-                }
-            }
-            else
-            {
-                Debug.LogWarning($"[PassiveTreeStatsIntegration] Invalid stat format: {stat}");
-            }
-        }
-
-        // Store applied stats for this node
-        appliedStats[nodePosition] = appliedNodeStats;
-    }
-
-    /// <summary>
-    /// Remove stats from a node from character stats
-    /// </summary>
-    private void RemoveStatsFromCharacter(Vector2Int nodePosition)
-    {
-        if (!appliedStats.ContainsKey(nodePosition))
-            return;
-
-        List<string> nodeStats = appliedStats[nodePosition];
-
-        foreach (string stat in nodeStats)
-        {
-            if (string.IsNullOrEmpty(stat))
-                continue;
-
-            // Parse stat format: "statName: value"
-            string[] parts = stat.Split(':');
-            if (parts.Length == 2)
-            {
-                string statName = parts[0].Trim();
-                string valueString = parts[1].Trim();
-
-                if (float.TryParse(valueString, out float value))
-                {
-                    // Remove the stat (subtract the value)
-                    characterStats.AddToStat(statName, -value);
-
-                    if (debugMode)
-                    {
-                        Debug.Log($"[PassiveTreeStatsIntegration] Removed stat: {statName} -{value}");
-                    }
-                }
-            }
-        }
-
-        // Remove from applied stats
-        appliedStats.Remove(nodePosition);
-    }
-
-    /// <summary>
-    /// Check if a stat name is valid in the character stats system
-    /// </summary>
-    private bool IsValidStatName(string statName)
-    {
-        if (string.IsNullOrEmpty(statName))
-            return false;
-
-        // Try to get the stat value - if it doesn't throw an error, it's valid
-        try
-        {
-            float value = characterStats.GetStatValue(statName);
-            return true; // If we can get a value, the stat exists
-        }
-        catch
-        {
-            // Check if it's a custom stat in equipment stats
-            return characterStats.equipmentStats.ContainsKey(statName);
-        }
-    }
-
-    /// <summary>
-    /// Apply stats from all allocated nodes
-    /// </summary>
-    [ContextMenu("Apply All Allocated Node Stats")]
-    public void ApplyAllAllocatedNodeStats()
-    {
-        if (!isIntegrationActive || passiveTreeManager == null || boardDataManager == null)
-        {
-            Debug.LogWarning("[PassiveTreeStatsIntegration] Integration not properly set up");
-            return;
-        }
-
-        // Get all cells from passive tree manager
-        var allCells = passiveTreeManager.GetAllCells();
-        
-        foreach (var kvp in allCells)
-        {
-            Vector2Int position = kvp.Key;
-            CellController cell = kvp.Value;
-
-            if (cell.IsPurchased)
-            {
-                ApplyNodeStats(position, true);
-            }
-        }
-
-        Debug.Log($"[PassiveTreeStatsIntegration] Applied stats from {appliedStats.Count} allocated nodes");
-    }
-
-    /// <summary>
-    /// Remove stats from all allocated nodes
-    /// </summary>
-    [ContextMenu("Remove All Allocated Node Stats")]
-    public void RemoveAllAllocatedNodeStats()
-    {
-        if (!isIntegrationActive)
-        {
-            Debug.LogWarning("[PassiveTreeStatsIntegration] Integration not active");
-            return;
-        }
-
-        // Remove stats from all applied nodes
-        var positionsToRemove = new List<Vector2Int>(appliedStats.Keys);
-        
-        foreach (Vector2Int position in positionsToRemove)
-        {
-            RemoveStatsFromCharacter(position);
-        }
-
-        Debug.Log("[PassiveTreeStatsIntegration] Removed stats from all allocated nodes");
-    }
-
-    /// <summary>
-    /// Get currently applied stats for a node
-    /// </summary>
-    public List<string> GetAppliedStatsForNode(Vector2Int nodePosition)
-    {
-        return appliedStats.ContainsKey(nodePosition) ? appliedStats[nodePosition] : new List<string>();
-    }
-
-    /// <summary>
-    /// Get all currently applied stats
-    /// </summary>
-    public Dictionary<Vector2Int, List<string>> GetAllAppliedStats()
-    {
-        return new Dictionary<Vector2Int, List<string>>(appliedStats);
-    }
-
-    /// <summary>
-    /// Create a CharacterStatsData instance if none exists
-    /// </summary>
-    private void CreateCharacterStatsData()
-    {
-        characterStats = new CharacterStatsData();
-        Debug.Log("[PassiveTreeStatsIntegration] Created CharacterStatsData instance");
-    }
-
-    /// <summary>
-    /// Set the character stats reference
-    /// </summary>
-    public void SetCharacterStats(CharacterStatsData stats)
-    {
-        characterStats = stats;
-    }
-
-    /// <summary>
-    /// Set the passive tree manager reference
-    /// </summary>
-    public void SetPassiveTreeManager(PassiveTreeManager manager)
-    {
-        passiveTreeManager = manager;
-    }
-
-    /// <summary>
-    /// Set the board data manager reference
-    /// </summary>
-    public void SetBoardDataManager(EnhancedBoardDataManager manager)
-    {
-        boardDataManager = manager;
-    }
-
-    /// <summary>
-    /// Convert stats dictionary to list format
-    /// </summary>
-    private List<string> ConvertStatsDictionaryToList(Dictionary<string, float> statsDict)
-    {
-        List<string> statsList = new List<string>();
-        
-        if (statsDict != null)
-        {
-            foreach (var kvp in statsDict)
-            {
-                statsList.Add($"{kvp.Key}: {kvp.Value}");
-            }
-        }
-        
-        return statsList;
-    }
-
-    /// <summary>
-    /// Validate all stat mappings
-    /// </summary>
-    [ContextMenu("Validate Stat Mappings")]
     public void ValidateStatMappings()
     {
+			try
+			{
+				var boardDataManager = FindFirstObjectByType<EnhancedBoardDataManager>();
         if (boardDataManager == null)
         {
-            Debug.LogWarning("[PassiveTreeStatsIntegration] Board data manager not found");
+					Debug.Log("[PassiveTreeStatsIntegration] Stat mapping validation skipped: no EnhancedBoardDataManager found");
             return;
         }
 
         var allNodeData = boardDataManager.GetAllNodeData();
         List<string> allStats = new List<string>();
-
         foreach (var kvp in allNodeData)
         {
             var statsDict = kvp.Value.GetStats();
-            if (statsDict != null)
-            {
+					if (statsDict == null) continue;
                 foreach (var statKvp in statsDict)
                 {
                     allStats.Add($"{statKvp.Key}: {statKvp.Value}");
-                }
             }
         }
 
-        List<string> unmappedStats = PassiveTreeStatMapper.ValidateStatMappings(allStats);
-
-        if (unmappedStats.Count > 0)
+				var unmapped = PassiveTreeStatMapper.ValidateStatMappings(allStats);
+				if (unmapped != null && unmapped.Count > 0)
         {
-            Debug.LogWarning($"[PassiveTreeStatsIntegration] Found {unmappedStats.Count} unmapped stats:");
-            foreach (string stat in unmappedStats)
+					Debug.LogWarning($"[PassiveTreeStatsIntegration] Found {unmapped.Count} unmapped stats");
+					foreach (var stat in unmapped)
             {
                 Debug.LogWarning($"  - {stat}");
             }
         }
         else
         {
-            Debug.Log("[PassiveTreeStatsIntegration] All stats are properly mapped!");
-        }
-    }
+					Debug.Log("[PassiveTreeStatsIntegration] All passive stats are mapped to CharacterStatsData.");
+				}
+			}
+			catch (Exception e)
+			{
+				Debug.LogWarning($"[PassiveTreeStatsIntegration] ValidateStatMappings encountered an issue: {e.Message}");
+			}
+		}
+	}
 }

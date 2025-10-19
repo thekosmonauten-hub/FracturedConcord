@@ -76,6 +76,12 @@ namespace PassiveTree
             {
                 AssignSpriteBasedOnNodeType();
             }
+            
+            // Force attribute overlay update for extension board cells
+            if (enableAttributeOverlays)
+            {
+                RefreshAttributeOverlay();
+            }
         }
         
         /// <summary>
@@ -389,6 +395,24 @@ namespace PassiveTree
         }
         
         /// <summary>
+        /// Force refresh attribute overlay for extension board cells
+        /// This ensures overlays are properly updated after JSON data changes
+        /// </summary>
+        [ContextMenu("Force Refresh Attribute Overlay")]
+        public void ForceRefreshAttributeOverlay()
+        {
+            if (enableAttributeOverlays)
+            {
+                RefreshAttributeOverlay();
+                
+                if (showDebugInfo)
+                {
+                    Debug.Log($"[CellController_EXT] 🔄 Force refreshed attribute overlay for {gameObject.name}");
+                }
+            }
+        }
+        
+        /// <summary>
         /// Sync grid position from CellJsonData to CellController_EXT
         /// Uses Y_X naming convention logic
         /// </summary>
@@ -617,6 +641,7 @@ namespace PassiveTree
         private TextAsset FindJsonFileForBoard(string boardName)
         {
             // Try to find JSON files that match the board name
+            #if UNITY_EDITOR
             string[] guids = UnityEditor.AssetDatabase.FindAssets("t:TextAsset");
             
             foreach (string guid in guids)
@@ -642,6 +667,10 @@ namespace PassiveTree
             }
             
             return null;
+            #else
+            Debug.LogWarning("FindJsonFileForBoard uses UnityEditor and is unavailable in Player builds.");
+            return null;
+            #endif
         }
         
         /// <summary>

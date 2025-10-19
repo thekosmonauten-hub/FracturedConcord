@@ -543,9 +543,64 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCreationController
   uiDocument: {fileID: 933192086}
+  starterDeckManager: {fileID: 0}
+--- !u!1 &2000877927
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2000877929}
+  - component: {fileID: 2000877928}
+  m_Layer: 0
+  m_Name: 'StarterDeckManager '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2000877928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2000877927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4462ae43249ab1844b36823ce21a2364, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StarterDeckManager
+  marauderStarterDeck: {fileID: 0}
+  rangerStarterDeck: {fileID: 0}
+  witchStarterDeck: {fileID: 0}
+  brawlerStarterDeck: {fileID: 0}
+  thiefStarterDeck: {fileID: 0}
+  apostleStarterDeck: {fileID: 0}
+  starterDeckDefinitions: []
+  loadDefinitionsFromResources: 1
+  definitionsResourcesPath: StarterDecks
+--- !u!4 &2000877929
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2000877927}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 951.04016, y: 566.7095, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 538745688}
   - {fileID: 469117719}
+  - {fileID: 2000877929}

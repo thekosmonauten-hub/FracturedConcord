@@ -4,7 +4,7 @@ public class CombatCardTest : MonoBehaviour
 {
     [Header("Test Configuration")]
     public bool runTestOnStart = false;
-    public SimpleCombatUI cardManager;
+    public AnimatedCombatUI cardManager; // Updated to use AnimatedCombatUI
     
     void Start()
     {
@@ -19,57 +19,32 @@ public class CombatCardTest : MonoBehaviour
     {
         if (cardManager == null)
         {
-            cardManager = FindFirstObjectByType<SimpleCombatUI>();
+            cardManager = FindFirstObjectByType<AnimatedCombatUI>();
         }
         
         if (cardManager != null)
         {
             Debug.Log("=== Testing Combat Card System ===");
-            Debug.Log($"Deck count: {cardManager.GetDeckCount()}");
-            Debug.Log($"Hand count: {cardManager.GetHandCount()}");
-            Debug.Log($"Discard count: {cardManager.GetDiscardCount()}");
+            Debug.Log("AnimatedCombatUI found");
+            Debug.Log("Note: AnimatedCombatUI uses different API than SimpleCombatUI");
             Debug.Log("=== Test Complete ===");
         }
         else
         {
-            Debug.LogError("SimpleCombatUI not found! Make sure it's added to the scene.");
+            Debug.LogError("AnimatedCombatUI not found! Make sure it's added to the scene.");
         }
     }
     
     [ContextMenu("Draw Test Card")]
     public void DrawTestCard()
     {
-        if (cardManager == null)
-        {
-            cardManager = FindFirstObjectByType<SimpleCombatUI>();
-        }
-        
-        if (cardManager != null)
-        {
-            cardManager.DrawCardPublic();
-        }
-        else
-        {
-            Debug.LogError("SimpleCombatUI not found!");
-        }
+        Debug.LogWarning("Draw card functionality moved to AnimatedCombatUI - use combat system directly");
     }
     
     [ContextMenu("Shuffle Deck")]
     public void ShuffleDeck()
     {
-        if (cardManager == null)
-        {
-            cardManager = FindFirstObjectByType<SimpleCombatUI>();
-        }
-        
-        if (cardManager != null)
-        {
-            cardManager.ShuffleDeckPublic();
-        }
-        else
-        {
-            Debug.LogError("SimpleCombatUI not found!");
-        }
+        Debug.LogWarning("Shuffle functionality managed by CombatDeckManager");
     }
     
     [ContextMenu("Check Database Status")]

@@ -42,6 +42,9 @@ public class CardEffect
     {
         switch (effectType)
         {
+            case EffectType.ApplyStatus:
+                ApplyStatusEffect(caster, target);
+                break;
             case EffectType.Damage:
                 if (target != null)
                 {
@@ -107,5 +110,100 @@ public class CardEffect
         }
         
         return desc;
+    }
+    
+    /// <summary>
+    /// Apply a status effect to a target
+    /// </summary>
+    private void ApplyStatusEffect(Character caster, Character target)
+    {
+        if (target == null) return;
+        
+        // Create status effect based on effect name
+        StatusEffectType statusType = GetStatusEffectType(effectName);
+        if (statusType != StatusEffectType.Poison || effectName.ToLower() == "poison") // Check for poison specifically
+        {
+            StatusEffect statusEffect = new StatusEffect(statusType, effectName, value, duration);
+            
+            // Find the target's StatusEffectManager
+            // Note: Character is a data class, not a MonoBehaviour, so we need to find the manager differently
+            StatusEffectManager statusManager = null;
+            
+            // Try to find in display components
+            PlayerCombatDisplay playerDisplay = GameObject.FindFirstObjectByType<PlayerCombatDisplay>();
+            if (playerDisplay != null)
+            {
+                statusManager = playerDisplay.GetStatusEffectManager();
+            }
+            
+            // Also try to find in enemy displays
+            if (statusManager == null)
+            {
+                EnemyCombatDisplay[] enemyDisplays = GameObject.FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+                foreach (var enemyDisplay in enemyDisplays)
+                {
+                    if (enemyDisplay != null && enemyDisplay.name.Contains(target.characterName))
+                    {
+                        statusManager = enemyDisplay.GetComponent<StatusEffectManager>();
+                        break;
+                    }
+                }
+            }
+            
+            if (statusManager != null)
+            {
+                statusManager.AddStatusEffect(statusEffect);
+                Debug.Log($"Applied status effect {effectName} to {target.characterName}");
+            }
+            else
+            {
+                Debug.LogWarning($"No StatusEffectManager found for {target.characterName}");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Get StatusEffectType from effect name
+    /// </summary>
+    private StatusEffectType GetStatusEffectType(string effectName)
+    {
+        // Map effect names to status effect types
+        switch (effectName.ToLower())
+        {
+            case "poison":
+            case "poisoned":
+                return StatusEffectType.Poison;
+            case "burn":
+            case "burning":
+                return StatusEffectType.Burn;
+            case "freeze":
+            case "frozen":
+                return StatusEffectType.Freeze;
+            case "stun":
+            case "stunned":
+                return StatusEffectType.Stun;
+            case "strength":
+                return StatusEffectType.Strength;
+            case "dexterity":
+                return StatusEffectType.Dexterity;
+            case "intelligence":
+                return StatusEffectType.Intelligence;
+            case "shield":
+                return StatusEffectType.Shield;
+            case "regeneration":
+            case "regen":
+                return StatusEffectType.Regeneration;
+            case "mana regen":
+            case "mana regeneration":
+                return StatusEffectType.ManaRegen;
+            case "vulnerable":
+                return StatusEffectType.Vulnerable;
+            case "weak":
+                return StatusEffectType.Weak;
+            case "frail":
+                return StatusEffectType.Frail;
+            default:
+                return StatusEffectType.Poison; // Default fallback
+        }
     }
 }

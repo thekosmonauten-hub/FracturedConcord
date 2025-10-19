@@ -11,6 +11,7 @@ public class Character
     public string characterClass;
     public int level = 1;
     public int experience = 0;
+    public int skillPoints = 0;
     public int act = 1;
     
     [Header("Core Attributes (PoE Style)")]
@@ -26,6 +27,7 @@ public class Character
     public int reliance = 200;
     public int maxReliance = 200;
     public float currentGuard = 0f; // Current guard amount
+    public float maxGuard = 0f; // Maximum guard (based on max health)
     public int maxEnergyShield = 0; // Maximum energy shield
     public int currentEnergyShield = 0; // Current energy shield
     
@@ -36,6 +38,12 @@ public class Character
     public int defense;
     public float criticalChance;
     public float criticalMultiplier;
+    
+    // Derived secondary stats from attributes
+    public float increasedMeleePhysicalDamage = 0f; // Additive increased (e.g., 0.15 = +15%)
+    public float accuracyRating = 0f;
+    public float increasedEvasion = 0f; // Additive increased (e.g., 0.10 = +10%)
+    public float baseEvasionRating = 0f; // baseline before increased modifiers
     
     [Header("Damage Modifiers")]
     public DamageModifiers damageModifiers = new DamageModifiers();
@@ -62,9 +70,9 @@ public class Character
     [Header("Weapons")]
     public CharacterWeapons weapons = new CharacterWeapons();
     
-    // Add this field to the Character class
-    [Header("Deck")]
-    public Deck currentDeck;
+    [Header("Deck & Cards")]
+    public Deck currentDeck; // Legacy - for backward compatibility
+    public CharacterDeckData deckData = new CharacterDeckData(); // New: deck management & card collection
     
     // Constructor
     public Character(string name, string characterClass)
@@ -129,12 +137,38 @@ public class Character
     // Calculate derived stats based on core attributes
     public void CalculateDerivedStats()
     {
-        // Health calculation (based on Strength and Vitality)
-        maxHealth = strength * 10 + 100; // Base 100 + 10 per strength
+        // Attribute breakpoints
+        int str = Mathf.Max(0, strength);
+        int dex = Mathf.Max(0, dexterity);
+        int intel = Mathf.Max(0, intelligence);
+
+        // Strength → Life and Melee Physical Increased
+        // Every 2 STR: +1 Life; Every 10 STR: +5 additional Life
+        // Every 5 STR: +1% inc melee phys; Every 10 STR: +2% additional inc melee phys
+        int lifeFromStr = (str / 2) + 5 * (str / 10);
+        float incMeleeFromStr = 0.01f * (str / 5) + 0.02f * (str / 10);
+
+        // Base life stays 100 unless overridden by content systems
+        maxHealth = 100 + lifeFromStr;
         currentHealth = maxHealth; // Start with full health
+        increasedMeleePhysicalDamage = incMeleeFromStr;
         
-        // Energy Shield calculation (based on Intelligence)
-        maxEnergyShield = intelligence * 2; // 2 ES per intelligence point
+        // Guard calculation (guard cannot exceed max health)
+        UpdateMaxGuard();
+        
+        // Dexterity → Accuracy and Evasion Increased
+        // Every 1 DEX: +2 Accuracy; Every 10 DEX: +20 additional Accuracy
+        // Every 5 DEX: +1% inc Evasion; Every 10 DEX: +2% additional inc Evasion
+        accuracyRating = (dex * 2) + 20 * (dex / 10);
+        increasedEvasion = 0.01f * (dex / 5) + 0.02f * (dex / 10);
+        baseEvasionRating = 0f; // can be set by gear; character sheets can display final via a helper if needed
+
+        // Intelligence → Energy Shield and Increased Max ES
+        // Every 2 INT: +1 ES; Every 10 INT: +5 additional ES
+        // Every 5 INT: +1% inc max ES; Every 10 INT: +2% additional inc max ES
+        int esFromInt = (intel / 2) + 5 * (intel / 10);
+        float incESPct = 0.01f * (intel / 5) + 0.02f * (intel / 10);
+        maxEnergyShield = Mathf.FloorToInt(esFromInt * (1f + incESPct));
         currentEnergyShield = maxEnergyShield; // Start with full energy shield
         
         // Attack power (based on Strength and Dexterity)
@@ -180,7 +214,7 @@ public class Character
     public void LevelUp()
     {
         level++;
-        experience = 0; // Reset experience for next level
+        skillPoints += 1; // +1 skill point per level
         
         // Get attribute gains for this class
         var (strGain, dexGain, intGain) = GetLevelUpGains();
@@ -195,6 +229,13 @@ public class Character
         
         Debug.Log($"{characterName} leveled up to level {level}! " +
                   $"Gained +{strGain} STR, +{dexGain} DEX, +{intGain} INT");
+        
+        // Auto-save after level up
+        if (CharacterManager.Instance != null && CharacterManager.Instance.GetCurrentCharacter() == this)
+        {
+            CharacterManager.Instance.SaveCharacter();
+            Debug.Log($"[Auto-Save] Character saved after leveling up to level {level}.");
+        }
     }
     
     // Calculate required experience for next level (PoE-style exponential scaling)
@@ -207,11 +248,23 @@ public class Character
     public void AddExperience(int exp)
     {
         experience += exp;
-        int requiredExp = GetRequiredExperience();
-        
-        if (experience >= requiredExp)
+        // Allow multiple level-ups with carryover
+        bool leveled = false;
+        while (true)
         {
-            LevelUp();
+            int requiredExp = GetRequiredExperience();
+            if (experience >= requiredExp)
+            {
+                experience -= requiredExp; // carryover
+                LevelUp();
+                leveled = true;
+                continue;
+            }
+            break;
+        }
+        if (leveled)
+        {
+            Debug.Log($"{characterName} is now level {level}. Skill Points: {skillPoints}. XP towards next level: {experience}/{GetRequiredExperience()}");
         }
     }
     
@@ -249,6 +302,26 @@ public class Character
             actualDamage = damage * Mathf.Max(0.1f, reduction); // Minimum 10% damage
         }
         
+        // Apply Bolster (less damage taken per stack: 2%, max 10 stacks)
+        try
+        {
+            var playerDisplay = GameObject.FindFirstObjectByType<PlayerCombatDisplay>();
+            if (playerDisplay != null)
+            {
+                var statusManager = playerDisplay.GetStatusEffectManager();
+                if (statusManager != null)
+                {
+                    float bolsterStacks = Mathf.Min(10f, statusManager.GetTotalMagnitude(StatusEffectType.Bolster));
+                    if (bolsterStacks > 0f)
+                    {
+                        float lessMultiplier = Mathf.Clamp01(1f - (0.02f * bolsterStacks));
+                        actualDamage *= lessMultiplier;
+                    }
+                }
+            }
+        }
+        catch { /* safe guard */ }
+
         // Apply guard first
         if (currentGuard > 0)
         {
@@ -406,7 +479,34 @@ public class Character
     // Convert to CharacterData for save system compatibility
     public CharacterData ToCharacterData()
     {
-        return new CharacterData(characterName, characterClass, level, act);
+        var data = new CharacterData(characterName, characterClass, level, act);
+        
+        // Core Stats
+        data.experience = experience;
+        data.skillPoints = skillPoints;
+        data.strength = strength;
+        data.dexterity = dexterity;
+        data.intelligence = intelligence;
+        
+        // Resources
+        data.currentHealth = currentHealth;
+        data.maxHealth = maxHealth;
+        data.currentEnergyShield = currentEnergyShield;
+        data.maxEnergyShield = maxEnergyShield;
+        data.mana = mana;
+        data.maxMana = maxMana;
+        data.manaRecoveryPerTurn = manaRecoveryPerTurn;
+        data.cardsDrawnPerTurn = cardsDrawnPerTurn;
+        data.reliance = reliance;
+        data.maxReliance = maxReliance;
+        
+        // Game State
+        data.currentScene = currentScene;
+        data.lastPosX = lastPosition.x;
+        data.lastPosY = lastPosition.y;
+        data.lastPosZ = lastPosition.z;
+        
+        return data;
     }
     
     // Create from CharacterData
@@ -415,6 +515,33 @@ public class Character
         Character character = new Character(data.characterName, data.characterClass);
         character.level = data.level;
         character.act = data.act;
+        
+        // Core Stats
+        character.experience = data.experience;
+        character.skillPoints = data.skillPoints;
+        character.strength = data.strength;
+        character.dexterity = data.dexterity;
+        character.intelligence = data.intelligence;
+        
+        // Resources
+        character.currentHealth = data.currentHealth;
+        character.maxHealth = data.maxHealth;
+        character.currentEnergyShield = data.currentEnergyShield;
+        character.maxEnergyShield = data.maxEnergyShield;
+        character.mana = data.mana;
+        character.maxMana = data.maxMana;
+        character.manaRecoveryPerTurn = data.manaRecoveryPerTurn;
+        character.cardsDrawnPerTurn = data.cardsDrawnPerTurn;
+        character.reliance = data.reliance;
+        character.maxReliance = data.maxReliance;
+        
+        // Game State
+        character.currentScene = data.currentScene;
+        character.lastPosition = new Vector3(data.lastPosX, data.lastPosY, data.lastPosZ);
+        
+        // Recalculate derived stats based on loaded attributes
+        character.CalculateDerivedStats();
+        
         return character;
     }
 
@@ -487,11 +614,25 @@ public class Character
         return currentDeck?.GetDeckStatistics() ?? new DeckStatistics();
     }
     
-    // Add guard to the character
+    // Add guard to the character (capped at max health)
     public void AddGuard(float guardAmount)
     {
-        currentGuard += guardAmount;
-        Debug.Log($"{characterName} gained {guardAmount} guard. Total guard: {currentGuard}");
+        // Guard cannot exceed max health
+        float newGuard = currentGuard + guardAmount;
+        currentGuard = Mathf.Min(newGuard, maxHealth);
+        
+        Debug.Log($"{characterName} gained {guardAmount} guard. Total guard: {currentGuard}/{maxHealth}");
+    }
+    
+    // Set max guard based on max health (call this when max health changes)
+    public void UpdateMaxGuard()
+    {
+        maxGuard = maxHealth;
+        // Ensure current guard doesn't exceed new max
+        if (currentGuard > maxGuard)
+        {
+            currentGuard = maxGuard;
+        }
     }
     
     // Add reliance to the character

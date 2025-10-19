@@ -186,25 +186,47 @@ public class DamageCalculator : MonoBehaviour
         float totalDamage = card.baseDamage;
         
         // Add attribute scaling
-        totalDamage += card.damageScaling.CalculateScalingBonus(character);
+        float scalingBonus = card.damageScaling.CalculateScalingBonus(character);
+        totalDamage += scalingBonus;
         
         // Add weapon scaling if applicable (uses total damage including affixes)
         if (card.scalesWithMeleeWeapon && equippedWeapon != null && equippedWeapon.weaponType == WeaponType.Melee)
         {
-            totalDamage += equippedWeapon.GetWeaponDamage();
+            float weaponDamage = equippedWeapon.GetWeaponDamage();
+            totalDamage += weaponDamage;
         }
         else if (card.scalesWithProjectileWeapon && equippedWeapon != null && equippedWeapon.weaponType == WeaponType.Projectile)
         {
-            totalDamage += equippedWeapon.GetWeaponDamage();
+            float weaponDamage = equippedWeapon.GetWeaponDamage();
+            totalDamage += weaponDamage;
         }
         else if (card.scalesWithSpellWeapon && equippedWeapon != null && equippedWeapon.weaponType == WeaponType.Spell)
         {
-            totalDamage += equippedWeapon.GetWeaponDamage();
+            float weaponDamage = equippedWeapon.GetWeaponDamage();
+            totalDamage += weaponDamage;
         }
         
         // Apply character's damage modifiers
-        totalDamage *= (1f + character.increasedDamage);
-        totalDamage *= character.moreDamage;
+        float increasedMultiplier = (1f + character.increasedDamage);
+        // If melee physical (identified by scalesWithMeleeWeapon), apply STR-based increased melee phys
+        if (card.scalesWithMeleeWeapon)
+        {
+            increasedMultiplier *= (1f + Mathf.Max(0f, character.increasedMeleePhysicalDamage));
+        }
+        float moreMultiplier = Mathf.Max(1f, character.moreDamage); // Ensure minimum of 1 to avoid zero damage
+        
+        // Debug logging
+        Debug.Log($"<color=cyan>CalculateCardDamage Debug for {card.cardName}:</color>");
+        Debug.Log($"  Base Damage: {card.baseDamage}");
+        Debug.Log($"  Scaling Bonus: {scalingBonus}");
+        Debug.Log($"  Before Modifiers: {totalDamage}");
+        Debug.Log($"  Increased Damage: {character.increasedDamage} (multiplier: {increasedMultiplier})");
+        Debug.Log($"  More Damage: {character.moreDamage}");
+        
+        totalDamage *= increasedMultiplier;
+        totalDamage *= moreMultiplier;
+        
+        Debug.Log($"  Final Damage: {totalDamage}");
         
         return totalDamage;
     }

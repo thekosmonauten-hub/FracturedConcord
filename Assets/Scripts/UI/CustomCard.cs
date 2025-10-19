@@ -8,6 +8,7 @@ public class CustomCard : VisualElement
     public Card cardData { get; private set; }
     public bool isUsable { get; private set; }
     public bool isSelected { get; private set; }
+    public bool isComboHighlighted { get; private set; }
     
     // UI Elements
     private VisualElement cardBackground;
@@ -142,10 +143,37 @@ public class CustomCard : VisualElement
         if (isUsable)
         {
             cardBackground.RemoveFromClassList("unusable");
+            cardBackground.RemoveFromClassList("mana-insufficient");
         }
         else
         {
             cardBackground.AddToClassList("unusable");
+            
+            // Check if it's specifically a mana issue
+            if (character != null && character.mana < cardData.manaCost)
+            {
+                cardBackground.AddToClassList("mana-insufficient");
+            }
+        }
+        
+        // Update mana cost color based on affordability
+        UpdateManaCostColor(character);
+    }
+    
+    private void UpdateManaCostColor(Character character)
+    {
+        if (manaCost != null && character != null)
+        {
+            if (character.mana >= cardData.manaCost)
+            {
+                // Can afford - normal color
+                manaCost.style.color = new Color(1f, 1f, 1f); // White
+            }
+            else
+            {
+                // Cannot afford - red color
+                manaCost.style.color = new Color(1f, 0.3f, 0.3f); // Red
+            }
         }
     }
     
@@ -163,6 +191,20 @@ public class CustomCard : VisualElement
         }
     }
     
+    public void SetComboHighlighted(bool highlighted)
+    {
+        isComboHighlighted = highlighted;
+        
+        if (highlighted)
+        {
+            cardBackground.AddToClassList("combo-highlighted");
+        }
+        else
+        {
+            cardBackground.RemoveFromClassList("combo-highlighted");
+        }
+    }
+    
     private void OnCardClick(ClickEvent evt)
     {
         OnCardClicked?.Invoke(this);
@@ -177,6 +219,15 @@ public class CustomCard : VisualElement
         this.style.marginTop = -20;
         this.style.rotate = new StyleRotate(new Angle(0));
         this.style.scale = new StyleScale(new Vector2(1.1f, 1.1f));
+        
+        // Show tooltip
+        if (CardTooltipSystem.Instance != null && cardData != null)
+        {
+            Vector2 mousePos = evt.localMousePosition;
+            // Convert to screen position (this is approximate)
+            Vector2 screenPos = new Vector2(mousePos.x + Screen.width/2, mousePos.y + Screen.height/2);
+            CardTooltipSystem.Instance.StartTooltipTimer(cardData, GetCurrentCharacter(), screenPos);
+        }
     }
     
     private void OnMouseLeave(MouseLeaveEvent evt)
@@ -186,5 +237,33 @@ public class CustomCard : VisualElement
         
         // Reset transform - the CombatUI will reapply the fanning transform
         // This will be handled by the UpdateHand method when it's called
+        
+        // Hide tooltip
+        if (CardTooltipSystem.Instance != null)
+        {
+            CardTooltipSystem.Instance.CancelTooltipTimer();
+        }
+    }
+    
+    /// <summary>
+    /// Get the current character for tooltip calculations
+    /// </summary>
+    private Character GetCurrentCharacter()
+    {
+        // Try to get character from CharacterManager
+        CharacterManager characterManager = CharacterManager.Instance;
+        if (characterManager != null && characterManager.HasCharacter())
+        {
+            return characterManager.GetCurrentCharacter();
+        }
+        
+        // Try to get character from CombatDeckManager
+        CombatDeckManager deckManager = CombatDeckManager.Instance;
+        if (deckManager != null)
+        {
+            return deckManager.GetCurrentCharacter();
+        }
+        
+        return null;
     }
 }

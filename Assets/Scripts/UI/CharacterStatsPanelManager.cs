@@ -12,12 +12,21 @@ public class CharacterStatsPanelManager : MonoBehaviour
     [Header("Panel References")]
     public GameObject characterStatsPanel;
     public CharacterStatsController statsController;
+	private RectTransform panelRect;
+	private CanvasGroup panelCanvasGroup;
     
     [Header("Toggle Button")]
     public Button toggleButton;
     
     [Header("Panel State")]
     public bool isPanelVisible = false;
+	[Header("Slide Settings")]
+	[SerializeField] private bool useSlideAnimation = true;
+	[SerializeField] private float slideDuration = 0.25f;
+	[SerializeField] private AnimationCurve slideEase = AnimationCurve.EaseInOut(0, 0, 1, 1);
+	[SerializeField] private float offscreenPadding = 40f;
+	private Vector2 visibleAnchoredPos;
+	private Vector2 hiddenAnchoredPos;
     
     [Header("Toggle Protection")]
     [SerializeField] private float toggleCooldown = 0.1f; // Prevent rapid successive toggles
@@ -45,12 +54,28 @@ public class CharacterStatsPanelManager : MonoBehaviour
             return;
         }
         
-        // Initialize panel state
-        if (characterStatsPanel != null)
-        {
-            characterStatsPanel.SetActive(false);
-            isPanelVisible = false;
-        }
+		// Initialize panel state
+		if (characterStatsPanel != null)
+		{
+			panelRect = characterStatsPanel.GetComponent<RectTransform>();
+			panelCanvasGroup = characterStatsPanel.GetComponent<CanvasGroup>();
+			if (panelCanvasGroup == null) panelCanvasGroup = characterStatsPanel.AddComponent<CanvasGroup>();
+			if (panelRect != null)
+			{
+				visibleAnchoredPos = panelRect.anchoredPosition;
+				// Compute hidden position to the LEFT by panel width + padding
+				float width = panelRect.rect.width;
+				hiddenAnchoredPos = visibleAnchoredPos - new Vector2(width + offscreenPadding, 0f);
+				// Start hidden
+				panelRect.anchoredPosition = hiddenAnchoredPos;
+			}
+			panelCanvasGroup.blocksRaycasts = false; // don't intercept when hidden
+			panelCanvasGroup.interactable = false;
+			panelCanvasGroup.alpha = 0f;
+			// Start disabled so it cannot intercept any raycasts
+			characterStatsPanel.SetActive(false);
+			isPanelVisible = false;
+		}
     }
     
     private void Start()
@@ -130,19 +155,51 @@ public class CharacterStatsPanelManager : MonoBehaviour
             return;
         }
         
-        // Toggle the visibility state
-        isPanelVisible = !isPanelVisible;
-        
-        // Apply the visibility to the panel
-        characterStatsPanel.SetActive(isPanelVisible);
-        
-        // Update stats when opening the panel
-        if (isPanelVisible)
-        {
-            UpdatePanelData();
-        }
-        
-        Debug.Log($"[CharacterStatsPanelManager] Panel toggled: {(isPanelVisible ? "Visible" : "Hidden")} - Panel active: {characterStatsPanel.activeSelf}");
+		// Toggle the visibility state
+		isPanelVisible = !isPanelVisible;
+		
+		if (!useSlideAnimation || panelRect == null || panelCanvasGroup == null)
+		{
+			characterStatsPanel.SetActive(isPanelVisible);
+			panelCanvasGroup.blocksRaycasts = isPanelVisible;
+			panelCanvasGroup.interactable = isPanelVisible;
+			panelCanvasGroup.alpha = isPanelVisible ? 1f : 0f;
+			if (isPanelVisible) UpdatePanelData();
+		}
+		else
+		{
+			// Animate slide and raycast state
+			Vector2 target = isPanelVisible ? visibleAnchoredPos : hiddenAnchoredPos;
+			if (isPanelVisible)
+			{
+				// Ensure active before animating in
+				characterStatsPanel.SetActive(true);
+				// Start from hidden position and 0 alpha if this is a fresh open
+				panelRect.anchoredPosition = hiddenAnchoredPos;
+				panelCanvasGroup.alpha = 0f;
+				UpdatePanelData();
+				panelCanvasGroup.blocksRaycasts = true;
+				panelCanvasGroup.interactable = true;
+			}
+			LeanTween.cancel(characterStatsPanel);
+			LeanTween.value(characterStatsPanel, panelRect.anchoredPosition, target, slideDuration)
+				.setOnUpdate((Vector2 v) => panelRect.anchoredPosition = v)
+				.setEase(slideEase);
+			LeanTween.value(characterStatsPanel, panelCanvasGroup.alpha, isPanelVisible ? 1f : 0f, slideDuration)
+				.setOnUpdate((float a) => panelCanvasGroup.alpha = a)
+				.setEase(slideEase)
+				.setOnComplete(() => {
+					if (!isPanelVisible)
+					{
+						panelCanvasGroup.blocksRaycasts = false;
+						panelCanvasGroup.interactable = false;
+						// Finally disable so it cannot intercept any clicks
+						characterStatsPanel.SetActive(false);
+					}
+				});
+		}
+		
+		Debug.Log($"[CharacterStatsPanelManager] Panel toggled: {(isPanelVisible ? "Visible" : "Hidden")}" );
         
         // Reset toggle protection
         isToggling = false;

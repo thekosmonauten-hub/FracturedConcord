@@ -217,8 +217,17 @@ namespace PassiveTree
                     Debug.Log($"  - Corresponding extension point: {correspondingExtensionPointName}");
                 }
                 
-                // Allocate the corresponding extension point on the adjacent board
-                AllocateCorrespondingExtensionPoint(adjacentPosition, correspondingCellPosition, correspondingExtensionPointName);
+                // CRITICAL: Only allocate if the direction matches the extension point direction
+                if (ShouldAllocateForDirection(extensionPointName, direction))
+                {
+                    Debug.Log($"[WorldBoardAdjacencyManager] ✅ ALLOCATING: Direction {direction} matches extension point {extensionPointName}");
+                    // Allocate the corresponding extension point on the adjacent board
+                    AllocateCorrespondingExtensionPoint(adjacentPosition, correspondingCellPosition, correspondingExtensionPointName);
+                }
+                else
+                {
+                    Debug.Log($"[WorldBoardAdjacencyManager] ❌ SKIPPING: Direction {direction} does not match extension point {extensionPointName}");
+                }
             }
         }
         
@@ -460,6 +469,89 @@ namespace PassiveTree
         public bool HasBoardAt(Vector2Int worldPosition)
         {
             return worldBoardPositions.ContainsKey(worldPosition);
+        }
+        
+        /// <summary>
+        /// Check if we should allocate for the given direction based on the extension point name
+        /// This prevents allocating on wrong adjacent boards
+        /// </summary>
+        private bool ShouldAllocateForDirection(string extensionPointName, Vector2Int direction)
+        {
+            // Extension_North should only allocate on North direction (up)
+            if (extensionPointName == "Extension_North" && direction == Vector2Int.up)
+                return true;
+            
+            // Extension_South should only allocate on South direction (down)
+            if (extensionPointName == "Extension_South" && direction == Vector2Int.down)
+                return true;
+            
+            // Extension_East should only allocate on East direction (right)
+            if (extensionPointName == "Extension_East" && direction == Vector2Int.right)
+                return true;
+            
+            // Extension_West should only allocate on West direction (left)
+            if (extensionPointName == "Extension_West" && direction == Vector2Int.left)
+                return true;
+            
+            return false;
+        }
+        
+        /// <summary>
+        /// Validate that the adjacency system works for any board configuration
+        /// This method can be called to test the system with different scenarios
+        /// </summary>
+        public void ValidateAdjacencySystem()
+        {
+            Debug.Log($"[WorldBoardAdjacencyManager] 🔍 VALIDATION: Testing adjacency system for any board configuration");
+            
+            // Test all possible extension point directions
+            string[] extensionPoints = { "Extension_North", "Extension_South", "Extension_East", "Extension_West" };
+            Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.right, Vector2Int.left };
+            
+            foreach (string extensionPoint in extensionPoints)
+            {
+                foreach (Vector2Int direction in directions)
+                {
+                    bool shouldAllocate = ShouldAllocateForDirection(extensionPoint, direction);
+                    string correspondingPoint = GetCorrespondingExtensionPointName(extensionPoint, direction);
+                    
+                    Debug.Log($"[WorldBoardAdjacencyManager] 🔍 TEST: {extensionPoint} + {direction} = Allocate: {shouldAllocate}, Corresponding: {correspondingPoint}");
+                    
+                    // Validate the mapping is correct
+                    if (shouldAllocate)
+                    {
+                        bool mappingCorrect = IsMappingCorrect(extensionPoint, direction, correspondingPoint);
+                        if (!mappingCorrect)
+                        {
+                            Debug.LogWarning($"[WorldBoardAdjacencyManager] ⚠️ INCORRECT MAPPING: {extensionPoint} + {direction} → {correspondingPoint}");
+                        }
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Check if the extension point mapping is correct
+        /// </summary>
+        private bool IsMappingCorrect(string originalPoint, Vector2Int direction, string correspondingPoint)
+        {
+            // North → South
+            if (originalPoint == "Extension_North" && direction == Vector2Int.up && correspondingPoint == "Extension_South")
+                return true;
+            
+            // South → North  
+            if (originalPoint == "Extension_South" && direction == Vector2Int.down && correspondingPoint == "Extension_North")
+                return true;
+            
+            // East → West
+            if (originalPoint == "Extension_East" && direction == Vector2Int.right && correspondingPoint == "Extension_West")
+                return true;
+            
+            // West → East
+            if (originalPoint == "Extension_West" && direction == Vector2Int.left && correspondingPoint == "Extension_East")
+                return true;
+            
+            return false;
         }
     }
 }

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc97289223b8f943b58c307b0877854, type: 3}
+  m_Name: WitchStart
+  m_EditorClassIdentifier: Assembly-CSharp::StarterDeckDefinition
+  characterClass: Marauder
+  cards:
+  - card: {fileID: 11400000, guid: f4d20fc8372647e47aeaeb76476d6819, type: 2}
+    count: 6
+  - card: {fileID: 11400000, guid: c9dead36e3dcd4e43a099045bee4fb64, type: 2}
+    count: 2
+  - card: {fileID: 11400000, guid: d82c5757171a19a48b1115044e38755f, type: 2}
+    count: 2
+  - card: {fileID: 11400000, guid: 0f5fc16c0ca3dcc4aa72bf698a0acc7a, type: 2}
+    count: 2
+  - card: {fileID: 11400000, guid: 747f2aa3c5d587d49804ef8e91c679c6, type: 2}
+    count: 4
+  - card: {fileID: 11400000, guid: 67623740bde4feb47a84af8fc321054e, type: 2}
+    count: 2

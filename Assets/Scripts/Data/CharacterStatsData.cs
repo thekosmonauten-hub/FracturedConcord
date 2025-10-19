@@ -28,6 +28,7 @@ public class CharacterStatsData
     public float criticalChance;
     public float criticalMultiplier;
     public float accuracy;
+    public float evasionIncreased;
     
     [Header("Damage Modifiers")]
     public float increasedPhysicalDamage;
@@ -187,6 +188,7 @@ public class CharacterStatsData
         criticalMultiplier = 1.5f;
         accuracy = 100f;
         evasion = 0f;
+        evasionIncreased = 0f;
         blockChance = 0f;
         dodgeChance = 0f;
         
@@ -361,6 +363,7 @@ public class CharacterStatsData
             case "criticalmultiplier": return criticalMultiplier;
             case "accuracy": return accuracy;
             case "evasion": return evasion;
+            case "evasionincreased": return evasionIncreased;
             case "blockchance": return blockChance;
             case "dodgechance": return dodgeChance;
             
@@ -479,6 +482,7 @@ public class CharacterStatsData
             case "criticalmultiplier": criticalMultiplier = value; break;
             case "accuracy": accuracy = value; break;
             case "evasion": evasion = value; break;
+            case "evasionincreased": evasionIncreased = value; break;
             case "increasedphysicaldamage": increasedPhysicalDamage = value; break;
             case "increasedfiredamage": increasedFireDamage = value; break;
             case "increasedcolddamage": increasedColdDamage = value; break;
@@ -673,6 +677,7 @@ public class CharacterStatsData
         allStats["Critical Multiplier"] = criticalMultiplier;
         allStats["Accuracy"] = accuracy;
         allStats["Evasion"] = evasion;
+        allStats["Evasion Increased %"] = evasionIncreased * 100f;
         allStats["Block Chance"] = blockChance;
         allStats["Dodge Chance"] = dodgeChance;
         

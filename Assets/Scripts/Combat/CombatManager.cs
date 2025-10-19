@@ -27,6 +27,9 @@ public class CombatManager : MonoBehaviour
     public System.Action<Card> OnCardPlayed;
     public System.Action OnTurnEnded;
     public System.Action OnCombatEnded;
+
+	// Optional bridge to UI-driven combat display manager (UGUI path)
+	private CombatDisplayManager cachedDisplayManager;
     
     private void Start()
     {
@@ -208,6 +211,7 @@ public class CombatManager : MonoBehaviour
         float damage = DamageCalculator.CalculateCardDamage(card, playerCharacter, GetEquippedWeapon());
         
         // Handle AoE vs single target
+        Debug.Log($"[PlayCard] {card.cardName} isAoE={card.isAoE} aoeTargets={card.aoeTargets}");
         if (card.isAoE)
         {
             // AoE card hits multiple enemies
@@ -237,7 +241,23 @@ public class CombatManager : MonoBehaviour
     
     private void PlaySingleTargetCard(Card card, float damage)
     {
-        // Apply damage to selected enemy
+        // Prefer CombatDisplayManager if present (UGUI path), otherwise use internal enemies list
+		var dm = GetDisplayManager();
+		if (dm != null)
+		{
+			if (selectedEnemyIndex >= 0)
+			{
+				dm.PlayerAttackEnemy(selectedEnemyIndex, damage);
+				Debug.Log($"{playerCharacter.characterName} played {card.cardName} for {damage:F1} damage on enemy index {selectedEnemyIndex} (DisplayManager)");
+			}
+			else
+			{
+				Debug.LogWarning("No valid target index for card (DisplayManager)!");
+			}
+			return;
+		}
+
+        // Apply damage to selected enemy (internal path)
         if (selectedEnemyIndex < enemies.Count && enemies[selectedEnemyIndex] != null)
         {
             enemies[selectedEnemyIndex].TakeDamage(damage);
@@ -251,20 +271,92 @@ public class CombatManager : MonoBehaviour
     
     private void PlayAoECard(Card card, float damage)
     {
-        // AoE hits multiple enemies
+        var dm = GetDisplayManager();
         int targetsHit = 0;
-        int maxTargets = Mathf.Min(card.aoeTargets, enemies.Count);
-        
-        for (int i = 0; i < maxTargets; i++)
+
+        if (dm != null)
         {
-            if (enemies[i] != null && enemies[i].IsAlive())
+            // Use display manager's active enemies and apply adjacency/all logic
+            var active = dm.GetActiveEnemies();
+            int total = active != null ? active.Count : 0;
+            if (total == 0)
             {
-                enemies[i].TakeDamage(damage);
-                targetsHit++;
-                Debug.Log($"{playerCharacter.characterName} played {card.cardName} for {damage:F1} damage on {enemies[i].enemyName}!");
+                Debug.LogWarning("No enemies available in DisplayManager for AoE.");
+                return;
+            }
+
+            // Build alive flags
+            System.Func<int, bool> isAliveAt = (idx) => idx >= 0 && idx < total && active[idx] != null && active[idx].currentHealth > 0;
+
+            System.Collections.Generic.List<int> indices = new System.Collections.Generic.List<int>();
+            if (card.aoeTargets <= 0)
+            {
+                for (int i = 0; i < total; i++) if (isAliveAt(i)) indices.Add(i);
+            }
+            else
+            {
+                // adjacency from selectedEnemyIndex
+                int start = selectedEnemyIndex;
+                if (!isAliveAt(start))
+                {
+                    // find nearest alive
+                    int best = -1; int bestDist = int.MaxValue;
+                    for (int i = 0; i < total; i++)
+                    {
+                        if (!isAliveAt(i)) continue;
+                        int d = Mathf.Abs(i - selectedEnemyIndex);
+                        if (d < bestDist) { best = i; bestDist = d; }
+                    }
+                    start = best >= 0 ? best : 0;
+                }
+                if (isAliveAt(start)) indices.Add(start);
+
+                for (int d = 1; indices.Count < card.aoeTargets; d++)
+                {
+                    bool any = false;
+                    int left = start - d;
+                    if (isAliveAt(left) && !indices.Contains(left)) { indices.Add(left); any = true; if (indices.Count == card.aoeTargets) break; }
+                    int right = start + d;
+                    if (isAliveAt(right) && !indices.Contains(right)) { indices.Add(right); any = true; }
+                    if (!any && left < 0 && right >= total) break;
+                }
+                for (int i = 0; indices.Count < card.aoeTargets && i < total; i++)
+                {
+                    if (isAliveAt(i) && !indices.Contains(i)) indices.Add(i);
+                }
+            }
+
+            Debug.Log($"[AoE] Using DisplayManager with total={total}, selected={selectedEnemyIndex}, targetsResolved=[{string.Join(",", indices)}]");
+
+            // Apply via display manager so UI updates correctly
+            for (int n = 0; n < indices.Count; n++)
+            {
+                int idx = indices[n];
+                if (isAliveAt(idx))
+                {
+                    dm.PlayerAttackEnemy(idx, damage);
+                    targetsHit++;
+                }
             }
         }
-        
+        else
+        {
+            // Internal enemies list path
+            // Determine AoE targets using adjacency around selected enemy.
+            List<int> targetIndices = GetAoETargetIndices(card.aoeTargets, selectedEnemyIndex);
+            Debug.Log($"[AoE] Internal path, targetsResolved=[{string.Join(",", targetIndices)}]");
+            for (int t = 0; t < targetIndices.Count; t++)
+            {
+                int i = targetIndices[t];
+                if (i >= 0 && i < enemies.Count && enemies[i] != null && enemies[i].IsAlive())
+                {
+                    enemies[i].TakeDamage(damage);
+                    targetsHit++;
+                    Debug.Log($"{playerCharacter.characterName} played {card.cardName} for {damage:F1} damage on {enemies[i].enemyName}!");
+                }
+            }
+        }
+
         if (targetsHit > 0)
         {
             Debug.Log($"{card.cardName} hit {targetsHit} enemies for {damage:F1} damage each!");
@@ -336,12 +428,127 @@ public class CombatManager : MonoBehaviour
             EndCombat(true);
         }
     }
+
+    /// <summary>
+    /// Compute which enemies should be hit by an AoE effect.
+    /// If requestedTargets <= 0, returns all alive enemies.
+    /// Otherwise returns a set chosen by adjacency around centerIndex (center, -1, +1, -2, +2, ...).
+    /// </summary>
+    private List<int> GetAoETargetIndices(int requestedTargets, int centerIndex)
+    {
+        List<int> result = new List<int>();
+
+        // Collect alive enemy indices
+        List<int> alive = new List<int>();
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            if (enemies[i] != null && enemies[i].IsAlive())
+            {
+                alive.Add(i);
+            }
+        }
+
+        if (alive.Count == 0)
+        {
+            return result;
+        }
+
+        // Non-positive means hit all in scope
+        if (requestedTargets <= 0)
+        {
+            result.AddRange(alive);
+            return result;
+        }
+
+        // Ensure starting index is alive; if not, find nearest alive
+        int start = centerIndex;
+        if (!alive.Contains(start))
+        {
+            int best = alive[0];
+            int bestDist = Mathf.Abs(best - centerIndex);
+            for (int j = 1; j < alive.Count; j++)
+            {
+                int idx = alive[j];
+                int d = Mathf.Abs(idx - centerIndex);
+                if (d < bestDist)
+                {
+                    best = idx;
+                    bestDist = d;
+                }
+            }
+            start = best;
+        }
+
+        result.Add(start);
+
+        // Expand outwards: left, right, left2, right2, ...
+        for (int d = 1; result.Count < requestedTargets; d++)
+        {
+            bool addedAny = false;
+
+            int left = start - d;
+            if (left >= 0 && alive.Contains(left) && !result.Contains(left))
+            {
+                result.Add(left);
+                addedAny = true;
+                if (result.Count == requestedTargets) break;
+            }
+
+            int right = start + d;
+            if (right < enemies.Count && alive.Contains(right) && !result.Contains(right))
+            {
+                result.Add(right);
+                addedAny = true;
+            }
+
+            if (!addedAny && left < 0 && right >= enemies.Count)
+            {
+                break;
+            }
+        }
+
+        // If still short, fill remaining from alive left-to-right
+        for (int k = 0; result.Count < requestedTargets && k < alive.Count; k++)
+        {
+            if (!result.Contains(alive[k]))
+            {
+                result.Add(alive[k]);
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Enemy row classification helper for future use.
+    /// For 4–5 enemies: indices 0..2 Back, 3..4 Front. For ≤3, treat as Both.
+    /// </summary>
+    public enum EnemyRow { Front, Back, Both }
+
+    public static EnemyRow GetEnemyRow(int zeroBasedIndex, int totalEnemies)
+    {
+        if (totalEnemies >= 4)
+        {
+            if (zeroBasedIndex <= 2) return EnemyRow.Back;
+            return EnemyRow.Front;
+        }
+        return EnemyRow.Both;
+    }
     
     private Weapon GetEquippedWeapon()
     {
         // For now, return the melee weapon if available
         return playerCharacter.weapons.meleeWeapon;
     }
+
+	private CombatDisplayManager GetDisplayManager()
+	{
+		if (cachedDisplayManager == null)
+		{
+			cachedDisplayManager = FindFirstObjectByType<CombatDisplayManager>();
+		}
+		return cachedDisplayManager;
+	}
     
     public void EndTurn()
     {
@@ -424,10 +631,23 @@ public class CombatManager : MonoBehaviour
             Debug.Log("Combat won! Enemy defeated.");
             // Add experience, rewards, etc.
             playerCharacter.AddExperience(50);
+            
+            // Auto-save after victory
+            if (CharacterManager.Instance != null)
+            {
+                CharacterManager.Instance.SaveCharacter();
+                Debug.Log("[Auto-Save] Character saved after combat victory.");
+            }
         }
         else
         {
             Debug.Log("Combat lost! Player defeated.");
+            // Auto-save after defeat (preserve progress up to this point)
+            if (CharacterManager.Instance != null)
+            {
+                CharacterManager.Instance.SaveCharacter();
+                Debug.Log("[Auto-Save] Character saved after combat defeat.");
+            }
         }
         
         OnCombatEnded?.Invoke();

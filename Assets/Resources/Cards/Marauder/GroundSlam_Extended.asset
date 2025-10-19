@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f4a3e1b8c9d2a5e4f6b7c8d9e0f1a2b, type: 3}
+  m_Name: GroundSlam_Extended
+  m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
+  cardName: Ground Slam
+  cardType: Attack
+  playCost: 2
+  description: Deal {damage} physical damage to all {aoeTargets} enemies.
+  rarity: 1
+  element: 4
+  category: 0
+  cardImage: {fileID: 4164643674672263029, guid: 015efe5b1cddb694eb6ce4892836a0dc, type: 3}
+  elementFrame: {fileID: 0}
+  costBubble: {fileID: 0}
+  rarityFrame: {fileID: 0}
+  damage: 12
+  block: 0
+  isDiscardCard: 0
+  isDualWield: 0
+  ifDiscardedEffect: 
+  dualWieldEffect: 
+  primaryDamageType: 1
+  additionalDamageTypes: 
+  scalesWithMeleeWeapon: 1
+  scalesWithProjectileWeapon: 0
+  scalesWithSpellWeapon: 0
+  isAoE: 1
+  aoeTargets: 5
+  aoeRowScope: 0
+  damageScaling:
+    strengthScaling: 0.5
+    dexterityScaling: 0
+    intelligenceScaling: 0
+  guardScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+  requirements:
+    requiredStrength: 0
+    requiredDexterity: 0
+    requiredIntelligence: 0
+    requiredWeaponTypes: 
+    requiredLevel: 1
+  effects: []
+  enableCombo: 1
+  comboWith: 
+  comboDescription: Causes hit enemies to Crumble.
+  comboWithCardType: 2
+  comboAttackIncrease: 0
+  comboGuardIncrease: 0
+  comboIsAoE: 0
+  comboManaRefund: 0
+  comboApplyAilment: 
+  comboBuffs: []
+  comboConsumeAilment: 0
+  comboConsumeAilmentId: 0
+  comboDrawCards: 0
+  comboAilment: 9
+  comboAilmentPortion: 0.3
+  comboAilmentDuration: 5
+  consumeAilment: 0
+  consumeAilmentId: 0
+  comboScaling: 0
+  comboScalingDivisor: 1
+  comboLogic: 1
+  comboEffect: 
+  comboHighlightType: type
+  tags:
+  - Attack
+  - Physical

@@ -89,7 +89,8 @@ public class PassiveTreeCompleteSetup : MonoBehaviour
     {
         Debug.Log("[PassiveTreeCompleteSetup] Applying TypeScript data...");
 
-        // Find the CorePassiveTreeData asset
+        #if UNITY_EDITOR
+        // Find the CorePassiveTreeData asset (Editor only)
         string[] guids = UnityEditor.AssetDatabase.FindAssets("CorePassiveTreeData t:PassiveTreeBoardData");
         
         if (guids.Length == 0)
@@ -119,6 +120,9 @@ public class PassiveTreeCompleteSetup : MonoBehaviour
         UnityEditor.AssetDatabase.SaveAssets();
         
         Debug.Log("[PassiveTreeCompleteSetup] TypeScript data applied successfully");
+        #else
+        Debug.LogWarning("[PassiveTreeCompleteSetup] ApplyTypeScriptData uses UnityEditor and is unavailable in Player builds.");
+        #endif
     }
 
     /// <summary>

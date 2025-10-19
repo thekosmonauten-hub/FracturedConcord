@@ -1,0 +1,351 @@
+{
+  "deckName": "Example Card Types",
+  "characterClass": "Example",
+  "description": "Examples of different card types and mechanics",
+  "cards": [
+    {
+      "cardName": "Basic Strike",
+      "count": 1,
+      "data": {
+        "cardName": "Basic Strike",
+        "description": "Deal {damage} physical damage.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 6.0,
+        "primaryDamageType": "Physical",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredStrength": 10
+        },
+        "damageScaling": {
+          "strengthScaling": 0.3
+        },
+        "tags": ["Attack", "Physical", "Basic"],
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "AoE Cleave",
+      "count": 1,
+      "data": {
+        "cardName": "AoE Cleave",
+        "description": "Deal {damage} physical damage to all {aoeTargets} enemies.",
+        "cardType": "Attack",
+        "manaCost": 2,
+        "baseDamage": 5.0,
+        "primaryDamageType": "Physical",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true
+        },
+        "aoe": {
+          "isAoE": true,
+          "aoeTargets": 3
+        },
+        "requirements": {
+          "requiredStrength": 25
+        },
+        "damageScaling": {
+          "strengthScaling": 0.25
+        },
+        "tags": ["Attack", "Physical", "AoE"],
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Fire Spell",
+      "count": 1,
+      "data": {
+        "cardName": "Fire Spell",
+        "description": "Deal {damage} fire damage. Scales with Intelligence.",
+        "cardType": "Attack",
+        "manaCost": 2,
+        "baseDamage": 12.0,
+        "primaryDamageType": "Fire",
+        "weaponScaling": {
+          "scalesWithSpellWeapon": true
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredIntelligence": 35
+        },
+        "damageScaling": {
+          "intelligenceScaling": 0.75
+        },
+        "tags": ["Attack", "Fire", "Spell"],
+        "rarity": "Magic",
+        "element": "Fire",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Projectile Shot",
+      "count": 1,
+      "data": {
+        "cardName": "Projectile Shot",
+        "description": "Deal {damage} physical damage. Scales with Dexterity.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 7.0,
+        "primaryDamageType": "Physical",
+        "weaponScaling": {
+          "scalesWithProjectileWeapon": true
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredDexterity": 30
+        },
+        "damageScaling": {
+          "dexterityScaling": 0.6
+        },
+        "tags": ["Attack", "Physical", "Projectile"],
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Basic Block",
+      "count": 1,
+      "data": {
+        "cardName": "Basic Block",
+        "description": "Gain {guard} Guard.",
+        "cardType": "Guard",
+        "manaCost": 1,
+        "baseGuard": 5.0,
+        "guardScaling": {
+          "strengthScaling": 0.2
+        },
+        "requirements": {
+          "requiredStrength": 15
+        },
+        "tags": ["Guard", "Defense"],
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Guard"
+      }
+    },
+    {
+      "cardName": "Shield with Draw",
+      "count": 1,
+      "data": {
+        "cardName": "Shield with Draw",
+        "description": "Gain {guard} Guard. Draw a card.",
+        "cardType": "Guard",
+        "manaCost": 1,
+        "baseGuard": 8.0,
+        "guardScaling": {
+          "strengthScaling": 0.25
+        },
+        "requirements": {
+          "requiredStrength": 20
+        },
+        "effects": [
+          {
+            "effectType": "Draw",
+            "effectName": "Draw Card",
+            "description": "Draw 1 card",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        "tags": ["Guard", "Defense", "Draw"],
+        "rarity": "Magic",
+        "element": "Basic",
+        "category": "Guard"
+      }
+    },
+    {
+      "cardName": "Skill: Draw Cards",
+      "count": 1,
+      "data": {
+        "cardName": "Skill: Draw Cards",
+        "description": "Draw 2 cards.",
+        "cardType": "Skill",
+        "manaCost": 1,
+        "effects": [
+          {
+            "effectType": "Draw",
+            "effectName": "Draw Cards",
+            "description": "Draw 2 cards",
+            "value": 2.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        "tags": ["Skill", "Draw", "Utility"],
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Skill"
+      }
+    },
+    {
+      "cardName": "Skill: Heal",
+      "count": 1,
+      "data": {
+        "cardName": "Skill: Heal",
+        "description": "Restore 15 health.",
+        "cardType": "Skill",
+        "manaCost": 2,
+        "effects": [
+          {
+            "effectType": "Heal",
+            "effectName": "Heal",
+            "description": "Restore 15 health",
+            "value": 15.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        "tags": ["Skill", "Heal", "Recovery"],
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Skill"
+      }
+    },
+    {
+      "cardName": "Power: Damage Buff",
+      "count": 1,
+      "data": {
+        "cardName": "Power: Damage Buff",
+        "description": "Gain +20% increased damage for 3 turns.",
+        "cardType": "Power",
+        "manaCost": 1,
+        "effects": [
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Damage Buff",
+            "description": "+20% increased damage",
+            "value": 20.0,
+            "duration": 3,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        "tags": ["Power", "Buff", "Damage"],
+        "rarity": "Magic",
+        "element": "Basic",
+        "category": "Power"
+      }
+    },
+    {
+      "cardName": "Skill: Apply Debuff",
+      "count": 1,
+      "data": {
+        "cardName": "Skill: Apply Debuff",
+        "description": "Apply Vulnerability to all enemies for 2 turns.",
+        "cardType": "Skill",
+        "manaCost": 1,
+        "effects": [
+          {
+            "effectType": "ApplyStatus",
+            "effectName": "Vulnerability",
+            "description": "Enemies take increased damage",
+            "value": 1.0,
+            "duration": 2,
+            "damageType": "None",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        "tags": ["Skill", "Debuff", "Vulnerability"],
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Skill"
+      }
+    },
+    {
+      "cardName": "Multi-Stat Card",
+      "count": 1,
+      "data": {
+        "cardName": "Multi-Stat Card",
+        "description": "Deal {damage} damage. Scales with STR and DEX.",
+        "cardType": "Attack",
+        "manaCost": 2,
+        "baseDamage": 10.0,
+        "primaryDamageType": "Physical",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true,
+          "scalesWithProjectileWeapon": true
+        },
+        "requirements": {
+          "requiredStrength": 25,
+          "requiredDexterity": 25
+        },
+        "damageScaling": {
+          "strengthScaling": 0.3,
+          "dexterityScaling": 0.3
+        },
+        "tags": ["Attack", "Physical", "Hybrid"],
+        "rarity": "Rare",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Multi-Element Card",
+      "count": 1,
+      "data": {
+        "cardName": "Multi-Element Card",
+        "description": "Deal {damage} fire and cold damage.",
+        "cardType": "Attack",
+        "manaCost": 3,
+        "baseDamage": 15.0,
+        "primaryDamageType": "Fire",
+        "additionalDamageTypes": ["Cold"],
+        "weaponScaling": {
+          "scalesWithSpellWeapon": true
+        },
+        "requirements": {
+          "requiredIntelligence": 45
+        },
+        "damageScaling": {
+          "intelligenceScaling": 0.8
+        },
+        "tags": ["Attack", "Fire", "Cold", "Spell"],
+        "rarity": "Rare",
+        "element": "Fire",
+        "category": "Attack"
+      }
+    }
+  ]
+}
+

@@ -119,6 +119,60 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &674227595
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 674227597}
+  - component: {fileID: 674227596}
+  m_Layer: 0
+  m_Name: StarterDeckManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &674227596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 674227595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4462ae43249ab1844b36823ce21a2364, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StarterDeckManager
+  marauderStarterDeck: {fileID: 0}
+  rangerStarterDeck: {fileID: 0}
+  witchStarterDeck: {fileID: 0}
+  brawlerStarterDeck: {fileID: 0}
+  thiefStarterDeck: {fileID: 0}
+  apostleStarterDeck: {fileID: 0}
+  starterDeckDefinitions:
+  - {fileID: 11400000, guid: 23e499f21bd3dd240bfb42eb90a6e18e, type: 2}
+  loadDefinitionsFromResources: 1
+  definitionsResourcesPath: StarterDecks
+--- !u!4 &674227597
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 674227595}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 697.7971, y: 445.35687, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &703568346
 GameObject:
   m_ObjectHideFlags: 0
@@ -642,15 +696,21 @@ MonoBehaviour:
     characterClass: 
     level: 0
     experience: 0
+    skillPoints: 0
     act: 0
     strength: 0
     dexterity: 0
     intelligence: 0
     mana: 0
     maxMana: 0
+    manaRecoveryPerTurn: 0
+    cardsDrawnPerTurn: 0
     reliance: 0
     maxReliance: 0
     currentGuard: 0
+    maxGuard: 0
+    maxEnergyShield: 0
+    currentEnergyShield: 0
     maxHealth: 0
     currentHealth: 0
     attackPower: 0
@@ -722,6 +782,13 @@ MonoBehaviour:
       description: 
       characterClass: 
       cards: []
+    deckData:
+      activeDeckName: Default Deck
+      savedDeckNames: []
+      unlockedCards: []
+      hasAllCards: 0
+      lastUsedDeck: 
+      deckSlotsUnlocked: 5
 --- !u!4 &1842250570
 Transform:
   m_ObjectHideFlags: 0
@@ -827,3 +894,4 @@ SceneRoots:
   - {fileID: 1682370683}
   - {fileID: 1842250570}
   - {fileID: 703568348}
+  - {fileID: 674227597}

@@ -55,44 +55,317 @@ public class CardEffectProcessor : MonoBehaviour
             return;
         }
         
-        if (targetEnemy == null)
+        if (targetEnemy == null && !card.isAoE)
         {
-            Debug.LogError("✗ Target enemy is NULL! Cannot apply!");
+            Debug.LogError("✗ Target enemy is NULL and card is not AoE! Cannot apply!");
             return;
         }
         
         Debug.Log($"✓ Card: {card.cardName} (Type: {card.cardType})");
-        Debug.Log($"✓ Target: {targetEnemy.enemyName}");
-        Debug.Log($"✓ Target HP BEFORE: {targetEnemy.currentHealth}/{targetEnemy.maxHealth}");
+        if (targetEnemy != null)
+        {
+            Debug.Log($"✓ Target: {targetEnemy.enemyName}");
+            Debug.Log($"✓ Target HP BEFORE: {targetEnemy.currentHealth}/{targetEnemy.maxHealth}");
+        }
+        else if (card.isAoE)
+        {
+            Debug.Log($"✓ AoE Target: All enemies");
+        }
         
         if (showDetailedLogs)
         {
-            Debug.Log($"<color=cyan>═══ Applying {card.cardName} to {targetEnemy.enemyName} ═══</color>");
+            string targetName = targetEnemy != null ? targetEnemy.enemyName : "All enemies";
+            Debug.Log($"<color=cyan>═══ Applying {card.cardName} to {targetName} ═══</color>");
         }
         
-        // Calculate damage based on card type
-        switch (card.cardType)
+        // Check if this is an AoE card
+        if (card.isAoE)
         {
-            case CardType.Attack:
-                ApplyAttackCard(card, targetEnemy, player, targetScreenPosition);
-                break;
-            
-            case CardType.Guard:
-                ApplyGuardCard(card, player);
-                break;
-            
-            case CardType.Skill:
-                ApplySkillCard(card, targetEnemy, player, targetScreenPosition);
-                break;
-            
-            case CardType.Power:
-                ApplyPowerCard(card, player);
-                break;
-            
-            default:
-                Debug.LogWarning($"Unknown card type: {card.cardType}");
-                break;
+            Debug.Log($"<color=orange>⚡ AoE Card detected: {card.cardName} will hit all enemies!</color>");
+            ApplyAoECard(card, player, targetScreenPosition);
         }
+        else
+        {
+            // Single target card
+            switch (card.cardType)
+            {
+                case CardType.Attack:
+                    ApplyAttackCard(card, targetEnemy, player, targetScreenPosition);
+                    break;
+                
+                case CardType.Guard:
+                    ApplyGuardCard(card, player);
+                    break;
+                
+                case CardType.Skill:
+                    ApplySkillCard(card, targetEnemy, player, targetScreenPosition);
+                    break;
+                
+                case CardType.Power:
+                    ApplyPowerCard(card, player);
+                    break;
+                
+                default:
+                    Debug.LogWarning($"Unknown card type: {card.cardType}");
+                    break;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Apply an AoE card - affects all enemies
+    /// </summary>
+    private void ApplyAoECard(Card card, Character player, Vector3 targetScreenPosition)
+    {
+        Debug.Log($"<color=orange>🎯 Applying AoE card: {card.cardName}</color>");
+        
+        // Get all active enemies
+        List<Enemy> allEnemies = GetAllActiveEnemies();
+        
+        if (allEnemies.Count == 0)
+        {
+            Debug.LogWarning("No enemies found for AoE card!");
+            return;
+        }
+        
+        // Choose targets respecting AoE row scope
+        List<Enemy> orderedTargets = new List<Enemy>();
+        EnemyTargetingManager targeting = EnemyTargetingManager.Instance;
+        Enemy targeted = targeting != null ? targeting.GetTargetedEnemy() : null;
+        if (targeted != null && targeted.currentHealth > 0)
+        {
+            orderedTargets.Add(targeted);
+        }
+        // Determine row scope
+        bool limitToSelectedRow = (card.aoeRowScope == AoERowScope.SelectedRow);
+        var cdm = combatManager != null ? combatManager : FindFirstObjectByType<CombatDisplayManager>();
+        System.Func<Enemy, bool> rowFilter = (e) => true;
+        if (limitToSelectedRow && targeted != null && cdm != null)
+        {
+            int total = GetActiveEnemyCount(cdm);
+            int selIdx = FindActiveEnemyIndex(targeted);
+            var selectedRow = GetRowForActiveIndex(selIdx, total);
+            rowFilter = (e) => {
+                int idx = FindActiveEnemyIndex(e);
+                if (idx < 0) return true; // if we cannot resolve index, do not exclude it
+                return GetRowForActiveIndex(idx, total) == selectedRow || selectedRow == CombatManager.EnemyRow.Both;
+            };
+        }
+
+        // Build adjacency-ordered targets based on active enemy indices
+        var activeList = TryGetActiveEnemiesList();
+        List<int> candidateIndices = new List<int>();
+        int selectedIdx = FindActiveEnemyIndex(targeted);
+        if (activeList != null)
+        {
+            for (int i = 0; i < activeList.Count; i++)
+            {
+                var e = activeList[i];
+                if (e != null && e.currentHealth > 0 && (targeted == null || e != targeted) && (!limitToSelectedRow || rowFilter(e)))
+                {
+                    candidateIndices.Add(i);
+                }
+            }
+        }
+
+        List<int> finalIndices = new List<int>();
+        if (selectedIdx >= 0)
+        {
+            finalIndices.Add(selectedIdx);
+            // adjacency expansion: left, right, left2, right2, ... within candidate set
+            for (int d = 1; finalIndices.Count < (card.aoeTargets > 0 ? card.aoeTargets : int.MaxValue); d++)
+            {
+                bool any = false;
+                int left = selectedIdx - d;
+                if (candidateIndices.Contains(left) && !finalIndices.Contains(left)) { finalIndices.Add(left); any = true; }
+                int right = selectedIdx + d;
+                if (candidateIndices.Contains(right) && !finalIndices.Contains(right)) { finalIndices.Add(right); any = true; }
+                if (!any && (left < 0 && (activeList == null || right >= activeList.Count))) break;
+            }
+            // fill remaining from candidates if still short
+            for (int i = 0; (card.aoeTargets <= 0 || finalIndices.Count < card.aoeTargets) && i < candidateIndices.Count; i++)
+            {
+                int idx = candidateIndices[i];
+                if (!finalIndices.Contains(idx)) finalIndices.Add(idx);
+            }
+        }
+        else
+        {
+            // No selected index; fall back to all candidates (row-filtered) in list order
+            finalIndices.AddRange(candidateIndices);
+        }
+
+        int maxTargets = card.aoeTargets > 0 ? Mathf.Min(card.aoeTargets, finalIndices.Count) : finalIndices.Count;
+        Debug.Log($"<color=orange>🎯 AoE will hit {maxTargets} enemies</color>");
+
+        for (int n = 0; n < maxTargets; n++)
+        {
+            int ai = finalIndices[n];
+            Enemy enemy = (activeList != null && ai >= 0 && ai < activeList.Count) ? activeList[ai] : null;
+            Debug.Log($"<color=orange>🎯 Applying to enemy {n + 1}/{maxTargets}: {enemy?.enemyName}</color>");
+
+            // Prefer routing through CombatDisplayManager to ensure UI + VFX update per target
+            int enemyIndex = ai;
+            if (enemyIndex >= 0 && combatManager != null)
+            {
+                float totalDamage = (card.cardType == CardType.Attack || (card.cardType == CardType.Skill && card.baseDamage > 0))
+                    ? CalculateDamage(card, player)
+                    : 0f;
+
+                if (totalDamage > 0f)
+                {
+                    combatManager.PlayerAttackEnemy(enemyIndex, totalDamage);
+                    continue;
+                }
+            }
+
+            // Fallback: direct application if index not found or non-damage type
+            Vector3 enemyPosition = GetEnemyScreenPosition(enemy);
+            switch (card.cardType)
+            {
+                case CardType.Attack:
+                    ApplyAttackCard(card, enemy, player, enemyPosition);
+                    break;
+                case CardType.Skill:
+                    ApplySkillCard(card, enemy, player, enemyPosition);
+                    break;
+                default:
+                    Debug.LogWarning($"AoE card type {card.cardType} not supported yet");
+                    break;
+            }
+        }
+    }
+
+    private List<Enemy> TryGetActiveEnemiesList()
+    {
+        var cdm = combatManager != null ? combatManager : FindFirstObjectByType<CombatDisplayManager>();
+        if (cdm == null) return null;
+        var field = typeof(CombatDisplayManager).GetField("activeEnemies", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (field == null) return null;
+        return field.GetValue(cdm) as List<Enemy>;
+    }
+
+    private int GetActiveEnemyCount(CombatDisplayManager cdm)
+    {
+        var field = typeof(CombatDisplayManager).GetField("activeEnemies", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (field != null)
+        {
+            var list = field.GetValue(cdm) as List<Enemy>;
+            if (list != null) return list.Count;
+        }
+        return 0;
+    }
+
+    private CombatManager.EnemyRow GetRowForActiveIndex(int zeroBasedIndex, int totalEnemies)
+    {
+        if (zeroBasedIndex < 0) return CombatManager.EnemyRow.Both;
+        return CombatManager.GetEnemyRow(zeroBasedIndex, totalEnemies);
+    }
+
+    private int FindActiveEnemyIndex(Enemy enemy)
+    {
+        if (enemy == null) return -1;
+        // Try activeEnemies list first (order used by PlayerAttackEnemy)
+        var cdm = combatManager != null ? combatManager : FindFirstObjectByType<CombatDisplayManager>();
+        if (cdm != null)
+        {
+            var field = typeof(CombatDisplayManager).GetField("activeEnemies", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (field != null)
+            {
+                var list = field.GetValue(cdm) as List<Enemy>;
+                if (list != null)
+                {
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        if (list[i] == enemy) return i;
+                    }
+                }
+            }
+        }
+
+        // Fallback: enemyDisplays order
+        if (combatManager != null && combatManager.enemyDisplays != null)
+        {
+            for (int i = 0; i < combatManager.enemyDisplays.Count; i++)
+            {
+                var d = combatManager.enemyDisplays[i];
+                if (d != null && d.GetCurrentEnemy() == enemy) return i;
+            }
+        }
+        return -1;
+    }
+    
+    /// <summary>
+    /// Get all active enemies in the combat
+    /// </summary>
+    private List<Enemy> GetAllActiveEnemies()
+    {
+        List<Enemy> activeEnemies = new List<Enemy>();
+        
+        // Try to get enemies from CombatDisplayManager
+        var combatDisplayManager = FindFirstObjectByType<CombatDisplayManager>();
+        if (combatDisplayManager != null)
+        {
+            // Access the activeEnemies list if it's public
+            var activeEnemiesField = typeof(CombatDisplayManager).GetField("activeEnemies", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            
+            if (activeEnemiesField != null)
+            {
+                var enemies = activeEnemiesField.GetValue(combatDisplayManager) as List<Enemy>;
+                if (enemies != null)
+                {
+                    foreach (var enemy in enemies)
+                    {
+                        if (enemy != null && enemy.currentHealth > 0)
+                        {
+                            activeEnemies.Add(enemy);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Fallback: find enemies through EnemyCombatDisplay components
+        if (activeEnemies.Count == 0)
+        {
+            // Find EnemyCombatDisplay components which contain Enemy data
+            EnemyCombatDisplay[] enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+            foreach (var enemyDisplay in enemyDisplays)
+            {
+                if (enemyDisplay != null && enemyDisplay.gameObject.activeInHierarchy)
+                {
+                    // Get the enemy data from the display component
+                    Enemy enemy = enemyDisplay.GetCurrentEnemy();
+                    if (enemy != null && enemy.currentHealth > 0)
+                    {
+                        activeEnemies.Add(enemy);
+                    }
+                }
+            }
+        }
+        
+        return activeEnemies;
+    }
+    
+    /// <summary>
+    /// Get screen position for an enemy (for AoE targeting)
+    /// </summary>
+    private Vector3 GetEnemyScreenPosition(Enemy enemy, int index)
+    {
+        // Try to find the enemy's display component
+        var enemyDisplay = FindFirstObjectByType<EnemyCombatDisplay>();
+        if (enemyDisplay != null)
+        {
+            // Calculate a position based on the enemy index
+            // This spreads out the target positions for visual variety
+            Vector3 basePosition = enemyDisplay.transform.position;
+            basePosition.x += (index - 1) * 50f; // Spread horizontally
+            return basePosition;
+        }
+        
+        // Fallback: use the original target position
+        return Vector3.zero;
     }
     
     /// <summary>
@@ -104,6 +377,47 @@ public class CardEffectProcessor : MonoBehaviour
         
         // Calculate total damage
         float totalDamage = CalculateDamage(card, player);
+
+        // Prefer CombatDisplayManager routing if we can resolve the enemy index
+        int idx = FindActiveEnemyIndex(targetEnemy);
+        if (idx >= 0 && combatManager != null)
+        {
+            combatManager.PlayerAttackEnemy(idx, totalDamage);
+            return;
+        }
+
+        // Apply Vulnerability multiplier: +15% damage taken per stack
+        try
+        {
+            var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+            foreach (var d in enemyDisplays)
+            {
+                if (d != null && d.GetCurrentEnemy() == targetEnemy)
+                {
+                    var statusManager = d.GetComponent<StatusEffectManager>();
+                    if (statusManager != null)
+                    {
+                        float stacks = statusManager.GetTotalMagnitude(StatusEffectType.Vulnerable);
+                        if (stacks > 0f)
+                        {
+                            float vulnMultiplier = 1f + (0.15f * stacks);
+                            Debug.Log($"  Vulnerable stacks: {stacks}, multiplier: x{vulnMultiplier:F2}");
+                            totalDamage *= vulnMultiplier;
+                        }
+                        // Apply Bolster (less damage taken per stack: 2%, max 10 stacks)
+                        float bolsterStacks = Mathf.Min(10f, statusManager.GetTotalMagnitude(StatusEffectType.Bolster));
+                        if (bolsterStacks > 0f)
+                        {
+                            float lessMultiplier = Mathf.Clamp01(1f - (0.02f * bolsterStacks));
+                            Debug.Log($"  Bolster stacks: {bolsterStacks}, less dmg multiplier: x{lessMultiplier:F2}");
+                            totalDamage *= lessMultiplier;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        catch { /* safe guard */ }
         
         Debug.Log($"  Base damage: {card.baseDamage}");
         Debug.Log($"  Total calculated damage: {totalDamage}");
@@ -132,16 +446,288 @@ public class CardEffectProcessor : MonoBehaviour
         // Update enemy display to show new HP
         UpdateEnemyDisplay(targetEnemy);
         
+        // Process generic on-play effects (e.g., Draw)
+        ApplyOnPlayEffects(card);
+        
+        // NEW: Hook - apply structured combo ailment if present
+        if (card.comboAilmentId != AilmentId.None)
+        {
+            switch (card.comboAilmentId)
+            {
+                case AilmentId.Crumble:
+                    if (card.primaryDamageType == DamageType.Physical && card.comboAilmentPortion > 0f)
+                    {
+                        // Find the display for the specific target enemy to apply Crumble correctly
+                        var displays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+                        foreach (var d in displays)
+                        {
+                            if (d != null && d.GetCurrentEnemy() == targetEnemy)
+                            {
+                                var statusManager = d.GetComponent<StatusEffectManager>();
+                                if (statusManager != null)
+                                {
+                                    int dur = card.comboAilmentDuration > 0 ? card.comboAilmentDuration : 5;
+                                    float stored = totalDamage * card.comboAilmentPortion;
+                                    statusManager.ApplyOrStackCrumble(stored, dur);
+                                    Debug.Log($"[Crumble] Stored {stored:F0} damage for {dur} turns (structured)");
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+        
         // Check if enemy is defeated
         if (targetEnemy.currentHealth <= 0)
         {
             Debug.Log($"<color=yellow>💀 {targetEnemy.enemyName} has been defeated!</color>");
             
-            if (combatManager != null)
+                // XP grant per enemy kill using area level and rarity multipliers with overlevel penalties
+                TryGrantKillExperience(targetEnemy);
+                TryGenerateLoot(targetEnemy);
+                
+                if (combatManager != null)
+                {
+                    combatManager.OnEnemyDefeated?.Invoke(targetEnemy);
+                }
+        }
+    }
+
+    private void TryGenerateLoot(Enemy enemy)
+    {
+        // Simple loot: roll a weapon from ItemDatabase matching enemy tier → rarity
+        var itemDb = ItemDatabase.Instance;
+        if (itemDb == null) return;
+
+        ItemRarity rarity = ItemRarity.Normal;
+        try
+        {
+            var displays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+            foreach (var d in displays)
             {
-                combatManager.OnEnemyDefeated?.Invoke(targetEnemy);
+                if (d != null && d.GetCurrentEnemy() == enemy)
+                {
+                    var tierField = typeof(EnemyCombatDisplay).GetField("enemyData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    var ed = tierField != null ? tierField.GetValue(d) as EnemyData : null;
+                    if (ed != null)
+                    {
+                        switch (ed.tier)
+                        {
+                            case EnemyTier.Normal: rarity = ItemRarity.Normal; break;
+                            case EnemyTier.Elite: rarity = ItemRarity.Magic; break;
+                            case EnemyTier.Miniboss: rarity = ItemRarity.Rare; break;
+                            case EnemyTier.Boss: rarity = ItemRarity.Rare; break;
+                        }
+                    }
+                    break;
+                }
             }
         }
+        catch { rarity = ItemRarity.Normal; }
+
+        var candidates = itemDb.GetWeaponsByRarity(rarity);
+        if (candidates == null || candidates.Count == 0)
+        {
+            candidates = itemDb.weapons; // fallback to any weapon
+        }
+        if (candidates == null || candidates.Count == 0) return;
+
+        var dropped = candidates[Random.Range(0, candidates.Count)];
+
+        // Add to inventory via CharacterManager
+        var cm = CharacterManager.Instance;
+        if (cm != null)
+        {
+            cm.AddItem(dropped);
+        }
+
+        // Log to combat UI with rarity color and hover tooltip
+        var animatedUI = FindFirstObjectByType<AnimatedCombatUI>();
+        if (animatedUI != null)
+        {
+            animatedUI.AddLootToken(dropped, enemy.enemyName);
+        }
+        else
+        {
+            string color = GetRarityHexColor(dropped.rarity);
+            string itemText = $"<color=#{color}>[{dropped.itemName}]</color>";
+            string message = $"{enemy.enemyName} dropped {itemText}";
+            var simpleUI = FindFirstObjectByType<CombatUI>();
+            if (simpleUI != null)
+            {
+                simpleUI.SetCombatLogMessage(message);
+            }
+        }
+    }
+
+    private string GetRarityHexColor(ItemRarity rarity)
+    {
+        switch (rarity)
+        {
+            case ItemRarity.Normal: return "FFFFFF";
+            case ItemRarity.Magic: return "4AA3FF"; // blue
+            case ItemRarity.Rare: return "FFD700"; // gold
+            case ItemRarity.Unique: return "FF7F27"; // orange
+            default: return "FFFFFF";
+        }
+    }
+
+    private void TryShowHoverTooltipForDrop(BaseItem item)
+    {
+        // Basic implementation: create a transient GameObject with TooltipTrigger under the root canvas
+        try
+        {
+            var canvas = GameObject.FindObjectOfType<Canvas>();
+            if (canvas == null) return;
+            var go = new GameObject("LootTooltipProxy");
+            go.transform.SetParent(canvas.transform, false);
+            var trigger = go.AddComponent<TooltipTrigger>();
+            trigger.title = item.GetDisplayName();
+            trigger.content = item.GetFullDescription();
+            // position near mouse; the trigger script reads Input.mousePosition
+            // auto-destroy shortly after to avoid clutter
+            LeanTween.delayedCall(go, 2f, () => { if (go != null) GameObject.Destroy(go); });
+        }
+        catch { /* best-effort */ }
+    }
+
+    /// <summary>
+    /// Find the UI/display index for a given Enemy, using CombatDisplayManager if available.
+    /// </summary>
+    private int FindEnemyIndex(Enemy enemy)
+    {
+        if (enemy == null) return -1;
+
+        // Try direct match against enemyDisplays
+        if (combatManager != null && combatManager.enemyDisplays != null)
+        {
+            for (int i = 0; i < combatManager.enemyDisplays.Count; i++)
+            {
+                var d = combatManager.enemyDisplays[i];
+                if (d != null && d.GetCurrentEnemy() == enemy)
+                {
+                    return i;
+                }
+            }
+        }
+
+        // Try activeEnemies list via reflection on CombatDisplayManager
+        var cdm = combatManager != null ? combatManager : FindFirstObjectByType<CombatDisplayManager>();
+        if (cdm != null)
+        {
+            var field = typeof(CombatDisplayManager).GetField("activeEnemies", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (field != null)
+            {
+                var list = field.GetValue(cdm) as List<Enemy>;
+                if (list != null)
+                {
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        if (list[i] == enemy) return i;
+                    }
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    /// <summary>
+    /// Compute XP for a kill using area level, rarity multipliers, and overlevel penalties.
+    /// </summary>
+    private int ComputeKillXp(Enemy enemy)
+    {
+        int areaLevel = 1;
+        int playerLevel = 1;
+        var encounterMgr = EncounterManager.Instance;
+        if (encounterMgr != null)
+        {
+            var enc = encounterMgr.GetCurrentEncounter();
+            if (enc != null)
+            {
+                areaLevel = Mathf.Max(1, enc.areaLevel);
+            }
+        }
+
+        var cm = CharacterManager.Instance;
+        if (cm != null && cm.HasCharacter())
+        {
+            playerLevel = Mathf.Max(1, cm.GetCurrentCharacter().level);
+        }
+
+        float baseXP = 5f;
+        float areaMultiplier = 1f + 0.1f * (areaLevel - 1);
+
+        // Prefer rolled rarity on Enemy for XP
+        float rarityMultiplier = 1f;
+        if (enemy != null)
+        {
+            switch (enemy.rarity)
+            {
+                case EnemyRarity.Magic: rarityMultiplier = 1.4f; break;
+                case EnemyRarity.Rare: rarityMultiplier = 2.0f; break;
+                case EnemyRarity.Unique: rarityMultiplier = 3.0f; break;
+                default: rarityMultiplier = 1f; break;
+            }
+        }
+
+        // Fallback: use EnemyData tier or label if needed
+        try
+        {
+            var displays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+            foreach (var d in displays)
+            {
+                if (d != null && d.GetCurrentEnemy() == enemy)
+                {
+                    var tierField = typeof(EnemyCombatDisplay).GetField("enemyData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    var ed = tierField != null ? tierField.GetValue(d) as EnemyData : null;
+                    if (ed != null)
+                    {
+                        switch (ed.tier)
+                        {
+                            case EnemyTier.Normal: rarityMultiplier = Mathf.Max(rarityMultiplier, 1f); break;
+                            case EnemyTier.Elite: rarityMultiplier = Mathf.Max(rarityMultiplier, 1.6f); break;
+                            case EnemyTier.Miniboss: rarityMultiplier = Mathf.Max(rarityMultiplier, 2.0f); break;
+                            case EnemyTier.Boss: rarityMultiplier = Mathf.Max(rarityMultiplier, 3.0f); break;
+                        }
+                    }
+                    else
+                    {
+                        string typeText = d.enemyTypeText != null ? d.enemyTypeText.text.ToLower() : string.Empty;
+                        if (typeText.Contains("unique")) rarityMultiplier = Mathf.Max(rarityMultiplier, 3.0f);
+                        else if (typeText.Contains("rare")) rarityMultiplier = Mathf.Max(rarityMultiplier, 2.0f);
+                        else if (typeText.Contains("magic")) rarityMultiplier = Mathf.Max(rarityMultiplier, 1.4f);
+                    }
+                    break;
+                }
+            }
+        }
+        catch { rarityMultiplier = Mathf.Max(rarityMultiplier, 1f); }
+
+        float xp = baseXP * areaMultiplier * rarityMultiplier;
+        int diff = playerLevel - areaLevel;
+        if (diff >= 4 && diff <= 8)
+        {
+            float[] penalties = { 0.8f, 0.6f, 0.4f, 0.2f, 0.1f };
+            xp *= penalties[diff - 4];
+        }
+        else if (diff >= 9)
+        {
+            xp = 0f;
+        }
+        return Mathf.RoundToInt(xp);
+    }
+
+    private void TryGrantKillExperience(Enemy enemy)
+    {
+        var cm = CharacterManager.Instance;
+        if (cm == null || !cm.HasCharacter()) return;
+        int xp = ComputeKillXp(enemy);
+        if (xp <= 0) return;
+        cm.AddExperience(xp);
+        Debug.Log($"[XP] Gained {xp} XP for killing {enemy.enemyName}. Level {cm.GetCurrentCharacter().level} XP {cm.GetCurrentCharacter().experience}/{cm.GetCurrentCharacter().GetRequiredExperience()}");
     }
     
     /// <summary>
@@ -170,15 +756,27 @@ public class CardEffectProcessor : MonoBehaviour
     {
         float guardAmount = CalculateGuard(card, player);
         
-        // Apply guard to player (you'll need to implement this in Character class)
+        // Apply guard to player
         if (player != null)
         {
-            // TODO: Add guard/block system to Character
-            Debug.Log($"  🛡️ Player gained {guardAmount:F0} guard");
+            player.AddGuard(guardAmount);
+            Debug.Log($"  🛡️ Player gained {guardAmount:F0} guard (Total: {player.currentGuard}/{player.maxHealth})");
             
-            // For now, just log it
-            // Later: player.AddGuard(guardAmount);
+            // Update the guard display UI
+            PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+            if (playerDisplay != null)
+            {
+                playerDisplay.UpdateGuardDisplay();
+                Debug.Log($"  🛡️ Guard display updated");
+            }
+            else
+            {
+                Debug.LogWarning($"  ⚠️ PlayerCombatDisplay not found - guard UI won't update");
+            }
         }
+        
+        // Process generic on-play effects (e.g., Draw)
+        ApplyOnPlayEffects(card);
     }
     
     /// <summary>
@@ -197,7 +795,54 @@ public class CardEffectProcessor : MonoBehaviour
             ApplyGuardCard(card, player);
         }
         
-        // TODO: Apply additional effects (draw cards, heal, etc.)
+        // Process generic on-play effects (e.g., Draw)
+        ApplyOnPlayEffects(card);
+        
+        // NEW: If this skill is a Shout, consume Crumble on targets
+        // Or if the card explicitly consumes an ailment (per-card)
+        bool shouldConsume = card.cardName.ToLower().Contains("shout") || card.consumeAilmentEnabled;
+        if (shouldConsume)
+        {
+            AilmentId consumeId = card.consumeAilmentEnabled ? card.consumeAilmentId : AilmentId.Crumble;
+            if (card.isAoE)
+            {
+                foreach (var enemy in GetAllActiveEnemies())
+                {
+                    var displays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+                    foreach (var d in displays)
+                    {
+                        if (d != null && d.GetCurrentEnemy() == enemy)
+                        {
+                            var statusManager = d.GetComponent<StatusEffectManager>();
+                            if (statusManager != null)
+                            {
+                                if (consumeId == AilmentId.Crumble) statusManager.ConsumeCrumble();
+                                // Additional ailments can be added here with specific consume logic
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (targetEnemy != null)
+            {
+                var displays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+                foreach (var d in displays)
+                {
+                    if (d != null && d.GetCurrentEnemy() == targetEnemy)
+                    {
+                        var statusManager = d.GetComponent<StatusEffectManager>();
+                        if (statusManager != null)
+                        {
+                            if (consumeId == AilmentId.Crumble) statusManager.ConsumeCrumble();
+                            // Additional ailments can be added here with specific consume logic
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        
         Debug.Log($"  ✨ Skill effect applied: {card.cardName}");
     }
     
@@ -208,6 +853,34 @@ public class CardEffectProcessor : MonoBehaviour
     {
         // TODO: Implement buff system
         Debug.Log($"  💪 Power card applied: {card.cardName}");
+        
+        // Process generic on-play effects (e.g., Draw)
+        ApplyOnPlayEffects(card);
+    }
+
+    /// <summary>
+    /// Handle generic on-play effects that should apply regardless of card type (e.g., Draw).
+    /// </summary>
+    private void ApplyOnPlayEffects(Card card)
+    {
+        if (card == null || card.effects == null) return;
+        int drawTotal = 0;
+        foreach (var eff in card.effects)
+        {
+            if (eff != null && eff.effectType == EffectType.Draw)
+            {
+                drawTotal += Mathf.RoundToInt(eff.value);
+            }
+        }
+        if (drawTotal > 0)
+        {
+            var deckMgr = CombatDeckManager.Instance;
+            if (deckMgr != null)
+            {
+                Debug.Log($"[Effect] Draw {drawTotal} card(s)");
+                deckMgr.DrawCards(drawTotal);
+            }
+        }
     }
     
     /// <summary>

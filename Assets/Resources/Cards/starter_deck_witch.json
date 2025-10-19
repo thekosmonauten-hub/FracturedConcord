@@ -1,0 +1,507 @@
+{
+  "deckName": "Witch Starter Deck",
+  "characterClass": "Witch",
+  "description": "A spell-focused deck with elemental attacks (lightning, fire, cold, chaos) and combo synergies",
+  "cards": [
+    {
+      "cardName": "Arcane Bolt",
+      "count": 6,
+      "data": {
+        "cardName": "Arcane Bolt",
+        "description": "Deal {damage} Lightning damage. Gain 2 Guard. Combo (Arcane Bolt + Arcane Bolt): Deal 150% damage and gain 5 Guard.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 6.0,
+        "baseGuard": 2.0,
+        "primaryDamageType": "Lightning",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": true
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 25,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Spell", "Lightning", "Combo", "Projectile"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.5
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "Damage",
+            "effectName": "Combo Damage",
+            "description": "If last card was Arcane Bolt, deal 150% damage instead",
+            "value": 1.5,
+            "duration": 1,
+            "damageType": "Lightning",
+            "targetsSelf": false,
+            "targetsEnemy": true,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "comboArcaneBolt"
+          },
+          {
+            "effectType": "Guard",
+            "effectName": "Combo Guard",
+            "description": "If last card was Arcane Bolt, gain 5 Guard instead of 2",
+            "value": 5.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "comboArcaneBolt"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Lightning",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Arcane Barrier",
+      "count": 4,
+      "data": {
+        "cardName": "Arcane Barrier",
+        "description": "Gain 8 Guard (+Int/3). Gain 2 temporary Intelligence. Combo (Arcane Bolt + Arcane Barrier): Gain 50% more Guard.",
+        "cardType": "Guard",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 8.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 20,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Guard", "Intelligence", "Combo", "Arcane"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.33
+        },
+        
+        "effects": [
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Temporary Intelligence",
+            "description": "Gain 2 temporary Intelligence for rest of combat",
+            "value": 2.0,
+            "duration": -1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "Guard",
+            "effectName": "Combo Guard Bonus",
+            "description": "If last card was Arcane Bolt, gain 50% more Guard",
+            "value": 1.5,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "comboArcaneBolt"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Guard"
+      }
+    },
+    {
+      "cardName": "Fireball",
+      "count": 2,
+      "data": {
+        "cardName": "Fireball",
+        "description": "Deal {damage} fire damage to all enemies. Apply 2 Ignite. Combo (Arcane Bolt + Fireball): Apply 3x Ignite duration.",
+        "cardType": "Attack",
+        "manaCost": 2,
+        "baseDamage": 12.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Fire",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": true
+        },
+        
+        "aoe": {
+          "isAoE": true,
+          "aoeTargets": 3
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 30,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Spell", "Fire", "Combo", "Projectile"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.33
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "ApplyStatus",
+            "effectName": "Ignite",
+            "description": "Apply 2 Ignite stacks (30% of hit damage, 2 seconds)",
+            "value": 2.0,
+            "duration": 2,
+            "damageType": "Fire",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "ApplyStatus",
+            "effectName": "Combo Ignite Duration",
+            "description": "If last card was Arcane Bolt, Ignite lasts 6 seconds instead of 2",
+            "value": 2.0,
+            "duration": 6,
+            "damageType": "Fire",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": "comboArcaneBolt"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Fire",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Frost Nova",
+      "count": 2,
+      "data": {
+        "cardName": "Frost Nova",
+        "description": "Deal {damage} cold damage to all enemies. Apply 3 Chill. Combo (Frost Nova + Fireball): Apply 2x Chill duration.",
+        "cardType": "Attack",
+        "manaCost": 2,
+        "baseDamage": 8.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Cold",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": true
+        },
+        
+        "aoe": {
+          "isAoE": true,
+          "aoeTargets": 3
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 28,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Spell", "Cold", "Combo", "Area"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.25
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "ApplyStatus",
+            "effectName": "Chill",
+            "description": "Apply 3 Chill stacks (reduces attack/movement speed by 30%, 6 seconds)",
+            "value": 3.0,
+            "duration": 6,
+            "damageType": "Cold",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "ApplyStatus",
+            "effectName": "Combo Chill Duration",
+            "description": "If last card was Fireball, Chill lasts 12 seconds instead of 6",
+            "value": 3.0,
+            "duration": 12,
+            "damageType": "Cold",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": "comboFireball"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Cold",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Chaos Bolt",
+      "count": 2,
+      "data": {
+        "cardName": "Chaos Bolt",
+        "description": "Deal {damage} chaos damage to a single enemy. Apply 3 Poison. Combo (Fireball + Chaos Bolt): Apply 2x Poison damage.",
+        "cardType": "Attack",
+        "manaCost": 2,
+        "baseDamage": 10.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Chaos",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": true
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 26,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Spell", "Chaos", "Combo", "Projectile"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.33
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "ApplyStatus",
+            "effectName": "Poison",
+            "description": "Apply 3 Poison stacks (20% of hit damage, 3 turns)",
+            "value": 3.0,
+            "duration": 3,
+            "damageType": "Chaos",
+            "targetsSelf": false,
+            "targetsEnemy": true,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "ApplyStatus",
+            "effectName": "Combo Poison Damage",
+            "description": "If last card was Fireball, poison deals 40% of hit damage instead of 20%",
+            "value": 3.0,
+            "duration": 3,
+            "damageType": "Chaos",
+            "targetsSelf": false,
+            "targetsEnemy": true,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "comboFireball"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Chaos",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Arcane Focus",
+      "count": 2,
+      "data": {
+        "cardName": "Arcane Focus",
+        "description": "Gain 3 temporary Intelligence. Draw 1 card. Combo (Arcane Focus + any Spell): Gain 2 Guard.",
+        "cardType": "Skill",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 24,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Skill", "Intelligence", "Combo", "Arcane"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Temporary Intelligence",
+            "description": "Gain 3 temporary Intelligence for rest of combat",
+            "value": 3.0,
+            "duration": -1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "Draw",
+            "effectName": "Draw Card",
+            "description": "Draw 1 card",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "Guard",
+            "effectName": "Combo Guard",
+            "description": "If last card was a Spell, gain 2 Guard",
+            "value": 2.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "comboSpell"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Skill"
+      }
+    }
+  ]
+}
+

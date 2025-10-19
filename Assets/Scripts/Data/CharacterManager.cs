@@ -25,6 +25,9 @@ public class CharacterManager : MonoBehaviour
     [Header("Current Character")]
     public Character currentCharacter;
     
+    [Header("Inventory")]
+    public List<BaseItem> inventoryItems = new List<BaseItem>();
+    
     [Header("Character Events")]
     public System.Action<Character> OnCharacterLoaded;
     public System.Action<Character> OnCharacterSaved;
@@ -34,6 +37,8 @@ public class CharacterManager : MonoBehaviour
     public System.Action<Character> OnExperienceGained;
     public System.Action<Character> OnManaUsed;
     public System.Action<Character> OnRelianceUsed;
+    public System.Action<string> OnCardUnlocked; // card name
+    public System.Action<BaseItem> OnItemAdded; // inventory item added
     
     private void Awake()
     {
@@ -41,6 +46,11 @@ public class CharacterManager : MonoBehaviour
         {
             _instance = this;
             DontDestroyOnLoad(gameObject);
+            // Attempt to restore character if not already set (scene reloads)
+            if (currentCharacter == null)
+            {
+                EnsureCharacterLoadedFromPrefs();
+            }
         }
         else if (_instance != this)
         {
@@ -58,6 +68,23 @@ public class CharacterManager : MonoBehaviour
         {
             currentCharacter = Character.FromCharacterData(characterData);
             LoadCharacterFromPlayerPrefs(characterName);
+            // Fallback: if no starter cards unlocked yet, initialize from StarterDeckDefinition
+            try
+            {
+                if (currentCharacter != null && (currentCharacter.deckData == null || currentCharacter.deckData.unlockedCards.Count == 0))
+                {
+                    if (currentCharacter.deckData == null)
+                    {
+                        currentCharacter.deckData = new CharacterDeckData();
+                    }
+                    var sdm = StarterDeckManager.Instance;
+                    if (sdm != null)
+                    {
+                        sdm.AssignStarterToCharacterDeckData(currentCharacter);
+                    }
+                }
+            }
+            catch { }
             OnCharacterLoaded?.Invoke(currentCharacter);
             Debug.Log($"Loaded character: {currentCharacter.characterName}");
         }
@@ -74,6 +101,8 @@ public class CharacterManager : MonoBehaviour
         SaveCharacter();
         OnCharacterLoaded?.Invoke(currentCharacter);
         Debug.Log($"Created new character: {currentCharacter.characterName}");
+        PlayerPrefs.SetString("LastCharacterName", characterName);
+        PlayerPrefs.Save();
     }
     
     // Save the current character
@@ -109,6 +138,7 @@ public class CharacterManager : MonoBehaviour
         PlayerPrefs.SetInt(prefix + "Intelligence", currentCharacter.intelligence);
         PlayerPrefs.SetString(prefix + "CurrentScene", currentCharacter.currentScene);
         PlayerPrefs.SetString(prefix + "LastPosition", JsonUtility.ToJson(currentCharacter.lastPosition));
+        PlayerPrefs.SetString("LastCharacterName", currentCharacter.characterName);
         
         PlayerPrefs.Save();
     }
@@ -134,6 +164,17 @@ public class CharacterManager : MonoBehaviour
         }
         
         currentCharacter.CalculateDerivedStats();
+    }
+
+    // Ensure a character is present by restoring from PlayerPrefs if needed
+    public void EnsureCharacterLoadedFromPrefs()
+    {
+        if (currentCharacter != null) return;
+        string last = PlayerPrefs.GetString("LastCharacterName", string.Empty);
+        if (!string.IsNullOrWhiteSpace(last))
+        {
+            LoadCharacter(last);
+        }
     }
     
     // Get current character (null-safe)
@@ -191,6 +232,25 @@ public class CharacterManager : MonoBehaviour
                 OnCharacterLevelUp?.Invoke(currentCharacter);
             }
         }
+    }
+
+    // Unlock a card by name for the current character and notify listeners
+    public void UnlockCard(string cardName)
+    {
+        if (currentCharacter == null || string.IsNullOrWhiteSpace(cardName)) return;
+        if (currentCharacter.deckData == null) currentCharacter.deckData = new CharacterDeckData();
+        currentCharacter.deckData.UnlockCard(cardName);
+        OnCardUnlocked?.Invoke(cardName);
+        Debug.Log($"[Cards] Unlocked card: {cardName} for {currentCharacter.characterName}");
+    }
+
+    // Add an item to the player's inventory and notify listeners
+    public void AddItem(BaseItem item)
+    {
+        if (item == null) return;
+        inventoryItems.Add(item);
+        OnItemAdded?.Invoke(item);
+        Debug.Log($"[Loot] Added item to inventory: {item.itemName} ({item.rarity})");
     }
     
     public bool UseMana(int amount)

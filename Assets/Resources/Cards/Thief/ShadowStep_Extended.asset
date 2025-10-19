@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f4a3e1b8c9d2a5e4f6b7c8d9e0f1a2b, type: 3}
+  m_Name: ShadowStep_Extended
+  m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
+  cardName: Shadow Step
+  cardType: Guard
+  playCost: 1
+  description: 'Gain 6 Guard (+Dex/6). Dual: Gain 6 Guard (+Dex/6) and 250(+Dex*2)
+    evasion. Prepare: Gain +2 (+Dex/2) Guard and 1 temporary Dexterity.'
+  rarity: 0
+  element: 0
+  category: 3
+  cardImage: {fileID: 0}
+  elementFrame: {fileID: 0}
+  costBubble: {fileID: 0}
+  rarityFrame: {fileID: 0}
+  damage: 0
+  block: 6
+  isDiscardCard: 0
+  isDualWield: 0
+  ifDiscardedEffect: 
+  dualWieldEffect: 
+  primaryDamageType: 1
+  additionalDamageTypes: 
+  scalesWithMeleeWeapon: 0
+  scalesWithProjectileWeapon: 0
+  scalesWithSpellWeapon: 0
+  isAoE: 0
+  aoeTargets: 1
+  aoeRowScope: 0
+  damageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+  guardScaling:
+    strengthScaling: 0.5
+    dexterityScaling: 0
+    intelligenceScaling: 0
+  requirements:
+    requiredStrength: 0
+    requiredDexterity: 0
+    requiredIntelligence: 0
+    requiredWeaponTypes: 
+    requiredLevel: 1
+  effects: []
+  enableCombo: 1
+  comboWith: 
+  comboDescription: 
+  comboWithCardType: 0
+  comboAttackIncrease: 0
+  comboGuardIncrease: 0
+  comboIsAoE: 0
+  comboManaRefund: 0
+  comboApplyAilment: 
+  comboBuffs: []
+  comboConsumeAilment: 0
+  comboConsumeAilmentId: 0
+  comboDrawCards: 0
+  comboAilment: 0
+  comboAilmentPortion: 0
+  comboAilmentDuration: 0
+  consumeAilment: 0
+  consumeAilmentId: 0
+  comboScaling: 0
+  comboScalingDivisor: 1
+  comboLogic: 0
+  comboEffect: 
+  comboHighlightType: type
+  tags:
+  - Guard
+  - Basic

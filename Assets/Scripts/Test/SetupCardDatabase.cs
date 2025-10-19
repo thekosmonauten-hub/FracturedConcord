@@ -1,5 +1,7 @@
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System.Linq;
 
 public class SetupCardDatabase : MonoBehaviour
@@ -7,6 +9,7 @@ public class SetupCardDatabase : MonoBehaviour
     [ContextMenu("Setup Card Database")]
     public void InitializeCardDatabase()
     {
+#if UNITY_EDITOR
         // Create Resources folder if it doesn't exist
         if (!AssetDatabase.IsValidFolder("Assets/Resources"))
         {
@@ -42,12 +45,15 @@ public class SetupCardDatabase : MonoBehaviour
         Debug.Log($"CardDatabase created at {databasePath} with {cardDatabase.allCards.Count} cards");
         Debug.Log($"Categories: Attack={cardDatabase.attackCards.Count}, Skill={cardDatabase.skillCards.Count}, Power={cardDatabase.powerCards.Count}, Guard={cardDatabase.guardCards.Count}");
         Debug.Log($"Elements: Basic={cardDatabase.basicCards.Count}, Fire={cardDatabase.fireCards.Count}, Cold={cardDatabase.coldCards.Count}, Lightning={cardDatabase.lightningCards.Count}, Physical={cardDatabase.physicalCards.Count}, Chaos={cardDatabase.chaosCards.Count}");
-        Debug.Log($"Rarities: Common={cardDatabase.commonCards.Count}, Magic={cardDatabase.magicCards.Count}, Rare={cardDatabase.rareCards.Count}, Unique={cardDatabase.uniqueCards.Count}");
+#else
+        Debug.LogWarning("InitializeCardDatabase is editor-only.");
+#endif
     }
     
     [ContextMenu("Create CardVisualAssets")]
     public void CreateCardVisualAssets()
     {
+#if UNITY_EDITOR
         // Create Resources folder if it doesn't exist
         if (!AssetDatabase.IsValidFolder("Assets/Resources"))
         {
@@ -66,10 +72,14 @@ public class SetupCardDatabase : MonoBehaviour
         AssetDatabase.SaveAssets();
         
         Debug.Log($"CardVisualAssets created at {assetsPath}");
+#else
+        Debug.LogWarning("CreateCardVisualAssets is editor-only.");
+#endif
     }
     
     private void AssignCardSprites(CardVisualAssets visualAssets)
     {
+#if UNITY_EDITOR
         // Find sprites in the CardParts folder
         string[] spriteGuids = AssetDatabase.FindAssets("t:Sprite", new[] { "Assets/Art/CardArt/CardParts" });
         
@@ -82,6 +92,9 @@ public class SetupCardDatabase : MonoBehaviour
             // Assign sprites based on filename
             AssignSpriteByName(visualAssets, sprite, fileName);
         }
+#else
+        Debug.LogWarning("AssignCardSprites is editor-only.");
+#endif
     }
     
     private void AssignSpriteByName(CardVisualAssets visualAssets, Sprite sprite, string fileName)

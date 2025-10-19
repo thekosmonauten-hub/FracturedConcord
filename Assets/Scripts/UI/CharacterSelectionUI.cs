@@ -192,6 +192,29 @@ public class CharacterData
     public int act;
     public string saveDate;
     
+    // Core Stats
+    public int experience;
+    public int skillPoints;
+    public int strength;
+    public int dexterity;
+    public int intelligence;
+    
+    // Resources
+    public int currentHealth;
+    public int maxHealth;
+    public int currentEnergyShield;
+    public int maxEnergyShield;
+    public int mana;
+    public int maxMana;
+    public int manaRecoveryPerTurn;
+    public int cardsDrawnPerTurn;
+    public int reliance;
+    public int maxReliance;
+    
+    // Game State
+    public string currentScene;
+    public float lastPosX, lastPosY, lastPosZ;
+    
     public CharacterData(string name, string characterClass, int level, int act)
     {
         this.characterName = name;

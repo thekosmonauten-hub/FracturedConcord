@@ -9,6 +9,7 @@ public class CombatUI : MonoBehaviour
     
     [Header("Combat Manager")]
     public CombatManager combatManager;
+    public CombatDisplayManager combatDisplayManager;
     
     // UI Elements
     private VisualElement root;
@@ -35,6 +36,11 @@ public class CombatUI : MonoBehaviour
     private Label discardCountLabel;
     private Button returnToMapButton;
     
+    // Buff/Debuff display elements
+    private VisualElement buffBar;
+    private Label playerBuffsLabel;
+    private Label enemyBuffsLabel;
+    
     private void Start()
     {
         InitializeUI();
@@ -45,6 +51,19 @@ public class CombatUI : MonoBehaviour
             combatManager.OnCardPlayed += OnCardPlayed;
             combatManager.OnTurnEnded += OnTurnEnded;
             combatManager.OnCombatEnded += OnCombatEnded;
+        }
+        
+        // Also subscribe to CombatDisplayManager events
+        if (combatDisplayManager == null)
+        {
+            combatDisplayManager = FindFirstObjectByType<CombatDisplayManager>();
+        }
+        
+        if (combatDisplayManager != null)
+        {
+            combatDisplayManager.OnCombatStateChanged += OnCombatStateChanged;
+            combatDisplayManager.OnTurnChanged += OnTurnChanged;
+            combatDisplayManager.OnTurnTypeChanged += OnTurnTypeChanged;
         }
     }
     
@@ -101,6 +120,11 @@ public class CombatUI : MonoBehaviour
         discardCountLabel = root.Q<Label>("DiscardCount");
         returnToMapButton = root.Q<Button>("ReturnToMapButton");
         
+        // Get buff/debuff display elements
+        buffBar = root.Q<VisualElement>("BuffBar");
+        playerBuffsLabel = root.Q<Label>("PlayerBuffs");
+        enemyBuffsLabel = root.Q<Label>("EnemyBuffs");
+        
         // Set up button events
         endTurnButton.clicked += OnEndTurnClicked;
         drawCardButton.clicked += OnDrawCardClicked;
@@ -139,6 +163,7 @@ public class CombatUI : MonoBehaviour
         UpdateCombatStatus();
         UpdateDeckInfo();
         UpdateHand();
+        UpdateBuffDisplay();
     }
     
     private void UpdatePlayerInfo()
@@ -153,13 +178,9 @@ public class CombatUI : MonoBehaviour
         float healthPercentage = (float)player.currentHealth / player.maxHealth;
         playerHealthFill.style.width = Length.Percent(healthPercentage * 100f);
         
-        // Update health color based on percentage
-        if (healthPercentage > 0.5f)
-            playerHealthFill.style.backgroundColor = new Color(0f, 0.8f, 0.4f);
-        else if (healthPercentage > 0.25f)
-            playerHealthFill.style.backgroundColor = new Color(1f, 0.8f, 0f);
-        else
-            playerHealthFill.style.backgroundColor = new Color(1f, 0.2f, 0.2f);
+        // NOTE: Health color management is now handled by PlayerCombatDisplay.cs
+        // This was causing conflicts with the red color set in editor mode
+        // The PlayerCombatDisplay component now has a useDynamicHealthColor setting
         
         playerHealthText.text = $"{player.currentHealth}/{player.maxHealth}";
         
@@ -402,7 +423,29 @@ public class CombatUI : MonoBehaviour
     
     private void OnEndTurnClicked()
     {
-        combatManager.EndTurn();
+        // Use CombatDisplayManager if available, otherwise fall back to CombatManager
+        if (combatDisplayManager != null)
+        {
+            combatDisplayManager.EndPlayerTurn();
+        }
+        else if (combatManager != null)
+        {
+            combatManager.EndTurn();
+        }
+        else
+        {
+            Debug.LogWarning("No combat manager found to end turn!");
+        }
+    }
+
+    // Allow external systems to set a combat log message
+    public void SetCombatLogMessage(string message)
+    {
+        if (combatLog != null)
+        {
+            combatLog.text = message;
+        }
+        Debug.Log($"[CombatUI] {message}");
     }
     
     private void OnDrawCardClicked()
@@ -449,5 +492,120 @@ public class CombatUI : MonoBehaviour
     public void AddCombatLog(string message)
     {
         combatLog.text = message;
+    }
+    
+    // CombatDisplayManager event handlers
+    private void OnCombatStateChanged(CombatDisplayManager.CombatState state)
+    {
+        Debug.Log($"Combat state changed to: {state}");
+        UpdateCombatStatus();
+    }
+    
+    private void OnTurnChanged(int turnNumber)
+    {
+        Debug.Log($"Turn changed to: {turnNumber}");
+        // Update turn indicator if needed
+    }
+    
+    private void OnTurnTypeChanged(bool isPlayerTurn)
+    {
+        Debug.Log($"Turn type changed - Player turn: {isPlayerTurn}");
+        UpdateCombatStatus();
+    }
+    
+    private void UpdateBuffDisplay()
+    {
+        if (playerBuffsLabel == null || enemyBuffsLabel == null) return;
+        
+        // Get player status effects
+        string playerBuffText = GetStatusEffectText(true);
+        playerBuffsLabel.text = $"Player Buffs: {playerBuffText}";
+        
+        // Get enemy status effects
+        string enemyBuffText = GetStatusEffectText(false);
+        enemyBuffsLabel.text = $"Enemy Buffs: {enemyBuffText}";
+    }
+    
+    private string GetStatusEffectText(bool isPlayer)
+    {
+        string statusText = "None";
+        
+        if (isPlayer)
+        {
+            // Get player status effects
+            PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+            if (playerDisplay != null)
+            {
+                StatusEffectManager statusManager = playerDisplay.GetStatusEffectManager();
+                if (statusManager != null)
+                {
+                    statusText = statusManager.GetStatusEffectSummary();
+                }
+            }
+        }
+        else
+        {
+            // Get enemy status effects
+            EnemyCombatDisplay[] enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+            if (enemyDisplays.Length > 0)
+            {
+                List<string> enemyStatuses = new List<string>();
+                foreach (var enemyDisplay in enemyDisplays)
+                {
+                    if (enemyDisplay != null)
+                    {
+                        StatusEffectManager statusManager = enemyDisplay.GetComponent<StatusEffectManager>();
+                        if (statusManager != null)
+                        {
+                            string enemyStatus = statusManager.GetStatusEffectSummary();
+                            if (!string.IsNullOrEmpty(enemyStatus) && enemyStatus != "None")
+                            {
+                                enemyStatuses.Add(enemyStatus);
+                            }
+                        }
+                    }
+                }
+                
+                if (enemyStatuses.Count > 0)
+                {
+                    statusText = string.Join(", ", enemyStatuses);
+                }
+            }
+        }
+        
+        return statusText;
+    }
+    
+    /// <summary>
+    /// Flash the End Turn button to indicate player can't afford any cards
+    /// </summary>
+    public void FlashEndTurnButton()
+    {
+        if (endTurnButton == null) return;
+        
+        // Flash the button with a pulsing red effect
+        var buttonElement = endTurnButton.Q<VisualElement>(className: "unity-button__text");
+        if (buttonElement != null)
+        {
+            // Store original background color
+            Color originalColor = buttonElement.style.backgroundColor.value;
+            
+            // Create flash sequence
+            LeanTween.sequence()
+                .append(LeanTween.value(0f, 1f, 0.2f).setOnUpdate((float t) => {
+                    buttonElement.style.backgroundColor = Color.Lerp(originalColor, Color.red, t);
+                }))
+                .append(LeanTween.value(1f, 0f, 0.2f).setOnUpdate((float t) => {
+                    buttonElement.style.backgroundColor = Color.Lerp(Color.red, originalColor, t);
+                }))
+                .append(LeanTween.value(0f, 1f, 0.2f).setOnUpdate((float t) => {
+                    buttonElement.style.backgroundColor = Color.Lerp(originalColor, Color.red, t);
+                }))
+                .append(LeanTween.value(1f, 0f, 0.2f).setOnUpdate((float t) => {
+                    buttonElement.style.backgroundColor = Color.Lerp(Color.red, originalColor, t);
+                }));
+        }
+        
+        Debug.Log("<color=orange>End Turn button flashed - player cannot afford any cards!</color>");
     }
 }

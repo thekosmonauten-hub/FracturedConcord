@@ -1,0 +1,312 @@
+{
+  "deckName": "Marauder's Fury",
+  "characterClass": "Marauder",
+  "description": "A brutal deck focused on physical damage and close combat",
+  "cards": [
+    {
+      "cardName": "Heavy Strike",
+      "count": 6,
+      "data": {
+        "cardName": "Heavy Strike",
+        "description": "Deal {damage} physical damage. Scales with melee weapon and Strength.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 8.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        "cardArtName": "CardArt/HeavyStrike",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredStrength": 25,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Attack", "Physical", "Combo"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.5,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "effects": [],
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Brace",
+      "count": 4,
+      "data": {
+        "cardName": "Brace",
+        "description": "Gain {guard} Guard. Scales with Strength.",
+        "cardType": "Guard",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 5.0,
+        "primaryDamageType": "None",
+        "cardArtName": "CardArt/Brace",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredStrength": 20,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Guard", "Strength", "Combo"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "guardScaling": {
+          "strengthScaling": 0.25,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "effects": [],
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Guard"
+      }
+    },
+    {
+      "cardName": "Ground Slam",
+      "count": 2,
+      "data": {
+        "cardName": "Ground Slam",
+        "description": "Deal {damage} physical damage to all {aoeTargets} enemies. Scales with melee weapon and Strength.",
+        "cardType": "Attack",
+        "manaCost": 2,
+        "baseDamage": 4.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        "cardArtName": "CardArt/GroundSlam",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        "aoe": {
+          "isAoE": true,
+          "aoeTargets": 3
+        },
+        "requirements": {
+          "requiredStrength": 30,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": ["Melee"]
+        },
+        "tags": ["Attack", "Physical", "AoE", "Melee"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.25,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "effects": [],
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Cleave",
+      "count": 2,
+      "data": {
+        "cardName": "Cleave",
+        "description": "Deal {damage} physical damage to all {aoeTargets} enemies. Scales with melee weapon and Strength.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 7.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        "cardArtName": "CardArt/Cleave",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": true,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        "aoe": {
+          "isAoE": true,
+          "aoeTargets": 3
+        },
+        "requirements": {
+          "requiredStrength": 28,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Attack", "Physical", "AoE", "Combo"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.333,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "effects": [],
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Endure",
+      "count": 2,
+      "data": {
+        "cardName": "Endure",
+        "description": "Gain {guard} Guard. Draw a card.",
+        "cardType": "Guard",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 8.0,
+        "primaryDamageType": "None",
+        "cardArtName": "CardArt/Endure",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredStrength": 22,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Guard", "Strength", "Draw"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "guardScaling": {
+          "strengthScaling": 0.25,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "effects": [
+          {
+            "effectType": "Draw",
+            "effectName": "Draw Card",
+            "description": "Draw 1 card",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Guard"
+      }
+    },
+    {
+      "cardName": "Intimidating Shout",
+      "count": 2,
+      "data": {
+        "cardName": "Intimidating Shout",
+        "description": "Apply 1 Vulnerability to all enemies. Effect increases with Strength.",
+        "cardType": "Skill",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "None",
+        "cardArtName": "CardArt/IntimidatingShout",
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        "requirements": {
+          "requiredStrength": 15,
+          "requiredDexterity": 0,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        "tags": ["Warcry", "Skill", "Strength", "Combo"],
+        "additionalDamageTypes": [],
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        "effects": [
+          {
+            "effectType": "ApplyStatus",
+            "effectName": "Vulnerability",
+            "description": "Target takes increased damage",
+            "value": 1.0,
+            "duration": 2,
+            "damageType": "None",
+            "targetsSelf": false,
+            "targetsEnemy": true,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Skill"
+      }
+    }
+  ]
+}
+

@@ -1,48 +1,47 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 using TMPro;
 
-namespace PassiveTree
+namespace PassiveTree.UI
 {
     /// <summary>
-    /// Component for board selection buttons in the board selection UI
+    /// Button component for board selection with board data
     /// </summary>
     public class BoardSelectionButton : MonoBehaviour
     {
-        [Header("UI References")]
+        [Header("Button References")]
         [SerializeField] private Button button;
-        [SerializeField] private Image boardPreviewImage;
-        [SerializeField] private TextMeshProUGUI boardNameText;
-        [SerializeField] private TextMeshProUGUI boardDescriptionText;
-        [SerializeField] private Image backgroundImage;
+        [SerializeField] private TextMeshProUGUI buttonText;
+        [SerializeField] private Image buttonImage;
         
-        [Header("Visual Settings")]
-        [SerializeField] private Color normalColor = Color.white;
-        [SerializeField] private Color hoverColor = Color.cyan;
-        [SerializeField] private Color selectedColor = Color.green;
+        [Header("Board Data")]
+        [SerializeField] private BoardData boardData;
         
-        // Current board data
-        private BoardData currentBoardData;
+        [Header("Events")]
+        [SerializeField] private UnityEvent<BoardData> onBoardSelected;
         
-        // Events
-        public System.Action<BoardData> OnBoardSelected;
-        
-        void Awake()
+        private void Awake()
         {
-            // Get components if not assigned
+            // Get button component if not assigned
             if (button == null)
+            {
                 button = GetComponent<Button>();
-                
-            if (boardPreviewImage == null)
-                boardPreviewImage = GetComponentInChildren<Image>();
-                
-            if (boardNameText == null)
-                boardNameText = GetComponentInChildren<TextMeshProUGUI>();
-                
-            if (backgroundImage == null)
-                backgroundImage = GetComponent<Image>();
+            }
             
-            // Setup button events
+            // Get text component if not assigned
+            if (buttonText == null)
+            {
+                buttonText = GetComponentInChildren<TextMeshProUGUI>();
+            }
+            
+            // Get image component if not assigned
+            if (buttonImage == null)
+            {
+                buttonImage = GetComponent<Image>();
+            }
+            
+            // Setup button click event
             if (button != null)
             {
                 button.onClick.AddListener(OnButtonClicked);
@@ -50,33 +49,40 @@ namespace PassiveTree
         }
         
         /// <summary>
-        /// Setup the button with board data
+        /// Set the board data for this button
         /// </summary>
-        public void SetupButton(BoardData boardData)
+        public void SetBoardData(BoardData data)
         {
-            currentBoardData = boardData;
-            
+            boardData = data;
+            UpdateButtonDisplay();
+        }
+        
+        /// <summary>
+        /// Get the board data for this button
+        /// </summary>
+        public BoardData GetBoardData()
+        {
+            return boardData;
+        }
+        
+        /// <summary>
+        /// Update the button's visual display
+        /// </summary>
+        private void UpdateButtonDisplay()
+        {
             if (boardData == null) return;
             
-            // Set board name
-            if (boardNameText != null)
-                boardNameText.text = boardData.BoardName;
+            // Update button text
+            if (buttonText != null)
+            {
+                buttonText.text = boardData.BoardName;
+            }
             
-            // Set board description
-            if (boardDescriptionText != null)
-                boardDescriptionText.text = boardData.BoardDescription;
-            
-            // Set board preview image
-            if (boardPreviewImage != null && boardData.BoardPreview != null)
-                boardPreviewImage.sprite = boardData.BoardPreview;
-            
-            // Set background color
-            if (backgroundImage != null)
-                backgroundImage.color = boardData.BoardColor;
-            
-            // Enable/disable button based on unlock status
-            if (button != null)
-                button.interactable = boardData.IsUnlocked;
+            // Update button image if available
+            if (buttonImage != null && boardData.BoardPreview != null)
+            {
+                buttonImage.sprite = boardData.BoardPreview;
+            }
         }
         
         /// <summary>
@@ -84,34 +90,65 @@ namespace PassiveTree
         /// </summary>
         private void OnButtonClicked()
         {
-            if (currentBoardData != null)
+            if (boardData == null)
             {
-                OnBoardSelected?.Invoke(currentBoardData);
+                Debug.LogWarning("[BoardSelectionButton] Button clicked but no board data assigned");
+                return;
+            }
+            
+            Debug.Log($"[BoardSelectionButton] Board selected: {boardData.BoardName}");
+            
+            // Invoke the selection event
+            onBoardSelected?.Invoke(boardData);
+        }
+        
+        /// <summary>
+        /// Enable or disable the button
+        /// </summary>
+        public void SetInteractable(bool interactable)
+        {
+            if (button != null)
+            {
+                button.interactable = interactable;
             }
         }
         
         /// <summary>
         /// Set the button's visual state
         /// </summary>
-        public void SetButtonState(bool isSelected, bool isHovered = false)
+        public void SetButtonState(bool isSelected, bool isAvailable)
         {
-            if (backgroundImage == null) return;
+            if (button == null) return;
+            
+            // Update button appearance based on state
+            var colors = button.colors;
             
             if (isSelected)
-                backgroundImage.color = selectedColor;
-            else if (isHovered)
-                backgroundImage.color = hoverColor;
+            {
+                colors.normalColor = Color.green;
+                colors.highlightedColor = Color.green;
+            }
+            else if (!isAvailable)
+            {
+                colors.normalColor = Color.gray;
+                colors.highlightedColor = Color.gray;
+            }
             else
-                backgroundImage.color = normalColor;
+            {
+                colors.normalColor = Color.white;
+                colors.highlightedColor = Color.yellow;
+            }
+            
+            button.colors = colors;
         }
         
-        /// <summary>
-        /// Get the current board data
-        /// </summary>
-        public BoardData GetBoardData()
+        private void OnDestroy()
         {
-            return currentBoardData;
+            // Clean up button event
+            if (button != null)
+            {
+                button.onClick.RemoveListener(OnButtonClicked);
+            }
         }
     }
 }
-

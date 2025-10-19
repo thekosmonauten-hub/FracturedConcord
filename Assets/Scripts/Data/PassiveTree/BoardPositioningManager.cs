@@ -4,6 +4,7 @@ using TMPro;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using PassiveTree.UI;
 
 namespace PassiveTree
 {
@@ -48,6 +49,15 @@ namespace PassiveTree
         [SerializeField] private Transform boardButtonContainer;
         [SerializeField] private GameObject boardButtonPrefab;
         
+        [Header("Board Summary")]
+        [SerializeField] private BoardSummaryWindow boardSummaryWindow;
+        
+        [Header("Board Confirmation")]
+        [SerializeField] private BoardConfirmationUI boardConfirmationUI;
+        
+        [Header("Passive Tree Disabling")]
+        // Using existing boardsContainer field for passive tree disabling
+        
         [Header("Debug")]
         [SerializeField] private bool showDebugInfo = true;
         [SerializeField] private bool showGridGizmos = true;
@@ -82,6 +92,12 @@ namespace PassiveTree
                     Debug.Log("[BoardPositioningManager] Auto-found SelectionContainer");
                 }
             }
+            
+            // Initialize board summary window
+            InitializeBoardSummaryWindow();
+            
+            // Initialize board confirmation UI
+            InitializeBoardConfirmationUI();
         }
         
         /// <summary>
@@ -588,6 +604,9 @@ namespace PassiveTree
                 // Populate the selection container with available boards
                 PopulateSelectionContainer(currentBoardName);
                 
+                // Disable passive tree to prevent click-through
+                DisablePassiveTree();
+                
                 // Enable the selection container
                 selectionContainer.SetActive(true);
                 
@@ -807,6 +826,9 @@ namespace PassiveTree
                     Debug.Log($"[BoardPositioningManager] SelectionContainer hidden: {!selectionContainer.activeInHierarchy}");
                 }
             }
+            
+            // Re-enable passive tree
+            EnablePassiveTree();
             
             if (showDebugInfo)
             {
@@ -1582,6 +1604,241 @@ namespace PassiveTree
                 Debug.LogError("[BoardPositioningManager] ❌ SelectionContainer not found in scene!");
             }
         }
+        
+        /// <summary>
+        /// Disable passive tree interaction to prevent click-through
+        /// </summary>
+        private void DisablePassiveTree()
+        {
+            Debug.Log("[BoardPositioningManager] 🔒 Starting to disable passive tree...");
+            
+            // Method 1: Try to find BoardsContainer if not assigned
+            if (boardsContainer == null)
+            {
+                GameObject boardsContainerGO = GameObject.Find("BoardsContainer");
+                if (boardsContainerGO != null)
+                {
+                    boardsContainer = boardsContainerGO.transform;
+                    Debug.Log($"[BoardPositioningManager] Found BoardsContainer: {boardsContainer.name}");
+                }
+                else
+                {
+                    Debug.LogWarning("[BoardPositioningManager] ❌ BoardsContainer not found! Searching for alternatives...");
+                }
+            }
+            
+            // Method 1: Disable the entire BoardsContainer
+            if (boardsContainer != null)
+            {
+                boardsContainer.gameObject.SetActive(false);
+                Debug.Log($"[BoardPositioningManager] ✅ Disabled BoardsContainer: {boardsContainer.name}");
+            }
+            else
+            {
+                Debug.LogWarning("[BoardPositioningManager] ❌ BoardsContainer is null, cannot disable it");
+            }
+            
+            // Method 2: Disable all passive tree cells/buttons as backup
+            CellController[] allCells = FindObjectsOfType<CellController>();
+            Debug.Log($"[BoardPositioningManager] Found {allCells.Length} CellController components");
+            foreach (CellController cell in allCells)
+            {
+                cell.enabled = false; // Disable the cell controller
+            }
+            
+            // Method 3: Disable all colliders on passive tree objects
+            Collider[] allColliders = FindObjectsOfType<Collider>();
+            int disabledColliders = 0;
+            foreach (Collider collider in allColliders)
+            {
+                // Only disable colliders that are part of passive tree (not UI)
+                if (collider.gameObject.name.Contains("Board") || 
+                    collider.gameObject.name.Contains("Cell") ||
+                    collider.gameObject.name.Contains("Node"))
+                {
+                    collider.enabled = false;
+                    disabledColliders++;
+                }
+            }
+            
+            Debug.Log($"[BoardPositioningManager] ✅ Disabled {allCells.Length} cells and {disabledColliders} colliders to prevent click-through");
+        }
+        
+        /// <summary>
+        /// Re-enable passive tree interaction
+        /// </summary>
+        private void EnablePassiveTree()
+        {
+            Debug.Log("[BoardPositioningManager] 🔓 Starting to re-enable passive tree...");
+            
+            // Method 1: Re-enable the entire BoardsContainer
+            if (boardsContainer != null)
+            {
+                boardsContainer.gameObject.SetActive(true);
+                Debug.Log($"[BoardPositioningManager] ✅ Re-enabled BoardsContainer: {boardsContainer.name}");
+            }
+            else
+            {
+                Debug.LogWarning("[BoardPositioningManager] ❌ BoardsContainer is null, cannot re-enable it");
+            }
+            
+            // Method 2: Re-enable all passive tree cells/buttons
+            CellController[] allCells = FindObjectsOfType<CellController>();
+            Debug.Log($"[BoardPositioningManager] Found {allCells.Length} CellController components to re-enable");
+            foreach (CellController cell in allCells)
+            {
+                cell.enabled = true; // Re-enable the cell controller
+            }
+            
+            // Method 3: Re-enable all colliders on passive tree objects
+            Collider[] allColliders = FindObjectsOfType<Collider>();
+            int enabledColliders = 0;
+            foreach (Collider collider in allColliders)
+            {
+                // Only re-enable colliders that are part of passive tree (not UI)
+                if (collider.gameObject.name.Contains("Board") || 
+                    collider.gameObject.name.Contains("Cell") ||
+                    collider.gameObject.name.Contains("Node"))
+                {
+                    collider.enabled = true;
+                    enabledColliders++;
+                }
+            }
+            
+            Debug.Log($"[BoardPositioningManager] ✅ Re-enabled BoardsContainer, {allCells.Length} cells, and {enabledColliders} colliders");
+        }
+        
+        /// <summary>
+        /// Initialize the board summary window
+        /// </summary>
+        private void InitializeBoardSummaryWindow()
+        {
+            if (boardSummaryWindow == null)
+            {
+                boardSummaryWindow = FindObjectOfType<BoardSummaryWindow>();
+                if (boardSummaryWindow == null)
+                {
+                    Debug.LogWarning("[BoardPositioningManager] No BoardSummaryWindow found in scene");
+                }
+                else
+                {
+                    Debug.Log("[BoardPositioningManager] ✅ Found BoardSummaryWindow");
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Initialize the board confirmation UI
+        /// </summary>
+        private void InitializeBoardConfirmationUI()
+        {
+            if (boardConfirmationUI == null)
+            {
+                boardConfirmationUI = FindObjectOfType<BoardConfirmationUI>();
+                if (boardConfirmationUI == null)
+                {
+                    Debug.LogWarning("[BoardPositioningManager] No BoardConfirmationUI found in scene");
+                }
+                else
+                {
+                    Debug.Log("[BoardPositioningManager] ✅ Found BoardConfirmationUI");
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Show board summary for the specified board data
+        /// </summary>
+        public void ShowBoardSummary(BoardData boardData)
+        {
+            if (boardSummaryWindow != null && boardData != null)
+            {
+                boardSummaryWindow.ShowBoardSummary(boardData);
+                Debug.Log($"[BoardPositioningManager] Showing summary for {boardData.BoardName}");
+            }
+        }
+        
+        /// <summary>
+        /// Hide the board summary window
+        /// </summary>
+        public void HideBoardSummary()
+        {
+            if (boardSummaryWindow != null)
+            {
+                boardSummaryWindow.HideBoardSummary();
+                Debug.Log("[BoardPositioningManager] Hiding board summary");
+            }
+        }
+        
+        /// <summary>
+        /// Show board confirmation UI for the selected board
+        /// </summary>
+        public void ShowBoardConfirmation(BoardData boardData)
+        {
+            if (boardConfirmationUI != null && boardData != null)
+            {
+                // Hide the board selection UI
+                if (selectionContainer != null)
+                {
+                    selectionContainer.SetActive(false);
+                }
+                
+                // Show confirmation UI
+                boardConfirmationUI.ShowBoardConfirmation(
+                    boardData,
+                    OnBoardConfirmed,
+                    OnBoardConfirmationCancelled
+                );
+                
+                Debug.Log($"[BoardPositioningManager] Showing confirmation for {boardData.BoardName}");
+            }
+            else
+            {
+                Debug.LogWarning("[BoardPositioningManager] No BoardConfirmationUI found or board data is null");
+            }
+        }
+        
+        /// <summary>
+        /// Hide the board confirmation UI
+        /// </summary>
+        public void HideBoardConfirmation()
+        {
+            if (boardConfirmationUI != null)
+            {
+                boardConfirmationUI.HideBoardConfirmation();
+                Debug.Log("[BoardPositioningManager] Hiding board confirmation");
+            }
+        }
+        
+        /// <summary>
+        /// Handle board confirmation - actually place the board
+        /// </summary>
+        private void OnBoardConfirmed(BoardData boardData)
+        {
+            Debug.Log($"[BoardPositioningManager] Board confirmed: {boardData.BoardName}");
+            
+            // Hide confirmation UI
+            HideBoardConfirmation();
+            
+            // Actually place the board (existing logic)
+            // Note: This method needs to be implemented or use existing SpawnExtensionBoardPrefab
+            Debug.LogWarning("[BoardPositioningManager] SpawnExtensionBoard method not implemented - using SpawnExtensionBoardPrefab instead");
+        }
+        
+        /// <summary>
+        /// Handle board confirmation cancellation - return to board selection
+        /// </summary>
+        private void OnBoardConfirmationCancelled()
+        {
+            Debug.Log("[BoardPositioningManager] Board confirmation cancelled - returning to board selection");
+            
+            // Show the board selection UI again
+            if (selectionContainer != null)
+            {
+                selectionContainer.SetActive(true);
+            }
+        }
+        
         
         
         

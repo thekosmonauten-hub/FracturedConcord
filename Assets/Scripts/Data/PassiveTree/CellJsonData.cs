@@ -26,6 +26,7 @@ public class CellJsonData : MonoBehaviour
     
     [Header("Debug")]
     [SerializeField] private bool showDebugInfo = true;
+    [SerializeField] private bool manuallySetName = false; // Track if name was manually set
 
     // Properties for easy access
     public string NodeId => nodeId;
@@ -37,6 +38,68 @@ public class CellJsonData : MonoBehaviour
     public int MaxRank => maxRank;
     public int CurrentRank => currentRank;
     public JsonStats NodeStats => nodeStats;
+
+    /// <summary>
+    /// Update the node stats for this cell
+    /// </summary>
+    public void UpdateNodeStats(JsonStats newStats)
+    {
+        if (newStats == null)
+        {
+            Debug.LogWarning($"[CellJsonData] UpdateNodeStats called with null stats on {gameObject.name}");
+            return;
+        }
+        
+        nodeStats = newStats;
+        
+        if (showDebugInfo)
+        {
+            Debug.Log($"[CellJsonData] Updated stats for {gameObject.name}");
+        }
+    }
+
+    /// <summary>
+    /// Set the node name for this cell
+    /// </summary>
+    public void SetNodeName(string newName)
+    {
+        if (string.IsNullOrEmpty(newName))
+        {
+            Debug.LogWarning($"[CellJsonData] SetNodeName called with null or empty name on {gameObject.name}");
+            return;
+        }
+        
+        nodeName = newName;
+        manuallySetName = true; // Mark that this name was manually set
+        
+        // Also update the GameObject name to match the new node name
+        if (nodePosition != Vector2Int.zero)
+        {
+            string newGameObjectName = $"Cell_{nodePosition.x}_{nodePosition.y}_{newName}";
+            if (gameObject.name != newGameObjectName)
+            {
+                gameObject.name = newGameObjectName;
+                Debug.Log($"[CellJsonData] Updated GameObject name to: {newGameObjectName}");
+            }
+        }
+        
+        if (showDebugInfo)
+        {
+            Debug.Log($"[CellJsonData] Updated node name for {gameObject.name} to: {newName}");
+        }
+    }
+    
+    /// <summary>
+    /// Reset the manually set name flag to allow auto-updates again
+    /// </summary>
+    public void ResetManuallySetNameFlag()
+    {
+        manuallySetName = false;
+        if (showDebugInfo)
+        {
+            Debug.Log($"[CellJsonData] Reset manually set name flag for {gameObject.name}");
+        }
+    }
 
     /// <summary>
     /// Set the JSON data for this cell
@@ -1241,6 +1304,16 @@ public class CellJsonData : MonoBehaviour
     [ContextMenu("Update Cell Name")]
     public void UpdateCellName()
     {
+        // Don't auto-update if the name was manually set
+        if (manuallySetName)
+        {
+            if (showDebugInfo)
+            {
+                Debug.Log($"[CellJsonData] Skipping auto-update for {gameObject.name} - name was manually set");
+            }
+            return;
+        }
+        
         if (!string.IsNullOrEmpty(nodeName) && nodePosition != Vector2Int.zero)
         {
             string newName = $"Cell_{nodePosition.x}_{nodePosition.y}_{nodeName}";

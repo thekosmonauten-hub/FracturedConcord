@@ -50,7 +50,7 @@ namespace PassiveTree
         [SerializeField] protected bool showDebugInfo = false;
         
         [Header("Attribute Overlay Sprites")]
-        [SerializeField] private bool enableAttributeOverlays = false;
+        [SerializeField] protected bool enableAttributeOverlays = false;
         [SerializeField] private SpriteRenderer overlaySpriteRenderer;
         [SerializeField] private Sprite strengthOverlay;
         [SerializeField] private Sprite dexterityOverlay;

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.InputSystem;
+using System;
 
 namespace PassiveTree
 {
@@ -32,6 +33,91 @@ namespace PassiveTree
         [SerializeField] private ExtensionBoardGenerator boardGenerator;
         [SerializeField] private bool enableExtensionBoards = true;
         
+        [Header("Stats Integration")]
+        [SerializeField] private bool enableStatsIntegration = true;
+        [SerializeField] private PassiveTreeStatsIntegration statsIntegration;
+        
+        [Header("Allocation Confirmation")]
+        [SerializeField] private bool requireConfirmToAllocate = true;
+        
+        // Pending selection buffer for confirm/cancel flow
+        private HashSet<Vector2Int> pendingAllocations = new HashSet<Vector2Int>();
+        
+        // Events for stats integration
+        public static event Action<Vector2Int, CellController> OnNodeAllocated;
+        public static event Action<Vector2Int, CellController> OnNodeDeallocated;
+        public static event Action<Vector2Int, CellController> OnNodeClicked;
+        
+        // UI can subscribe to update pending/points display
+        public static event Action OnPendingAllocationsChanged;
+
+        /// <summary>
+        /// Get current count of pending allocations
+        /// </summary>
+        public int GetPendingAllocationsCount()
+        {
+            return pendingAllocations != null ? pendingAllocations.Count : 0;
+        }
+
+        /// <summary>
+        /// Confirm and finalize all pending allocations. Returns number of nodes allocated.
+        /// </summary>
+        public int ConfirmPendingAllocations()
+        {
+            if (!requireConfirmToAllocate || pendingAllocations == null || pendingAllocations.Count == 0) return 0;
+
+            int allocated = 0;
+            // Copy to avoid modification during iteration
+            var toAllocate = new List<Vector2Int>(pendingAllocations);
+            foreach (var pos in toAllocate)
+            {
+                CellController cell = null;
+                if (cells.ContainsKey(pos))
+                {
+                    cell = cells[pos];
+                }
+                else
+                {
+                    cell = FindCellInExtensionBoards(pos);
+                }
+                if (cell == null) continue;
+                if (cell.IsPurchased) continue;
+                if (!cell.IsAdjacent) continue;
+
+                cell.SetSelected(false);
+                cell.SetPurchased(true);
+                TriggerNodeAllocatedEvent(pos, cell);
+                UnlockAdjacentNodes(pos);
+                allocated++;
+            }
+
+            pendingAllocations.Clear();
+            OnPendingAllocationsChanged?.Invoke();
+            return allocated;
+        }
+
+        /// <summary>
+        /// Cancel any pending allocations and clear selection state.
+        /// </summary>
+        public void CancelPendingAllocations()
+        {
+            if (pendingAllocations == null || pendingAllocations.Count == 0) return;
+            foreach (var pos in pendingAllocations)
+            {
+                if (cells.ContainsKey(pos))
+                {
+                    cells[pos].SetSelected(false);
+                }
+                else
+                {
+                    var extCell = FindCellInExtensionBoards(pos);
+                    if (extCell != null) extCell.SetSelected(false);
+                }
+            }
+            pendingAllocations.Clear();
+            OnPendingAllocationsChanged?.Invoke();
+        }
+        
         // Simple state tracking
         private Dictionary<Vector2Int, CellController> cells = new Dictionary<Vector2Int, CellController>();
         private Vector2Int selectedCell = new Vector2Int(-1, -1);
@@ -41,6 +127,7 @@ namespace PassiveTree
             InitializeTooltipSystem();
             InitializeBoard();
             InitializeExtensionBoardSystem();
+            InitializeStatsIntegration();
         }
         
         /// <summary>
@@ -313,6 +400,36 @@ namespace PassiveTree
             // Notify UI of cell selection
             NotifyUICellSelected(gridPosition);
             
+            // If confirm flow is enabled, toggle pending selection instead of immediate allocation
+            if (requireConfirmToAllocate && cell != null)
+            {
+                // Already purchased? ignore
+                if (cell.IsPurchased)
+                {
+                    if (showDebugInfo) Debug.Log($"[PassiveTreeManager] Click ignored - already purchased {gridPosition}");
+                    return;
+                }
+                // Must be adjacent to be selectable
+                if (!cell.IsAdjacent)
+                {
+                    if (showDebugInfo) Debug.Log($"[PassiveTreeManager] Click ignored - not adjacent {gridPosition}");
+                    return;
+                }
+                
+                if (pendingAllocations.Contains(gridPosition))
+                {
+                    pendingAllocations.Remove(gridPosition);
+                    cell.SetSelected(false);
+                }
+                else
+                {
+                    pendingAllocations.Add(gridPosition);
+                    cell.SetSelected(true);
+                }
+                OnPendingAllocationsChanged?.Invoke();
+                return;
+            }
+
             Debug.Log($"[PassiveTreeManager] Processing click for {cell.NodeType} node at {gridPosition}");
             
             // Handle different node types
@@ -364,6 +481,11 @@ namespace PassiveTree
         /// </summary>
         private void HandleRegularNodeClick(CellController cell)
         {
+            if (requireConfirmToAllocate)
+            {
+                // In confirm mode, ignore immediate purchase flow
+                return;
+            }
             // Use the appropriate overload based on cell type
             bool canPurchase = false;
             if (cell is CellController_EXT extCell)
@@ -434,6 +556,10 @@ namespace PassiveTree
         /// </summary>
         private void HandleStartNodeClick(CellController cell)
         {
+            if (requireConfirmToAllocate)
+            {
+                return;
+            }
             if (showDebugInfo)
                 Debug.Log($"[PassiveTreeManager] HandleStartNodeClick called for {cell.GridPosition}, currently purchased: {cell.IsPurchased}");
             
@@ -441,12 +567,14 @@ namespace PassiveTree
             if (cell.IsPurchased)
             {
                 cell.SetPurchased(false);
+                TriggerNodeDeallocatedEvent(cell.GridPosition, cell);
                 if (showDebugInfo)
                     Debug.Log($"[PassiveTreeManager] Start node unpurchased: {cell.GridPosition}");
             }
             else
             {
                 cell.SetPurchased(true);
+                TriggerNodeAllocatedEvent(cell.GridPosition, cell);
                 if (showDebugInfo)
                     Debug.Log($"[PassiveTreeManager] Start node purchased: {cell.GridPosition}");
             }
@@ -457,12 +585,24 @@ namespace PassiveTree
         /// </summary>
         private void HandleTravelNodeClick(CellController cell)
         {
+            if (requireConfirmToAllocate)
+            {
+                return;
+            }
             if (CanPurchaseNode(cell))
             {
+                Debug.Log($"[PassiveTreeManager] ✅ Can purchase node - proceeding with purchase");
                 cell.SetPurchased(true);
+                Debug.Log($"[PassiveTreeManager] ✅ Node marked as purchased");
+                TriggerNodeAllocatedEvent(cell.GridPosition, cell);
+                Debug.Log($"[PassiveTreeManager] ✅ Node allocated event triggered");
                 UnlockAdjacentNodes(cell.GridPosition);
                 if (showDebugInfo)
                     Debug.Log($"[PassiveTreeManager] Travel node purchased: {cell.GridPosition}");
+            }
+            else
+            {
+                Debug.Log($"[PassiveTreeManager] ❌ Cannot purchase node - purchase blocked");
             }
         }
         
@@ -471,12 +611,24 @@ namespace PassiveTree
         /// </summary>
         private void HandleNotableNodeClick(CellController cell)
         {
+            if (requireConfirmToAllocate)
+            {
+                return;
+            }
             if (CanPurchaseNode(cell))
             {
+                Debug.Log($"[PassiveTreeManager] ✅ Can purchase notable node - proceeding with purchase");
                 cell.SetPurchased(true);
+                Debug.Log($"[PassiveTreeManager] ✅ Notable node marked as purchased");
+                TriggerNodeAllocatedEvent(cell.GridPosition, cell);
+                Debug.Log($"[PassiveTreeManager] ✅ Notable node allocated event triggered");
                 UnlockAdjacentNodes(cell.GridPosition);
                 if (showDebugInfo)
                     Debug.Log($"[PassiveTreeManager] Notable node purchased: {cell.GridPosition}");
+            }
+            else
+            {
+                Debug.Log($"[PassiveTreeManager] ❌ Cannot purchase notable node - purchase blocked");
             }
         }
         
@@ -507,9 +659,14 @@ namespace PassiveTree
         /// </summary>
         private void HandleKeystoneNodeClick(CellController cell)
         {
+            if (requireConfirmToAllocate)
+            {
+                return;
+            }
             if (CanPurchaseNode(cell))
             {
                 cell.SetPurchased(true);
+                TriggerNodeAllocatedEvent(cell.GridPosition, cell);
                 if (showDebugInfo)
                     Debug.Log($"[PassiveTreeManager] Keystone node purchased: {cell.GridPosition}");
             }
@@ -1583,6 +1740,79 @@ namespace PassiveTree
             
             if (showDebugInfo)
                 Debug.Log("[PassiveTreeManager] Extension board system initialized");
+        }
+        
+        /// <summary>
+        /// Initialize the stats integration system
+        /// </summary>
+        private void InitializeStatsIntegration()
+        {
+            if (!enableStatsIntegration) return;
+            
+            if (showDebugInfo)
+                PassiveTreeLogger.LogInfo("Initializing stats integration...", "manager");
+            
+            // Find or create stats integration component
+            if (statsIntegration == null)
+            {
+                statsIntegration = FindFirstObjectByType<PassiveTreeStatsIntegration>();
+                
+                if (statsIntegration == null)
+                {
+                    GameObject integrationObj = new GameObject("PassiveTreeStatsIntegration");
+                    statsIntegration = integrationObj.AddComponent<PassiveTreeStatsIntegration>();
+                    integrationObj.transform.SetParent(transform);
+                }
+            }
+            
+            // Set up the integration
+            if (statsIntegration != null)
+            {
+                statsIntegration.SetPassiveTreeManager(this);
+                statsIntegration.SetupIntegration();
+                
+                if (showDebugInfo)
+                    PassiveTreeLogger.LogInfo("Stats integration initialized", "manager");
+            }
+            else
+            {
+                PassiveTreeLogger.LogWarning("Could not initialize stats integration", "manager");
+            }
+        }
+        
+        /// <summary>
+        /// Trigger node allocation event for stats integration
+        /// </summary>
+        private void TriggerNodeAllocatedEvent(Vector2Int position, CellController cell)
+        {
+            Debug.Log($"[PassiveTreeManager] TriggerNodeAllocatedEvent called for {position}, enableStatsIntegration: {enableStatsIntegration}");
+            
+            if (enableStatsIntegration)
+            {
+                Debug.Log($"[PassiveTreeManager] Invoking OnNodeAllocated event for {position}");
+                OnNodeAllocated?.Invoke(position, cell);
+                
+                if (showDebugInfo)
+                    PassiveTreeLogger.LogInfo($"Node allocated event triggered for {position}", "manager");
+            }
+            else
+            {
+                Debug.Log($"[PassiveTreeManager] Stats integration disabled - not triggering event");
+            }
+        }
+        
+        /// <summary>
+        /// Trigger node deallocation event for stats integration
+        /// </summary>
+        private void TriggerNodeDeallocatedEvent(Vector2Int position, CellController cell)
+        {
+            if (enableStatsIntegration)
+            {
+                OnNodeDeallocated?.Invoke(position, cell);
+                
+                if (showDebugInfo)
+                    PassiveTreeLogger.LogInfo($"Node deallocated event triggered for {position}", "manager");
+            }
         }
         
         /// <summary>

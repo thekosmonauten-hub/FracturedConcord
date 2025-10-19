@@ -5,6 +5,7 @@ public class DeckStatistics
 {
     [Header("Card Counts")]
     public int totalCards;
+    public int uniqueCards; // Number of unique cards in deck
     public int attackCards;
     public int guardCards;
     public int skillCards;

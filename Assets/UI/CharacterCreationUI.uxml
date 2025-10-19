@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
-    <Style src="CharacterCreationUI.uss" />
+    <Style src="project://database/Assets/UI/CharacterCreationUI.uss?fileID=7433441132597879392&amp;guid=ce6494e52aa8e60498c4debc6d15a6f0&amp;type=3#CharacterCreationUI" />
     <ui:VisualElement name="main-container" class="main-container">
         <ui:VisualElement name="Background" class="section">
             <ui:VisualElement name="name-section" class="section" />
@@ -35,7 +35,7 @@
             </ui:VisualElement>
             <ui:VisualElement name="preview-section" class="section" />
             <ui:Label text="Deck Preview" class="section-label" />
-            <ui:VisualElement name="CharacterPreview" class="character-preview" />
+            <ui:VisualElement name="StarterDeckPreview" class="character-preview" />
             <ui:VisualElement name="action-buttons" class="action-buttons">
                 <ui:Button name="BackButton" text="Back to Main Menu" class="action-button secondary" />
                 <ui:Button name="CreateCharacterButton" text="Create Character" class="action-button primary" />

@@ -18,6 +18,7 @@ namespace PassiveTree
         [SerializeField] private Button closeButton;
         [SerializeField] private TextMeshProUGUI titleText;
         [SerializeField] private TextMeshProUGUI descriptionText;
+        [SerializeField] private Button backgroundBlocker; // Background panel to block clicks
         
         [Header("Board Button Prefab")]
         [SerializeField] private GameObject boardButtonPrefab;
@@ -47,6 +48,10 @@ namespace PassiveTree
             // Setup close button
             if (closeButton != null)
                 closeButton.onClick.AddListener(CloseSelection);
+                
+            // Setup background blocker to prevent click-through
+            if (backgroundBlocker != null)
+                backgroundBlocker.onClick.AddListener(CloseSelection);
                 
             // Make this GameObject persistent to prevent destruction (only if it's a root object)
             if (transform.parent == null)
@@ -112,6 +117,9 @@ namespace PassiveTree
             // Create buttons for available boards (filtered to exclude current board)
             CreateBoardButtons();
             
+            // Create background blocker if needed
+            CreateBackgroundBlocker();
+            
             // Show the panel
             if (selectionPanel != null)
             {
@@ -146,6 +154,40 @@ namespace PassiveTree
         {
             HideBoardSelection();
             OnSelectionCancelled?.Invoke();
+        }
+        
+        /// <summary>
+        /// Create a background blocker panel if it doesn't exist
+        /// </summary>
+        private void CreateBackgroundBlocker()
+        {
+            if (backgroundBlocker != null) return; // Already exists
+            
+            // Create a new GameObject for the background
+            GameObject blockerObject = new GameObject("BackgroundBlocker");
+            blockerObject.transform.SetParent(transform, false);
+            
+            // Add Image component for visual background
+            var image = blockerObject.AddComponent<UnityEngine.UI.Image>();
+            image.color = new Color(0, 0, 0, 0.5f); // Semi-transparent black
+            
+            // Add Button component for click handling
+            backgroundBlocker = blockerObject.AddComponent<Button>();
+            
+            // Set up RectTransform to cover full screen
+            var rectTransform = blockerObject.GetComponent<RectTransform>();
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = Vector2.zero;
+            rectTransform.offsetMax = Vector2.zero;
+            
+            // Make sure it's behind the selection panel
+            blockerObject.transform.SetAsFirstSibling();
+            
+            // Setup the click listener
+            backgroundBlocker.onClick.AddListener(CloseSelection);
+            
+            Debug.Log("[ExtensionBoardSelectionUI] Created background blocker panel");
         }
         
         /// <summary>

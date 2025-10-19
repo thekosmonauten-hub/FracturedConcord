@@ -157,6 +157,79 @@ public class CardVisualManager : MonoBehaviour
         UpdateRarityColors();
     }
     
+    /// <summary>
+    /// Update card visuals from Card object (for JSON-loaded cards)
+    /// </summary>
+    public void UpdateCardVisuals(Card card)
+    {
+        if (card == null) return;
+        
+        // Convert Card to CardData format for display
+        // Create a temporary CardData to reuse existing rendering logic
+        CardData tempCardData = ScriptableObject.CreateInstance<CardData>();
+        tempCardData.cardName = card.cardName;
+        tempCardData.description = card.description;
+        tempCardData.cardType = card.cardType.ToString();
+        tempCardData.playCost = card.manaCost;
+        tempCardData.damage = (int)card.baseDamage;
+        tempCardData.block = (int)card.baseGuard;
+        
+        // Parse rarity and element from Card
+        tempCardData.rarity = ParseCardRarity(card);
+        tempCardData.element = ParseCardElement(card);
+        tempCardData.category = ParseCardCategory(card.cardType);
+        
+        // Most importantly: Set the card art from the Card object
+        tempCardData.cardImage = card.cardArt;
+        
+        // Now use the existing UpdateCardVisuals method
+        UpdateCardVisuals(tempCardData);
+        
+        Debug.Log($"<color=cyan>[CardArt] Updated card visuals from Card object: {card.cardName} (Art: {(card.cardArt != null ? "Loaded" : "Missing")})</color>");
+    }
+    
+    private CardRarity ParseCardRarity(Card card)
+    {
+        // Try to parse from tags or use default
+        if (card.tags != null && card.tags.Contains("Rare"))
+            return CardRarity.Rare;
+        if (card.tags != null && card.tags.Contains("Magic"))
+            return CardRarity.Magic;
+        if (card.tags != null && card.tags.Contains("Unique"))
+            return CardRarity.Unique;
+        
+        return CardRarity.Common;
+    }
+    
+    private CardElement ParseCardElement(Card card)
+    {
+        // Parse based on damage type or tags
+        if (card.primaryDamageType == DamageType.Fire)
+            return CardElement.Fire;
+        if (card.primaryDamageType == DamageType.Cold)
+            return CardElement.Cold;
+        if (card.primaryDamageType == DamageType.Lightning)
+            return CardElement.Lightning;
+        if (card.primaryDamageType == DamageType.Physical)
+            return CardElement.Physical;
+        if (card.primaryDamageType == DamageType.Chaos)
+            return CardElement.Chaos;
+        
+        return CardElement.Basic;
+    }
+    
+    private CardCategory ParseCardCategory(CardType cardType)
+    {
+        switch (cardType)
+        {
+            case CardType.Attack: return CardCategory.Attack;
+            case CardType.Guard: return CardCategory.Guard;
+            case CardType.Skill: return CardCategory.Skill;
+            case CardType.Power: return CardCategory.Power;
+            default: return CardCategory.Attack;
+        }
+    }
+    
     private void UpdateTextElements()
     {
         // Update card name

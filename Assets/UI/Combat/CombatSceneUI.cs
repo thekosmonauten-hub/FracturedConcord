@@ -7,7 +7,7 @@ public class CombatSceneUI : MonoBehaviour
     public UIDocument uiDocument;
     public CombatManager combatManager;
     public CombatUI combatUI;
-    public SimpleCombatUI cardManager;
+    public AnimatedCombatUI animatedCombatUI; // Updated to AnimatedCombatUI
     
     private void Start()
     {
@@ -18,8 +18,8 @@ public class CombatSceneUI : MonoBehaviour
             combatManager = FindFirstObjectByType<CombatManager>();
         if (combatUI == null)
             combatUI = FindFirstObjectByType<CombatUI>();
-        if (cardManager == null)
-            cardManager = FindFirstObjectByType<SimpleCombatUI>();
+        if (animatedCombatUI == null)
+            animatedCombatUI = FindFirstObjectByType<AnimatedCombatUI>();
         
         // Pass references to CombatUI
         if (combatUI != null)
@@ -27,15 +27,14 @@ public class CombatSceneUI : MonoBehaviour
             combatUI.combatManager = combatManager;
         }
         
-        // Initialize card manager
-        if (cardManager != null)
+        // Initialize animated combat UI
+        if (animatedCombatUI != null)
         {
-            // SimpleCombatUI doesn't need uiDocument reference
-            Debug.Log("SimpleCombatUI found and initialized.");
+            Debug.Log("AnimatedCombatUI found and initialized.");
         }
         else
         {
-            Debug.LogWarning("SimpleCombatUI not found! Cards will not be displayed.");
+            Debug.LogWarning("AnimatedCombatUI not found! Cards will not be displayed.");
         }
     }
 }

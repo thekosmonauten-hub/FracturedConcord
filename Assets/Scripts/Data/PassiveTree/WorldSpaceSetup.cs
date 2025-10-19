@@ -114,6 +114,13 @@ namespace PassiveTree
                 return true; // Preserve tooltip UI
             }
             
+            // Preserve canvases with "background" in the name
+            if (canvas.name.ToLower().Contains("background"))
+            {
+                Debug.Log($"[WorldSpaceSetup] Preserving background canvas: {canvas.name}");
+                return true;
+            }
+            
             // Preserve canvases with "tooltip" in the name
             if (canvas.name.ToLower().Contains("tooltip"))
             {

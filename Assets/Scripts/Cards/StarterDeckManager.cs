@@ -31,6 +31,13 @@ public class StarterDeckManager : MonoBehaviour
     public ApostleStarterDeck apostleStarterDeck;
     
     private Dictionary<string, Deck> starterDecks = new Dictionary<string, Deck>();
+
+	[Header("Starter Deck Definitions (Optional) - CardDataExtended only")]
+	public List<StarterDeckDefinition> starterDeckDefinitions = new List<StarterDeckDefinition>();
+
+	[Header("Resources Loading (Optional)")]
+	public bool loadDefinitionsFromResources = true;
+	public string definitionsResourcesPath = "StarterDecks";
     
     private void Awake()
     {
@@ -66,6 +73,26 @@ public class StarterDeckManager : MonoBehaviour
             
         if (apostleStarterDeck != null)
             starterDecks["Apostle"] = apostleStarterDeck.CreateApostleStarterDeck();
+
+		// (Optional) Load StarterDeckDefinition entries for CardDataExtended-only flow
+		if (starterDeckDefinitions != null)
+		{
+			foreach (var def in starterDeckDefinitions)
+			{
+				if (def == null || string.IsNullOrWhiteSpace(def.characterClass)) continue;
+				// No legacy Deck population here; definitions are used to initialize Character.deckData
+			}
+		}
+
+		if (loadDefinitionsFromResources && !string.IsNullOrEmpty(definitionsResourcesPath))
+		{
+			var defs = Resources.LoadAll<StarterDeckDefinition>(definitionsResourcesPath);
+			foreach (var def in defs)
+			{
+				if (def == null || string.IsNullOrWhiteSpace(def.characterClass)) continue;
+				// As above, kept for deckData initialization time
+			}
+		}
     }
     
     // Get starter deck for a character class
@@ -115,4 +142,77 @@ public class StarterDeckManager : MonoBehaviour
         
         return stats;
     }
+
+	/// <summary>
+	/// Initialize Character.deckData from StarterDeckDefinition for the character's class.
+	/// Does not use legacy Card/Deck. Pure CardDataExtended-based.
+	/// </summary>
+	public void AssignStarterToCharacterDeckData(Character character)
+	{
+		if (character == null) return;
+
+		StarterDeckDefinition chosen = null;
+		if (starterDeckDefinitions != null && starterDeckDefinitions.Count > 0)
+		{
+			chosen = starterDeckDefinitions.Find(d => d != null &&
+				string.Equals(d.characterClass, character.characterClass, System.StringComparison.OrdinalIgnoreCase));
+		}
+
+		if (chosen == null && loadDefinitionsFromResources && !string.IsNullOrEmpty(definitionsResourcesPath))
+		{
+			var defs = Resources.LoadAll<StarterDeckDefinition>(definitionsResourcesPath);
+			foreach (var d in defs)
+			{
+				if (d != null && string.Equals(d.characterClass, character.characterClass, System.StringComparison.OrdinalIgnoreCase))
+				{
+					chosen = d; break;
+				}
+			}
+		}
+
+		if (chosen == null)
+		{
+			Debug.LogWarning($"StarterDeckManager: No StarterDeckDefinition found for '{character.characterClass}'.");
+			return;
+		}
+
+		var names = chosen.GetCardNames();
+		character.deckData.InitializeStarterCollection(names);
+
+		var defaultDeckName = $"{character.characterClass} Starter";
+		if (!character.deckData.HasDeck(defaultDeckName))
+		{
+			character.deckData.AddDeck(defaultDeckName);
+		}
+		character.deckData.SetActiveDeck(defaultDeckName);
+
+		Debug.Log($"StarterDeckManager: Initialized starter collection for {character.characterName} ({character.characterClass}) with {names.Count} cards.");
+	}
+
+	/// <summary>
+	/// Retrieve the StarterDeckDefinition for a given class, checking assigned list then Resources.
+	/// Returns null if none found.
+	/// </summary>
+	public StarterDeckDefinition GetDefinitionForClass(string className)
+	{
+		if (string.IsNullOrWhiteSpace(className)) return null;
+		StarterDeckDefinition chosen = null;
+		if (starterDeckDefinitions != null && starterDeckDefinitions.Count > 0)
+		{
+			chosen = starterDeckDefinitions.Find(d => d != null &&
+				string.Equals(d.characterClass, className, System.StringComparison.OrdinalIgnoreCase));
+		}
+		if (chosen == null && loadDefinitionsFromResources && !string.IsNullOrEmpty(definitionsResourcesPath))
+		{
+			var defs = Resources.LoadAll<StarterDeckDefinition>(definitionsResourcesPath);
+			foreach (var d in defs)
+			{
+				if (d != null && string.Equals(d.characterClass, className, System.StringComparison.OrdinalIgnoreCase))
+				{
+					chosen = d; break;
+				}
+			}
+		}
+		return chosen;
+	}
 }

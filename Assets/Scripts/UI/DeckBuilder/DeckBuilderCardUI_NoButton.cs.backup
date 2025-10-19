@@ -1,0 +1,27 @@
+// BACKUP: If Button component keeps causing issues, use this version
+// This version completely removes Button dependency
+
+// In DeckBuilderCardUI.cs, replace the button-related code:
+
+// REMOVE THIS:
+private Button button;
+
+// REMOVE THIS from Awake():
+button = GetComponent<Button>();
+if (button != null)
+{
+    button.transition = Selectable.Transition.None;
+}
+
+// REMOVE THIS from UpdateVisualState():
+// (Already removed, nothing to do)
+
+// That's it! The IPointerClickHandler will work perfectly without Button.
+
+
+
+
+
+
+
+

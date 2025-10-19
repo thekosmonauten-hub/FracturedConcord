@@ -15,6 +15,10 @@ public class PassiveTreeUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI cellTypeText;
     [SerializeField] private TextMeshProUGUI cellCostText;
     [SerializeField] private TextMeshProUGUI cellStatusText;
+    [SerializeField] private TextMeshProUGUI availablePointsText;
+    [SerializeField] private TextMeshProUGUI pendingPointsText;
+    [SerializeField] private UnityEngine.UI.Button confirmButton;
+    [SerializeField] private UnityEngine.UI.Button cancelButton;
 
     [Header("UI Settings")]
     [SerializeField] private bool showDetailedInfo = true;
@@ -32,6 +36,7 @@ public class PassiveTreeUI : MonoBehaviour
     private PassiveTreeManager treeManager;
     private BoardDataManager dataManager;
     private CellController currentSelectedCell;
+    private PassiveTree.PlayerPassiveState playerPassiveState;
 
     void Start()
     {
@@ -80,7 +85,96 @@ public class PassiveTreeUI : MonoBehaviour
         // Note: You'll need to add this event to PassiveTreeManager
         // treeManager.OnCellSelected += OnCellSelected;
 
+        // Hook pending allocation updates if available
+        PassiveTree.PassiveTreeManager.OnPendingAllocationsChanged += RefreshPointsUI;
+        
+        // Try to locate PlayerPassiveState via CharacterManager (if integrated)
+        // Optional: fallback null (UI will show 0)
+        playerPassiveState = null;
+        
+        // Hook confirm/cancel buttons
+        if (confirmButton != null)
+        {
+            confirmButton.onClick.AddListener(OnConfirmAllocations);
+        }
+        if (cancelButton != null)
+        {
+            cancelButton.onClick.AddListener(OnCancelAllocations);
+        }
+        
+        RefreshPointsUI();
         Debug.Log("[PassiveTreeUI] Connected to passive tree system");
+    }
+
+    private void OnDestroy()
+    {
+        PassiveTree.PassiveTreeManager.OnPendingAllocationsChanged -= RefreshPointsUI;
+        if (confirmButton != null) confirmButton.onClick.RemoveListener(OnConfirmAllocations);
+        if (cancelButton != null) cancelButton.onClick.RemoveListener(OnCancelAllocations);
+    }
+
+    private void RefreshPointsUI()
+    {
+        // Available Points
+        int available = 0;
+        if (playerPassiveState != null)
+        {
+            available = playerPassiveState.GetAvailablePoints();
+        }
+        if (availablePointsText != null)
+        {
+            availablePointsText.text = $"Available Points: {available}";
+        }
+        
+        // Pending allocations (count)
+        int pending = treeManager != null ? treeManager.GetPendingAllocationsCount() : 0;
+        if (pendingPointsText != null)
+        {
+            pendingPointsText.text = pending > 0 ? $"Pending: {pending}" : "Pending: 0";
+        }
+        
+        // Enable/disable confirm/cancel
+        if (confirmButton != null) confirmButton.interactable = pending > 0 && available >= pending;
+        if (cancelButton != null) cancelButton.interactable = pending > 0;
+    }
+
+    private void OnConfirmAllocations()
+    {
+        if (treeManager == null) return;
+        // Spend points and finalize purchases
+        int pendingCount = treeManager.GetPendingAllocationsCount();
+        if (pendingCount == 0) return;
+        if (playerPassiveState != null && playerPassiveState.GetAvailablePoints() < pendingCount)
+        {
+            Debug.LogWarning("[PassiveTreeUI] Not enough points to confirm pending selections");
+            return;
+        }
+        
+        int allocated = treeManager.ConfirmPendingAllocations();
+        
+        // Spend points
+        if (playerPassiveState != null)
+        {
+            playerPassiveState.AddSkillPoints(-allocated);
+        }
+        RefreshPointsUI();
+    }
+
+    private void OnCancelAllocations()
+    {
+        if (treeManager == null) return;
+        treeManager.CancelPendingAllocations();
+        RefreshPointsUI();
+    }
+
+    private PassiveTree.CellController FindCell(Vector2Int gridPos)
+    {
+        var cells = FindObjectsByType<PassiveTree.CellController>(FindObjectsSortMode.None);
+        foreach (var c in cells)
+        {
+            if (c.GridPosition == gridPos) return c;
+        }
+        return null;
     }
 
     /// <summary>

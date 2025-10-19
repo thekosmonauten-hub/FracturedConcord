@@ -39,6 +39,10 @@ public class Card
     public float baseGuard;
     public DamageType primaryDamageType = DamageType.Physical;
     
+    [Header("Visual Assets")]
+    public Sprite cardArt; // Card artwork sprite
+    public string cardArtName; // Name of sprite to load from Resources (for JSON cards)
+    
     [Header("Weapon Scaling")]
     public bool scalesWithMeleeWeapon = false;
     public bool scalesWithProjectileWeapon = false;
@@ -47,6 +51,7 @@ public class Card
     [Header("Area of Effect")]
     public bool isAoE = false; // Area of Effect - hits multiple enemies
     public int aoeTargets = 3; // Number of enemies hit (default to all 3)
+    public AoERowScope aoeRowScope = AoERowScope.BothRows; // Row scope for AoE
     
     [Header("Requirements")]
     public CardRequirements requirements = new CardRequirements();
@@ -63,6 +68,25 @@ public class Card
     
     [Header("Card Effects")]
     public List<CardEffect> effects = new List<CardEffect>();
+    
+    [Header("Combo Properties")]
+    [Tooltip("Cards or types this card can combo with (comma-separated)")]
+    public string comboWith = "";
+    [Tooltip("Description of what happens when this card combos")]
+    public string comboDescription = "";
+    [Tooltip("Effect that triggers when this card combos")]
+    public string comboEffect = "";
+    [Tooltip("Type of combo highlighting: 'specific', 'type', 'tag'")]
+    public string comboHighlightType = "specific";
+    
+    [Header("Combo Ailment (Runtime)")]
+    public AilmentId comboAilmentId = AilmentId.None;
+    public float comboAilmentPortion = 0f;
+    public int comboAilmentDuration = 0;
+    
+    [Header("Consume Ailment (Runtime)")]
+    public bool consumeAilmentEnabled = false;
+    public AilmentId consumeAilmentId = AilmentId.None;
     
     // Check if character can use this card
     public bool CanUseCard(Character character)
@@ -120,6 +144,17 @@ public class Card
         if (cardType == CardType.Attack && baseDamage > 0)
         {
             float totalDamage = DamageCalculator.CalculateCardDamage(this, character, character.weapons.meleeWeapon);
+            
+            // Debug logging to identify the issue
+            Debug.Log($"<color=yellow>Card {cardName} Damage Calculation:</color>");
+            Debug.Log($"  Base Damage: {baseDamage}");
+            Debug.Log($"  Character: {(character != null ? character.characterName : "NULL")}");
+            Debug.Log($"  Melee Weapon: {(character?.weapons?.meleeWeapon != null ? character.weapons.meleeWeapon.weaponName : "NULL")}");
+            Debug.Log($"  Scales with Melee: {scalesWithMeleeWeapon}");
+            Debug.Log($"  Strength: {character?.strength ?? 0}");
+            Debug.Log($"  Strength Scaling: {damageScaling.strengthScaling}");
+            Debug.Log($"  Total Damage: {totalDamage}");
+            
             dynamicDesc = dynamicDesc.Replace("{damage}", totalDamage.ToString("F0"));
             dynamicDesc = dynamicDesc.Replace("{baseDamage}", baseDamage.ToString("F0"));
         }
@@ -162,6 +197,29 @@ public class Card
         if (isAoE)
         {
             dynamicDesc = dynamicDesc.Replace("{aoeTargets}", aoeTargets.ToString());
+        }
+        
+        // Replace effect-based scaling placeholders
+        if (effects != null && effects.Count > 0)
+        {
+            foreach (var effect in effects)
+            {
+                // Handle status effect scaling with Strength (like Vulnerability)
+                if (effect.effectType == EffectType.ApplyStatus && effect.effectName == "Vulnerability")
+                {
+                    // Calculate total Vulnerability: base value + 1 per 15 Strength
+                    float baseVulnerability = effect.value;
+                    float strengthBonus = Mathf.Floor(character.strength / 15f);
+                    float totalVulnerability = baseVulnerability + strengthBonus;
+                    
+                    dynamicDesc = dynamicDesc.Replace("{vulnerability}", totalVulnerability.ToString("F0"));
+                    dynamicDesc = dynamicDesc.Replace("{baseVulnerability}", baseVulnerability.ToString("F0"));
+                    dynamicDesc = dynamicDesc.Replace("{vulnerabilityBonus}", strengthBonus.ToString("F0"));
+                }
+                
+                // Add more effect-based placeholders here as needed
+                // Example: {poison}, {burn}, {stun}, etc.
+            }
         }
         
         return dynamicDesc;

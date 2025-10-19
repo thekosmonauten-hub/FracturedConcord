@@ -1,5 +1,7 @@
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System.Collections.Generic;
 using System.Linq;
 
@@ -339,6 +341,7 @@ public class ItemDatabase : ScriptableObject
     [ContextMenu("Clear All Items")]
     public void ClearAllItems()
     {
+        #if UNITY_EDITOR
         if (EditorUtility.DisplayDialog("Clear All Items", 
             "Are you sure you want to clear all items from the database?", "Yes", "No"))
         {
@@ -349,6 +352,9 @@ public class ItemDatabase : ScriptableObject
             consumables.Clear();
             Debug.Log("Cleared all items from database.");
         }
+        #else
+        Debug.LogWarning("ClearAllItems dialog is editor-only.");
+        #endif
     }
     
     // Get database statistics

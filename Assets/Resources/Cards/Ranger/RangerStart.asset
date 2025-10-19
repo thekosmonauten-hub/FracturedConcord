@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cc97289223b8f943b58c307b0877854, type: 3}
+  m_Name: RangerStart
+  m_EditorClassIdentifier: Assembly-CSharp::StarterDeckDefinition
+  characterClass: Ranger
+  cards:
+  - card: {fileID: 11400000, guid: 51df381156921e34b9f683c0e717494a, type: 2}
+    count: 5
+  - card: {fileID: 11400000, guid: de5a036625ac8194f8a920ee7e3ef9e3, type: 2}
+    count: 3
+  - card: {fileID: 11400000, guid: 69853309f46c81847b1b612c99fd3e67, type: 2}
+    count: 3
+  - card: {fileID: 11400000, guid: 35bd450cb13dbec4a8e2ba46fa357ba9, type: 2}
+    count: 4
+  - card: {fileID: 11400000, guid: 260eb40a89376c345a5a1d1572c56315, type: 2}
+    count: 2
+  - card: {fileID: 11400000, guid: 923dcf5f8faadd34aa06669d9daaae71, type: 2}
+    count: 1

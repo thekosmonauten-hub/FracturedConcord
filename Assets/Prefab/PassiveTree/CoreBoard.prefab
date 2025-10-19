@@ -75,7 +75,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 55387869409894569, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Intelligence & Strength
+      value: Max Health
       objectReference: {fileID: 0}
     - target: {fileID: 55387869409894569, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -86,16 +86,32 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 55387869409894569, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 55387869409894569, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +5 Intelligence, 5 Strength
+      value: 4% increased Max health
       objectReference: {fileID: 0}
     - target: {fileID: 55387869409894569, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.strength
-      value: 5
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 55387869409894569, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.dexterity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 55387869409894569, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealth
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 55387869409894569, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.intelligence
-      value: 5
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 55387869409894569, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealthIncrease
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 80888170697772554, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Size.x
@@ -151,7 +167,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 165998544603136501, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Max energy shield
+      value: Max health and Energy shield
       objectReference: {fileID: 0}
     - target: {fileID: 165998544603136501, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -166,8 +182,16 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 165998544603136501, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 165998544603136501, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: 6% increased Max Energy Shield
+      value: '2% increased Max Health and Energy Shield '
+      objectReference: {fileID: 0}
+    - target: {fileID: 165998544603136501, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealthIncrease
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 165998544603136501, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.maxEnergyShieldIncrease
@@ -175,7 +199,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 174972659863108913, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_0_5_Strength & Dexterity
+      value: Cell_0_5_Max health and Energy shield
       objectReference: {fileID: 0}
     - target: {fileID: 222894676706555977, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeId
@@ -204,6 +228,10 @@ PrefabInstance:
     - target: {fileID: 222894676706555977, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodePosition.y
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 222894676706555977, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 222894676706555977, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
@@ -267,7 +295,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 477042375734846308, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Max energy shield
+      value: Max health and Energy shield
       objectReference: {fileID: 0}
     - target: {fileID: 477042375734846308, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -282,8 +310,24 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 477042375734846308, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 477042375734846308, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: 4% increased Max Energy Shield
+      value: '2% increased Max Health and Energy Shield '
+      objectReference: {fileID: 0}
+    - target: {fileID: 477042375734846308, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.dexterity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 477042375734846308, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.intelligence
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 477042375734846308, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealthIncrease
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 477042375734846308, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.maxEnergyShieldIncrease
@@ -391,7 +435,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 540729114608612903, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Intelligence
+      value: Increased Armour
       objectReference: {fileID: 0}
     - target: {fileID: 540729114608612903, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -402,12 +446,20 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 540729114608612903, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 540729114608612903, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +10 Intelligence
+      value: 6% Increased Armour
       objectReference: {fileID: 0}
     - target: {fileID: 540729114608612903, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.intelligence
-      value: 10
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 540729114608612903, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.armorIncrease
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 588251273004659663, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Color.b
@@ -463,7 +515,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 764918840389902822, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Max health
+      value: Max health and Energy shield
       objectReference: {fileID: 0}
     - target: {fileID: 764918840389902822, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -474,16 +526,32 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 764918840389902822, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 764918840389902822, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: 4% increased Max Health
+      value: '2% increased Max Health and Energy Shield '
+      objectReference: {fileID: 0}
+    - target: {fileID: 764918840389902822, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.dexterity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 764918840389902822, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.intelligence
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 764918840389902822, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.maxHealthIncrease
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 764918840389902822, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxEnergyShieldIncrease
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 792492345338544097, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_1_6_Max energy shield
+      value: Cell_1_6_Max health and Energy shield
       objectReference: {fileID: 0}
     - target: {fileID: 796635621365688604, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: button
@@ -605,6 +673,10 @@ PrefabInstance:
       propertyPath: nodePosition.y
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 936554298838678804, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 938490446902695980, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeId
       value: Cell_0_1
@@ -619,7 +691,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 938490446902695980, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Intelligence & Strength
+      value: Max Health
       objectReference: {fileID: 0}
     - target: {fileID: 938490446902695980, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -630,16 +702,32 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 938490446902695980, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 938490446902695980, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +5 Intelligence, 5 Strength
+      value: 4% Increased Max health
       objectReference: {fileID: 0}
     - target: {fileID: 938490446902695980, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.strength
-      value: 5
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 938490446902695980, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.dexterity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 938490446902695980, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealth
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 938490446902695980, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.intelligence
-      value: 5
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 938490446902695980, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealthIncrease
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 950014570323666168, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Color.b
@@ -766,12 +854,16 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 977348863141540995, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 977348863141540995, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: 6% increased Max Health
+      value: 4% increased Max Health
       objectReference: {fileID: 0}
     - target: {fileID: 977348863141540995, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.maxHealthIncrease
-      value: 6
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1106426597558881668, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -1167,7 +1259,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1542292915623630441, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_1_0_Intelligence & Strength
+      value: Cell_1_0_Max Health
       objectReference: {fileID: 0}
     - target: {fileID: 1558391585106001380, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Color.b
@@ -1355,7 +1447,7 @@ PrefabInstance:
       objectReference: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
     - target: {fileID: 1679735156299228335, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_0_2_Strength
+      value: Cell_0_2_Increased Armour
       objectReference: {fileID: 0}
     - target: {fileID: 1704061618866453047, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -1419,7 +1511,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1796049167413213561, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Intelligence & Dexterity
+      value: Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 1796049167413213561, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -1430,16 +1522,28 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1796049167413213561, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1796049167413213561, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +5 Intelligence, 5 Dexterity
+      value: 6% Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 1796049167413213561, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.dexterity
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1796049167413213561, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.intelligence
-      value: 5
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1796049167413213561, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealthIncrease
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1796049167413213561, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxEnergyShieldIncrease
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1833407339727325418, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -1559,7 +1663,7 @@ PrefabInstance:
       objectReference: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
     - target: {fileID: 1955652236554884786, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_2_6_Max energy shield
+      value: Cell_2_6_Max health and Energy shield
       objectReference: {fileID: 0}
     - target: {fileID: 1994468897268393739, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeId
@@ -1575,7 +1679,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1994468897268393739, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Strength & Dexterity
+      value: Increased Evasion
       objectReference: {fileID: 0}
     - target: {fileID: 1994468897268393739, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -1590,16 +1694,32 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1994468897268393739, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1994468897268393739, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +5 Strength, +5 Dexterity
+      value: 12% increased Evasion
       objectReference: {fileID: 0}
     - target: {fileID: 1994468897268393739, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.strength
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1994468897268393739, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.dexterity
-      value: 5
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1994468897268393739, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.intelligence
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1994468897268393739, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.increasedEvasion
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1994468897268393739, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealthIncrease
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2007720830721638263, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Color.b
@@ -1795,7 +1915,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2058422259780926345, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_2_1_Intelligence
+      value: Cell_2_1_Strength
       objectReference: {fileID: 0}
     - target: {fileID: 2120707734019559652, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Color.b
@@ -1823,7 +1943,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2237537826916900777, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_0_1_Intelligence & Strength
+      value: Cell_0_1_Max Health
       objectReference: {fileID: 0}
     - target: {fileID: 2241268718351455843, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: button
@@ -2471,7 +2591,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2936093800338821092, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_4_6_Max energy shield
+      value: Cell_4_6_Increased Evasion
       objectReference: {fileID: 0}
     - target: {fileID: 2954553479380324361, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -2603,7 +2723,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3228322038492807522, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_1_4_Strength
+      value: Cell_1_4_All attributes
       objectReference: {fileID: 0}
     - target: {fileID: 3235758288997117704, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -2650,12 +2770,16 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3249299651810327592, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3249299651810327592, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +100 to Accuracy rating, +16% increased projectile damage, +20 Dexterity
+      value: +150 to Accuracy rating, +16% increased projectile damage, +20 Dexterity
       objectReference: {fileID: 0}
     - target: {fileID: 3249299651810327592, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.accuracy
-      value: 100
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 3249299651810327592, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.dexterity
@@ -2842,12 +2966,16 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3437000956743443777, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3437000956743443777, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +10 Strength
+      value: +5 Strength
       objectReference: {fileID: 0}
     - target: {fileID: 3437000956743443777, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.strength
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3459125826062024625, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeId
@@ -2863,7 +2991,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3459125826062024625, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Strength
+      value: Increased Armour
       objectReference: {fileID: 0}
     - target: {fileID: 3459125826062024625, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -2874,12 +3002,20 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3459125826062024625, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3459125826062024625, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +10 Strength
+      value: 6% Increased Armour
       objectReference: {fileID: 0}
     - target: {fileID: 3459125826062024625, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.strength
-      value: 10
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3459125826062024625, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.armorIncrease
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3548519867438638021, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: button
@@ -3415,7 +3551,7 @@ PrefabInstance:
       objectReference: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
     - target: {fileID: 3856854088861014866, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_5_2_Dexterity
+      value: Cell_5_2_Intelligence
       objectReference: {fileID: 0}
     - target: {fileID: 3883886541753272830, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeId
@@ -3431,7 +3567,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3883886541753272830, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Dexterity
+      value: Intelligence
       objectReference: {fileID: 0}
     - target: {fileID: 3883886541753272830, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -3446,12 +3582,20 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3883886541753272830, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3883886541753272830, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +10 Dexterity
+      value: +5 Intelligence
       objectReference: {fileID: 0}
     - target: {fileID: 3883886541753272830, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.dexterity
-      value: 10
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3883886541753272830, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.intelligence
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3907309509170097700, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeId
@@ -3467,7 +3611,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3907309509170097700, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Strength & Dexterity
+      value: Max health and Energy shield
       objectReference: {fileID: 0}
     - target: {fileID: 3907309509170097700, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -3478,16 +3622,36 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3907309509170097700, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907309509170097700, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +5 Strength, +5 Dexterity
+      value: '2% increased Max Health and Energy Shield '
       objectReference: {fileID: 0}
     - target: {fileID: 3907309509170097700, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.strength
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3907309509170097700, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.dexterity
-      value: 5
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907309509170097700, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealth
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907309509170097700, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.intelligence
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907309509170097700, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealthIncrease
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907309509170097700, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxEnergyShieldIncrease
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3911525899106526457, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -3575,7 +3739,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4033181154002608987, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_6_0_Intelligence & Dexterity
+      value: Cell_6_0_Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 4059069379043139675, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeId
@@ -3606,8 +3770,28 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4059069379043139675, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4059069379043139675, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
       value: 12% increased Evasion
+      objectReference: {fileID: 0}
+    - target: {fileID: 4059069379043139675, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.dexterity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4059069379043139675, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.intelligence
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4059069379043139675, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.increasedEvasion
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4059069379043139675, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealthIncrease
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4077323332906670485, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Color.b
@@ -3744,6 +3928,10 @@ PrefabInstance:
     - target: {fileID: 4151921780352286085, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodePosition.y
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4151921780352286085, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4151921780352286085, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
@@ -3922,6 +4110,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4373952164796304382, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4373952164796304382, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
       value: +10 Strength
       objectReference: {fileID: 0}
@@ -3974,6 +4166,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4455663948737585322, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4455663948737585322, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
       value: +10 Strength
       objectReference: {fileID: 0}
@@ -3995,7 +4191,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4481655409541990985, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Strength
+      value: All attributes
       objectReference: {fileID: 0}
     - target: {fileID: 4481655409541990985, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -4010,12 +4206,24 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4481655409541990985, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4481655409541990985, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +10 Strength
+      value: +1 to all attributes
       objectReference: {fileID: 0}
     - target: {fileID: 4481655409541990985, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.strength
-      value: 10
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4481655409541990985, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.dexterity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4481655409541990985, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.intelligence
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4496741940784054077, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Color.b
@@ -4170,12 +4378,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4718387314449395352, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718387314449395352, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +10 Intelligence
+      value: +5 Intelligence
       objectReference: {fileID: 0}
     - target: {fileID: 4718387314449395352, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.intelligence
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4731121957859429958, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: button
@@ -4471,11 +4683,11 @@ PrefabInstance:
       objectReference: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
     - target: {fileID: 4904510433902146545, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_5_0_Intelligence & Dexterity
+      value: Cell_5_0_Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 4938272558170634988, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_0_6_Max health
+      value: Cell_0_6_Max health and Energy shield
       objectReference: {fileID: 0}
     - target: {fileID: 4979967920507159198, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
@@ -4611,7 +4823,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5017317430350764908, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Intelligence & Strength
+      value: Armour
       objectReference: {fileID: 0}
     - target: {fileID: 5017317430350764908, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -4626,16 +4838,24 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5017317430350764908, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5017317430350764908, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +5 Intelligence, 5 Strength
+      value: +25 armour
+      objectReference: {fileID: 0}
+    - target: {fileID: 5017317430350764908, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.armour
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 5017317430350764908, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.strength
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5017317430350764908, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.intelligence
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5027656628552776530, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
@@ -4643,7 +4863,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5054379995495410462, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_0_0_Intelligence & Strength
+      value: Cell_0_0_Max Health
       objectReference: {fileID: 0}
     - target: {fileID: 5060783044038853965, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeId
@@ -4659,7 +4879,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5060783044038853965, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Intelligence & Dexterity
+      value: Flat Energy shield
       objectReference: {fileID: 0}
     - target: {fileID: 5060783044038853965, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -4674,16 +4894,24 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5060783044038853965, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5060783044038853965, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +5 Intelligence, 5 Dexterity
+      value: +12 Energy shield
       objectReference: {fileID: 0}
     - target: {fileID: 5060783044038853965, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.dexterity
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5060783044038853965, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.intelligence
-      value: 5
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5060783044038853965, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxEnergyShield
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 5088745275683086487, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -4813,6 +5041,26 @@ PrefabInstance:
       propertyPath: m_Color.g
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5183617205708526021, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeName
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5183617205708526021, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5183617205708526021, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.dexterity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5183617205708526021, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.intelligence
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5183617205708526021, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealthIncrease
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5205806194448211271, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeId
       value: Cell_1_3
@@ -4839,6 +5087,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5205806194448211271, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodePosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5205806194448211271, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5205806194448211271, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
@@ -4961,9 +5213,13 @@ PrefabInstance:
       propertyPath: nodePosition.y
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 5260282745156324952, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5279867347459711526, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_0_4_Strength
+      value: Cell_0_4_Max health and Energy shield
       objectReference: {fileID: 0}
     - target: {fileID: 5318571531113456872, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -5022,6 +5278,10 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5378090229926117290, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5378090229926117290, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
       value: +25 Evasion
       objectReference: {fileID: 0}
@@ -5043,7 +5303,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5391223519646677673, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Strength & Dexterity
+      value: Dexterity
       objectReference: {fileID: 0}
     - target: {fileID: 5391223519646677673, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -5058,12 +5318,16 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5391223519646677673, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5391223519646677673, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +5 Strength, +5 Dexterity
+      value: +5 Dexterity
       objectReference: {fileID: 0}
     - target: {fileID: 5391223519646677673, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.strength
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5391223519646677673, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.dexterity
@@ -5087,7 +5351,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5406924431273288718, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_6_5_Strength & Dexterity
+      value: Cell_6_5_Increased Evasion
       objectReference: {fileID: 0}
     - target: {fileID: 5430323361260148983, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Size.x
@@ -5103,7 +5367,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5432461754171463649, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_6_4_Dexterity
+      value: Cell_6_4_Increased Evasion
       objectReference: {fileID: 0}
     - target: {fileID: 5451525269941058147, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -5206,6 +5470,10 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5727547103967865114, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5727547103967865114, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
       value: +3 to all attributes
       objectReference: {fileID: 0}
@@ -5235,7 +5503,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5835984499223837157, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Intelligence
+      value: Strength
       objectReference: {fileID: 0}
     - target: {fileID: 5835984499223837157, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -5250,12 +5518,20 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5835984499223837157, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5835984499223837157, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +10 Intelligence
+      value: +5 Strength
+      objectReference: {fileID: 0}
+    - target: {fileID: 5835984499223837157, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.strength
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5835984499223837157, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.intelligence
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5857304911026168213, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Size.x
@@ -5279,7 +5555,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5918047856299305001, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_2_5_Strength & Dexterity
+      value: Cell_2_5_All attributes
       objectReference: {fileID: 0}
     - target: {fileID: 5943186634197361291, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeId
@@ -5308,6 +5584,10 @@ PrefabInstance:
     - target: {fileID: 5943186634197361291, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodePosition.y
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5943186634197361291, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5943186634197361291, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
@@ -5350,6 +5630,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5989077210336539132, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5989077210336539132, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
       value: +16% increased Spell damage, +8% increased Energy shield, +20 Intelligence
       objectReference: {fileID: 0}
@@ -5359,11 +5643,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5989077210336539132, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.maxEnergyShield
-      value: 8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5989077210336539132, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.spellPowerIncrease
       value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 5989077210336539132, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxEnergyShieldIncrease
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6026295551262815726, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Color.b
@@ -5403,7 +5691,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6039239774848623159, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Strength
+      value: Max health and Energy shield
       objectReference: {fileID: 0}
     - target: {fileID: 6039239774848623159, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -5414,12 +5702,24 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6039239774848623159, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6039239774848623159, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +10 Strength
+      value: '2% increased Max Health and Energy Shield '
       objectReference: {fileID: 0}
     - target: {fileID: 6039239774848623159, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.strength
-      value: 10
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6039239774848623159, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealthIncrease
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6039239774848623159, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxEnergyShieldIncrease
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6041896868456907416, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: button
@@ -5647,7 +5947,7 @@ PrefabInstance:
       objectReference: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
     - target: {fileID: 6289648609706547179, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_4_0_Intelligence
+      value: Cell_4_0_Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 6293359267876225637, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Color.b
@@ -5683,7 +5983,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6372776942166611663, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Max energy shield
+      value: Increased Evasion
       objectReference: {fileID: 0}
     - target: {fileID: 6372776942166611663, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -5698,12 +5998,20 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6372776942166611663, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6372776942166611663, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: 6% increased Max Energy Shield
+      value: 12% increased Evasion
+      objectReference: {fileID: 0}
+    - target: {fileID: 6372776942166611663, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.increasedEvasion
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 6372776942166611663, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.maxEnergyShieldIncrease
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6383010995243360531, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: button
@@ -5975,11 +6283,11 @@ PrefabInstance:
       objectReference: {fileID: -6466491387628841487, guid: 776227c039f293c4bbc8bf0d6b9f36a1, type: 3}
     - target: {fileID: 6590829409586192999, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_6_1_Intelligence & Dexterity
+      value: Cell_6_1_Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 6604133647499216413, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_4_2_Intelligence & Dexterity
+      value: Cell_4_2_Flat Energy shield
       objectReference: {fileID: 0}
     - target: {fileID: 6686402276918397405, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -6042,6 +6350,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6753915876816050943, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6753915876816050943, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
       value: +10 Dexterity
       objectReference: {fileID: 0}
@@ -6063,7 +6375,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6813810783243521470, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_2_2_Intelligence & Strength
+      value: Cell_2_2_Armour
       objectReference: {fileID: 0}
     - target: {fileID: 6835134128816456573, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Size.x
@@ -6091,7 +6403,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6863481968939178733, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Intelligence & Dexterity
+      value: Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 6863481968939178733, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -6106,16 +6418,28 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6863481968939178733, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6863481968939178733, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +5 Intelligence, 5 Dexterity
+      value: 6% Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 6863481968939178733, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.dexterity
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6863481968939178733, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.intelligence
-      value: 5
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6863481968939178733, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealthIncrease
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6863481968939178733, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxEnergyShieldIncrease
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6909706173986064658, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: button
@@ -6431,7 +6755,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7078863269990708149, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_3_3_Start
+      value: Cell_3_3 Start
       objectReference: {fileID: 0}
     - target: {fileID: 7124238929369379619, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
@@ -6767,7 +7091,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8081474990143979670, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_2_0_Intelligence
+      value: Cell_2_0_Increased Armour
       objectReference: {fileID: 0}
     - target: {fileID: 8118187135214796120, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeId
@@ -6783,7 +7107,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8118187135214796120, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Intelligence & Dexterity
+      value: Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 8118187135214796120, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -6794,16 +7118,28 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8118187135214796120, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8118187135214796120, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +5 Intelligence, 5 Dexterity
+      value: 6% Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 8118187135214796120, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.dexterity
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8118187135214796120, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.intelligence
-      value: 5
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8118187135214796120, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealthIncrease
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8118187135214796120, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxEnergyShieldIncrease
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8136370484301391717, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -6850,12 +7186,20 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8161314339128438189, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8161314339128438189, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +10 Dexterity
+      value: 5 Dexterity
       objectReference: {fileID: 0}
     - target: {fileID: 8161314339128438189, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.dexterity
-      value: 10
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8161314339128438189, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.intelligence
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8161414165407731333, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -7019,7 +7363,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8378190368220580705, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Intelligence
+      value: Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 8378190368220580705, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -7030,16 +7374,24 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8378190368220580705, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8378190368220580705, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +10 Intelligence
+      value: 6% Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 8378190368220580705, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.intelligence
-      value: 10
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8378190368220580705, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxEnergyShieldIncrease
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8430169351309503225, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_4_5_Strength & Dexterity
+      value: Cell_4_5_Dexterity
       objectReference: {fileID: 0}
     - target: {fileID: 8451525257954563777, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Color.b
@@ -7078,8 +7430,28 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8472165734513860554, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8472165734513860554, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
       value: 12% increased Evasion
+      objectReference: {fileID: 0}
+    - target: {fileID: 8472165734513860554, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.dexterity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8472165734513860554, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.intelligence
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8472165734513860554, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.increasedEvasion
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8472165734513860554, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealthIncrease
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8493332908976142297, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeId
@@ -7110,11 +7482,19 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8493332908976142297, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8493332908976142297, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
       value: +8% increased Max Health, +50 Armour, +20 Strength
       objectReference: {fileID: 0}
     - target: {fileID: 8493332908976142297, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.armor
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 8493332908976142297, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.armour
       value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 8493332908976142297, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
@@ -7136,6 +7516,10 @@ PrefabInstance:
     - target: {fileID: 8633164981803263458, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodePosition.x
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8633164981803263458, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8645672528970997002, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: button
@@ -7239,7 +7623,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8680415490417210542, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Dexterity
+      value: Increased Evasion
       objectReference: {fileID: 0}
     - target: {fileID: 8680415490417210542, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -7254,12 +7638,20 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8680415490417210542, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8680415490417210542, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +10 Dexterity
+      value: 12% increased Evasion
       objectReference: {fileID: 0}
     - target: {fileID: 8680415490417210542, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.dexterity
-      value: 10
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8680415490417210542, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.increasedEvasion
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 8681740211152046578, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Size.x
@@ -7327,7 +7719,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8778742099522844191, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Name
-      value: Cell_6_2_Dexterity
+      value: Cell_6_2_Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 8810151239493262515, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Size.x
@@ -7443,23 +7835,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8837655768853913620, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Intelligence & Strength
+      value: Max Health
       objectReference: {fileID: 0}
     - target: {fileID: 8837655768853913620, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
       value: small
       objectReference: {fileID: 0}
     - target: {fileID: 8837655768853913620, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8837655768853913620, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +5 Intelligence, 5 Strength
+      value: 4% increased Max health
       objectReference: {fileID: 0}
     - target: {fileID: 8837655768853913620, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.strength
-      value: 5
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8837655768853913620, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealth
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8837655768853913620, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.intelligence
-      value: 5
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8837655768853913620, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxHealthIncrease
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8839381341062783218, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: button
@@ -7830,6 +8234,10 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8970912266549148146, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8970912266549148146, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
       value: +3 to all attributes
       objectReference: {fileID: 0}
@@ -7864,6 +8272,10 @@ PrefabInstance:
     - target: {fileID: 9014729551759124135, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodePosition.y
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9014729551759124135, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9037224683577888164, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Color.b
@@ -7975,7 +8387,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9197634030773343807, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Dexterity
+      value: Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 9197634030773343807, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -7990,12 +8402,20 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9197634030773343807, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9197634030773343807, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +10 Dexterity
+      value: 6% Increased Energy Shield
       objectReference: {fileID: 0}
     - target: {fileID: 9197634030773343807, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.dexterity
-      value: 10
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9197634030773343807, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.maxEnergyShieldIncrease
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 9201816902490017188, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeId
@@ -8011,7 +8431,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9201816902490017188, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeName
-      value: Strength & Dexterity
+      value: All attributes
       objectReference: {fileID: 0}
     - target: {fileID: 9201816902490017188, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeType
@@ -8026,16 +8446,24 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 9201816902490017188, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: manuallySetName
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9201816902490017188, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeDescription
-      value: +5 Strength, +5 Dexterity
+      value: +1 to all attributes
       objectReference: {fileID: 0}
     - target: {fileID: 9201816902490017188, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.strength
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9201816902490017188, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: nodeStats.dexterity
-      value: 5
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9201816902490017188, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      propertyPath: nodeStats.intelligence
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9202079427605538976, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       propertyPath: m_Size.x
@@ -8056,6 +8484,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6800070406457730380, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5840142553090920602}
+    - targetCorrespondingSourceObject: {fileID: 6800070406457730380, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6495592074085575831}
     - targetCorrespondingSourceObject: {fileID: 5054379995495410462, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1205669703720895137}
@@ -9377,6 +9808,23 @@ MonoBehaviour:
   showOnStart: 0
   tooltipPanel: {fileID: 0}
   cellSizeFixer: {fileID: 0}
+--- !u!114 &6495592074085575831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5765138398516887133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4709e052c1b607644b83c5dad2014024, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PassiveTree.BoardJSONData
+  boardId: core_board
+  autoUpdateOnStart: 1
+  enableDebugLogging: 1
+  allocatedCells: []
+  totalAllocatedNodes: 0
 --- !u!212 &5771106014571102806 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 6793750966114883911, guid: 647dbfa4ea1c37b4e81d44037c85b1c3, type: 3}

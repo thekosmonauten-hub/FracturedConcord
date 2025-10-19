@@ -1,0 +1,468 @@
+{
+  "deckName": "Ranger Starter Deck",
+  "characterClass": "Ranger",
+  "description": "A dexterity-focused deck using bow attacks, evasion mechanics, and poison/bleed effects",
+  "cards": [
+    {
+      "cardName": "Pack Hunter",
+      "count": 6,
+      "data": {
+        "cardName": "Pack Hunter",
+        "description": "Deal 5 physical damage (+Dex/2) to a single enemy. (Bows: Splash 50% to pack). Combo (Pack Hunter + Pack Hunter): Deal 100% damage to ALL enemies.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 5.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": true,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 25,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["WeaponAttack", "BowAttack", "Attack", "Physical", "Combo", "Projectile"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.5,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "Damage",
+            "effectName": "Splash Damage",
+            "description": "Splash 50% damage to same pack if using bow",
+            "value": 0.5,
+            "duration": 1,
+            "damageType": "Physical",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "hasSplash"
+          },
+          {
+            "effectType": "Damage",
+            "effectName": "Combo Effect",
+            "description": "If last card was Pack Hunter, deal damage to all enemies",
+            "value": 5.0,
+            "duration": 1,
+            "damageType": "Physical",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": "comboPackHunter"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Dodge",
+      "count": 4,
+      "data": {
+        "cardName": "Dodge",
+        "description": "Gain 15 Evasion (+Dex/2) for the rest of combat. Combo (Pack Hunter + Dodge): 25% increased evasion for 10 seconds.",
+        "cardType": "Guard",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 15.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 20,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Guard", "Dexterity", "Combo"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.5,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Evasion Buff",
+            "description": "Gain 15 + (Dex/2) Evasion for rest of combat",
+            "value": 15.0,
+            "duration": -1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Combo Evasion Boost",
+            "description": "If last card was Pack Hunter, gain 25% increased evasion for 10 turns",
+            "value": 25.0,
+            "duration": 10,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": "comboPackHunter"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Guard"
+      }
+    },
+    {
+      "cardName": "Multi-Shot",
+      "count": 3,
+      "data": {
+        "cardName": "Multi-Shot",
+        "description": "Deal 10 physical damage (+Dex/2) to all enemies. Combo (Focus + Multi-Shot): Apply bleed + Gain Frenzy charge.",
+        "cardType": "Attack",
+        "manaCost": 2,
+        "baseDamage": 10.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": true,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": true,
+          "aoeTargets": 3
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 30,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["WeaponAttack", "BowAttack", "Attack", "Physical", "Combo", "Projectile"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.5,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "ApplyStatus",
+            "effectName": "Combo Bleed",
+            "description": "If last card was Focus, apply Bleed to all enemies",
+            "value": 1.0,
+            "duration": 4,
+            "damageType": "Physical",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": "comboFocus"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Quickstep",
+      "count": 2,
+      "data": {
+        "cardName": "Quickstep",
+        "description": "Gain 20 Evasion (+Dex/2) for the rest of combat. Combo (Focus + Quickstep): 3x Evasion gained.",
+        "cardType": "Skill",
+        "manaCost": 1,
+        "baseDamage": 0.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 22,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Skill", "Dexterity", "Combo"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Evasion Buff",
+            "description": "Gain 20 + (Dex/2) Evasion for rest of combat (3x if combo)",
+            "value": 20.0,
+            "duration": -1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Skill"
+      }
+    },
+    {
+      "cardName": "Poison Arrow",
+      "count": 2,
+      "data": {
+        "cardName": "Poison Arrow",
+        "description": "Deal 5 physical damage and apply 2 Poison stacks to all enemies. Combo (Focus + Poison Arrow): 3x Poison duration.",
+        "cardType": "Attack",
+        "manaCost": 1,
+        "baseDamage": 5.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "Physical",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": true,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": true,
+          "aoeTargets": 3
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 28,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["WeaponAttack", "BowAttack", "Attack", "Physical", "Poison", "Projectile"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "ApplyStatus",
+            "effectName": "Poison",
+            "description": "Apply 2 Poison stacks (20% of hit damage, 3 turns)",
+            "value": 2.0,
+            "duration": 3,
+            "damageType": "Physical",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "ApplyStatus",
+            "effectName": "Combo Poison Duration",
+            "description": "If last card was Focus, poison lasts 9 turns instead of 3",
+            "value": 2.0,
+            "duration": 9,
+            "damageType": "Physical",
+            "targetsSelf": false,
+            "targetsEnemy": false,
+            "targetsAllEnemies": true,
+            "targetsAll": false,
+            "condition": "comboFocus"
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Physical",
+        "category": "Attack"
+      }
+    },
+    {
+      "cardName": "Focus",
+      "count": 1,
+      "data": {
+        "cardName": "Focus",
+        "description": "Recover 1 mana or overcharge if at full mana. Gain 20% increased evasion for 2 turns.",
+        "cardType": "Skill",
+        "manaCost": 0,
+        "baseDamage": 0.0,
+        "baseGuard": 0.0,
+        "primaryDamageType": "None",
+        
+        "weaponScaling": {
+          "scalesWithMeleeWeapon": false,
+          "scalesWithProjectileWeapon": false,
+          "scalesWithSpellWeapon": false
+        },
+        
+        "aoe": {
+          "isAoE": false,
+          "aoeTargets": 1
+        },
+        
+        "requirements": {
+          "requiredStrength": 0,
+          "requiredDexterity": 18,
+          "requiredIntelligence": 0,
+          "requiredLevel": 1,
+          "requiredWeaponTypes": []
+        },
+        
+        "tags": ["Skill", "Dexterity"],
+        
+        "additionalDamageTypes": [],
+        
+        "damageScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "guardScaling": {
+          "strengthScaling": 0.0,
+          "dexterityScaling": 0.0,
+          "intelligenceScaling": 0.0
+        },
+        
+        "effects": [
+          {
+            "effectType": "GainMana",
+            "effectName": "Mana Recovery",
+            "description": "Recover 1 mana (or overcharge if at full)",
+            "value": 1.0,
+            "duration": 1,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          },
+          {
+            "effectType": "TemporaryStatBoost",
+            "effectName": "Evasion Boost",
+            "description": "Gain 20% increased evasion for 2 turns",
+            "value": 20.0,
+            "duration": 2,
+            "damageType": "None",
+            "targetsSelf": true,
+            "targetsEnemy": false,
+            "targetsAllEnemies": false,
+            "targetsAll": false,
+            "condition": ""
+          }
+        ],
+        
+        "rarity": "Common",
+        "element": "Basic",
+        "category": "Skill"
+      }
+    }
+  ]
+}
+
