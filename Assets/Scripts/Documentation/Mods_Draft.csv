@@ -1,0 +1,60 @@
+Category	Prefix/Suffix	Name	Stat Text	Min	Max	Item Types
+Life	Prefix	Healthy	+10–19 to Maximum Life	10	19	Armour
+Life	Prefix	Stout	+20–29 to Maximum Life	20	29	Armour
+Life	Prefix	Vigorous	+30–39 to Maximum Life	30	39	Armour
+Life	Prefix	Sanguine	+40–49 to Maximum Life	40	49	Armour
+Life	Prefix	Fecund	+50–59 to Maximum Life	50	59	Armour
+Life	Prefix	Saturated	+60–79 to Maximum Life	60	79	Armour
+Mana	Prefix	Mana Infused	+10–19 to Maximum Mana	10	19	Jewelry
+Mana	Prefix	Mindful	+20–29 to Maximum Mana	20	29	Jewelry
+Mana	Prefix	Enlightened	+30–39 to Maximum Mana	30	39	Jewelry
+Mana	Prefix	Spiritual	+40–49 to Maximum Mana	40	49	Jewelry
+Mana	Prefix	Arcane	+50–59 to Maximum Mana	50	59	Jewelry
+Mana	Prefix	Sage’s	+60–79 to Maximum Mana	60	79	Jewelry
+Fire Resistance	Suffix	of the Drake	+8–12% to Fire Resistance	8	12	Armour,Jewelry
+Fire Resistance	Suffix	of the Salamander	+13–18% to Fire Resistance	13	18	Armour,Jewelry
+Fire Resistance	Suffix	of the Volcano	+19–24% to Fire Resistance	19	24	Armour,Jewelry
+Fire Resistance	Suffix	of the Phoenix	+25–30% to Fire Resistance	25	30	Armour,Jewelry
+Cold Resistance	Suffix	of the Penguin	+8–12% to Cold Resistance	8	12	Armour,Jewelry
+Cold Resistance	Suffix	of the Yeti	+13–18% to Cold Resistance	13	18	Armour,Jewelry
+Cold Resistance	Suffix	of the Glacier	+19–24% to Cold Resistance	19	24	Armour,Jewelry
+Cold Resistance	Suffix	of the Iceborn	+25–30% to Cold Resistance	25	30	Armour,Jewelry
+Lightning Resistance	Suffix	of the Spark	+8–12% to Lightning Resistance	8	12	Armour,Jewelry
+Lightning Resistance	Suffix	of the Storm	+13–18% to Lightning Resistance	13	18	Armour,Jewelry
+Lightning Resistance	Suffix	of the Tempest	+19–24% to Lightning Resistance	19	24	Armour,Jewelry
+Lightning Resistance	Suffix	of Thunder	+25–30% to Lightning Resistance	25	30	Armour,Jewelry
+Strength	Suffix	of the Bear	+5–9 to Strength	5	9	Jewelry,Armour
+Strength	Suffix	of the Titan	+10–19 to Strength	10	19	Jewelry,Armour
+Strength	Suffix	of the Mountain	+20–29 to Strength	20	29	Jewelry,Armour
+Dexterity	Suffix	of the Lynx	+5–9 to Dexterity	5	9	Jewelry,Armour
+Dexterity	Suffix	of the Fox	+10–19 to Dexterity	10	19	Jewelry,Armour
+Dexterity	Suffix	of the Cheetah	+20–29 to Dexterity	20	29	Jewelry,Armour
+Intelligence	Suffix	of the Owl	+5–9 to Intelligence	5	9	Jewelry,Armour
+Intelligence	Suffix	of the Sage	+10–19 to Intelligence	10	19	Jewelry,Armour
+Intelligence	Suffix	of the Savant	+20–29 to Intelligence	20	29	Jewelry,Armour
+Physical Damage	Prefix	Jagged	Adds 3–6 to Physical Damage	3	6	Weapon
+Physical Damage	Prefix	Serrated	Adds 5–9 to Physical Damage	5	9	Weapon
+Physical Damage	Prefix	Wicked	Adds 8–14 to Physical Damage	8	14	Weapon
+Physical Damage	Prefix	Vicious	Adds 11–20 to Physical Damage	11	20	Weapon
+Physical Damage	Prefix	Feral	Adds 15–25 to Physical Damage	15	25	Weapon
+Physical Damage	Prefix	Brutal	Adds 20–35 to Physical Damage	20	35	Weapon
+Spell Damage	Prefix	Adept’s	+10–19% Increased Spell Damage	10	19	Caster Weapon,Jewelry
+Spell Damage	Prefix	Scholar’s	+20–29% Increased Spell Damage	20	29	Caster Weapon,Jewelry
+Spell Damage	Prefix	Occultist’s	+30–39% Increased Spell Damage	30	39	Caster Weapon,Jewelry
+Spell Damage	Prefix	Thaumaturge’s	+40–49% Increased Spell Damage	40	49	Caster Weapon,Jewelry
+Spell Damage	Prefix	Archmage’s	+50–59% Increased Spell Damage	50	59	Caster Weapon,Jewelry
+Attack Speed	Suffix	of Skill	+4–6% Increased Attack Speed	4	6	Weapon
+Attack Speed	Suffix	of Haste	+7–9% Increased Attack Speed	7	9	Weapon
+Attack Speed	Suffix	of Fury	+10–12% Increased Attack Speed	10	12	Weapon
+Attack Speed	Suffix	of Alacrity	+13–15% Increased Attack Speed	13	15	Weapon
+Attack Speed	Suffix	of Zeal	+16–18% Increased Attack Speed	16	18	Weapon
+Critical Chance	Suffix	of Precision	+10–14% to Global Critical Strike Chance	10	14	Weapon
+Critical Chance	Suffix	of the Sniper	+15–19% to Global Critical Strike Chance	15	19	Weapon
+Critical Chance	Suffix	of Puncturing	+20–24% to Global Critical Strike Chance	20	24	Weapon
+Critical Chance	Suffix	of the Assassin	+25–29% to Global Critical Strike Chance	25	29	Weapon
+Critical Chance	Suffix	of the Executioner	+30–35% to Global Critical Strike Chance	30	35	Weapon
+Energy Shield	Prefix	Guarded	+10–19% to Energy Shield	10	19	Armour
+Energy Shield	Prefix	Shielded	+20–29% to Energy Shield	20	29	Armour
+Energy Shield	Prefix	Ward	+30–39% to Energy Shield	30	39	Armour
+Energy Shield	Prefix	Aegis	+40–49% to Energy Shield	40	49	Armour
+Energy Shield	Prefix	Sanctified	+50–59% to Energy Shield	50	59	Armour

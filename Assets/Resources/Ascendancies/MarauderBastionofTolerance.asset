@@ -1,0 +1,260 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbc266e3ace2db94093de6c368eac738, type: 3}
+  m_Name: MarauderBastionofTolerance
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyData
+  ascendancyName: Bastion of Tolerance
+  baseClass: Marauder
+  tagline: The harder they strike, the stronger your resolve becomes.
+  splashArt: {fileID: -422263132307650810, guid: a26d8cf8c7ba6bc4e9795c7776a6c701, type: 3}
+  icon: {fileID: 316641397361282961, guid: c8cbb8ef1771b9e45b484862546c9175, type: 3}
+  themeColor: {r: 1, g: 1, b: 1, a: 1}
+  description: A mountain absorbs pain until it breaks the battlefield.
+  playstyleKeywords: []
+  coreMechanicName: Tolerance
+  coreMechanicDescription: Gain 1 Tolerance Charge when hit (or 2 on kill). Each
+    stacks reduces incoming damage by 3% (max 10 stacks).
+  passiveAbilities: []
+  startNode:
+    name: Tolerance
+    nodeType: 0
+    description: Gain 1 Tolerance Charge when hit (or 2 on kill). Each reduces incoming
+      damage by 15% (max 3 stacks).\nUnlocks Unique "Indomitable Roar" card.
+    icon: {fileID: 2497671411413029557, guid: f7c5b441ded2adc4f956e004d574ce47, type: 3}
+    nodeScale: 1.5
+    pointCost: 0
+    unlockedByDefault: 1
+    prerequisitePassives: []
+    requireAllPrerequisites: 1
+    treePosition: {x: 220, y: 0}
+  branches:
+  - branchName: Braced Assault
+    branchTheme: 
+    branchNodes:
+    - name: Tolerance and Guard effectiveness_1
+      nodeType: 1
+      description: 10% Increased Tolerance Effect, 10% Increased Guard effectiveness.
+      icon: {fileID: 2497671411413029557, guid: f7c5b441ded2adc4f956e004d574ce47, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Bastion Of Tolerance
+      requireAllPrerequisites: 1
+      treePosition: {x: 168.577, y: 61.283554}
+    - name: Iron Will
+      nodeType: 2
+      description: Guard persists between turns at 50% effectiveness, Your attack
+        cards cannot miss.
+      icon: {fileID: -3762917413836962630, guid: c110090424cd7984a96168fbd246d72d, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Tolerance and Guard effectiveness_1
+      requireAllPrerequisites: 1
+      treePosition: {x: 117.153984, y: 122.56711}
+    - name: Tolerance and Guard effectiveness_4
+      nodeType: 1
+      description: 10% Increased Tolerance Effect, 10% Increased Guard effectiveness.
+      icon: {fileID: 2497671411413029557, guid: f7c5b441ded2adc4f956e004d574ce47, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Iron Will
+      requireAllPrerequisites: 1
+      treePosition: {x: 65.73097, y: 183.85066}
+    - name: Immovable Object
+      nodeType: 2
+      description: Gain Guard equal to 5% of Attributes and Armour when an attack
+        hits for more than 10% of your Max life.
+      icon: {fileID: -660822774516783023, guid: 15a56418162a49a4eac3a123211fb3de, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Tolerance and Guard effectiveness_4
+      requireAllPrerequisites: 1
+      treePosition: {x: -13.05365, y: 169.9588}
+    - name: Tolerance and Guard effectiveness_2
+      nodeType: 1
+      description: 10% Increased Tolerance Effect, 10% Increased Guard effectiveness.
+      icon: {fileID: 2497671411413029557, guid: f7c5b441ded2adc4f956e004d574ce47, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Immovable Object
+      requireAllPrerequisites: 1
+      treePosition: {x: -91.83827, y: 156.06694}
+    - name: Braced Assault
+      nodeType: 2
+      description: Next Attack after using Guard deals +20% more damage; \nUsing
+        several guard skills in sequence adds additional 20% more damage (Max 100%
+        more damage)
+      icon: {fileID: -94589962814239740, guid: 6e1c9b0876240194091013b1a15adb93, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Tolerance and Guard effectiveness_2
+      requireAllPrerequisites: 1
+      treePosition: {x: -170.6229, y: 142.17508}
+    branchAngle: 130
+    horizontalOffset: 0
+    directionChanges:
+    - atNodeIndex: 3
+      newAngle: 190
+      newSpacing: 0
+    crossBranchConnections: []
+  - branchName: Wall of War
+    branchTheme: 
+    branchNodes:
+    - name: Tolerance and Guard effectiveness_3
+      nodeType: 1
+      description: 10% Increased Tolerance Effect, 10% Increased Guard effectiveness.
+      icon: {fileID: 2497671411413029557, guid: f7c5b441ded2adc4f956e004d574ce47, type: 3}
+      nodeScale: 0
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Bastion Of Tolerance
+      requireAllPrerequisites: 1
+      treePosition: {x: 158.71643, y: -51.423004}
+    - name: Bulwark Pulse
+      nodeType: 2
+      description: Each time you gain Guard, deal 10% of it as Physical damage to
+        all enemies.
+      icon: {fileID: 156625010670772458, guid: f56ce3fce357c3e4588d265be2eb1ec7, type: 3}
+      nodeScale: 1.5
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Tolerance and Guard effectiveness_3
+      requireAllPrerequisites: 1
+      treePosition: {x: 97.43287, y: -102.84601}
+    - name: Tolerance and Guard effectiveness_5
+      nodeType: 1
+      description: 10% Increased Tolerance Effect, 10% Increased Guard effectiveness.
+      icon: {fileID: 2497671411413029557, guid: f7c5b441ded2adc4f956e004d574ce47, type: 3}
+      nodeScale: 0
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Bulwark Pulse
+      requireAllPrerequisites: 1
+      treePosition: {x: 22.257462, y: -75.48439}
+    - name: Shock Absorber
+      nodeType: 2
+      description: "Convert 25% of incoming damage into delayed \u201CPressure\u201D
+        (releases as Bleed over 2 turns)."
+      icon: {fileID: 648741226903542075, guid: e51355c9196674844abd85ae1ff715bc, type: 3}
+      nodeScale: 1.5
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Tolerance and Guard effectiveness_5
+      requireAllPrerequisites: 1
+      treePosition: {x: -47.024567, y: -35.484386}
+    - name: Tolerance and Guard effectiveness_6
+      nodeType: 1
+      description: 10% Increased Tolerance Effect, 10% Increased Guard effectiveness.
+      icon: {fileID: 2497671411413029557, guid: f7c5b441ded2adc4f956e004d574ce47, type: 3}
+      nodeScale: 0
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Shock Absorber
+      requireAllPrerequisites: 1
+      treePosition: {x: -127.02457, y: -35.484394}
+    - name: Wall of War
+      nodeType: 2
+      description: At combat start, gain Guard = 35% of max HP, Guard cap increased
+        to 2x of Max HP.
+      icon: {fileID: -4245228807227793346, guid: f4016b4fbfed98649ab58f4289cbd8ca, type: 3}
+      nodeScale: 1.5
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Tolerance and Guard effectiveness_6
+      requireAllPrerequisites: 1
+      treePosition: {x: -207.02457, y: -35.4844}
+    branchAngle: 220
+    horizontalOffset: 0
+    directionChanges:
+    - atNodeIndex: 2
+      newAngle: 160
+      newSpacing: 0
+    - atNodeIndex: 3
+      newAngle: 150
+      newSpacing: 0
+    - atNodeIndex: 4
+      newAngle: 180
+      newSpacing: 0
+    crossBranchConnections: []
+  useBranchSystem: 1
+  floatingNodes:
+  - node:
+      name: Tolerance and Guard effectiveness_7
+      nodeType: 1
+      description: 10% Increased Tolerance Effect, 10% Increased Guard effectiveness.
+      icon: {fileID: 2497671411413029557, guid: f7c5b441ded2adc4f956e004d574ce47, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Bulwark Pulse
+      - Immovable Object
+      requireAllPrerequisites: 0
+      treePosition: {x: 2.1896095, y: 33.556396}
+    firstNodeName: Bulwark Pulse
+    secondNodeName: Immovable Object
+    positionOffset: {x: -40, y: 0}
+    midpointBias: 0.5
+    distanceMultiplier: 0
+    perpendicularOffset: 0
+    nodeScaleOverride: 0
+  - node:
+      name: Tolerance and Guard effectiveness_8
+      nodeType: 1
+      description: 10% Increased Tolerance Effect, 10% Increased Guard effectiveness.
+      icon: {fileID: 2497671411413029557, guid: f7c5b441ded2adc4f956e004d574ce47, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Iron Will
+      - Shock Absorber
+      requireAllPrerequisites: 0
+      treePosition: {x: 75.06471, y: 43.54136}
+    firstNodeName: Iron Will
+    secondNodeName: Shock Absorber
+    positionOffset: {x: 40, y: -20}
+    midpointBias: 0.5
+    distanceMultiplier: 0
+    perpendicularOffset: 0
+    nodeScaleOverride: 0
+  signatureCard:
+    copies: 3
+    cardName: Indomitable Roar
+    cardType: Skill
+    manaCost: 1
+    description: 
+    cardData: {fileID: 0}
+  requiredLevel: 21
+  unlockRequirement: Tolerance
+  maxAscendancyPoints: 8
+  startNodePosition: {x: 220, y: 0}
+  treePaths: []
+  useAutoGeneratedPaths: 1
+  numberOfBranches: 2

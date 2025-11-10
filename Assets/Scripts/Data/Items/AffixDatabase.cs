@@ -232,6 +232,37 @@ public class AffixDatabase : ScriptableObject
         // Otherwise, Normal item (0 affixes)
     }
     
+    // Generate random affixes for an item with forced rarity (for testing)
+    public void GenerateRandomAffixes(BaseItem item, int itemLevel, ItemRarity forcedRarity)
+    {
+        if (item == null)
+        {
+            Debug.LogError("[AffixDatabase] Cannot generate affixes for null item!");
+            return;
+        }
+        
+        if (item.isUnique)
+            return; // Unique items have fixed affixes
+            
+        item.ClearAffixes();
+        
+        switch (forcedRarity)
+        {
+            case ItemRarity.Normal:
+                // No affixes
+                break;
+            case ItemRarity.Magic:
+                GenerateMagicAffixes(item, itemLevel);
+                break;
+            case ItemRarity.Rare:
+                GenerateRareAffixes(item, itemLevel);
+                break;
+            case ItemRarity.Unique:
+                // Unique items should have pre-defined affixes
+                break;
+        }
+    }
+    
     private void GenerateMagicAffixes(BaseItem item, int itemLevel)
     {
         int prefixCount = Random.Range(0, 2); // 0 or 1
@@ -510,6 +541,343 @@ public class AffixDatabase : ScriptableObject
         affix.requiredTags = new List<string> { "weapon" };
         
         category.affixes.Add(affix);
+    }
+
+    // ===== SMART COMPATIBILITY METHODS =====
+    
+    /// <summary>
+    /// Enhanced compatibility checking using base item stats and Local vs Global modifier rules
+    /// </summary>
+    public static bool IsAffixCompatibleWithItem(Affix affix, BaseItem item)
+    {
+        // Check each modifier in the affix for Local vs Global compatibility
+        foreach (AffixModifier modifier in affix.modifiers)
+        {
+            if (!IsModifierCompatibleWithItem(modifier, item))
+                return false;
+        }
+        
+        // Legacy compatibility tag system (keep for backward compatibility)
+        if (affix.compatibleTags == null || affix.compatibleTags.Count == 0)
+            return true; // No restrictions
+        
+        foreach (string requiredTag in affix.compatibleTags)
+        {
+            if (requiredTag == "energyshield_base")
+            {
+                // Only compatible with items that have Energy Shield as base stat
+                if (item is Armour armour && armour.energyShield > 0)
+                    continue;
+                else
+                    return false;
+            }
+            else if (requiredTag == "armour_base")
+            {
+                // Only compatible with items that have Armour as base stat
+                if (item is Armour armour && armour.armour > 0)
+                    continue;
+                else
+                    return false;
+            }
+            else if (requiredTag == "evasion_base")
+            {
+                // Only compatible with items that have Evasion as base stat
+                if (item is Armour armour && armour.evasion > 0)
+                    continue;
+                else
+                    return false;
+            }
+            else
+            {
+                // Check item tags
+                if (item.itemTags != null && item.itemTags.Contains(requiredTag))
+                    continue;
+                else
+                    return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    /// <summary>
+    /// Checks if a specific modifier is compatible with an item based on Local vs Global rules
+    /// </summary>
+    private static bool IsModifierCompatibleWithItem(AffixModifier modifier, BaseItem item)
+    {
+        if (modifier.scope == ModifierScope.Global)
+        {
+            return IsGlobalModifierCompatible(modifier, item);
+        }
+        else // Local modifier
+        {
+            return IsLocalModifierCompatible(modifier, item);
+        }
+    }
+    
+    /// <summary>
+    /// Global modifiers can roll on appropriate item types (jewelry, armor)
+    /// but should NOT roll on items where they could be local instead
+    /// </summary>
+    private static bool IsGlobalModifierCompatible(AffixModifier modifier, BaseItem item)
+    {
+        string statName = modifier.statName.ToLower();
+        
+        // Global mods typically can roll on jewelry and armor, but not weapons
+        // Exception: Some global mods CAN roll on weapons as implicits (marked separately)
+        
+        if (item is WeaponItem)
+        {
+            // Most global mods should not roll on weapons where local versions exist
+            if (statName.Contains("physicaldamage") || statName.Contains("firedamage") ||
+                statName.Contains("colddamage") || statName.Contains("lightningdamage") ||
+                statName.Contains("chaosdamage") || statName.Contains("criticalchance"))
+            {
+                return false; // These should be local on weapons
+            }
+            
+            // Allow some global mods on weapons (accuracy, resistances, etc.)
+            return true;
+        }
+        
+        if (item is Armour || item is Jewellery)
+        {
+            // Global mods are generally allowed on armor and jewelry
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
+    /// Local modifiers can only roll on items that have the relevant base stat
+    /// </summary>
+    private static bool IsLocalModifierCompatible(AffixModifier modifier, BaseItem item)
+    {
+        string statName = modifier.statName.ToLower();
+        
+        // Physical damage mods - only on weapons
+        if (statName.Contains("physicaldamage") || statName.Contains("addedphysicaldamage"))
+        {
+            return item is WeaponItem;
+        }
+        
+        // Elemental damage mods - only on weapons  
+        if (statName.Contains("firedamage") || statName.Contains("colddamage") ||
+            statName.Contains("lightningdamage") || statName.Contains("chaosdamage"))
+        {
+            return item is WeaponItem;
+        }
+        
+        // Critical strike chance - only on weapons with base crit
+        if (statName.Contains("criticalchance") || statName.Contains("criticalstrikechance"))
+        {
+            return item is WeaponItem weapon && weapon.criticalStrikeChance > 0;
+        }
+        
+        // Attack speed - only on weapons
+        if (statName.Contains("attackspeed"))
+        {
+            return item is WeaponItem;
+        }
+        
+        // Cast speed - only on caster weapons
+        if (statName.Contains("castspeed"))
+        {
+            return item is WeaponItem weapon && weapon.itemTags.Contains("spell");
+        }
+        
+        // Armour - only on armor pieces with base armour
+        if (statName.Contains("armour") && !statName.Contains("base"))
+        {
+            return item is Armour armour && armour.armour > 0;
+        }
+        
+        // Evasion - only on armor pieces with base evasion
+        if (statName.Contains("evasion"))
+        {
+            return item is Armour armour && armour.evasion > 0;
+        }
+        
+        // Energy Shield - only on armor pieces with base ES
+        if (statName.Contains("energyshield"))
+        {
+            return item is Armour armour && armour.energyShield > 0;
+        }
+        
+        // Block chance - only on shields
+        if (statName.Contains("blockchance"))
+        {
+            return item is Armour armour && armour.itemTags.Contains("shield");
+        }
+        
+        // Default: allow if no specific restrictions
+        return true;
+    }
+    
+    /// <summary>
+    /// Basic compatibility checking for item types (used during affix pool selection)
+    /// Enhanced with Local vs Global modifier awareness
+    /// </summary>
+    private bool IsAffixCompatibleWithItemType(Affix affix, ItemType itemType)
+    {
+        // Use compatible tags if available
+        if (affix.compatibleTags != null && affix.compatibleTags.Count > 0)
+        {
+            List<string> itemTags = GetItemTags(itemType);
+            
+            // Check if any compatible tag matches the item's tags
+            foreach (string compatibleTag in affix.compatibleTags)
+            {
+                if (itemTags.Contains(compatibleTag))
+                    return true;
+                    
+                // Handle base-type specific tags
+                if (compatibleTag.EndsWith("_base"))
+                {
+                    // For base-type specific affixes, allow them in the pool
+                    // Final compatibility will be checked when applying to specific items
+                    string baseType = compatibleTag.Replace("_base", "");
+                    if (itemTags.Contains(baseType))
+                        return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        // Fallback to legacy tag system
+        if (affix.requiredTags != null && affix.requiredTags.Count > 0)
+        {
+            List<string> itemTags = GetItemTags(itemType);
+            return affix.requiredTags.Any(tag => itemTags.Contains(tag));
+        }
+        
+        return true; // No restrictions
+    }
+    
+    /// <summary>
+    /// Get random prefix that's compatible with the specific item
+    /// </summary>
+    public Affix GetRandomCompatiblePrefix(BaseItem item, int itemLevel, AffixTier maxTier = AffixTier.Tier1)
+    {
+        List<Affix> availablePrefixes = GetAvailableCompatiblePrefixes(item, itemLevel, maxTier);
+        
+        if (availablePrefixes.Count == 0)
+            return null;
+            
+        // Weighted random selection
+        float totalWeight = availablePrefixes.Sum(a => a.weight);
+        float randomValue = Random.Range(0f, totalWeight);
+        float currentWeight = 0f;
+        
+        foreach (var affix in availablePrefixes)
+        {
+            currentWeight += affix.weight;
+            if (randomValue <= currentWeight)
+                return affix;
+        }
+        
+        return availablePrefixes[0]; // Fallback
+    }
+    
+    /// <summary>
+    /// Get random suffix that's compatible with the specific item
+    /// </summary>
+    public Affix GetRandomCompatibleSuffix(BaseItem item, int itemLevel, AffixTier maxTier = AffixTier.Tier1)
+    {
+        List<Affix> availableSuffixes = GetAvailableCompatibleSuffixes(item, itemLevel, maxTier);
+        
+        if (availableSuffixes.Count == 0)
+            return null;
+            
+        // Weighted random selection
+        float totalWeight = availableSuffixes.Sum(a => a.weight);
+        float randomValue = Random.Range(0f, totalWeight);
+        float currentWeight = 0f;
+        
+        foreach (var affix in availableSuffixes)
+        {
+            currentWeight += affix.weight;
+            if (randomValue <= currentWeight)
+                return affix;
+        }
+        
+        return availableSuffixes[0]; // Fallback
+    }
+    
+    /// <summary>
+    /// Get available prefixes that are compatible with the specific item
+    /// </summary>
+    private List<Affix> GetAvailableCompatiblePrefixes(BaseItem item, int itemLevel, AffixTier maxTier)
+    {
+        List<Affix> allPrefixes = new List<Affix>();
+        
+        switch (item.itemType)
+        {
+            case ItemType.Weapon:
+                foreach (var category in weaponPrefixCategories)
+                {
+                    allPrefixes.AddRange(category.GetAllAffixes());
+                }
+                break;
+            case ItemType.Armour:
+                foreach (var category in armourPrefixCategories)
+                {
+                    allPrefixes.AddRange(category.GetAllAffixes());
+                }
+                break;
+            case ItemType.Accessory:
+                foreach (var category in jewelleryPrefixCategories)
+                {
+                    allPrefixes.AddRange(category.GetAllAffixes());
+                }
+                break;
+        }
+        
+        // Filter by tier requirements, level requirements, and smart compatibility with the specific item
+        return allPrefixes.Where(a => 
+            (int)a.tier <= (int)maxTier && 
+            a.minLevel <= itemLevel &&
+            IsAffixCompatibleWithItem(a, item)
+        ).ToList();
+    }
+    
+    /// <summary>
+    /// Get available suffixes that are compatible with the specific item
+    /// </summary>
+    private List<Affix> GetAvailableCompatibleSuffixes(BaseItem item, int itemLevel, AffixTier maxTier)
+    {
+        List<Affix> allSuffixes = new List<Affix>();
+        
+        switch (item.itemType)
+        {
+            case ItemType.Weapon:
+                foreach (var category in weaponSuffixCategories)
+                {
+                    allSuffixes.AddRange(category.GetAllAffixes());
+                }
+                break;
+            case ItemType.Armour:
+                foreach (var category in armourSuffixCategories)
+                {
+                    allSuffixes.AddRange(category.GetAllAffixes());
+                }
+                break;
+            case ItemType.Accessory:
+                foreach (var category in jewellerySuffixCategories)
+                {
+                    allSuffixes.AddRange(category.GetAllAffixes());
+                }
+                break;
+        }
+        
+        // Filter by tier requirements, level requirements, and smart compatibility with the specific item
+        return allSuffixes.Where(a => 
+            (int)a.tier <= (int)maxTier && 
+            a.minLevel <= itemLevel &&
+            IsAffixCompatibleWithItem(a, item)
+        ).ToList();
     }
 
     // ===== PoE CONVERTER METHODS =====

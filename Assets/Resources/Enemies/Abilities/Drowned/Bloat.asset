@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAbility
   id: Bloat
   displayName: Bloat
-  trigger: 5
+  trigger: 6
   cooldownTurns: 0
   initialCooldown: 0
-  phaseThreshold: 0
-  target: 2
+  phaseThreshold: 0.1
+  target: 1
   effects:
   - {fileID: 11400000, guid: 639a393f2a0d2604b935124e4a492703, type: 2}

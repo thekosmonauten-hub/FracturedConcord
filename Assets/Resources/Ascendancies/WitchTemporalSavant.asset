@@ -1,0 +1,293 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbc266e3ace2db94093de6c368eac738, type: 3}
+  m_Name: WitchTemporalSavant
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyData
+  ascendancyName: Temporal Savant
+  baseClass: Witch
+  tagline: "You\u2019ve already seen how this battle ends."
+  splashArt: {fileID: 3333594751275733648, guid: 895f3e466fcc7ae4a8d445f95c8de420, type: 3}
+  icon: {fileID: -2837344121137896641, guid: d4791c02d465b6e48b144eb350efadfc, type: 3}
+  themeColor: {r: 1, g: 1, b: 1, a: 1}
+  description: Control of time, inevitability, and foresight.
+  playstyleKeywords: []
+  coreMechanicName: Temporal Threads
+  coreMechanicDescription: 15% chance on draw to make your card "Temporal".\nA "Temporal"
+    card Echos it's effect at the start of the next turn.
+  passiveAbilities: []
+  startNode:
+    name: Temporal Threads
+    nodeType: 0
+    description: 15% chance on draw to make your card "Temporal".\nA "Temporal" card
+      Echos it's effect at the start of the next turn.\nUnlocks Unique "Temporal
+      Loop" card.
+    icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+    nodeScale: 1.5
+    pointCost: 0
+    unlockedByDefault: 1
+    prerequisitePassives: []
+    requireAllPrerequisites: 1
+    treePosition: {x: 0, y: 220}
+  branches:
+  - branchName: Borrowed Power
+    branchTheme: RightBranch
+    branchNodes:
+    - name: Temporal Draw & Energy Shield_1
+      nodeType: 1
+      description: +1% chance to Draw a Temporal Card, 5% Increased Energy shield.
+      icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+      nodeScale: 0
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Temporal Threads
+      requireAllPrerequisites: 1
+      treePosition: {x: 130, y: 220}
+    - name: Future Echo
+      nodeType: 2
+      description: The first card you play each turn automatically repeats itself
+        after 2 turns with 75% power.
+      icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+      nodeScale: 1.5
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Temporal Draw & Energy Shield_1
+      requireAllPrerequisites: 1
+      treePosition: {x: 130, y: 140}
+    - name: Temporal Draw & Energy Shield_2
+      nodeType: 1
+      description: +1% chance to Draw a Temporal Card, 5% Increased Energy shield.
+      icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+      nodeScale: 0
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Future Echo
+      requireAllPrerequisites: 1
+      treePosition: {x: 34.737206, y: 85}
+    - name: Hourglass Paradox
+      nodeType: 2
+      description: If you spend No mana on your turn, gain +2 Draw, +10% increased
+        Mana next turn, and your first card costs 0.
+      icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+      nodeScale: 1.5
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Temporal Draw & Energy Shield_2
+      requireAllPrerequisites: 1
+      treePosition: {x: 34.737206, y: -25}
+    - name: Temporal Draw & Energy Shield_3
+      nodeType: 1
+      description: +1% chance to Draw a Temporal Card, 5% Increased Energy shield.
+      icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+      nodeScale: 0
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Hourglass Paradox
+      requireAllPrerequisites: 1
+      treePosition: {x: 130, y: -80.000015}
+    - name: Borrowed Power
+      nodeType: 2
+      description: Temporal cards gain +25% effect but cost +1 more.
+      icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+      nodeScale: 1.5
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Temporal Draw & Energy Shield_3
+      requireAllPrerequisites: 1
+      treePosition: {x: 130, y: -190.00002}
+    branchAngle: 0
+    horizontalOffset: 0
+    directionChanges:
+    - atNodeIndex: 0
+      newAngle: 0
+      newSpacing: 130
+    - atNodeIndex: 1
+      newAngle: 270
+      newSpacing: 80
+    - atNodeIndex: 2
+      newAngle: 210
+      newSpacing: 110
+    - atNodeIndex: 3
+      newAngle: 270
+      newSpacing: 0
+    - atNodeIndex: 4
+      newAngle: 330
+      newSpacing: 0
+    - atNodeIndex: 5
+      newAngle: 270
+      newSpacing: 0
+    - atNodeIndex: 6
+      newAngle: 180
+      newSpacing: 0
+    crossBranchConnections: []
+  - branchName: Chrono Collapse
+    branchTheme: LeftBranch
+    branchNodes:
+    - name: Echo Effectiveness & Cast speed_1
+      nodeType: 1
+      description: +5% increased effectiveness of Temporal cards, 2% increased cast
+        speed.
+      icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+      nodeScale: 0
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Temporal Threads
+      requireAllPrerequisites: 1
+      treePosition: {x: -130, y: 219.99998}
+    - name: Suspended Moment
+      nodeType: 2
+      description: Damage over time effects tick twice as fast for 2 turns after
+        you use a Delayed card.
+      icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Echo Effectiveness & Cast speed_1
+      requireAllPrerequisites: 1
+      treePosition: {x: -130, y: 139.99998}
+    - name: Echo Effectiveness & Cast speed_2
+      nodeType: 1
+      description: +5% increased effectiveness of Temporal cards, 2% increased cast
+        speed.
+      icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+      nodeScale: 0
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Suspended Moment
+      requireAllPrerequisites: 1
+      treePosition: {x: -34.737213, y: 84.99997}
+    - name: Echoing Will
+      nodeType: 2
+      description: Temporal cards gain +10% base power per card echoed this combat.
+        (80% Cap)
+      icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Echo Effectiveness & Cast speed_2
+      requireAllPrerequisites: 1
+      treePosition: {x: -34.737213, y: -25.00003}
+    - name: Echo Effectiveness & Cast speed_3
+      nodeType: 1
+      description: +5% increased effectiveness of Temporal cards, 2% increased cast
+        speed.
+      icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+      nodeScale: 0
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Echoing Will
+      requireAllPrerequisites: 1
+      treePosition: {x: -130, y: -80.00003}
+    - name: Chrono Collapse
+      nodeType: 2
+      description: When an enemy dies, all their debuffs spread to a random enemy.
+      icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Echo Effectiveness & Cast speed_3
+      requireAllPrerequisites: 1
+      treePosition: {x: -130, y: -190.00003}
+    branchAngle: 180
+    horizontalOffset: 0
+    directionChanges:
+    - atNodeIndex: 0
+      newAngle: 180
+      newSpacing: 130
+    - atNodeIndex: 1
+      newAngle: 270
+      newSpacing: 80
+    - atNodeIndex: 2
+      newAngle: 330
+      newSpacing: 110
+    - atNodeIndex: 3
+      newAngle: 270
+      newSpacing: 0
+    - atNodeIndex: 4
+      newAngle: 210
+      newSpacing: 0
+    - atNodeIndex: 5
+      newAngle: 270
+      newSpacing: 0
+    crossBranchConnections: []
+  useBranchSystem: 1
+  floatingNodes:
+  - node:
+      name: Echo Effectiveness & Cast speed_4
+      nodeType: 1
+      description: +5% increased effectiveness of Echoed cards, 2% increased cast
+        speed.
+      icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Chrono Collapse
+      - Borrowed Power
+      requireAllPrerequisites: 0
+      treePosition: {x: 0, y: -190.00003}
+    firstNodeName: Chrono Collapse
+    secondNodeName: Borrowed Power
+    positionOffset: {x: 0, y: 0}
+    midpointBias: 0.5
+    distanceMultiplier: 0
+    perpendicularOffset: 0
+    nodeScaleOverride: 0
+  - node:
+      name: Echo Effectiveness & Cast speed_4
+      nodeType: 1
+      description: +5% increased effectiveness of Echoed cards, 2% increased cast
+        speed.
+      icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Echoing Will
+      - Hourglass Paradox
+      requireAllPrerequisites: 0
+      treePosition: {x: -0.0000038146973, y: -105.000015}
+    firstNodeName: Echoing Will
+    secondNodeName: Hourglass Paradox
+    positionOffset: {x: 0, y: -80}
+    midpointBias: 0.5
+    distanceMultiplier: 0
+    perpendicularOffset: 0
+    nodeScaleOverride: 0
+  signatureCard:
+    copies: 3
+    cardName: Temporal Loop
+    cardType: Skill
+    manaCost: 3
+    description: 'Consume all Delayed or Threaded cards.\nTrigger their effects instantly
+      with -25% power and apply Slow (1) to all enemies.
+
+'
+    cardData: {fileID: 0}
+  requiredLevel: 21
+  unlockRequirement: Temporal Threads
+  maxAscendancyPoints: 8
+  startNodePosition: {x: 0, y: 220}
+  treePaths: []
+  useAutoGeneratedPaths: 1
+  numberOfBranches: 2

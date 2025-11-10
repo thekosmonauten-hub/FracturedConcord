@@ -66,6 +66,13 @@ public class StatusEffect
                 tickInterval = 1f;
                 damageType = DamageType.Fire;
                 break;
+            case StatusEffectType.Bleed:
+                effectColor = new Color(0.7f, 0f, 0f);
+                iconName = "Bleed";
+                tickInterval = 1f;
+                damageType = DamageType.Physical;
+                isDebuff = true;
+                break;
             case StatusEffectType.ChaosDot:
                 effectColor = new Color(0.5f, 0.2f, 0.6f); // Purple-ish
                 iconName = "ChaosDot"; // Provide icon if available
@@ -73,9 +80,14 @@ public class StatusEffect
                 damageType = DamageType.Chaos;
                 isDebuff = true;
                 break;
+            case StatusEffectType.Chill:
+                effectColor = new Color(0.6f, 0.9f, 1f);
+                iconName = "Chilled";
+                tickInterval = 0f;
+                break;
             case StatusEffectType.Freeze:
                 effectColor = Color.cyan;
-                iconName = "Chilled"; // Matches Chilled.aseprite
+                iconName = "Chilled"; // Reuse chilled icon for freeze if dedicated asset missing
                 tickInterval = 0f; // No ticking
                 break;
             case StatusEffectType.Stun:
@@ -123,6 +135,18 @@ public class StatusEffect
                 iconName = "Bolster"; // Provide an icon if available
                 isDebuff = false;
                 tickInterval = 0f; // No ticking
+                break;
+            case StatusEffectType.TempMaxMana:
+                effectColor = new Color(0.3f, 0.6f, 1f);
+                iconName = "TempMana";
+                isDebuff = false;
+                tickInterval = 0f;
+                break;
+            case StatusEffectType.TempEvasion:
+                effectColor = new Color(0.3f, 0.85f, 0.6f);
+                iconName = "TempEvasion";
+                isDebuff = false;
+                tickInterval = 0f;
                 break;
         }
     }
@@ -216,7 +240,9 @@ public enum StatusEffectType
     // Debuffs
     Poison,         // Damage over time
     Burn,           // Fire damage over time
+    Bleed,          // Physical damage over time
     ChaosDot,       // Chaos damage over time
+    Chill,          // Action speed reduction / partial freeze
     Freeze,         // Skip next turn
     Stun,           // Skip next turn
     Vulnerable,     // Take increased damage
@@ -237,6 +263,8 @@ public enum StatusEffectType
     ManaRegen,      // Mana over time
     Draw,           // Extra cards drawn
     Energy,         // Extra energy/mana
+    TempMaxMana,    // Temporary maximum mana increase
+    TempEvasion,    // Temporary increased evasion
     
     // Special
     Invisible,      // Cannot be targeted

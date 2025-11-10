@@ -1,0 +1,88 @@
+Name,Defence,Defence 2,Requirements,Implicit 1,Implicit 2,Item Type
+Iron Hat,Armour: 9–13,,requires: 9 Str,,,Helmet
+Cone Helmet,Armour: 38–50,,requires: Level 7, 21 Str,,,Helmet
+Barbute Helmet,Armour: 92–115,,requires: Level 18, 42 Str,,,Helmet
+Close Helmet,Armour: 130–150,,requires: Level 26, 58 Str,,,Helmet
+Gladiator Helmet,Armour: 174–195,,requires: Level 35, 75 Str,,,Helmet
+Reaver Helmet,Armour: 198–233,,requires: Level 40, 85 Str,,,Helmet
+Siege Helmet,Armour: 237–272,,requires: Level 48, 101 Str,,,Helmet
+Samnite Helmet,Armour: 276–325,,requires: Level 55, 114 Str,,,Helmet
+Ezomyte Burgonet,Armour: 346–381,,requires: Level 60, 138 Str,,,Helmet
+Royal Burgonet,Armour: 377–434,,requires: Level 65, 148 Str,,,Helmet
+Eternal Burgonet,Armour: 373–429,,requires: Level 69, 138 Str,,,Helmet
+General's Helmet,Armour: 431–496,,requires: Level 73, 170 Str,,,Helmet
+Conqueror's Helmet,Armour: 501–576,,requires: Level 78, 194 Str,,,Helmet
+Giantslayer Helmet,Armour: 582–669,,requires: Level 84, 224 Str,,,Helmet
+Leather Cap,Evasion Rating: 19–27,,requires: Level 3, 13 Dex,,,Helmet
+Tricorne,Evasion Rating: 53–69,,requires: Level 10, 27 Dex,,,Helmet
+Leather Hood,Evasion Rating: 101–127,,requires: Level 20, 46 Dex,,,Helmet
+Wolf Pelt,Evasion Rating: 150–172,,requires: Level 30, 66 Dex,,,Helmet
+Hunter Hood,Evasion Rating: 203–227,,requires: Level 41, 87 Dex,,,Helmet
+Noble Tricorne,Evasion Rating: 232–266,,requires: Level 47, 99 Dex,,,Helmet
+Ursine Pelt,Evasion Rating: 276–325,,requires: Level 55, 114 Dex,,,Helmet
+Silken Hood,Evasion Rating: 346–381,,requires: Level 60, 138 Dex,,,Helmet
+Sinner Tricorne,Evasion Rating: 369–425,,requires: Level 64, 138 Dex,,,Helmet
+Lion Pelt,Evasion Rating: 380–437,,requires: Level 70, 150 Dex,,,Helmet
+Dire Pelt,Evasion Rating: 431–496,,requires: Level 73, 170 Dex,,,Helmet
+Grizzly Pelt,Evasion Rating: 501–576,,requires: Level 78, 194 Dex,,,Helmet
+Majestic Pelt,Evasion Rating: 582–669,,requires: Level 84, 224 Dex,,,Helmet
+Vine Circlet,Energy Shield: 7–10,,requires: Level 3, 13 Int,,,Helmet
+Iron Circlet,Energy Shield: 12–15,,requires: Level 8, 23 Int,,,Helmet
+Torture Cage,Energy Shield: 20–25,,requires: Level 17, 40 Int,,,Helmet
+Tribal Circlet,Energy Shield: 28–33,,requires: Level 26, 58 Int,,,Helmet
+Bone Circlet,Energy Shield: 36–40,,requires: Level 34, 73 Int,,,Helmet
+Lunaris Circlet,Energy Shield: 41–48,,requires: Level 39, 83 Int,,,Helmet
+Steel Circlet,Energy Shield: 49–55,,requires: Level 48, 101 Int,,,Helmet
+Necromancer Circlet,Energy Shield: 55–64,,requires: Level 54, 112 Int,,,Helmet
+Solaris Circlet,Energy Shield: 60–68,,requires: Level 59, 122 Int,,,Helmet
+Mind Cage,Energy Shield: 73–84,,requires: Level 65, 138 Int,,,Helmet
+Hubris Circlet,Energy Shield: 80–92,,requires: Level 69, 154 Int,,,Helmet
+Moonlit Circlet,Energy Shield: 87–100,,requires: Level 73, 170 Int,,,Helmet
+Sunfire Circlet,Energy Shield: 101–116,,requires: Level 78, 194 Int,,,Helmet
+Lich's Circlet,Energy Shield: 117–134,,requires: Level 84, 224 Int,,,Helmet
+Battered Helm,Armour: 13–18,Evasion Rating: 13–18,requires: Level 4, 8 Str, 8 Dex,,,Helmet
+Sallet,Armour: 37–48,Evasion Rating: 37–48,requires: Level 13, 18 Str, 18 Dex,,,Helmet
+Visored Sallet,Armour: 64–80,Evasion Rating: 64–80,requires: Level 23, 28 Str, 28 Dex,,,Helmet
+Gilded Sallet,Armour: 90–97,Evasion Rating: 90–97,requires: Level 33, 38 Str, 38 Dex,,,Helmet
+Secutor Helm,Armour: 98–116,Evasion Rating: 98–116,requires: Level 36, 42 Str, 42 Dex,,,Helmet
+Fencer Helm,Armour: 117–134,Evasion Rating: 117–134,requires: Level 43, 49 Str, 49 Dex,,,Helmet
+Lacquered Helmet,Armour: 138–155,Evasion Rating: 138–155,requires: Level 51, 57 Str, 57 Dex,,,Helmet
+Fluted Bascinet,Armour: 160–189,Evasion Rating: 160–189,requires: Level 58, 64 Str, 64 Dex,,,Helmet
+Pig-Faced Bascinet,Armour: 229–263,Evasion Rating: 159–183,requires: Level 63, 85 Str, 62 Dex,,,Helmet
+Nightmare Bascinet,Armour: 162–187,Evasion Rating: 233–268,requires: Level 67, 62 Str, 85 Dex,,,Helmet
+Knight Helm,Armour: 268–308,Evasion Rating: 268–308,requires: Level 73, 101 Str, 101 Dex,,,Helmet
+Conquest Helmet,Armour: 308–355,Evasion Rating: 308–355,requires: Level 78, 116 Str, 116 Dex,,,Helmet
+Haunted Bascinet,Armour: 355–409,Evasion Rating: 355–409,requires: Level 84, 132 Str, 132 Dex,,,Helmet
+Sorrow Mask,Armour: 42–49,Evasion Rating: 42–49,requires: Level 15, 20 Str, 20 Dex,+2% to maximum Chaos Resistance,You are Weak,Helmet
+Atonement Mask,Armour: 122–140,Evasion Rating: 122–140,requires: Level 45, 51 Str, 51 Dex,+3% to maximum Chaos Resistance,You are Weak,Helmet
+Penitent Mask,Armour: 185–212,Evasion Rating: 185–212,requires: Level 75, 79 Str, 79 Dex,+4% to maximum Chaos Resistance,You are Weak,Helmet
+Rusted Coif,Armour: 16–22,Energy Shield: 5–7,requires: Level 5, 9 Str, 9 Int,,,Helmet
+Soldier Helmet,Armour: 34–45,Energy Shield: 8–11,requires: Level 12, 16 Str, 16 Int,,,Helmet
+Great Helmet,Armour: 61–76,Energy Shield: 14–17,requires: Level 22, 27 Str, 27 Int,,,Helmet
+Crusader Helmet,Armour: 85–95,Energy Shield: 18–20,requires: Level 31, 36 Str, 36 Int,,,Helmet
+Aventail Helmet,Armour: 101–119,Energy Shield: 21–25,requires: Level 37, 42 Str, 42 Int,,,Helmet
+Zealot Helmet,Armour: 119–137,Energy Shield: 25–29,requires: Level 44, 50 Str, 50 Int,,,Helmet
+Great Crown,Armour: 143–161,Energy Shield: 29–33,requires: Level 53, 59 Str, 59 Int,,,Helmet
+Magistrate Crown,Armour: 160–189,Energy Shield: 33–39,requires: Level 58, 64 Str, 64 Int,,,Helmet
+Prophet Crown,Armour: 224–258,Energy Shield: 32–37,requires: Level 63, 85 Str, 62 Int,,,Helmet
+Praetor Crown,Armour: 161–185,Energy Shield: 51–58,requires: Level 68, 62 Str, 91 Int,,,Helmet
+Faithful Helmet,Armour: 268–308,Energy Shield: 54–62,requires: Level 73, 101 Str, 101 Int,,,Helmet
+Paladin Crown,Armour: 308–355,Energy Shield: 62–71,requires: Level 78, 116 Str, 116 Int,,,Helmet
+Divine Crown,Armour: 355–409,Energy Shield: 71–82,requires: Level 84, 132 Str, 132 Int,,,Helmet
+Imp Crown,Armour: 42–49,Energy Shield: 10–12,requires: Level 15, 20 Str, 20 Int,-1 to Level of Embossed effects,"+1 to Level of Cards",Helmet
+Demon Crown,Armour: 122–140,Energy Shield: 25–29,requires: Level 45, 51 Str, 51 Int,-1 to Level of Embossed effects,"+1 to Level of Cards",Helmet
+Archdemon Crown,Armour: 185–212,Energy Shield: 38–43,requires: Level 75, 79 Str, 79 Int,-2 to Level of Embossed effects,"+2 to Level of Cards",Helmet
+Scare Mask,Evasion Rating: 13–18,Energy Shield: 4–6,requires: Level 4, 8 Dex, 8 Int,,,Helmet
+Plague Mask,Evasion Rating: 29–38,Energy Shield: 7–10,requires: Level 10, 14 Dex, 14 Int,,,Helmet
+Iron Mask,Evasion Rating: 48–60,Energy Shield: 11–14,requires: Level 17, 21 Dex, 21 Int,,,Helmet
+Festival Mask,Evasion Rating: 77–88,Energy Shield: 17–19,requires: Level 28, 33 Dex, 33 Int,,,Helmet
+Golden Mask,Evasion Rating: 96–103,Energy Shield: 20–22,requires: Level 35, 40 Dex, 40 Int,,,Helmet
+Raven Mask,Evasion Rating: 104–119,Energy Shield: 22–25,requires: Level 38, 44 Dex, 44 Int,,,Helmet
+Callous Mask,Evasion Rating: 122–137,Energy Shield: 25–28,requires: Level 45, 51 Dex, 51 Int,,,Helmet
+Regicide Mask,Evasion Rating: 141–158,Energy Shield: 29–32,requires: Level 52, 58 Dex, 58 Int,,,Helmet
+Harlequin Mask,Evasion Rating: 157–185,Energy Shield: 32–38,requires: Level 57, 64 Dex, 64 Int,,,Helmet
+Vaal Mask,Evasion Rating: 207–239,Energy Shield: 37–43,requires: Level 62, 79 Dex, 72 Int,,,Helmet
+Deicide Mask,Evasion Rating: 190–219,Energy Shield: 47–54,requires: Level 67, 73 Dex, 88 Int,,,Helmet
+Jester Mask,Evasion Rating: 268–308,Energy Shield: 54–62,requires: Level 73, 101 Dex, 101 Int,,,Helmet
+Ancient Mask,Evasion Rating: 308–355,Energy Shield: 62–71,requires: Level 78, 116 Dex, 116 Int,,,Helmet
+Torturer's Mask,Evasion Rating: 355–409,Energy Shield: 71–82,requires: Level 84, 132 Dex, 132 Int,,,Helmet

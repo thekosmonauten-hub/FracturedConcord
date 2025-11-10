@@ -24,6 +24,7 @@ public class Character
     public int maxMana = 3;
     public int manaRecoveryPerTurn = 3; // Base mana recovery per turn
     public int cardsDrawnPerTurn = 1; // Base cards drawn per turn
+    public int cardsDrawnPerWave = 1; // Base cards drawn when a new wave starts (in addition to turn draw)
     public int reliance = 200;
     public int maxReliance = 200;
     public float currentGuard = 0f; // Current guard amount
@@ -44,6 +45,14 @@ public class Character
     public float accuracyRating = 0f;
     public float increasedEvasion = 0f; // Additive increased (e.g., 0.10 = +10%)
     public float baseEvasionRating = 0f; // baseline before increased modifiers
+    
+    [Header("Speed Modifiers")]
+    [Tooltip("Total % increased attack speed from items/passives (additive).")]
+    public float attackSpeedIncreasedPercent = 0f;
+    [Tooltip("Total % increased cast speed from items/passives (additive).")]
+    public float castSpeedIncreasedPercent = 0f;
+    [Tooltip("Total % increased movement speed from items/passives (additive).")]
+    public float movementSpeedIncreasedPercent = 0f;
     
     [Header("Damage Modifiers")]
     public DamageModifiers damageModifiers = new DamageModifiers();
@@ -74,6 +83,21 @@ public class Character
     public Deck currentDeck; // Legacy - for backward compatibility
     public CharacterDeckData deckData = new CharacterDeckData(); // New: deck management & card collection
     
+    [System.NonSerialized]
+    private ChannelingTracker channelingTracker = new ChannelingTracker();
+
+    public ChannelingTracker Channeling
+    {
+        get
+        {
+            if (channelingTracker == null)
+            {
+                channelingTracker = new ChannelingTracker();
+            }
+            return channelingTracker;
+        }
+    }
+    
     // Constructor
     public Character(string name, string characterClass)
     {
@@ -81,6 +105,7 @@ public class Character
         this.characterClass = characterClass;
         this.lastSaveTime = DateTime.Now;
         InitializeStats();
+        ResetRuntimeState();
     }
     
     // Initialize stats based on Path of Exile-style class system
@@ -128,10 +153,16 @@ public class Character
         maxMana = 3;
         manaRecoveryPerTurn = 3; // Base mana recovery per turn
         cardsDrawnPerTurn = 1; // Base cards drawn per turn
+        cardsDrawnPerWave = 1; // Base cards drawn per wave
         reliance = 200;
         maxReliance = 200;
         
         CalculateDerivedStats();
+    }
+
+    public void ResetRuntimeState()
+    {
+        Channeling.Reset();
     }
     
     // Calculate derived stats based on core attributes
@@ -301,6 +332,11 @@ public class Character
             float reduction = 1f - (resistance / 100f);
             actualDamage = damage * Mathf.Max(0.1f, reduction); // Minimum 10% damage
         }
+
+        if (StackSystem.Instance != null)
+        {
+            actualDamage *= Mathf.Max(0f, StackSystem.Instance.GetToleranceDamageMultiplier());
+        }
         
         // Apply Bolster (less damage taken per stack: 2%, max 10 stacks)
         try
@@ -447,6 +483,26 @@ public class Character
         return cardsDrawnPerTurn;
     }
     
+    // Add cards drawn per wave (for passives/equipment)
+    public void AddCardsDrawnPerWave(int amount)
+    {
+        cardsDrawnPerWave += amount;
+        Debug.Log($"{characterName} cards drawn per wave increased by {amount}. Now draws {cardsDrawnPerWave} cards per wave.");
+    }
+    
+    // Set cards drawn per wave (for passives/equipment)
+    public void SetCardsDrawnPerWave(int amount)
+    {
+        cardsDrawnPerWave = amount;
+        Debug.Log($"{characterName} cards drawn per wave set to {cardsDrawnPerWave} per wave.");
+    }
+    
+    // Get cards drawn per wave
+    public int GetCardsDrawnPerWave()
+    {
+        return Mathf.Max(1, cardsDrawnPerWave); // Always return at least 1
+    }
+    
     // Get character info as string
     public string GetCharacterInfo()
     {
@@ -497,6 +553,7 @@ public class Character
         data.maxMana = maxMana;
         data.manaRecoveryPerTurn = manaRecoveryPerTurn;
         data.cardsDrawnPerTurn = cardsDrawnPerTurn;
+        data.cardsDrawnPerWave = cardsDrawnPerWave;
         data.reliance = reliance;
         data.maxReliance = maxReliance;
         
@@ -532,6 +589,7 @@ public class Character
         character.maxMana = data.maxMana;
         character.manaRecoveryPerTurn = data.manaRecoveryPerTurn;
         character.cardsDrawnPerTurn = data.cardsDrawnPerTurn;
+        character.cardsDrawnPerWave = data.cardsDrawnPerWave;
         character.reliance = data.reliance;
         character.maxReliance = data.maxReliance;
         
@@ -613,6 +671,66 @@ public class Character
     {
         return currentDeck?.GetDeckStatistics() ?? new DeckStatistics();
     }
+
+    #region Speed Helpers
+
+    public float GetAttackSpeedMultiplier()
+    {
+        float baseSpeed = GetBaseWeaponAttackSpeed();
+        float totalPercent = attackSpeedIncreasedPercent;
+        if (StackSystem.Instance != null)
+        {
+            totalPercent += StackSystem.Instance.GetSpeedBonuses().attack;
+        }
+        float multiplier = baseSpeed * (1f + totalPercent / 100f);
+        return Mathf.Clamp(multiplier, 0.05f, 10f);
+    }
+
+    public float GetCastSpeedMultiplier()
+    {
+        float totalPercent = castSpeedIncreasedPercent;
+        if (StackSystem.Instance != null)
+        {
+            totalPercent += StackSystem.Instance.GetSpeedBonuses().cast;
+        }
+        float multiplier = 1.5f * (1f + totalPercent / 100f);
+        return Mathf.Clamp(multiplier, 0.05f, 10f);
+    }
+
+    public float GetMovementSpeedMultiplier()
+    {
+        float totalPercent = movementSpeedIncreasedPercent;
+        if (StackSystem.Instance != null)
+        {
+            totalPercent += StackSystem.Instance.GetSpeedBonuses().move;
+        }
+        float multiplier = 1f * (1f + totalPercent / 100f);
+        return Mathf.Clamp(multiplier, 0.05f, 10f);
+    }
+
+    public void SetAttackSpeedIncreasePercent(float percent) => attackSpeedIncreasedPercent = percent;
+    public void AddAttackSpeedIncreasePercent(float delta) => attackSpeedIncreasedPercent += delta;
+    public void SetCastSpeedIncreasePercent(float percent) => castSpeedIncreasedPercent = percent;
+    public void AddCastSpeedIncreasePercent(float delta) => castSpeedIncreasedPercent += delta;
+    public void SetMovementSpeedIncreasePercent(float percent) => movementSpeedIncreasedPercent = percent;
+    public void AddMovementSpeedIncreasePercent(float delta) => movementSpeedIncreasedPercent += delta;
+
+    #endregion
+
+    private float GetBaseWeaponAttackSpeed()
+    {
+        float bestSpeed = 0f;
+        if (weapons != null)
+        {
+            if (weapons.meleeWeapon != null && weapons.meleeWeapon.attackSpeed > bestSpeed)
+                bestSpeed = weapons.meleeWeapon.attackSpeed;
+            if (weapons.projectileWeapon != null && weapons.projectileWeapon.attackSpeed > bestSpeed)
+                bestSpeed = weapons.projectileWeapon.attackSpeed;
+            if (weapons.spellWeapon != null && weapons.spellWeapon.attackSpeed > bestSpeed)
+                bestSpeed = weapons.spellWeapon.attackSpeed;
+        }
+        return bestSpeed > 0f ? bestSpeed : 1f;
+    }
     
     // Add guard to the character (capped at max health)
     public void AddGuard(float guardAmount)
@@ -640,5 +758,83 @@ public class Character
     {
         reliance += relianceAmount;
         Debug.Log($"{characterName} gained {relianceAmount} reliance. Total reliance: {reliance}");
+    }
+}
+
+[Serializable]
+public class ChannelingTracker
+{
+    [Serializable]
+    public struct ChannelingState
+    {
+        public bool isChanneling;
+        public string activeGroupKey;
+        public int consecutiveCasts;
+        public bool startedThisCast;
+        public bool stoppedThisCast;
+
+        public ChannelingState(bool isChanneling, string activeGroupKey, int consecutiveCasts, bool startedThisCast, bool stoppedThisCast)
+        {
+            this.isChanneling = isChanneling;
+            this.activeGroupKey = activeGroupKey ?? string.Empty;
+            this.consecutiveCasts = consecutiveCasts;
+            this.startedThisCast = startedThisCast;
+            this.stoppedThisCast = stoppedThisCast;
+        }
+    }
+
+    private string activeGroupKey = string.Empty;
+    private int consecutiveCastCount = 0;
+
+    public bool IsChanneling => consecutiveCastCount >= 2;
+    public string ActiveGroupKey => activeGroupKey;
+    public int ConsecutiveCastCount => consecutiveCastCount;
+
+    public ChannelingState RegisterCast(string groupKey)
+    {
+        string normalizedKey = string.IsNullOrEmpty(groupKey) ? string.Empty : groupKey;
+        bool stoppedThisCast = false;
+
+        if (string.IsNullOrEmpty(normalizedKey))
+        {
+            stoppedThisCast = IsChanneling || consecutiveCastCount > 0;
+            Reset();
+            return new ChannelingState(false, string.Empty, 0, false, stoppedThisCast);
+        }
+
+        if (!string.Equals(normalizedKey, activeGroupKey, StringComparison.Ordinal))
+        {
+            stoppedThisCast = IsChanneling || consecutiveCastCount > 0;
+            activeGroupKey = normalizedKey;
+            consecutiveCastCount = 1;
+        }
+        else
+        {
+            consecutiveCastCount++;
+        }
+
+        bool isChannelingNow = IsChanneling;
+        bool startedThisCast = isChannelingNow && consecutiveCastCount == 2;
+        bool stoppedFlag = stoppedThisCast && (!isChannelingNow || startedThisCast);
+
+        return new ChannelingState(isChannelingNow, activeGroupKey, consecutiveCastCount, startedThisCast, stoppedFlag);
+    }
+
+    public ChannelingState BreakChannel()
+    {
+        bool stopped = IsChanneling || consecutiveCastCount > 0;
+        Reset();
+        return new ChannelingState(false, string.Empty, 0, false, stopped);
+    }
+
+    public ChannelingState GetState()
+    {
+        return new ChannelingState(IsChanneling, activeGroupKey, consecutiveCastCount, false, false);
+    }
+
+    public void Reset()
+    {
+        activeGroupKey = string.Empty;
+        consecutiveCastCount = 0;
     }
 }

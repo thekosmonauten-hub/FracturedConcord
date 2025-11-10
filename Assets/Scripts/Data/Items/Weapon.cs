@@ -135,35 +135,50 @@ public class WeaponItem : BaseItem
     }
     
     // Get total damage including all modifiers (calculated with proper formula)
+    // Now properly handles dual-range affixes!
     public float GetTotalMinDamage()
     {
-        return CalculateTotalDamage(minDamage);
+        // Start with base minimum damage
+        float totalDamage = minDamage;
+        
+        // Add MINIMUM damage from dual-range affixes (e.g., "Adds (34-47) to (72-84)" uses 34-47 for min)
+        var (physicalMin, _) = GetDualModifierValue("addedPhysicalDamage");
+        var (fireMin, _) = GetDualModifierValue("addedFireDamage");
+        var (coldMin, _) = GetDualModifierValue("addedColdDamage");
+        var (lightningMin, _) = GetDualModifierValue("addedLightningDamage");
+        var (chaosMin, _) = GetDualModifierValue("addedChaosDamage");
+        
+        totalDamage += physicalMin + fireMin + coldMin + lightningMin + chaosMin;
+        
+        // Apply LOCAL increased damage multipliers (% on the weapon itself)
+        float increasedDamage = GetModifierValue("increasedPhysicalDamage") + GetModifierValue("increasedFireDamage") + 
+                               GetModifierValue("increasedColdDamage") + GetModifierValue("increasedLightningDamage") + 
+                               GetModifierValue("increasedChaosDamage");
+        totalDamage *= (1f + increasedDamage / 100f); // Convert percentage to multiplier
+        
+        return Mathf.Ceil(totalDamage);
     }
     
     public float GetTotalMaxDamage()
     {
-        return CalculateTotalDamage(maxDamage);
-    }
-    
-    // Calculate total damage using PoE-style formula: (Base + Added) * (1 + Increased)
-    private float CalculateTotalDamage(float baseDamage)
-    {
-        // Start with base damage
-        float totalDamage = baseDamage;
+        // Start with base maximum damage
+        float totalDamage = maxDamage;
         
-        // Add flat damage from all affixes
-        float addedDamage = GetModifierValue("PhysicalDamage") + GetModifierValue("FireDamage") + 
-                           GetModifierValue("ColdDamage") + GetModifierValue("LightningDamage") + 
-                           GetModifierValue("ChaosDamage");
-        totalDamage += addedDamage;
+        // Add MAXIMUM damage from dual-range affixes (e.g., "Adds (34-47) to (72-84)" uses 72-84 for max)
+        var (_, physicalMax) = GetDualModifierValue("addedPhysicalDamage");
+        var (_, fireMax) = GetDualModifierValue("addedFireDamage");
+        var (_, coldMax) = GetDualModifierValue("addedColdDamage");
+        var (_, lightningMax) = GetDualModifierValue("addedLightningDamage");
+        var (_, chaosMax) = GetDualModifierValue("addedChaosDamage");
         
-        // Apply increased damage multipliers
-        float increasedDamage = GetModifierValue("IncreasedPhysicalDamage") + GetModifierValue("IncreasedFireDamage") + 
-                               GetModifierValue("IncreasedColdDamage") + GetModifierValue("IncreasedLightningDamage") + 
-                               GetModifierValue("IncreasedChaosDamage");
+        totalDamage += physicalMax + fireMax + coldMax + lightningMax + chaosMax;
+        
+        // Apply LOCAL increased damage multipliers (% on the weapon itself)
+        float increasedDamage = GetModifierValue("increasedPhysicalDamage") + GetModifierValue("increasedFireDamage") + 
+                               GetModifierValue("increasedColdDamage") + GetModifierValue("increasedLightningDamage") + 
+                               GetModifierValue("increasedChaosDamage");
         totalDamage *= (1f + increasedDamage / 100f); // Convert percentage to multiplier
         
-        // Round up to nearest whole number
         return Mathf.Ceil(totalDamage);
     }
     

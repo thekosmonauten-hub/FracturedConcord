@@ -1,8 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using TMPro;
+using UnityEngine.UI;
 
 /// <summary>
 /// UI component for individual cards in the collection grid.
@@ -10,6 +13,15 @@ using TMPro;
 /// </summary>
 public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
+    [Serializable]
+    private class EmbossingSlotReference
+    {
+        public Transform container;
+        public Image emptySlotImage;
+        public Image filledSlotImage;
+        public Image iconImage;
+    }
+
     [Header("Structure")]
     [SerializeField] private RectTransform visualRoot; // scale this instead of the layout root to avoid layout jitter
     [Header("Card Visual Elements")]
@@ -25,6 +37,12 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private TextMeshProUGUI quantityText;
     [SerializeField] private TextMeshProUGUI categoryText;
+    [SerializeField] private TextMeshProUGUI additionalEffectsText;
+    [SerializeField] private Image categoryIconImage;
+    [SerializeField] private CardVisualAssets cardVisualAssets;
+    [SerializeField] private Transform embossingSlotContainer;
+    [Header("Embossing Slots (Optional Overrides)")]
+    [SerializeField] private EmbossingSlotReference[] embossingSlotReferences = new EmbossingSlotReference[5];
     
     [Header("State Visuals")]
     [SerializeField] private GameObject disabledOverlay;
@@ -47,11 +65,18 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
     private RectTransform rectTransform;
     private Button button;
     private Transform scaleTarget;
+    private bool referencesResolved = false;
+    private readonly Dictionary<Image, Sprite> embossingSlotDefaultSprites = new Dictionary<Image, Sprite>();
+    private readonly Dictionary<Image, Color> embossingSlotDefaultColors = new Dictionary<Image, Color>();
+    private readonly Dictionary<Transform, Image> embossingIconImageCache = new Dictionary<Transform, Image>();
+    private static readonly string[] EmbossingIconChildNames = { "EmbossingIcon", "Icon" };
+    private static Dictionary<string, EmbossingEffect> embossingEffectCache;
     
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
         button = GetComponent<Button>();
+        EnsureCardReferences();
         // Decide which transform to scale on hover
         scaleTarget = visualRoot != null ? (Transform)visualRoot : transform;
         originalScale = scaleTarget.localScale;
@@ -80,6 +105,7 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
     /// </summary>
     public void Initialize(CardData card, DeckBuilderUI deckBuilderUI)
     {
+        EnsureCardReferences();
         cardData = card;
         deckBuilder = deckBuilderUI;
         ownerCharacter = null; // No character in deck builder
@@ -92,6 +118,7 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
     /// </summary>
     public void Initialize(CardData card, DeckBuilderUI deckBuilderUI, Character character)
     {
+        EnsureCardReferences();
         cardData = card;
         deckBuilder = deckBuilderUI;
         ownerCharacter = character;
@@ -105,11 +132,13 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
     private void UpdateDisplay()
     {
         if (cardData == null) return;
+        EnsureCardReferences();
         
         // Update card image
         if (cardImage != null && cardData.cardImage != null)
         {
-            cardImage.sprite = cardData.cardImage;
+            // Use full-resolution sprite for detailed card display
+            cardImage.sprite = cardData.GetCardSprite(CardSpriteContext.Full);
         }
 
         // Background remains styled by color/frames for collection grid; no sprite assignment here
@@ -127,16 +156,34 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
         
         if (descriptionText != null)
         {
-            // Use dynamic description if we have a character and the card supports it
-            if (ownerCharacter != null && cardData is CardDataExtended)
+            Character descCharacter = ownerCharacter;
+            if (descCharacter == null)
             {
-                CardDataExtended extendedCard = cardData as CardDataExtended;
-                descriptionText.text = extendedCard.GetDynamicDescription(ownerCharacter);
-                Debug.Log($"<color=cyan>[DynamicDesc] Using dynamic description for {cardData.cardName}</color>");
+                var charManager = CharacterManager.Instance;
+                if (charManager != null)
+                {
+                    if (!charManager.HasCharacter())
+                    {
+                        charManager.EnsureCharacterLoadedFromPrefs();
+                    }
+                    descCharacter = charManager.GetCurrentCharacter();
+                }
+            }
+
+            if (descCharacter != null && cardData is CardDataExtended extendedCard)
+            {
+                string resolved = extendedCard.GetDynamicDescription(descCharacter);
+#if UNITY_EDITOR
+                if (!string.IsNullOrWhiteSpace(resolved) && resolved.Contains("{"))
+                {
+                    Debug.LogWarning($"[DeckBuilderCardUI] Unresolved placeholders for '{cardData.cardName}': {resolved}");
+                }
+#endif
+                descriptionText.text = resolved;
             }
             else
             {
-                // Use static description (deck builder mode or regular CardData)
+                // Fall back to template if no character is available
                 descriptionText.text = cardData.description;
             }
         }
@@ -145,6 +192,20 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
         {
             categoryText.text = cardData.category.ToString();
         }
+        
+        SetEmbossingSlots(null);
+        IList<EmbossingInstance> storedEmbossings = ResolveStoredEmbossings();
+        if (storedEmbossings != null && storedEmbossings.Count > 0)
+        {
+            Card previewCard = BuildPreviewCardWithEmbossings(storedEmbossings);
+            if (previewCard != null)
+            {
+                SetEmbossingSlots(previewCard);
+            }
+        }
+
+        UpdateAdditionalEffectsDisplay();
+        UpdateCategoryIconDisplay();
         
         // Update visual assets
         if (rarityFrame != null && cardData.rarityFrame != null)
@@ -234,6 +295,602 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
         if (rarityFrame == null || cardData == null) return;
         
         rarityFrame.color = RarityColorUtility.GetRarityFrameColor(cardData.rarity);
+    }
+
+    private void EnsureCardReferences()
+    {
+        if (referencesResolved)
+            return;
+
+        if (additionalEffectsText == null)
+        {
+            additionalEffectsText = GetComponentsInChildren<TextMeshProUGUI>(true)
+                .FirstOrDefault(t =>
+                    string.Equals(t.gameObject.name, "AdditionalEffectText", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(t.gameObject.name, "AdditionalEffectsText", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(t.gameObject.name, "AdditionalEffects", StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (categoryIconImage == null)
+        {
+            categoryIconImage = GetComponentsInChildren<Image>(true)
+                .FirstOrDefault(img => string.Equals(img.gameObject.name, "CategoryIcon", StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (cardVisualAssets == null)
+        {
+            var adapter = GetComponent<CombatCardAdapter>();
+            if (adapter != null && adapter.VisualAssets != null)
+            {
+                cardVisualAssets = adapter.VisualAssets;
+            }
+        }
+
+        if (cardVisualAssets == null)
+        {
+            cardVisualAssets = Resources.Load<CardVisualAssets>("CardVisualAssets");
+        }
+
+        if (embossingSlotContainer == null)
+        {
+            Transform searchRoot = visualRoot != null ? (Transform)visualRoot : transform;
+            embossingSlotContainer = searchRoot.GetComponentsInChildren<Transform>(true)
+                .FirstOrDefault(t => string.Equals(t.name, "EmbossingSlots", StringComparison.OrdinalIgnoreCase));
+        }
+
+        referencesResolved = true;
+    }
+
+    private void UpdateAdditionalEffectsDisplay()
+    {
+        string comboText = string.Empty;
+
+        if (cardData is CardDataExtended extended && extended.enableCombo)
+        {
+            Character referenceCharacter = ResolveReferenceCharacter();
+            string dynamicCombo = extended.GetDynamicComboDescription(referenceCharacter);
+            comboText = string.IsNullOrWhiteSpace(dynamicCombo) ? extended.comboDescription : dynamicCombo;
+        }
+
+        SetAdditionalEffectText(comboText);
+    }
+
+    private Character ResolveReferenceCharacter()
+    {
+        if (ownerCharacter != null)
+        {
+            return ownerCharacter;
+        }
+
+        if (CharacterManager.Instance != null && CharacterManager.Instance.HasCharacter())
+        {
+            return CharacterManager.Instance.currentCharacter;
+        }
+
+        return null;
+    }
+
+    private void UpdateCategoryIconDisplay()
+    {
+        if (cardData == null)
+        {
+            SetCategoryIconSprite(null);
+            return;
+        }
+
+        Sprite sprite = GetCategoryIconSprite(cardData.category, cardVisualAssets);
+        SetCategoryIconSprite(sprite);
+    }
+
+    private static Sprite GetCategoryIconSprite(CardCategory category, CardVisualAssets assets)
+    {
+        if (assets == null) return null;
+
+        switch (category)
+        {
+            case CardCategory.Attack:
+                return assets.attackIcon;
+            case CardCategory.Guard:
+                return assets.guardIcon;
+            case CardCategory.Skill:
+                return assets.skillIcon;
+            case CardCategory.Power:
+                return assets.powerIcon;
+            default:
+                return null;
+        }
+    }
+
+    public void SetAdditionalEffectText(string text)
+    {
+        EnsureCardReferences();
+
+        if (additionalEffectsText == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            additionalEffectsText.text = string.Empty;
+            if (additionalEffectsText.gameObject.activeSelf)
+            {
+                additionalEffectsText.gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            additionalEffectsText.text = text;
+            if (!additionalEffectsText.gameObject.activeSelf)
+            {
+                additionalEffectsText.gameObject.SetActive(true);
+            }
+        }
+    }
+
+    public void SetCategoryIcon(CardData card, CardVisualAssets assets = null)
+    {
+        if (assets != null)
+        {
+            cardVisualAssets = assets;
+        }
+
+        Sprite sprite = card != null ? GetCategoryIconSprite(card.category, cardVisualAssets) : null;
+        SetCategoryIconSprite(sprite);
+    }
+
+    public void SetCategoryIconSprite(Sprite sprite)
+    {
+        EnsureCardReferences();
+
+        if (categoryIconImage == null)
+        {
+            return;
+        }
+
+        bool hasSprite = sprite != null;
+        categoryIconImage.sprite = sprite;
+        categoryIconImage.enabled = hasSprite;
+        if (categoryIconImage.gameObject.activeSelf != hasSprite)
+        {
+            categoryIconImage.gameObject.SetActive(hasSprite);
+        }
+    }
+
+    public void ApplyEmbossingVisuals(Card card)
+    {
+        SetEmbossingSlots(card);
+    }
+
+    private IList<EmbossingInstance> ResolveStoredEmbossings()
+    {
+        if (deckBuilder == null || cardData == null)
+            return null;
+
+        DeckPreset deck = deckBuilder.CurrentDeck;
+        if (deck == null)
+            return null;
+
+        string groupKey = ResolveGroupKey(cardData);
+        if (string.IsNullOrEmpty(groupKey))
+            return null;
+
+        return deck.GetEmbossingsForGroup(groupKey);
+    }
+
+    private static string ResolveGroupKey(CardData data)
+    {
+        if (data is CardDataExtended extended && !string.IsNullOrEmpty(extended.groupKey))
+            return extended.groupKey;
+
+        return data != null ? data.cardName : string.Empty;
+    }
+
+    private Card BuildPreviewCardWithEmbossings(IList<EmbossingInstance> embossings)
+    {
+        if (embossings == null || embossings.Count == 0 || cardData == null)
+            return null;
+
+        return new Card
+        {
+            cardName = cardData.cardName,
+            embossingSlots = cardData.embossingSlots,
+            appliedEmbossings = DeckCardEntry.CopyEmbossings(embossings),
+            groupKey = ResolveGroupKey(cardData)
+        };
+    }
+
+    public static EmbossingEffect ResolveEmbossingEffect(string embossingId)
+    {
+        if (string.IsNullOrEmpty(embossingId))
+            return null;
+
+        EmbossingEffect effect = EmbossingDatabase.Instance != null
+            ? EmbossingDatabase.Instance.GetEmbossing(embossingId)
+            : null;
+
+        if (effect != null)
+            return effect;
+
+        if (embossingEffectCache != null && embossingEffectCache.TryGetValue(embossingId, out effect))
+            return effect;
+
+        if (embossingEffectCache == null)
+            embossingEffectCache = new Dictionary<string, EmbossingEffect>(StringComparer.OrdinalIgnoreCase);
+
+        static EmbossingEffect[] LoadFromPaths()
+        {
+            string[] candidatePaths =
+            {
+                "Embossings",
+                "Embossing/Effects",
+                "Embossing"
+            };
+
+            foreach (string path in candidatePaths)
+            {
+                EmbossingEffect[] results = Resources.LoadAll<EmbossingEffect>(path);
+                if (results != null && results.Length > 0)
+                {
+                    return results;
+                }
+            }
+
+            return Array.Empty<EmbossingEffect>();
+        }
+
+        EmbossingEffect[] allEmbossings = LoadFromPaths();
+        foreach (EmbossingEffect embossing in allEmbossings)
+        {
+            if (embossing == null || string.IsNullOrEmpty(embossing.embossingId))
+                continue;
+
+            embossingEffectCache[embossing.embossingId] = embossing;
+
+            if (effect == null && string.Equals(embossing.embossingId, embossingId, StringComparison.OrdinalIgnoreCase))
+            {
+                effect = embossing;
+            }
+        }
+
+        return effect;
+    }
+
+    private void SetEmbossingSlots(Card card)
+    {
+        IList<EmbossingInstance> embossings = card?.appliedEmbossings;
+        int slotCount = card != null ? card.embossingSlots : (cardData != null ? cardData.embossingSlots : 0);
+
+        EnsureCardReferences();
+
+        if (embossingSlotContainer == null && (embossingSlotReferences == null || embossingSlotReferences.Length == 0))
+        {
+            return;
+        }
+
+        Debug.Log($"[DeckBuilderCardUI] Refreshing embossing slots for {cardData?.cardName ?? card?.cardName ?? "Unknown"} - slots:{slotCount}, embossings:{embossings?.Count ?? 0}");
+
+        for (int i = 0; i < 5; i++)
+        {
+            ResolveEmbossingSlot(i, out Transform slotContainer, out GameObject emptySlotGO, out Transform filledIndicator, out Image filledImage, out Image iconImage);
+
+            if (slotContainer == null)
+            {
+                continue;
+            }
+
+            bool shouldBeActive = i < slotCount;
+            if (slotContainer.gameObject.activeSelf != shouldBeActive)
+            {
+                slotContainer.gameObject.SetActive(shouldBeActive);
+            }
+
+            CacheDefaultEmbossingVisual(filledImage);
+            if (iconImage != null && iconImage != filledImage)
+            {
+                CacheDefaultEmbossingVisual(iconImage);
+            }
+
+            EmbossingInstance slotInstance = embossings?.FirstOrDefault(e => e != null && e.slotIndex == i);
+            if (slotInstance == null && embossings != null && i < embossings.Count)
+            {
+                slotInstance = embossings[i];
+            }
+            bool isFilled = shouldBeActive && slotInstance != null && !string.IsNullOrEmpty(slotInstance.embossingId);
+
+            if (isFilled)
+            {
+                ApplyEmbossingSlotVisual(filledIndicator, filledImage, iconImage, slotInstance);
+            }
+            else
+            {
+                ResetEmbossingSlot(filledIndicator, filledImage, iconImage);
+            }
+
+            if (emptySlotGO != null)
+            {
+                bool emptyShouldBeActive = shouldBeActive;
+                if (emptySlotGO.activeSelf != emptyShouldBeActive)
+                {
+                    emptySlotGO.SetActive(emptyShouldBeActive);
+                }
+            }
+        }
+    }
+
+    private void ResolveEmbossingSlot(int zeroBasedSlotIndex, out Transform slotContainer, out GameObject emptySlotGO, out Transform filledIndicator, out Image filledImage, out Image iconImage)
+    {
+        slotContainer = null;
+        emptySlotGO = null;
+        filledIndicator = null;
+        filledImage = null;
+        iconImage = null;
+
+        EmbossingSlotReference reference = GetEmbossingSlotReference(zeroBasedSlotIndex);
+
+        if (reference != null)
+        {
+            slotContainer = reference.container != null ? reference.container : slotContainer;
+            if (reference.emptySlotImage != null)
+            {
+                emptySlotGO = reference.emptySlotImage.gameObject;
+            }
+            if (reference.filledSlotImage != null)
+            {
+                filledImage = reference.filledSlotImage;
+                filledIndicator = reference.filledSlotImage.transform;
+            }
+            if (reference.iconImage != null)
+            {
+                iconImage = reference.iconImage;
+            }
+        }
+
+        if (slotContainer == null && embossingSlotContainer != null)
+        {
+            slotContainer = embossingSlotContainer.Find($"Slot{zeroBasedSlotIndex + 1}Container");
+        }
+
+        if (slotContainer != null)
+        {
+            if (emptySlotGO == null)
+            {
+                Transform emptySlot = slotContainer.Find($"Slot{zeroBasedSlotIndex + 1}Embossing");
+                if (emptySlot != null)
+                {
+                    emptySlotGO = emptySlot.gameObject;
+                    if (reference != null && reference.emptySlotImage == null)
+                    {
+                        reference.emptySlotImage = emptySlot.GetComponent<Image>();
+                    }
+                }
+            }
+
+            if (filledIndicator == null)
+            {
+                filledIndicator = slotContainer.Find($"Slot{zeroBasedSlotIndex + 1}Filled");
+                if (filledIndicator != null && filledImage == null)
+                {
+                    filledImage = filledIndicator.GetComponent<Image>();
+                    if (reference != null && reference.filledSlotImage == null)
+                    {
+                        reference.filledSlotImage = filledImage;
+                    }
+                }
+            }
+        }
+
+        if (filledIndicator != null)
+        {
+            if (iconImage == null)
+            {
+                iconImage = ResolveEmbossingIconImage(filledIndicator);
+            }
+            else
+            {
+                embossingIconImageCache[filledIndicator] = iconImage;
+            }
+        }
+    }
+
+    private void CacheDefaultEmbossingVisual(Image image)
+    {
+        if (image == null)
+        {
+            return;
+        }
+
+        if (!embossingSlotDefaultSprites.ContainsKey(image))
+        {
+            embossingSlotDefaultSprites[image] = image.sprite;
+        }
+
+        if (!embossingSlotDefaultColors.ContainsKey(image))
+        {
+            embossingSlotDefaultColors[image] = image.color;
+        }
+    }
+
+    private Image ResolveEmbossingIconImage(Transform filledIndicator)
+    {
+        if (filledIndicator == null)
+        {
+            return null;
+        }
+
+        if (embossingIconImageCache.TryGetValue(filledIndicator, out Image cached))
+        {
+            return cached;
+        }
+
+        Image icon = null;
+        foreach (string childName in EmbossingIconChildNames)
+        {
+            Transform child = filledIndicator.Find(childName);
+            if (child != null)
+            {
+                icon = child.GetComponent<Image>();
+                if (icon != null)
+                {
+                    break;
+                }
+            }
+        }
+
+        embossingIconImageCache[filledIndicator] = icon;
+        return icon;
+    }
+
+    private void RestoreEmbossingImage(Image image, bool resetSprite = true, bool resetColor = true, bool resetPreserveAspect = true)
+    {
+        if (image == null)
+        {
+            return;
+        }
+
+        if (resetSprite && embossingSlotDefaultSprites.TryGetValue(image, out Sprite defaultSprite))
+        {
+            image.sprite = defaultSprite;
+        }
+
+        if (resetColor && embossingSlotDefaultColors.TryGetValue(image, out Color defaultColor))
+        {
+            image.color = defaultColor;
+        }
+
+        if (resetPreserveAspect)
+        {
+            image.preserveAspect = false;
+        }
+    }
+
+    private void ApplyEmbossingSlotVisual(Transform filledIndicator, Image backgroundImage, Image iconImage, EmbossingInstance instance)
+    {
+        if (filledIndicator == null)
+        {
+            return;
+        }
+
+        Sprite sprite = null;
+        Color color = Color.white;
+
+        if (instance != null && !string.IsNullOrEmpty(instance.embossingId))
+        {
+            EmbossingEffect effect = ResolveEmbossingEffect(instance.embossingId);
+            if (effect != null)
+            {
+                if (effect.embossingIcon != null)
+                {
+                    sprite = effect.embossingIcon;
+                }
+                color = effect.embossingColor;
+            }
+            else
+            {
+                Debug.LogWarning($"[DeckBuilderCardUI] Embossing '{instance.embossingId}' not found in database/resources.");
+            }
+
+            if (effect != null && effect.embossingIcon == null)
+            {
+                Debug.LogWarning($"[DeckBuilderCardUI] Embossing '{instance.embossingId}' has no icon assigned.");
+            }
+        }
+
+        bool hasIcon = sprite != null;
+
+        if (backgroundImage != null)
+        {
+            if (hasIcon)
+            {
+                backgroundImage.sprite = sprite;
+                backgroundImage.preserveAspect = true;
+                backgroundImage.color = Color.white;
+                Debug.Log($"[DeckBuilderCardUI] Applying embossing '{instance.embossingId}' to slot {instance.slotIndex + 1}. Icon: {sprite.name}");
+            }
+            else if (embossingSlotDefaultSprites.TryGetValue(backgroundImage, out Sprite defaultSprite))
+            {
+                backgroundImage.sprite = defaultSprite;
+                backgroundImage.preserveAspect = false;
+                backgroundImage.color = color;
+            }
+        }
+
+        if (iconImage != null && iconImage != backgroundImage)
+        {
+            Image targetIconImage = iconImage;
+            if (!hasIcon)
+            {
+                Debug.LogWarning($"[DeckBuilderCardUI] Embossing '{instance.embossingId}' resolved without an icon. Slot {instance.slotIndex + 1} will use default visuals.");
+                RestoreEmbossingImage(targetIconImage);
+                if (targetIconImage != backgroundImage)
+                {
+                    targetIconImage.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                targetIconImage.gameObject.SetActive(false);
+            }
+        }
+
+        filledIndicator.gameObject.SetActive(hasIcon);
+    }
+
+    private void ResetEmbossingSlot(Transform filledIndicator, Image backgroundImage, Image iconImage)
+    {
+        RestoreEmbossingImage(backgroundImage);
+
+        if (iconImage != null && iconImage != backgroundImage)
+        {
+            RestoreEmbossingImage(iconImage);
+            iconImage.gameObject.SetActive(false);
+        }
+
+        if (filledIndicator != null)
+        {
+            filledIndicator.gameObject.SetActive(false);
+        }
+    }
+    
+    public void ConfigureEmbossingSlot(int index, Transform container, Image emptySlotImage, Image filledSlotImage, Image iconImage = null)
+    {
+        EmbossingSlotReference reference = GetEmbossingSlotReference(index);
+        if (reference == null)
+        {
+            return;
+        }
+
+        reference.container = container;
+        reference.emptySlotImage = emptySlotImage;
+        reference.filledSlotImage = filledSlotImage;
+        reference.iconImage = iconImage;
+    }
+
+    private EmbossingSlotReference GetEmbossingSlotReference(int index)
+    {
+        if (index < 0)
+        {
+            return null;
+        }
+
+        int requiredLength = Math.Max(5, index + 1);
+        if (embossingSlotReferences == null || embossingSlotReferences.Length < requiredLength)
+        {
+            var newArray = new EmbossingSlotReference[requiredLength];
+            if (embossingSlotReferences != null)
+            {
+                Array.Copy(embossingSlotReferences, newArray, Math.Min(embossingSlotReferences.Length, requiredLength));
+            }
+
+            embossingSlotReferences = newArray;
+        }
+
+        if (embossingSlotReferences[index] == null)
+        {
+            embossingSlotReferences[index] = new EmbossingSlotReference();
+        }
+
+        return embossingSlotReferences[index];
     }
     
     #region Interaction Handlers

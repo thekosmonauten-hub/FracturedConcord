@@ -174,8 +174,16 @@ public class DamageCalculator : MonoBehaviour
         float moreDamageMultiplier = modifiers.GetTotalMoreDamageMultiplier(damageType);
         
         // Check for critical strike
-        bool isCritical = Random.Range(0f, 100f) < modifiers.criticalStrikeChance;
-        float criticalMultiplier = isCritical ? modifiers.criticalStrikeMultiplier : 1f;
+        float critChance = modifiers.criticalStrikeChance;
+        float critMultiplier = modifiers.criticalStrikeMultiplier;
+        if (StackSystem.Instance != null)
+        {
+            critChance += StackSystem.Instance.GetCritChanceBonus();
+            critMultiplier *= StackSystem.Instance.GetCritMultiplierBonus();
+        }
+        critChance = Mathf.Clamp(critChance, 0f, 100f);
+        bool isCritical = Random.Range(0f, 100f) < critChance;
+        float criticalMultiplier = isCritical ? critMultiplier : 1f;
         
         return new DamageCalculation(damageType, baseDamage, addedDamage, increasedDamage, moreDamageMultiplier, isCritical, criticalMultiplier);
     }
@@ -206,25 +214,56 @@ public class DamageCalculator : MonoBehaviour
             totalDamage += weaponDamage;
         }
         
+        // Apply embossing stat scaling bonuses (Phase 3 - adds flat damage based on stats)
+        if (card.appliedEmbossings != null && card.appliedEmbossings.Count > 0)
+        {
+            totalDamage = Dexiled.CombatSystem.Embossing.EmbossingEffectProcessor.ApplyScalingBonuses(card, character, totalDamage);
+        }
+        
         // Apply character's damage modifiers
-        float increasedMultiplier = (1f + character.increasedDamage);
-        // If melee physical (identified by scalesWithMeleeWeapon), apply STR-based increased melee phys
+        // "Increased" modifiers are ADDITIVE with each other
+        float totalIncreasedDamage = character.increasedDamage;
+        
+        // If melee physical (identified by scalesWithMeleeWeapon), add STR-based increased melee phys
         if (card.scalesWithMeleeWeapon)
         {
-            increasedMultiplier *= (1f + Mathf.Max(0f, character.increasedMeleePhysicalDamage));
+            totalIncreasedDamage += Mathf.Max(0f, character.increasedMeleePhysicalDamage);
         }
+        
+        float increasedMultiplier = (1f + totalIncreasedDamage);
         float moreMultiplier = Mathf.Max(1f, character.moreDamage); // Ensure minimum of 1 to avoid zero damage
+        if (StackSystem.Instance != null)
+        {
+            moreMultiplier *= Mathf.Max(0f, StackSystem.Instance.GetDamageMoreMultiplier());
+        }
         
         // Debug logging
         Debug.Log($"<color=cyan>CalculateCardDamage Debug for {card.cardName}:</color>");
         Debug.Log($"  Base Damage: {card.baseDamage}");
         Debug.Log($"  Scaling Bonus: {scalingBonus}");
         Debug.Log($"  Before Modifiers: {totalDamage}");
-        Debug.Log($"  Increased Damage: {character.increasedDamage} (multiplier: {increasedMultiplier})");
+        Debug.Log($"  Increased Damage (generic): {character.increasedDamage}");
+        if (card.scalesWithMeleeWeapon)
+        {
+            Debug.Log($"  Increased Melee Physical: {character.increasedMeleePhysicalDamage}");
+            Debug.Log($"  Total Increased (additive): {totalIncreasedDamage}");
+        }
+        Debug.Log($"  Increased Multiplier: {increasedMultiplier}");
         Debug.Log($"  More Damage: {character.moreDamage}");
         
         totalDamage *= increasedMultiplier;
         totalDamage *= moreMultiplier;
+        
+        // Apply embossing damage multipliers (Phase 1 - multiplicative with character modifiers)
+        if (card.appliedEmbossings != null && card.appliedEmbossings.Count > 0)
+        {
+            totalDamage = Dexiled.CombatSystem.Embossing.EmbossingEffectProcessor.ApplyDamageMultipliers(
+                card, 
+                totalDamage, 
+                card.primaryDamageType,
+                character
+            );
+        }
         
         Debug.Log($"  Final Damage: {totalDamage}");
         

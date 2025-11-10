@@ -36,6 +36,9 @@ public class PlayerCombatDisplay : MonoBehaviour
     [Header("Player Sprite Animation")]
     public PlayerSpriteAnimator playerSpriteAnimator;
     
+    [Header("Speed Meter UI")]
+    [SerializeField] private SpeedMeterRing speedMeterRing;
+    
     [Header("Colors")]
     // Note: Mana color is now handled by VerticalHealthBar with BarType.Mana
     
@@ -51,6 +54,20 @@ public class PlayerCombatDisplay : MonoBehaviour
     {
         InitializeDisplay();
         SetupCharacterManager();
+        HookSpeedMeterRing();
+    }
+
+    private void OnEnable()
+    {
+        HookSpeedMeterRing();
+    }
+
+    private void OnDisable()
+    {
+        if (CombatDeckManager.Instance != null)
+        {
+            CombatDeckManager.Instance.OnSpeedMeterChanged -= HandleSpeedMeterChanged;
+        }
     }
     
     private void InitializeDisplay()
@@ -114,7 +131,23 @@ public class PlayerCombatDisplay : MonoBehaviour
             guardText = transform.Find("GuardBar/GuardText")?.GetComponent<TextMeshProUGUI>();
             
         if (playerSpriteAnimator == null)
+        {
             playerSpriteAnimator = GetComponentInChildren<PlayerSpriteAnimator>();
+            if (playerSpriteAnimator == null)
+            {
+                // Fallback: dynamic player prefab may not be a child of this display
+                playerSpriteAnimator = FindFirstObjectByType<PlayerSpriteAnimator>();
+                if (playerSpriteAnimator == null)
+                {
+                    Debug.LogWarning("PlayerSpriteAnimator not found in children or scene. Attack/Guard animations will be skipped until available.");
+                }
+            }
+        }
+
+        if (speedMeterRing == null)
+        {
+            speedMeterRing = GetComponentInChildren<SpeedMeterRing>(includeInactive: true);
+        }
     }
     
     private void SetupCharacterManager()
@@ -182,6 +215,8 @@ public class PlayerCombatDisplay : MonoBehaviour
         // Update attribute readouts if present
         if (accuracyText != null) accuracyText.text = $"Acc: {currentCharacter.accuracyRating:F0}";
         if (evasionText != null) evasionText.text = $"Ev%: {currentCharacter.increasedEvasion * 100f:F0}";
+
+        RefreshSpeedMeterImmediately();
     }
     
     private void UpdateHealthDisplay()
@@ -281,6 +316,31 @@ public class PlayerCombatDisplay : MonoBehaviour
             }
         }
     }
+
+    private void HookSpeedMeterRing()
+    {
+        if (CombatDeckManager.Instance == null) return;
+
+        CombatDeckManager.Instance.OnSpeedMeterChanged -= HandleSpeedMeterChanged;
+        CombatDeckManager.Instance.OnSpeedMeterChanged += HandleSpeedMeterChanged;
+        RefreshSpeedMeterImmediately();
+    }
+
+    private void HandleSpeedMeterChanged(CombatDeckManager.SpeedMeterState state)
+    {
+        if (speedMeterRing != null)
+        {
+            speedMeterRing.UpdateMeterState(state);
+        }
+    }
+
+    private void RefreshSpeedMeterImmediately()
+    {
+        if (speedMeterRing != null && CombatDeckManager.Instance != null)
+        {
+            speedMeterRing.UpdateMeterState(CombatDeckManager.Instance.CurrentSpeedMeterState);
+        }
+    }
     
     // Event handlers
     private void OnCharacterDamaged(Character character)
@@ -354,10 +414,15 @@ public class PlayerCombatDisplay : MonoBehaviour
     /// </summary>
     public void TriggerAttackNudge()
     {
-        if (playerSpriteAnimator != null)
+        if (playerSpriteAnimator == null)
         {
-            playerSpriteAnimator.PlayAttackNudge();
+            // Attempt late binding for dynamic prefab cases
+            playerSpriteAnimator = GetComponentInChildren<PlayerSpriteAnimator>();
+            if (playerSpriteAnimator == null)
+                playerSpriteAnimator = FindFirstObjectByType<PlayerSpriteAnimator>();
         }
+        if (playerSpriteAnimator != null)
+            playerSpriteAnimator.PlayAttackNudge();
     }
     
     /// <summary>
@@ -365,10 +430,15 @@ public class PlayerCombatDisplay : MonoBehaviour
     /// </summary>
     public void TriggerGuardSheen()
     {
-        if (playerSpriteAnimator != null)
+        if (playerSpriteAnimator == null)
         {
-            playerSpriteAnimator.PlayGuardSheen();
+            // Attempt late binding for dynamic prefab cases
+            playerSpriteAnimator = GetComponentInChildren<PlayerSpriteAnimator>();
+            if (playerSpriteAnimator == null)
+                playerSpriteAnimator = FindFirstObjectByType<PlayerSpriteAnimator>();
         }
+        if (playerSpriteAnimator != null)
+            playerSpriteAnimator.PlayGuardSheen();
     }
     
     private void OnManaUsed(Character character)

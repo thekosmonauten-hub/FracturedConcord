@@ -34,8 +34,10 @@
                 </ui:Button>
             </ui:VisualElement>
             <ui:VisualElement name="preview-section" class="section" />
-            <ui:Label text="Deck Preview" class="section-label" />
-            <ui:VisualElement name="StarterDeckPreview" class="character-preview" />
+            <ui:Label text="Starter Deck Preview" class="section-label" />
+            <ui:ScrollView name="StarterDeckPreview" class="deck-preview-scroll">
+                <ui:VisualElement name="DeckCardGrid" class="deck-card-grid" />
+            </ui:ScrollView>
             <ui:VisualElement name="action-buttons" class="action-buttons">
                 <ui:Button name="BackButton" text="Back to Main Menu" class="action-button secondary" />
                 <ui:Button name="CreateCharacterButton" text="Create Character" class="action-button primary" />

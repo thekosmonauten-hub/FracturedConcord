@@ -1,494 +1,562 @@
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 using System.Collections.Generic;
+using DG.Tweening;
 
-public class MainMenuControllerClean : MonoBehaviour
+/// <summary>
+/// Canvas-based MainMenu controller for the new UI structure.
+/// Manages main menu buttons, character slot panel, and scene transitions.
+/// </summary>
+public class MainMenuController : MonoBehaviour
 {
-    [Header("UI References")]
-    public UIDocument uiDocument;
+    [Header("Center Panel Buttons")]
+    [SerializeField] private Button mainContinueButton;
+    [SerializeField] private Button startJourneyButton;
+    [SerializeField] private Button settingsButton;
+    [SerializeField] private Button exitButton;
+
+    [Header("Character Slot Panel")]
+    [SerializeField] private RectTransform characterSlotPanel;
+    [SerializeField] private Transform characterSlotContainer;
+    [SerializeField] private Button sidebarToggleButton;
+    [SerializeField] private RectTransform sidebarToggleButtonRect; // RectTransform of the toggle button for animation
+
+    [Header("Character Slot Prefab")]
+    [SerializeField] private GameObject characterSlotPrefab;
     
     [Header("Scene Names")]
-    public string characterCreationSceneName = "CharacterCreation";
-    
-    // UI Elements
-    private VisualElement mainMenuPanel;
-    private VisualElement characterSelectionPanel;
-    
-    // Main Menu Buttons
-    private Button newGameButton;
-    private Button continueButton;
-    private Button settingsButton;
-    private Button exitButton;
-    
-    // Character Selection Elements
-    private ListView characterListView;
-    private Button createNewCharacterButton;
-    private Button backToMainMenuButton;
-    
-    // Add these new fields to your existing MainMenuController class
-    private VisualElement characterSidebar;
-    private Button sidebarToggleButton;
-    private Button toggleSidebarButton;
-    private VisualElement characterList;
-    private Button sidebarCreateNewCharacterButton;
-    
-    private void Start()
+    [SerializeField] private string characterCreationSceneName = "CharacterCreation";
+    [SerializeField] private string gameSceneName = "GameScene";
+
+    [Header("Animation Settings")]
+    [SerializeField] private float panelAnimDuration = 0.3f;
+    [SerializeField] private Ease panelAnimEase = Ease.OutCubic;
+    [SerializeField] private float panelClosedX = 600f; // Panel X position when closed (off-screen right)
+    [SerializeField] private float panelOpenX = -600f; // Panel X position when open (fully visible - NEGATIVE pulls it left)
+    [SerializeField] private float toggleButtonClosedX = -20f; // Toggle button X position when panel closed
+    [SerializeField] private float toggleButtonOpenX = -620f; // Toggle button X position when panel open (moves with panel)
+
+    // State
+    private bool isPanelOpen = false;
+    private List<GameObject> characterSlotInstances = new List<GameObject>();
+    private CharacterData selectedCharacter = null;
+
+    // References (auto-found)
+    private CharacterManager characterManager;
+    private CharacterSaveSystem characterSaveSystem;
+    private TransitionManager transitionManager;
+    private VideoTransitionManager videoTransitionManager;
+
+    void Start()
     {
-        SetupUI();
-        SetupButtonEvents();
-        ShowMainMenu(); // Start with main menu visible
+        // Find existing managers in scene
+        characterManager = FindObjectOfType<CharacterManager>();
+        characterSaveSystem = FindObjectOfType<CharacterSaveSystem>();
+        transitionManager = FindObjectOfType<TransitionManager>();
+        videoTransitionManager = FindObjectOfType<VideoTransitionManager>();
+
+        if (characterManager == null)
+            Debug.LogError("[MainMenu] CharacterManager not found in scene!");
+        if (characterSaveSystem == null)
+            Debug.LogError("[MainMenu] CharacterSaveSystem not found in scene!");
+        if (videoTransitionManager == null)
+            Debug.LogWarning("[MainMenu] VideoTransitionManager not found - using standard transitions");
+
+        // Auto-assign toggle button RectTransform if not set
+        if (sidebarToggleButton != null && sidebarToggleButtonRect == null)
+        {
+            sidebarToggleButtonRect = sidebarToggleButton.GetComponent<RectTransform>();
+        }
+
+        // Setup button listeners
+        SetupButtons();
+
+        // Load characters
+        RefreshCharacterList();
+
+        // Initialize panel (closed)
+        InitializePanel();
+        
+        Debug.Log("[MainMenu] Initialization complete!");
     }
-    
-    private void SetupUI()
+
+    void SetupButtons()
     {
-        if (uiDocument == null)
+        // Center Panel Buttons
+        if (mainContinueButton != null)
         {
-            uiDocument = GetComponent<UIDocument>();
+            mainContinueButton.onClick.AddListener(OnMainContinueClicked);
+            Debug.Log("[MainMenu] Main Continue Button listener added");
+        }
+        else
+        {
+            Debug.LogError("[MainMenu] Main Continue Button is NULL! Assign it in Inspector.");
         }
         
-        if (uiDocument == null)
+        if (startJourneyButton != null)
         {
-            Debug.LogError("MainMenuController: No UIDocument found!");
-            return;
+            startJourneyButton.onClick.AddListener(OnStartJourneyClicked);
+            Debug.Log("[MainMenu] Start Journey Button listener added");
         }
-        
-        var root = uiDocument.rootVisualElement;
-        
-        // Get panel references
-        mainMenuPanel = root.Q<VisualElement>("MainMenuPanel");
-        characterSelectionPanel = root.Q<VisualElement>("CharacterSelectionPanel");
-        
-        // Get main menu button references
-        newGameButton = root.Q<Button>("NewGameButton");
-        continueButton = root.Q<Button>("ContinueButton");
-        settingsButton = root.Q<Button>("SettingsButton");
-        exitButton = root.Q<Button>("ExitButton");
-        
-        // Get sidebar references
-        characterSidebar = root.Q<VisualElement>("CharacterSidebar");
-        sidebarToggleButton = root.Q<Button>("SidebarToggleButton");
-        toggleSidebarButton = root.Q<Button>("ToggleSidebarButton");
-        characterList = root.Q<VisualElement>("CharacterList");
-        sidebarCreateNewCharacterButton = root.Q<Button>("CreateNewCharacterButton");
-        
-        // Get character selection references (keep for backward compatibility)
-        characterListView = root.Q<ListView>("CharacterListView");
-        createNewCharacterButton = root.Q<Button>("CreateNewCharacterButton");
-        backToMainMenuButton = root.Q<Button>("BackToMainMenuButton");
-        
-        // Check if save exists and enable/disable continue button
-        UpdateContinueButton();
-        
-        // Initialize sidebar
-        InitializeSidebar();
-    }
-    
-    private void SetupButtonEvents()
-    {
-        // Main Menu Button Events
-        if (newGameButton != null)
+        else
         {
-            newGameButton.clicked += OnNewGameClicked;
-        }
-        
-        if (continueButton != null)
-        {
-            continueButton.clicked += OnContinueClicked;
+            Debug.LogError("[MainMenu] Start Journey Button is NULL! Assign it in Inspector.");
         }
         
         if (settingsButton != null)
         {
-            settingsButton.clicked += OnSettingsClicked;
+            settingsButton.onClick.AddListener(OnSettingsClicked);
+            Debug.Log("[MainMenu] Settings Button listener added");
+        }
+        else
+        {
+            Debug.LogError("[MainMenu] Settings Button is NULL! Assign it in Inspector.");
         }
         
         if (exitButton != null)
         {
-            exitButton.clicked += OnExitClicked;
+            exitButton.onClick.AddListener(OnExitClicked);
+            Debug.Log("[MainMenu] Exit Button listener added");
         }
-        
-        // Character Selection Button Events
-        if (createNewCharacterButton != null)
+        else
         {
-            createNewCharacterButton.clicked += OnCreateNewCharacter;
+            Debug.LogError("[MainMenu] Exit Button is NULL! Assign it in Inspector.");
         }
         
-        if (backToMainMenuButton != null)
-        {
-            backToMainMenuButton.clicked += OnBackToMainMenu;
-        }
-        
-        // Set up character list view
-        if (characterListView != null)
-        {
-            characterListView.makeItem = MakeCharacterItem;
-            characterListView.bindItem = BindCharacterItem;
-        }
-    }
-    
-// Button Event Handlers
-private void OnNewGameClicked()
-{
-    // Use direct scene loading instead of transition
-    SceneManager.LoadScene(characterCreationSceneName);
-}
-
-private void OnContinueClicked()
-{
-    // Load the most recent character and continue
-    var characters = CharacterSaveSystem.Instance.LoadCharacters();
-    if (characters.Count > 0)
-    {
-        var mostRecentCharacter = characters[0]; // Assuming first is most recent
-        OnCharacterSelected(mostRecentCharacter);
-            }
-            else
-            {
-        Debug.LogWarning("No saved characters found!");
-    }
-}
-    
-    private void OnSettingsClicked()
-    {
-        Debug.Log("Settings button clicked - not implemented yet");
-    }
-    
-    private void OnExitClicked()
-    {
-        Debug.Log("Exit button clicked");
-        Application.Quit();
-    }
-    
-    private void OnCreateNewCharacter()
-    {
-    // Use direct scene loading instead of transition
-    SceneManager.LoadScene(characterCreationSceneName);
-}
-    
-    private void OnBackToMainMenu()
-    {
-        ShowMainMenu();
-    }
-    
-    // Panel Management
-    private void ShowMainMenu()
-    {
-        if (mainMenuPanel != null)
-        {
-            mainMenuPanel.style.display = DisplayStyle.Flex;
-        }
-        
-        if (characterSelectionPanel != null)
-        {
-            characterSelectionPanel.style.display = DisplayStyle.None;
-        }
-        
-        UpdateContinueButton();
-    }
-    
-    private void ShowCharacterSelection()
-    {
-        if (mainMenuPanel != null)
-        {
-            mainMenuPanel.style.display = DisplayStyle.None;
-        }
-        
-        if (characterSelectionPanel != null)
-        {
-            characterSelectionPanel.style.display = DisplayStyle.Flex;
-        }
-        
-        LoadAndRefreshCharacterList();
-    }
-    
-    private void UpdateContinueButton()
-    {
-        if (continueButton != null)
-        {
-            var characters = CharacterSaveSystem.Instance.LoadCharacters();
-            continueButton.SetEnabled(characters.Count > 0);
-        }
-    }
-    
-    private void LoadAndRefreshCharacterList()
-    {
-        if (characterListView != null)
-        {
-            var characters = CharacterSaveSystem.Instance.LoadCharacters();
-            characterListView.itemsSource = characters;
-            characterListView.RefreshItems();
-        }
-    }
-    
-    // ListView Item Management
-    private VisualElement MakeCharacterItem()
-    {
-        var container = new VisualElement();
-        container.AddToClassList("character-item");
-        return container;
-    }
-    
-    private void BindCharacterItem(VisualElement element, int index)
-    {
-        if (characterListView?.itemsSource is List<CharacterData> characters && 
-            index >= 0 && index < characters.Count)
-        {
-            var character = characters[index];
-            
-            // Clear existing content
-            element.Clear();
-            
-            // Character info container
-            var characterInfo = new VisualElement();
-            characterInfo.AddToClassList("character-info");
-            
-            // Character details
-            var characterDetails = new VisualElement();
-            characterDetails.AddToClassList("character-details");
-            
-            var nameLabel = new Label(character.characterName);
-            nameLabel.AddToClassList("character-name");
-            characterDetails.Add(nameLabel);
-            
-            var levelLabel = new Label($"Level {character.level}");
-            levelLabel.AddToClassList("character-level");
-            characterDetails.Add(levelLabel);
-            
-            var classLabel = new Label(character.characterClass);
-            classLabel.AddToClassList("character-class");
-            characterDetails.Add(classLabel);
-            
-            characterInfo.Add(characterDetails);
-            
-            // Action buttons container
-            var actionButtons = new VisualElement();
-            actionButtons.AddToClassList("character-actions");
-            
-            // Load button
-            var loadButton = new Button();
-            loadButton.text = "Load Character";
-            loadButton.AddToClassList("load-button");
-            loadButton.clicked += () => OnCharacterSelected(character);
-            actionButtons.Add(loadButton);
-            
-            // Delete button
-            var deleteButton = new Button();
-            deleteButton.text = "Delete";
-            deleteButton.AddToClassList("delete-button");
-            deleteButton.clicked += () => OnDeleteCharacter(character);
-            actionButtons.Add(deleteButton);
-            
-            characterInfo.Add(actionButtons);
-            element.Add(characterInfo);
-        }
-    }
-    
-    private void OnDeleteCharacter(CharacterData character)
-    {
-        // Show confirmation dialog
-        ShowDeleteConfirmation(character);
-    }
-
-    private void ShowDeleteConfirmation(CharacterData character)
-    {
-        // Create confirmation dialog
-        var dialog = new VisualElement();
-        dialog.AddToClassList("confirmation-dialog");
-        
-        var dialogContent = new VisualElement();
-        dialogContent.AddToClassList("dialog-content");
-        
-        var message = new Label($"Are you sure you want to delete '{character.characterName}'?");
-        message.AddToClassList("dialog-message");
-        dialogContent.Add(message);
-        
-        var buttonContainer = new VisualElement();
-        buttonContainer.AddToClassList("dialog-buttons");
-        
-        var confirmButton = new Button();
-        confirmButton.text = "Delete";
-        confirmButton.AddToClassList("confirm-button");
-        confirmButton.clicked += () => {
-            ConfirmDeleteCharacter(character);
-            dialog.RemoveFromHierarchy();
-        };
-        
-        var cancelButton = new Button();
-        cancelButton.text = "Cancel";
-        cancelButton.AddToClassList("cancel-button");
-        cancelButton.clicked += () => dialog.RemoveFromHierarchy();
-        
-        buttonContainer.Add(confirmButton);
-        buttonContainer.Add(cancelButton);
-        dialogContent.Add(buttonContainer);
-        dialog.Add(dialogContent);
-        
-        // Add dialog to root
-        var root = uiDocument.rootVisualElement;
-        root.Add(dialog);
-    }
-
-    private void ConfirmDeleteCharacter(CharacterData character)
-    {
-        // Delete the character
-        CharacterSaveSystem.Instance.DeleteCharacter(character.characterName);
-        
-        // Refresh both the sidebar and the old character list
-        RefreshSidebarCharacters();
-        LoadAndRefreshCharacterList();
-        
-        // Show feedback
-        Debug.Log($"Deleted character: {character.characterName}");
-        
-        // Update continue button state
-        UpdateContinueButton();
-    }
-
-    private void OnCharacterSelected(CharacterData character)
-    {
-        Debug.Log($"Loading character: {character.characterName}");
-        
-        // Load character data
-                LoadCharacterData(character);
-        
-        // Use direct scene loading instead of transition
-                SceneManager.LoadScene("MainGameUI");
-    }
-    
-    private void LoadCharacterData(CharacterData character)
-    {
-        // Set current character data
-        PlayerPrefs.SetString("CurrentCharacter", character.characterName);
-        PlayerPrefs.SetInt("CurrentCharacterLevel", character.level);
-        PlayerPrefs.SetInt("CurrentCharacterAct", character.act);
-        PlayerPrefs.SetString("CurrentCharacterClass", character.characterClass);
-        
-        // Save the current character data
-        PlayerPrefs.Save();
-        
-        Debug.Log($"Character data loaded: {character.characterName}");
-    }
-    
-    private void OnDestroy()
-    {
-        // Cleanup - No selectionChanged to remove since we're using individual buttons
-    }
-
-    // Add this new method
-    private void InitializeSidebar()
-    {
-        // Set up sidebar toggle button
+        // Sidebar Toggle Button
         if (sidebarToggleButton != null)
         {
-            sidebarToggleButton.clicked += ToggleSidebar;
+            sidebarToggleButton.onClick.AddListener(ToggleCharacterPanel);
+            Debug.Log("[MainMenu] Sidebar Toggle Button listener added");
         }
-        
-        // Set up sidebar close button
-        if (toggleSidebarButton != null)
+        else
         {
-            toggleSidebarButton.clicked += CloseSidebar;
+            Debug.LogError("[MainMenu] Sidebar Toggle Button is NULL! Assign it in Inspector.");
         }
-        
-        // Set up create new character button in sidebar
-        if (sidebarCreateNewCharacterButton != null)
-        {
-            sidebarCreateNewCharacterButton.clicked += OnCreateNewCharacter;
-        }
-        
-        // Load characters into sidebar
-        RefreshSidebarCharacters();
     }
 
-    // Add these new methods
-    private void ToggleSidebar()
+    void InitializePanel()
     {
-        if (characterSidebar != null)
+        if (characterSlotPanel == null)
         {
-            bool isOpen = characterSidebar.ClassListContains("open");
-            if (isOpen)
+            Debug.LogError("[MainMenu] CharacterSlotPanel is NULL!");
+            return;
+        }
+
+        // Position panel off-screen to the right
+        Vector2 startPos = characterSlotPanel.anchoredPosition;
+        startPos.x = panelClosedX;
+        characterSlotPanel.anchoredPosition = startPos;
+        
+        // Position toggle button at closed position
+        if (sidebarToggleButtonRect != null)
+        {
+            Vector2 togglePos = sidebarToggleButtonRect.anchoredPosition;
+            togglePos.x = toggleButtonClosedX;
+            sidebarToggleButtonRect.anchoredPosition = togglePos;
+        }
+        
+        isPanelOpen = false;
+        Debug.Log($"[MainMenu] Panel initialized at X: {panelClosedX} (closed)");
+    }
+
+    #region Button Handlers
+
+    void OnMainContinueClicked()
+    {
+        Debug.Log("<color=cyan>━━━ [MainMenu] Main Continue Button CLICKED ━━━</color>");
+        
+        // Load most recent character
+        if (characterSaveSystem != null)
+        {
+            var characters = characterSaveSystem.LoadCharacters();
+            Debug.Log($"[MainMenu] Found {characters.Count} saved characters");
+            
+            if (characters.Count > 0)
             {
-                CloseSidebar();
+                Debug.Log($"[MainMenu] Loading most recent character: {characters[0].characterName}");
+                LoadCharacter(characters[0], useVideoTransition:false);
             }
             else
             {
-                OpenSidebar();
+                Debug.LogWarning("[MainMenu] No characters found! Opening character selection panel.");
+                ToggleCharacterPanel(); // Open character selection
             }
         }
-    }
-
-    private void OpenSidebar()
-    {
-        if (characterSidebar != null)
+        else
         {
-            characterSidebar.AddToClassList("open");
-            RefreshSidebarCharacters();
+            Debug.LogError("[MainMenu] CharacterSaveSystem is NULL! Cannot load characters.");
         }
     }
 
-    private void CloseSidebar()
+    void OnStartJourneyClicked()
     {
-        if (characterSidebar != null)
+        Debug.Log("<color=cyan>━━━ [MainMenu] Start Journey Button CLICKED ━━━</color>");
+        
+        // Check if we have characters - if yes, open selection; if no, go to creation
+        if (characterSaveSystem != null)
         {
-            characterSidebar.RemoveFromClassList("open");
+            var characters = characterSaveSystem.LoadCharacters();
+            Debug.Log($"[MainMenu] Found {characters.Count} saved characters");
+            
+            if (characters.Count > 0)
+            {
+                Debug.Log("[MainMenu] Characters exist - opening character selection panel");
+                ToggleCharacterPanel(); // Open character selection
+            }
+            else
+            {
+                Debug.Log("[MainMenu] No characters found - navigating to character creation");
+                GoToCharacterCreation(); // Go directly to character creation
+            }
+        }
+        else
+        {
+            Debug.LogError("[MainMenu] CharacterSaveSystem is NULL! Navigating to character creation.");
+            GoToCharacterCreation();
         }
     }
 
-    private void RefreshSidebarCharacters()
+    void OnSettingsClicked()
     {
-        if (characterList == null) return;
+        Debug.Log("[MainMenu] Settings clicked (not implemented)");
+        // TODO: Open settings menu
+    }
+
+    void OnExitClicked()
+    {
+        Debug.Log("[MainMenu] Exit clicked");
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
+    }
+
+    #endregion
+
+    #region Character Management
+
+    void RefreshCharacterList()
+    {
+        // Clear existing slots
+        foreach (var slot in characterSlotInstances)
+        {
+            if (slot != null) Destroy(slot);
+        }
+        characterSlotInstances.Clear();
+
+        if (characterSaveSystem == null || characterSlotContainer == null)
+        {
+            Debug.LogWarning("[MainMenu] CharacterSaveSystem or CharacterSlotContainer is null!");
+            return;
+        }
+
+        // Get all saved characters
+        List<CharacterData> characters = characterSaveSystem.LoadCharacters();
         
-        // Clear existing characters
-        characterList.Clear();
-        
-        // Load characters
-        var characters = CharacterSaveSystem.Instance.LoadCharacters();
-        
+        Debug.Log($"[MainMenu] Loading {characters.Count} characters");
+
+        // Create slot for each character
         foreach (var character in characters)
         {
-            var characterCard = CreateCharacterCard(character);
-            characterList.Add(characterCard);
+            CreateCharacterSlot(character);
+        }
+
+        // Update main continue button state
+        if (mainContinueButton != null)
+        {
+            mainContinueButton.interactable = characters.Count > 0;
         }
     }
 
-    private VisualElement CreateCharacterCard(CharacterData character)
+    void CreateCharacterSlot(CharacterData character)
     {
-        var card = new VisualElement();
-        card.AddToClassList("character-card");
+        if (characterSlotPrefab == null)
+        {
+            Debug.LogError("[MainMenu] Character slot prefab not assigned!");
+            return;
+        }
+
+        GameObject slotObj = Instantiate(characterSlotPrefab, characterSlotContainer);
+        characterSlotInstances.Add(slotObj);
+
+        // Get references to slot components
+        var characterNameText = slotObj.transform.Find("CharacterName")?.GetComponent<TextMeshProUGUI>();
+        var characterLevelText = slotObj.transform.Find("CharacterLevel")?.GetComponent<TextMeshProUGUI>();
+        var characterProgressionText = slotObj.transform.Find("CharacterProgression")?.GetComponent<TextMeshProUGUI>();
+        var continueButton = slotObj.transform.Find("ContinueButton")?.GetComponent<Button>();
+        var deleteButton = slotObj.transform.Find("DeleteButton")?.GetComponent<Button>();
+
+        // Set text values
+        if (characterNameText != null)
+            characterNameText.text = character.characterName;
         
-        // Character info section
-        var infoSection = new VisualElement();
-        infoSection.AddToClassList("character-info");
+        if (characterLevelText != null)
+            characterLevelText.text = $"Level {character.level}";
         
-        var nameLabel = new Label(character.characterName);
-        nameLabel.AddToClassList("character-name");
-        infoSection.Add(nameLabel);
+        if (characterProgressionText != null)
+            characterProgressionText.text = $"{character.characterClass} - Act {character.act}";
+
+        // Setup button listeners
+        if (continueButton != null)
+        {
+            continueButton.onClick.AddListener(() => OnCharacterContinueClicked(character));
+        }
+        else
+        {
+            Debug.LogWarning($"[MainMenu] ContinueButton not found on slot for {character.characterName}");
+        }
         
-        var detailsLabel = new Label($"Level {character.level} {character.characterClass} - Act {character.act}");
-        detailsLabel.AddToClassList("character-details");
-        infoSection.Add(detailsLabel);
-        
-        card.Add(infoSection);
-        
-        // Action buttons section
-        var actionSection = new VisualElement();
-        actionSection.AddToClassList("character-actions");
-        
-        var playButton = new Button();
-        playButton.text = "Play";
-        playButton.AddToClassList("character-action-button");
-        playButton.AddToClassList("primary");
-        playButton.clicked += () => OnCharacterSelected(character);
-        actionSection.Add(playButton);
-        
-        var deleteButton = new Button();
-        deleteButton.text = "Delete";
-        deleteButton.AddToClassList("character-action-button");
-        deleteButton.AddToClassList("danger");
-        deleteButton.clicked += () => OnDeleteCharacter(character);
-        actionSection.Add(deleteButton);
-        
-        card.Add(actionSection);
-        
-        return card;
+        if (deleteButton != null)
+        {
+            deleteButton.onClick.AddListener(() => OnCharacterDeleteClicked(character));
+        }
+        else
+        {
+            Debug.LogWarning($"[MainMenu] DeleteButton not found on slot for {character.characterName}");
+        }
     }
+
+    void OnCharacterContinueClicked(CharacterData character)
+    {
+        Debug.Log($"[MainMenu] Continue clicked for character: {character.characterName}");
+        LoadCharacter(character);
+    }
+
+    void OnCharacterDeleteClicked(CharacterData character)
+    {
+        Debug.Log($"[MainMenu] Delete clicked for character: {character.characterName}");
+        
+        // TODO: Add confirmation dialog
+        DeleteCharacter(character);
+    }
+
+    void LoadCharacter(CharacterData character, bool useVideoTransition = true)
+    {
+        Debug.Log($"<color=lime>[MainMenu] Loading character: {character.characterName}</color>");
+        
+        if (characterManager != null)
+        {
+            Debug.Log($"[MainMenu] Calling CharacterManager.LoadCharacter({character.characterName})");
+            characterManager.LoadCharacter(character.characterName);
+            
+            Debug.Log($"[MainMenu] Character loaded, now transitioning to scene: {gameSceneName}");
+            if (!useVideoTransition && transitionManager != null)
+            {
+                transitionManager.TransitionToSceneWithCurtain(gameSceneName);
+            }
+            else
+            {
+                LoadScene(gameSceneName);
+            }
+        }
+        else
+        {
+            Debug.LogError("[MainMenu] Cannot load character - CharacterManager is null!");
+        }
+    }
+
+    void DeleteCharacter(CharacterData character)
+    {
+        if (characterSaveSystem != null)
+        {
+            characterSaveSystem.DeleteCharacter(character.characterName);
+            RefreshCharacterList();
+            Debug.Log($"[MainMenu] Character {character.characterName} deleted");
+        }
+        else
+        {
+            Debug.LogError("[MainMenu] Cannot delete character - CharacterSaveSystem is null!");
+        }
+    }
+
+    #endregion
+
+    #region Panel Animation
+
+    void ToggleCharacterPanel()
+    {
+        isPanelOpen = !isPanelOpen;
+        AnimatePanel(isPanelOpen);
+    }
+
+    void AnimatePanel(bool open)
+    {
+        if (characterSlotPanel == null)
+        {
+            Debug.LogWarning("[MainMenu] CharacterSlotPanel is null!");
+            return;
+        }
+
+        float panelTargetX = open ? panelOpenX : panelClosedX; // panelOpenX (negative) pulls panel left to show it fully
+        float toggleTargetX = open ? toggleButtonOpenX : toggleButtonClosedX;
+
+        Debug.Log($"[MainMenu] Animating panel to: {(open ? "OPEN" : "CLOSED")} (Panel X: {panelTargetX}, Toggle X: {toggleTargetX})");
+
+        // Animate panel with DOTween
+        characterSlotPanel.DOAnchorPosX(panelTargetX, panelAnimDuration)
+            .SetEase(panelAnimEase)
+            .OnComplete(() => {
+                Debug.Log($"[MainMenu] Panel animation complete. Open: {open}, Final X: {characterSlotPanel.anchoredPosition.x}");
+            });
+
+        // Animate toggle button along with the panel
+        if (sidebarToggleButtonRect != null)
+        {
+            sidebarToggleButtonRect.DOAnchorPosX(toggleTargetX, panelAnimDuration)
+                .SetEase(panelAnimEase);
+            
+            Debug.Log($"[MainMenu] Animating toggle button to X: {toggleTargetX}");
+        }
+        else
+        {
+            Debug.LogWarning("[MainMenu] SidebarToggleButtonRect is null! Cannot animate toggle button.");
+        }
+    }
+
+    /// <summary>
+    /// Public method to close the panel (can be called from UI button)
+    /// </summary>
+    public void CloseCharacterPanel()
+    {
+        if (isPanelOpen)
+        {
+            ToggleCharacterPanel();
+        }
+    }
+
+    /// <summary>
+    /// Public method to open the panel (can be called from UI button)
+    /// </summary>
+    public void OpenCharacterPanel()
+    {
+        if (!isPanelOpen)
+        {
+            ToggleCharacterPanel();
+        }
+    }
+
+    #endregion
+
+    #region Scene Loading
+
+    void LoadScene(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            Debug.LogError("[MainMenu] Scene name is NULL or EMPTY! Cannot load scene.");
+            return;
+        }
+
+        Debug.Log($"<color=yellow>[MainMenu] Attempting to load scene: {sceneName}</color>");
+        
+        // Check if scene exists in build settings
+        int sceneIndex = SceneUtility.GetBuildIndexByScenePath(sceneName);
+        if (sceneIndex < 0)
+        {
+            // Try finding by name
+            bool sceneExists = false;
+            for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+            {
+                string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+                string sceneNameFromPath = System.IO.Path.GetFileNameWithoutExtension(scenePath);
+                if (sceneNameFromPath == sceneName)
+                {
+                    sceneExists = true;
+                    sceneIndex = i;
+                    break;
+                }
+            }
+            
+            if (!sceneExists)
+            {
+                Debug.LogError($"[MainMenu] Scene '{sceneName}' NOT FOUND in build settings! Available scenes:");
+                for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+                {
+                    string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+                    string sceneNameFromPath = System.IO.Path.GetFileNameWithoutExtension(scenePath);
+                    Debug.Log($"  - {sceneNameFromPath}");
+                }
+                return;
+            }
+        }
+
+        // Priority: VideoTransition → TransitionManager → Direct Load
+        // Only use VideoTransitionManager for character creation; skip for direct gameplay scenes to avoid looping video
+        if (!string.Equals(sceneName, characterCreationSceneName, System.StringComparison.OrdinalIgnoreCase) && transitionManager != null)
+        {
+            Debug.Log($"[MainMenu] Loading scene {sceneName} via TransitionManager curtain");
+            transitionManager.TransitionToSceneWithCurtain(sceneName);
+            return;
+        }
+        
+        if (videoTransitionManager != null)
+        {
+            Debug.Log($"[MainMenu] Loading scene {sceneName} with VIDEO transition");
+            videoTransitionManager.PlayTransitionAndLoadScene(sceneName);
+        }
+        else if (transitionManager != null)
+        {
+            Debug.Log($"[MainMenu] Loading scene {sceneName} via TransitionManager");
+            transitionManager.TransitionToScene(sceneName);
+        }
+        else
+        {
+            Debug.Log($"[MainMenu] No transition managers found, loading scene {sceneName} directly");
+            SceneManager.LoadScene(sceneName);
+        }
+    }
+
+    #endregion
+
+    #region Public Helper Methods
+
+    /// <summary>
+    /// Force refresh the character list (useful after creating a new character)
+    /// </summary>
+    public void ForceRefreshCharacterList()
+    {
+        RefreshCharacterList();
+    }
+
+    /// <summary>
+    /// Navigate to Character Creation scene
+    /// </summary>
+    public void GoToCharacterCreation()
+    {
+        LoadScene(characterCreationSceneName);
+    }
+
+    #endregion
+
+    #region Debug Methods
+
+    [ContextMenu("Debug: Print Character Count")]
+    void DebugPrintCharacterCount()
+    {
+        if (characterSaveSystem != null)
+        {
+            var characters = characterSaveSystem.LoadCharacters();
+            Debug.Log($"[MainMenu Debug] Found {characters.Count} saved characters");
+        foreach (var character in characters)
+            {
+                Debug.Log($"  - {character.characterName} (Level {character.level} {character.characterClass})");
+            }
+        }
+        else
+        {
+            Debug.LogError("[MainMenu Debug] CharacterSaveSystem is null!");
+        }
+    }
+
+    [ContextMenu("Debug: Toggle Panel")]
+    void DebugTogglePanel()
+    {
+        ToggleCharacterPanel();
+    }
+
+    #endregion
 }

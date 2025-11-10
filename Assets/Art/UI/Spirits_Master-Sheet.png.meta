@@ -1,0 +1,952 @@
+fileFormatVersion: 2
+guid: 2304d6d536f2f154b825947741e6214a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4747464398201435676
+    second: Spirits_Master-Sheet_0
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_0
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 1527
+        width: 195
+        height: 456
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c163c9e87b162e140800000000000000
+      internalID: 4747464398201435676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 1530
+        width: 166
+        height: 451
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 623dbd6d26535fd4f9acdc9ba80c7e8b
+      internalID: -487987539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_2
+      rect:
+        serializedVersion: 2
+        x: 505
+        y: 1524
+        width: 175
+        height: 462
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 20999c6428eedbc4fb9fa3cf1bb22270
+      internalID: 1274610026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 720
+        y: 1521
+        width: 174
+        height: 462
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8efe214e90503144923622e116170b5
+      internalID: 1210553026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_4
+      rect:
+        serializedVersion: 2
+        x: 935
+        y: 1519
+        width: 180
+        height: 470
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cfc07bcda7291414a96080ad5b20c3e5
+      internalID: 1088395489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_5
+      rect:
+        serializedVersion: 2
+        x: 1155
+        y: 1521
+        width: 172
+        height: 462
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9043ddc476d2edd449c165177490afee
+      internalID: 2108439201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_6
+      rect:
+        serializedVersion: 2
+        x: 1370
+        y: 1519
+        width: 177
+        height: 459
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1e69635da77145c44a3e60550bfac897
+      internalID: 1310818931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_7
+      rect:
+        serializedVersion: 2
+        x: 1579
+        y: 1521
+        width: 183
+        height: 462
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec640f72524109a49968190658fc12fb
+      internalID: -1273257517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_8
+      rect:
+        serializedVersion: 2
+        x: 1799
+        y: 1521
+        width: 188
+        height: 462
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3da5ea2f66f055f4d8ea710254a7a2c9
+      internalID: 1758884757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_9
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 1038
+        width: 183
+        height: 457
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fae1869e6617b4d40b8eb565e6ca640f
+      internalID: -1825068461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_10
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 1038
+        width: 191
+        height: 451
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 684d823fab431324a811b4f9670d43d1
+      internalID: -1903948320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_11
+      rect:
+        serializedVersion: 2
+        x: 500
+        y: 1043
+        width: 177
+        height: 449
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6061406e92287e44c90166bdf312568c
+      internalID: 719039812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_12
+      rect:
+        serializedVersion: 2
+        x: 720
+        y: 1038
+        width: 180
+        height: 451
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8ec4643c1111ad47890432d15d163e4
+      internalID: -397817590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_13
+      rect:
+        serializedVersion: 2
+        x: 937
+        y: 1032
+        width: 185
+        height: 457
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6053b50d377bf34399a37d8c401f47b
+      internalID: -1936854900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_14
+      rect:
+        serializedVersion: 2
+        x: 1157
+        y: 1032
+        width: 178
+        height: 457
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1969f81079459c649832c399ffbe51a5
+      internalID: 2138559664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_15
+      rect:
+        serializedVersion: 2
+        x: 1366
+        y: 1032
+        width: 183
+        height: 455
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a11412a60f43904428349c033efcd7be
+      internalID: 1101456315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_16
+      rect:
+        serializedVersion: 2
+        x: 1586
+        y: 1032
+        width: 179
+        height: 457
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 15af63ea6b8a9c847be00d695f3bbe30
+      internalID: -985681971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_17
+      rect:
+        serializedVersion: 2
+        x: 1802
+        y: 1039
+        width: 182
+        height: 450
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d363a6966191aee49853d024ea29a5c2
+      internalID: 1387541356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_18
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 549
+        width: 187
+        height: 448
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a08b24f0f7739343b244e9e293d7046
+      internalID: -622337404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_19
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 551
+        width: 187
+        height: 457
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3b23f8c01453c024fabda5bca951c47a
+      internalID: -784369497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_20
+      rect:
+        serializedVersion: 2
+        x: 502
+        y: 547
+        width: 184
+        height: 461
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e54c3e8fb8971f54a9a678cd436f6a3d
+      internalID: 1536031715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_21
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 553
+        width: 181
+        height: 453
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4302b1adcab9d8499dcb58e65f44bc2
+      internalID: 1232183231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_22
+      rect:
+        serializedVersion: 2
+        x: 933
+        y: 547
+        width: 183
+        height: 456
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ffaff43f68337043ba4792a99549577
+      internalID: -1274499953
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_23
+      rect:
+        serializedVersion: 2
+        x: 1153
+        y: 553
+        width: 187
+        height: 448
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e31da4de77d8964ea49c25045e6c437
+      internalID: 1277146248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_24
+      rect:
+        serializedVersion: 2
+        x: 1373
+        y: 545
+        width: 174
+        height: 463
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 109a2bac8cd0cb0409430db162b175b7
+      internalID: 1372937723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_25
+      rect:
+        serializedVersion: 2
+        x: 1580
+        y: 549
+        width: 180
+        height: 457
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9a326759c6a50f42858aa108b7db799
+      internalID: 1542036328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_26
+      rect:
+        serializedVersion: 2
+        x: 1798
+        y: 549
+        width: 186
+        height: 457
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 70768b08fb644654183554bfc496f4fa
+      internalID: -495735459
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_27
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 56
+        width: 185
+        height: 456
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ae4c370b6c09eaf489387a8d4034714a
+      internalID: -1839298344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_28
+      rect:
+        serializedVersion: 2
+        x: 286
+        y: 64
+        width: 185
+        height: 450
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 32b77aa4d3579a84b8a76a65b169226f
+      internalID: 642691070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_29
+      rect:
+        serializedVersion: 2
+        x: 498
+        y: 62
+        width: 182
+        height: 456
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40809284f1e2a5144bb94abb68454aa1
+      internalID: -1412384167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_30
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 64
+        width: 183
+        height: 456
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d0a6af857f3175489f037c7df93bbc4
+      internalID: -538077988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_31
+      rect:
+        serializedVersion: 2
+        x: 933
+        y: 64
+        width: 178
+        height: 454
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3ce3cb10a155924d90891904cc07b12
+      internalID: 395613299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_32
+      rect:
+        serializedVersion: 2
+        x: 1153
+        y: 62
+        width: 176
+        height: 456
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 26edd76a5631f98498548b63e0c3dc47
+      internalID: -589790884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_33
+      rect:
+        serializedVersion: 2
+        x: 1366
+        y: 64
+        width: 189
+        height: 450
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a418c2f4488cc404c883031c40bdc431
+      internalID: -1405641442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_34
+      rect:
+        serializedVersion: 2
+        x: 1582
+        y: 64
+        width: 181
+        height: 454
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 64bf057b6d89cf64797e4ef5d4d2b4ae
+      internalID: -1842305042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spirits_Master-Sheet_35
+      rect:
+        serializedVersion: 2
+        x: 1800
+        y: 66
+        width: 180
+        height: 450
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4239744d6afe074ba958768fd61f787
+      internalID: -1518481978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 48ec596bc1d82fc4caf73f3b6a4e6c0c
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceOnImport
+        value: False
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      Spirits_Master-Sheet_0: 4747464398201435676
+      Spirits_Master-Sheet_1: -487987539
+      Spirits_Master-Sheet_10: -1903948320
+      Spirits_Master-Sheet_11: 719039812
+      Spirits_Master-Sheet_12: -397817590
+      Spirits_Master-Sheet_13: -1936854900
+      Spirits_Master-Sheet_14: 2138559664
+      Spirits_Master-Sheet_15: 1101456315
+      Spirits_Master-Sheet_16: -985681971
+      Spirits_Master-Sheet_17: 1387541356
+      Spirits_Master-Sheet_18: -622337404
+      Spirits_Master-Sheet_19: -784369497
+      Spirits_Master-Sheet_2: 1274610026
+      Spirits_Master-Sheet_20: 1536031715
+      Spirits_Master-Sheet_21: 1232183231
+      Spirits_Master-Sheet_22: -1274499953
+      Spirits_Master-Sheet_23: 1277146248
+      Spirits_Master-Sheet_24: 1372937723
+      Spirits_Master-Sheet_25: 1542036328
+      Spirits_Master-Sheet_26: -495735459
+      Spirits_Master-Sheet_27: -1839298344
+      Spirits_Master-Sheet_28: 642691070
+      Spirits_Master-Sheet_29: -1412384167
+      Spirits_Master-Sheet_3: 1210553026
+      Spirits_Master-Sheet_30: -538077988
+      Spirits_Master-Sheet_31: 395613299
+      Spirits_Master-Sheet_32: -589790884
+      Spirits_Master-Sheet_33: -1405641442
+      Spirits_Master-Sheet_34: -1842305042
+      Spirits_Master-Sheet_35: -1518481978
+      Spirits_Master-Sheet_4: 1088395489
+      Spirits_Master-Sheet_5: 2108439201
+      Spirits_Master-Sheet_6: 1310818931
+      Spirits_Master-Sheet_7: -1273257517
+      Spirits_Master-Sheet_8: 1758884757
+      Spirits_Master-Sheet_9: -1825068461
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

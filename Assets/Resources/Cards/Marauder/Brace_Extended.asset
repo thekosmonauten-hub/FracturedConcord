@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Brace_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Brace
+  groupKey: Brace
   cardType: Guard
   playCost: 1
   description: Gain {guard} Guard.
@@ -20,6 +21,8 @@ MonoBehaviour:
   element: 0
   category: 3
   cardImage: {fileID: 5817549183460865125, guid: cda022d9f1589ee49814d8c320646df8, type: 3}
+  cardThumbnail: {fileID: 8901297290041834606, guid: 40f1529b4403ce24781dc99918ca59c6, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -29,6 +32,9 @@ MonoBehaviour:
   isDualWield: 0
   ifDiscardedEffect: 
   dualWieldEffect: 
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 0
@@ -36,6 +42,7 @@ MonoBehaviour:
   scalesWithSpellWeapon: 0
   isAoE: 0
   aoeTargets: 1
+  aoeRowScope: 0
   damageScaling:
     strengthScaling: 0
     dexterityScaling: 0
@@ -74,6 +81,16 @@ MonoBehaviour:
   comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingDamageMultiplier: 1
+  channelingAdditionalGuard: 0
   tags:
   - Guard
   - Basic
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

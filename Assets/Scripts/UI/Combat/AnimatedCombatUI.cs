@@ -441,8 +441,35 @@ public class AnimatedCombatUI : MonoBehaviour
         UpdateWaveUI();
         if (waveText != null)
         {
-            LeanTween.scale(waveText.rectTransform, Vector3.one * 1.1f, 0.15f).setEase(LeanTweenType.easeOutQuad)
-                     .setOnComplete(() => LeanTween.scale(waveText.rectTransform, Vector3.one, 0.15f).setEase(LeanTweenType.easeInQuad));
+            // Cancel any existing animations on this object
+            LeanTween.cancel(waveText.gameObject);
+            
+            // Reset to normal scale first
+            waveText.rectTransform.localScale = Vector3.one;
+            
+            // Enhanced pulse animation: Scale up to 1.3x, then back down to 1.0x
+            LeanTween.scale(waveText.rectTransform, Vector3.one * 1.3f, 0.3f)
+                     .setEase(LeanTweenType.easeOutBack)
+                     .setOnComplete(() => 
+                     {
+                         LeanTween.scale(waveText.rectTransform, Vector3.one, 0.25f)
+                                  .setEase(LeanTweenType.easeInOutQuad);
+                     });
+            
+            // Optional: Add a subtle color flash
+            if (waveText is TextMeshProUGUI tmp)
+            {
+                Color originalColor = tmp.color;
+                Color flashColor = new Color(1f, 0.9f, 0.3f); // Gold flash
+                
+                LeanTween.value(waveText.gameObject, 0f, 1f, 0.3f)
+                         .setOnUpdate((float t) => 
+                         {
+                             tmp.color = Color.Lerp(flashColor, originalColor, t);
+                         });
+            }
+            
+            Debug.Log($"[Wave Animation] Playing pulse animation for Wave {cur}/{total}");
         }
     }
     

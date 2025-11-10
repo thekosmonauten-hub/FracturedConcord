@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: BloatDamage
   m_EditorClassIdentifier: Assembly-CSharp::DamageEffect
   damageType: 5
-  flatDamage: 10
+  flatDamage: 5
   percentOfMaxHp: 0

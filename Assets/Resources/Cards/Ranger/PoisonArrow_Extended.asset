@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: PoisonArrow_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Poison Arrow
+  groupKey: PoisonArrow
   cardType: Attack
   playCost: 1
   description: 'Deal 5 physical damage and apply 2 Poison stacks to all enemies.
@@ -35,8 +36,8 @@ MonoBehaviour:
   scalesWithMeleeWeapon: 1
   scalesWithProjectileWeapon: 0
   scalesWithSpellWeapon: 0
-  isAoE: 0
-  aoeTargets: 1
+  isAoE: 1
+  aoeTargets: 0
   damageScaling:
     strengthScaling: 1
     dexterityScaling: 0
@@ -52,8 +53,9 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
-  comboWith: 
-  comboDescription: 
+  enableCombo: 1
+  comboWith: Focus
+  comboDescription: Combo (Focus + Poison Arrow): 3x poison duration.
   comboEffect: 
   comboHighlightType: type
   tags:

@@ -37,6 +37,7 @@ public class CharacterStatsData
     public float increasedLightningDamage;
     public float increasedChaosDamage;
     public float increasedElementalDamage;
+    public float increasedElementalAttackDamage; // Elemental damage with attack skills specifically
     public float increasedSpellDamage;
     public float increasedAttackDamage;
     public float increasedProjectileDamage;
@@ -130,6 +131,7 @@ public class CharacterStatsData
     
     [Header("Card System Stats")]
     public int cardsDrawnPerTurn;
+    public int cardsDrawnPerWave;
     public int maxHandSize;
     public int discardPileSize;
     public int exhaustPileSize;
@@ -256,6 +258,7 @@ public class CharacterStatsData
         statusEffectDuration = 1f;
         
         cardsDrawnPerTurn = 1;
+        cardsDrawnPerWave = 1;
         maxHandSize = 10;
         discardPileSize = 0;
         exhaustPileSize = 0;
@@ -322,9 +325,15 @@ public class CharacterStatsData
         
         // Copy card system stats
         cardsDrawnPerTurn = character.cardsDrawnPerTurn;
+        cardsDrawnPerWave = character.cardsDrawnPerWave;
         manaRegeneration = character.manaRecoveryPerTurn;
         manaPerTurn = character.manaRecoveryPerTurn; // Copy mana per turn
         discardPower = 0f; // Default discard power (can be modified by equipment/effects)
+
+        // Speed stats
+        attackSpeed = character.GetAttackSpeedMultiplier();
+        castSpeed = character.GetCastSpeedMultiplier();
+        movementSpeed = character.GetMovementSpeedMultiplier();
         
         // Calculate elemental damage totals
         increasedElementalDamage = increasedFireDamage + increasedColdDamage + increasedLightningDamage;

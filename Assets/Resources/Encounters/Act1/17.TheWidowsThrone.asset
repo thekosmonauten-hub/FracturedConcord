@@ -17,4 +17,6 @@ MonoBehaviour:
   sceneName: CombatScene
   areaLevel: 21
   totalWaves: 12
+  maxEnemiesPerWave: 5
+  randomizeEnemyCount: 0
   uniqueEnemy: {fileID: 0}

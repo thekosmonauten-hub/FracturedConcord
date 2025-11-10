@@ -176,6 +176,9 @@ public class CardEffect
             case "burn":
             case "burning":
                 return StatusEffectType.Burn;
+            case "chill":
+            case "chilled":
+                return StatusEffectType.Chill;
             case "freeze":
             case "frozen":
                 return StatusEffectType.Freeze;

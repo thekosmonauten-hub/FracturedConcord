@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Dodge_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Dodge
+  groupKey: Dodge
   cardType: Guard
   playCost: 1
-  description: 'Gain 15 Evasion (+Dex/2) for the rest of combat. Combo (Pack Hunter
-    + Dodge): 25% increased evasion for 10 seconds.'
+  description: 'Gain 15 Evasion (+Dex/2) for the rest of combat. Combo (PackHunter
+    + Dodge): Gain 25% increased evasion for 2 seconds.'
   rarity: 0
   element: 0
   category: 3
@@ -52,8 +53,9 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
-  comboWith: 
-  comboDescription: 
+  enableCombo: 1
+  comboWith: PackHunter
+  comboDescription: Combo (PackHunter + Dodge): Gain 25% increased evasion for 2 seconds.
   comboEffect: 
   comboHighlightType: type
   tags:

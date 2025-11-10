@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Quickstep_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Quickstep
+  groupKey: Quickstep
   cardType: Skill
   playCost: 1
   description: 'Gain 20 Evasion (+Dex/2) for the rest of combat. Combo (Focus + Quickstep):
-    3x Evasion gained.'
+    3x evasion gained.'
   rarity: 0
   element: 0
   category: 1
@@ -52,8 +53,9 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
-  comboWith: 
-  comboDescription: 
+  enableCombo: 1
+  comboWith: Focus
+  comboDescription: Combo (Focus + Quickstep): 3x evasion gained.
   comboEffect: 
   comboHighlightType: type
   tags:

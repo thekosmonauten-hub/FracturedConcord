@@ -1,0 +1,3549 @@
+fileFormatVersion: 2
+guid: 728a877f44504fb4e93e484aa9ff528b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2170619902646849807
+    second: AscendancyFrame_Inlay_0
+  - first:
+      213: -8232121489589042534
+    second: AscendancyFrame_Inlay_1
+  - first:
+      213: 3587829197816970857
+    second: AscendancyFrame_Inlay_2
+  - first:
+      213: -3437840531923858061
+    second: AscendancyFrame_Inlay_3
+  - first:
+      213: -3995076172753798883
+    second: AscendancyFrame_Inlay_4
+  - first:
+      213: -8282102879450677890
+    second: AscendancyFrame_Inlay_5
+  - first:
+      213: 2498969903547192565
+    second: AscendancyFrame_Inlay_6
+  - first:
+      213: -2756152733218381944
+    second: AscendancyFrame_Inlay_7
+  - first:
+      213: 4363876265273566700
+    second: AscendancyFrame_Inlay_8
+  - first:
+      213: 5697638468066009313
+    second: AscendancyFrame_Inlay_9
+  - first:
+      213: -493063506944146508
+    second: AscendancyFrame_Inlay_10
+  - first:
+      213: 6012522845870530856
+    second: AscendancyFrame_Inlay_11
+  - first:
+      213: -2605076236930440146
+    second: AscendancyFrame_Inlay_12
+  - first:
+      213: 3502142978203714703
+    second: AscendancyFrame_Inlay_13
+  - first:
+      213: -3865567723091588816
+    second: AscendancyFrame_Inlay_14
+  - first:
+      213: -4646529817905769117
+    second: AscendancyFrame_Inlay_15
+  - first:
+      213: -2979802399970697232
+    second: AscendancyFrame_Inlay_16
+  - first:
+      213: 4980891784104937029
+    second: AscendancyFrame_Inlay_17
+  - first:
+      213: 7412414033812247275
+    second: AscendancyFrame_Inlay_18
+  - first:
+      213: 5769202800412266654
+    second: AscendancyFrame_Inlay_19
+  - first:
+      213: 133700581341915944
+    second: AscendancyFrame_Inlay_20
+  - first:
+      213: -8586327325847991532
+    second: AscendancyFrame_Inlay_21
+  - first:
+      213: 7039390990893703727
+    second: AscendancyFrame_Inlay_22
+  - first:
+      213: -8674950498963910902
+    second: AscendancyFrame_Inlay_23
+  - first:
+      213: 6077143090575161815
+    second: AscendancyFrame_Inlay_24
+  - first:
+      213: -4934531699286139898
+    second: AscendancyFrame_Inlay_25
+  - first:
+      213: 1552253736512331413
+    second: AscendancyFrame_Inlay_26
+  - first:
+      213: -4636010323842941356
+    second: AscendancyFrame_Inlay_27
+  - first:
+      213: 4982555391625231319
+    second: AscendancyFrame_Inlay_28
+  - first:
+      213: 1056334056082116970
+    second: AscendancyFrame_Inlay_29
+  - first:
+      213: -8071389900243852580
+    second: AscendancyFrame_Inlay_30
+  - first:
+      213: -3620034078675936537
+    second: AscendancyFrame_Inlay_31
+  - first:
+      213: -3504690943676003365
+    second: AscendancyFrame_Inlay_32
+  - first:
+      213: -3501829001753658580
+    second: AscendancyFrame_Inlay_33
+  - first:
+      213: -5545496933574018855
+    second: AscendancyFrame_Inlay_34
+  - first:
+      213: -4105469719823611631
+    second: AscendancyFrame_Inlay_35
+  - first:
+      213: -6952014692758598218
+    second: AscendancyFrame_Inlay_36
+  - first:
+      213: -7948031565077283581
+    second: AscendancyFrame_Inlay_37
+  - first:
+      213: -4559569932731061669
+    second: AscendancyFrame_Inlay_38
+  - first:
+      213: 3266189732976796596
+    second: AscendancyFrame_Inlay_39
+  - first:
+      213: -7914106127096966003
+    second: AscendancyFrame_Inlay_40
+  - first:
+      213: 771535457888199054
+    second: AscendancyFrame_Inlay_41
+  - first:
+      213: -7204806374847961250
+    second: AscendancyFrame_Inlay_42
+  - first:
+      213: 5318112606008279991
+    second: AscendancyFrame_Inlay_43
+  - first:
+      213: 5367860286701227546
+    second: AscendancyFrame_Inlay_44
+  - first:
+      213: 1697329260767558473
+    second: AscendancyFrame_Inlay_45
+  - first:
+      213: 2515087387699977511
+    second: AscendancyFrame_Inlay_46
+  - first:
+      213: -7397380950159492713
+    second: AscendancyFrame_Inlay_47
+  - first:
+      213: 3120522131924458208
+    second: AscendancyFrame_Inlay_48
+  - first:
+      213: -1038746202666884713
+    second: AscendancyFrame_Inlay_49
+  - first:
+      213: 6848760725569977763
+    second: AscendancyFrame_Inlay_50
+  - first:
+      213: -7502924526243827880
+    second: AscendancyFrame_Inlay_51
+  - first:
+      213: 4249798431113102929
+    second: AscendancyFrame_Inlay_52
+  - first:
+      213: 1815538890167277009
+    second: AscendancyFrame_Inlay_53
+  - first:
+      213: -1909260811844728903
+    second: AscendancyFrame_Inlay_54
+  - first:
+      213: 4719679954214727802
+    second: AscendancyFrame_Inlay_55
+  - first:
+      213: -5233823583350835727
+    second: AscendancyFrame_Inlay_56
+  - first:
+      213: 3806764016208296677
+    second: AscendancyFrame_Inlay_57
+  - first:
+      213: 1275330701815151952
+    second: AscendancyFrame_Inlay_58
+  - first:
+      213: 7899032859776980644
+    second: AscendancyFrame_Inlay_59
+  - first:
+      213: -368809073357830913
+    second: AscendancyFrame_Inlay_60
+  - first:
+      213: 4372735123370657999
+    second: AscendancyFrame_Inlay_61
+  - first:
+      213: 5195334494707137189
+    second: AscendancyFrame_Inlay_62
+  - first:
+      213: 6192143390810552116
+    second: AscendancyFrame_Inlay_63
+  - first:
+      213: 3902553289995283366
+    second: AscendancyFrame_Inlay_64
+  - first:
+      213: 8378081726769652188
+    second: AscendancyFrame_Inlay_65
+  - first:
+      213: 398138684159954686
+    second: AscendancyFrame_Inlay_66
+  - first:
+      213: -1562365926517678070
+    second: AscendancyFrame_Inlay_67
+  - first:
+      213: 4033036209215381339
+    second: AscendancyFrame_Inlay_68
+  - first:
+      213: -3941875687586162584
+    second: AscendancyFrame_Inlay_69
+  - first:
+      213: -8909100073878307276
+    second: AscendancyFrame_Inlay_70
+  - first:
+      213: 8661147245526415830
+    second: AscendancyFrame_Inlay_71
+  - first:
+      213: -7938535719071028811
+    second: AscendancyFrame_Inlay_72
+  - first:
+      213: -1089726798699000379
+    second: AscendancyFrame_Inlay_73
+  - first:
+      213: -839884818114364089
+    second: AscendancyFrame_Inlay_74
+  - first:
+      213: 2990555432908268870
+    second: AscendancyFrame_Inlay_75
+  - first:
+      213: 3723259980577625127
+    second: AscendancyFrame_Inlay_76
+  - first:
+      213: -3536310875931374344
+    second: AscendancyFrame_Inlay_77
+  - first:
+      213: -1406516486750249168
+    second: AscendancyFrame_Inlay_78
+  - first:
+      213: 3703548004850769989
+    second: AscendancyFrame_Inlay_79
+  - first:
+      213: 2639022122969339656
+    second: AscendancyFrame_Inlay_80
+  - first:
+      213: 4261494221169598050
+    second: AscendancyFrame_Inlay_81
+  - first:
+      213: 2992023347337785029
+    second: AscendancyFrame_Inlay_82
+  - first:
+      213: -1924480039186670340
+    second: AscendancyFrame_Inlay_83
+  - first:
+      213: -2694294989033595141
+    second: AscendancyFrame_Inlay_84
+  - first:
+      213: 8110462249319703217
+    second: AscendancyFrame_Inlay_85
+  - first:
+      213: 2500849392224859092
+    second: AscendancyFrame_Inlay_86
+  - first:
+      213: 6140092915034537916
+    second: AscendancyFrame_Inlay_87
+  - first:
+      213: -5015535060680907999
+    second: AscendancyFrame_Inlay_88
+  - first:
+      213: 4743415017458311093
+    second: AscendancyFrame_Inlay_89
+  - first:
+      213: -5121310237418078209
+    second: AscendancyFrame_Inlay_90
+  - first:
+      213: -5646903865048880241
+    second: AscendancyFrame_Inlay_91
+  - first:
+      213: 986660029876482347
+    second: AscendancyFrame_Inlay_92
+  - first:
+      213: -5723758831560671231
+    second: AscendancyFrame_Inlay_93
+  - first:
+      213: 5089186467999018722
+    second: AscendancyFrame_Inlay_94
+  - first:
+      213: -4477542090707952001
+    second: AscendancyFrame_Inlay_95
+  - first:
+      213: 3137101050820059746
+    second: AscendancyFrame_Inlay_96
+  - first:
+      213: -1909490015442254854
+    second: AscendancyFrame_Inlay_97
+  - first:
+      213: -1192158327408148150
+    second: AscendancyFrame_Inlay_98
+  - first:
+      213: -7372320336237198526
+    second: AscendancyFrame_Inlay_99
+  - first:
+      213: -9014069066366469796
+    second: AscendancyFrame_Inlay_100
+  - first:
+      213: 1934929005358130862
+    second: AscendancyFrame_Inlay_101
+  - first:
+      213: 4691480709979950232
+    second: AscendancyFrame_Inlay_102
+  - first:
+      213: 3129375792993520920
+    second: AscendancyFrame_Inlay_103
+  - first:
+      213: -908969529441567551
+    second: AscendancyFrame_Inlay_104
+  - first:
+      213: 8928584338270716249
+    second: AscendancyFrame_Inlay_105
+  - first:
+      213: 2660781179693246272
+    second: AscendancyFrame_Inlay_106
+  - first:
+      213: 505983814533414025
+    second: AscendancyFrame_Inlay_107
+  - first:
+      213: -7956712045101138828
+    second: AscendancyFrame_Inlay_108
+  - first:
+      213: 1056766588219918758
+    second: AscendancyFrame_Inlay_109
+  - first:
+      213: -2090514973689250256
+    second: AscendancyFrame_Inlay_110
+  - first:
+      213: -6124884693498981111
+    second: AscendancyFrame_Inlay_111
+  - first:
+      213: -1490154554085270419
+    second: AscendancyFrame_Inlay_112
+  - first:
+      213: -2846806880308936059
+    second: AscendancyFrame_Inlay_113
+  - first:
+      213: 6389869832911895280
+    second: AscendancyFrame_Inlay_114
+  - first:
+      213: 6439041945164230832
+    second: AscendancyFrame_Inlay_115
+  - first:
+      213: 6436434284375259491
+    second: AscendancyFrame_Inlay_116
+  - first:
+      213: 1334237882666132188
+    second: AscendancyFrame_Inlay_117
+  - first:
+      213: 3032151640621920903
+    second: AscendancyFrame_Inlay_118
+  - first:
+      213: -5429886843691511466
+    second: AscendancyFrame_Inlay_119
+  - first:
+      213: 7697922691509770290
+    second: AscendancyFrame_Inlay_120
+  - first:
+      213: -7898655671477336531
+    second: AscendancyFrame_Inlay_121
+  - first:
+      213: -2642070460446291291
+    second: AscendancyFrame_Inlay_122
+  - first:
+      213: -2394596976673789382
+    second: AscendancyFrame_Inlay_123
+  - first:
+      213: 4872642499704117902
+    second: AscendancyFrame_Inlay_124
+  - first:
+      213: -7061066875658602370
+    second: AscendancyFrame_Inlay_125
+  - first:
+      213: -6503928638249674387
+    second: AscendancyFrame_Inlay_126
+  - first:
+      213: -4385546516889222618
+    second: AscendancyFrame_Inlay_127
+  - first:
+      213: 6960189099888391959
+    second: AscendancyFrame_Inlay_128
+  - first:
+      213: 6652386948573701414
+    second: AscendancyFrame_Inlay_129
+  - first:
+      213: 2599333827379094245
+    second: AscendancyFrame_Inlay_130
+  - first:
+      213: -8394327983264265181
+    second: AscendancyFrame_Inlay_131
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_0
+      rect:
+        serializedVersion: 2
+        x: 834
+        y: 1909
+        width: 74
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fe6750f2b860e1e0800000000000000
+      internalID: -2170619902646849807
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_1
+      rect:
+        serializedVersion: 2
+        x: 902
+        y: 1919
+        width: 83
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a928f21fe11a1cd80800000000000000
+      internalID: -8232121489589042534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_2
+      rect:
+        serializedVersion: 2
+        x: 996
+        y: 1936
+        width: 19
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96eb7a275a78ac130800000000000000
+      internalID: 3587829197816970857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_3
+      rect:
+        serializedVersion: 2
+        x: 1009
+        y: 1924
+        width: 34
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37d0d3c20465a40d0800000000000000
+      internalID: -3437840531923858061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_4
+      rect:
+        serializedVersion: 2
+        x: 1032
+        y: 1899
+        width: 86
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d19f1604363ae88c0800000000000000
+      internalID: -3995076172753798883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_5
+      rect:
+        serializedVersion: 2
+        x: 1063
+        y: 1921
+        width: 39
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7d3a15cf4f001d80800000000000000
+      internalID: -8282102879450677890
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_6
+      rect:
+        serializedVersion: 2
+        x: 1093
+        y: 1909
+        width: 122
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f4925d13ef1ea220800000000000000
+      internalID: 2498969903547192565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_7
+      rect:
+        serializedVersion: 2
+        x: 1099
+        y: 1930
+        width: 57
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88fdbcd11bd20c9d0800000000000000
+      internalID: -2756152733218381944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_8
+      rect:
+        serializedVersion: 2
+        x: 803
+        y: 1913
+        width: 16
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce5a36ba75a9f8c30800000000000000
+      internalID: 4363876265273566700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_9
+      rect:
+        serializedVersion: 2
+        x: 817
+        y: 1911
+        width: 27
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e0eca3dff3121f40800000000000000
+      internalID: 5697638468066009313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_10
+      rect:
+        serializedVersion: 2
+        x: 825
+        y: 1915
+        width: 26
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b3c2e05a594829f0800000000000000
+      internalID: -493063506944146508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_11
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 1896
+        width: 10
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 821a8003ca5c07350800000000000000
+      internalID: 6012522845870530856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_12
+      rect:
+        serializedVersion: 2
+        x: 862
+        y: 1887
+        width: 67
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2423fcf6f8e8dbd0800000000000000
+      internalID: -2605076236930440146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_13
+      rect:
+        serializedVersion: 2
+        x: 910
+        y: 1897
+        width: 93
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f840678cb7c1a9030800000000000000
+      internalID: 3502142978203714703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_14
+      rect:
+        serializedVersion: 2
+        x: 1119
+        y: 1889
+        width: 71
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03909e1f2aeba5ac0800000000000000
+      internalID: -3865567723091588816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_15
+      rect:
+        serializedVersion: 2
+        x: 1179
+        y: 1892
+        width: 122
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 365577dbfb5348fb0800000000000000
+      internalID: -4646529817905769117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_16
+      rect:
+        serializedVersion: 2
+        x: 1200
+        y: 1910
+        width: 27
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ffd3e0418d95a6d0800000000000000
+      internalID: -2979802399970697232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_17
+      rect:
+        serializedVersion: 2
+        x: 1227
+        y: 1913
+        width: 15
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5468c3010beaf1540800000000000000
+      internalID: 4980891784104937029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_18
+      rect:
+        serializedVersion: 2
+        x: 742
+        y: 1869
+        width: 97
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be2df758a4f2ed660800000000000000
+      internalID: 7412414033812247275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_19
+      rect:
+        serializedVersion: 2
+        x: 774
+        y: 1889
+        width: 70
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9013c36163501050800000000000000
+      internalID: 5769202800412266654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_20
+      rect:
+        serializedVersion: 2
+        x: 841
+        y: 1878
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82be52968fffad100800000000000000
+      internalID: 133700581341915944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_21
+      rect:
+        serializedVersion: 2
+        x: 859
+        y: 1891
+        width: 13
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41bc9991acc37d880800000000000000
+      internalID: -8586327325847991532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_22
+      rect:
+        serializedVersion: 2
+        x: 873
+        y: 1895
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f22ed475fc0f0b160800000000000000
+      internalID: 7039390990893703727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_23
+      rect:
+        serializedVersion: 2
+        x: 1202
+        y: 1888
+        width: 38
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0f8829ab726c9780800000000000000
+      internalID: -8674950498963910902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_24
+      rect:
+        serializedVersion: 2
+        x: 1210
+        y: 1863
+        width: 147
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d9b3fa5179565450800000000000000
+      internalID: 6077143090575161815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_25
+      rect:
+        serializedVersion: 2
+        x: 1322
+        y: 1887
+        width: 20
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60c15235095058bb0800000000000000
+      internalID: -4934531699286139898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_26
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 1856
+        width: 40
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59e17169c86ba8510800000000000000
+      internalID: 1552253736512331413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_27
+      rect:
+        serializedVersion: 2
+        x: 678
+        y: 1871
+        width: 54
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45e3c405c2599afb0800000000000000
+      internalID: -4636010323842941356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_28
+      rect:
+        serializedVersion: 2
+        x: 684
+        y: 1865
+        width: 23
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7db778fdab7952540800000000000000
+      internalID: 4982555391625231319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_29
+      rect:
+        serializedVersion: 2
+        x: 706
+        y: 1878
+        width: 73
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a611ce03a3ad8ae00800000000000000
+      internalID: 1056334056082116970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_30
+      rect:
+        serializedVersion: 2
+        x: 1188
+        y: 1878
+        width: 22
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd22a4856a9acff80800000000000000
+      internalID: -8071389900243852580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_31
+      rect:
+        serializedVersion: 2
+        x: 1264
+        y: 1801
+        width: 184
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ea56b96f2e03cdc0800000000000000
+      internalID: -3620034078675936537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_32
+      rect:
+        serializedVersion: 2
+        x: 1268
+        y: 1870
+        width: 86
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdbc9a6c726dc5fc0800000000000000
+      internalID: -3504690943676003365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_33
+      rect:
+        serializedVersion: 2
+        x: 1346
+        y: 1859
+        width: 36
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2bff4e8311076fc0800000000000000
+      internalID: -3501829001753658580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_34
+      rect:
+        serializedVersion: 2
+        x: 702
+        y: 1850
+        width: 129
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d87d439bef6a03b0800000000000000
+      internalID: -5545496933574018855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_35
+      rect:
+        serializedVersion: 2
+        x: 729
+        y: 1871
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1198ac1aa017607c0800000000000000
+      internalID: -4105469719823611631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_36
+      rect:
+        serializedVersion: 2
+        x: 574
+        y: 1817
+        width: 63
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bdc3d4687b758f90800000000000000
+      internalID: -6952014692758598218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_37
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 1797
+        width: 158
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30df9fbe66be2b190800000000000000
+      internalID: -7948031565077283581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_38
+      rect:
+        serializedVersion: 2
+        x: 1224
+        y: 1850
+        width: 78
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5a6307cd4729b0c0800000000000000
+      internalID: -4559569932731061669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_39
+      rect:
+        serializedVersion: 2
+        x: 1415
+        y: 1823
+        width: 73
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b32c13d146d35d20800000000000000
+      internalID: 3266189732976796596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_40
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 1815
+        width: 28
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8494ab78627b2290800000000000000
+      internalID: -7914106127096966003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_41
+      rect:
+        serializedVersion: 2
+        x: 565
+        y: 1829
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e816b03496b05ba00800000000000000
+      internalID: 771535457888199054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_42
+      rect:
+        serializedVersion: 2
+        x: 1371
+        y: 1800
+        width: 39
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e57a7b756c2630c90800000000000000
+      internalID: -7204806374847961250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_43
+      rect:
+        serializedVersion: 2
+        x: 1439
+        y: 1815
+        width: 24
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b386a41d3bbdc940800000000000000
+      internalID: 5318112606008279991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_44
+      rect:
+        serializedVersion: 2
+        x: 1487
+        y: 1821
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1ec0c89d787e7a40800000000000000
+      internalID: 5367860286701227546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_45
+      rect:
+        serializedVersion: 2
+        x: 524
+        y: 1787
+        width: 22
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94b3de648ff1e8710800000000000000
+      internalID: 1697329260767558473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_46
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 1781
+        width: 29
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72d1ce257a267e220800000000000000
+      internalID: 2515087387699977511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_47
+      rect:
+        serializedVersion: 2
+        x: 563
+        y: 1808
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79970850839375990800000000000000
+      internalID: -7397380950159492713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_48
+      rect:
+        serializedVersion: 2
+        x: 1365
+        y: 1797
+        width: 6
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ea1a1388525e4b20800000000000000
+      internalID: 3120522131924458208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_49
+      rect:
+        serializedVersion: 2
+        x: 1406
+        y: 1796
+        width: 37
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 791214a05d1a591f0800000000000000
+      internalID: -1038746202666884713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_50
+      rect:
+        serializedVersion: 2
+        x: 1446
+        y: 1808
+        width: 27
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3adbe37f79fab0f50800000000000000
+      internalID: 6848760725569977763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_51
+      rect:
+        serializedVersion: 2
+        x: 1476
+        y: 1789
+        width: 36
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85faba445e140e790800000000000000
+      internalID: -7502924526243827880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_52
+      rect:
+        serializedVersion: 2
+        x: 1509
+        y: 1770
+        width: 69
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 156428d18215afa30800000000000000
+      internalID: 4249798431113102929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_53
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 1767
+        width: 26
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d5d3506007123910800000000000000
+      internalID: 1815538890167277009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_54
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 1778
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b7cb664861f085e0800000000000000
+      internalID: -1909260811844728903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_55
+      rect:
+        serializedVersion: 2
+        x: 515
+        y: 1768
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a70308499ebaf7140800000000000000
+      internalID: 4719679954214727802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_56
+      rect:
+        serializedVersion: 2
+        x: 522
+        y: 1783
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f5bf415e29bd57b0800000000000000
+      internalID: -5233823583350835727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_57
+      rect:
+        serializedVersion: 2
+        x: 1529
+        y: 1762
+        width: 25
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5eab5d124b754d430800000000000000
+      internalID: 3806764016208296677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_58
+      rect:
+        serializedVersion: 2
+        x: 371
+        y: 1601
+        width: 173
+        height: 168
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05d77dc2482e2b110800000000000000
+      internalID: 1275330701815151952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_59
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 1697
+        width: 55
+        height: 75
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a6152cf8800f9d60800000000000000
+      internalID: 7899032859776980644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_60
+      rect:
+        serializedVersion: 2
+        x: 483
+        y: 101
+        width: 1476
+        height: 1671
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff4c0901a1ab1eaf0800000000000000
+      internalID: -368809073357830913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_61
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 1694
+        width: 32
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc8c16d4d631fac30800000000000000
+      internalID: 4372735123370657999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_62
+      rect:
+        serializedVersion: 2
+        x: 1561
+        y: 1600
+        width: 117
+        height: 174
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5aa3a566239891840800000000000000
+      internalID: 5195334494707137189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_63
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 1269
+        width: 117
+        height: 211
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 437bb874b99eee550800000000000000
+      internalID: 6192143390810552116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_64
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 1428
+        width: 262
+        height: 262
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ab63376a87a82630800000000000000
+      internalID: 3902553289995283366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_65
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 1359
+        width: 52
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd1eb4701fce44470800000000000000
+      internalID: 8378081726769652188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_66
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 1125
+        width: 89
+        height: 300
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efe02b81609768500800000000000000
+      internalID: 398138684159954686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_67
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 1254
+        width: 49
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a006db4b77c515ae0800000000000000
+      internalID: -1562365926517678070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_68
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 1196
+        width: 17
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5f1298701938f730800000000000000
+      internalID: 4033036209215381339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_69
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 1152
+        width: 17
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8689da472f4ab49c0800000000000000
+      internalID: -3941875687586162584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_70
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 1155
+        width: 9
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43eb31c6fa48c5480800000000000000
+      internalID: -8909100073878307276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_71
+      rect:
+        serializedVersion: 2
+        x: 111
+        y: 1131
+        width: 16
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d974f4f783923870800000000000000
+      internalID: 8661147245526415830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_72
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 1168
+        width: 8
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b9650cd2d7a4d190800000000000000
+      internalID: -7938535719071028811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_73
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 1118
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cd825d004380e0f0800000000000000
+      internalID: -1089726798699000379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_74
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 1139
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74dbc0435312854f0800000000000000
+      internalID: -839884818114364089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_75
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 1126
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 645ac935256908920800000000000000
+      internalID: 2990555432908268870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_76
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 1103
+        width: 19
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 724d1c4c93daba330800000000000000
+      internalID: 3723259980577625127
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_77
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 1050
+        width: 22
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fc82c89eff7ceec0800000000000000
+      internalID: -3536310875931374344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_78
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 1094
+        width: 13
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03f558415bc0b7ce0800000000000000
+      internalID: -1406516486750249168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_79
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 1054
+        width: 14
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 540acb5c945a56330800000000000000
+      internalID: 3703548004850769989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_80
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 1045
+        width: 13
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8071cf183a0bf9420800000000000000
+      internalID: 2639022122969339656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_81
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 955
+        width: 21
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26e91317a6ed32b30800000000000000
+      internalID: 4261494221169598050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_82
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 984
+        width: 23
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ce6eb9c16dc58920800000000000000
+      internalID: 2992023347337785029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_83
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 1000
+        width: 24
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfcd2f6c99fda45e0800000000000000
+      internalID: -1924480039186670340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_84
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 987
+        width: 7
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfe99828bf0fb9ad0800000000000000
+      internalID: -2694294989033595141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_85
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 1009
+        width: 8
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b2aae6d1762e8070800000000000000
+      internalID: 8110462249319703217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_86
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 974
+        width: 12
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d3705ca54dc4b220800000000000000
+      internalID: 2500849392224859092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_87
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 910
+        width: 10
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbfb68089fdf53550800000000000000
+      internalID: 6140092915034537916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_88
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 909
+        width: 10
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 123e89d8f6d356ab0800000000000000
+      internalID: -5015535060680907999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_89
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 831
+        width: 50
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bf1bd1a3def3d140800000000000000
+      internalID: 4743415017458311093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_90
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 934
+        width: 18
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fffbf1219737de8b0800000000000000
+      internalID: -5121310237418078209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_91
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 947
+        width: 8
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8b2bf27ada22a1b0800000000000000
+      internalID: -5646903865048880241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_92
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 799
+        width: 21
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b213dd2d11251bd00800000000000000
+      internalID: 986660029876482347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_93
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 896
+        width: 8
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10042d02baf1190b0800000000000000
+      internalID: -5723758831560671231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_94
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 675
+        width: 45
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ee6ec4012c60a640800000000000000
+      internalID: 5089186467999018722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_95
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 849
+        width: 14
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7e1e7801339cd1c0800000000000000
+      internalID: -4477542090707952001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_96
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 702
+        width: 48
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26262aed8c8398b20800000000000000
+      internalID: 3137101050820059746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_97
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 771
+        width: 27
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af3c867a2f02085e0800000000000000
+      internalID: -1909490015442254854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_98
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 679
+        width: 22
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4140da415a947fe0800000000000000
+      internalID: -1192158327408148150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_99
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 658
+        width: 13
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2438134e6b140b990800000000000000
+      internalID: -7372320336237198526
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_100
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 614
+        width: 53
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c59b36651f797e280800000000000000
+      internalID: -9014069066366469796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_101
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 650
+        width: 12
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea6a8fdbdaf3ada10800000000000000
+      internalID: 1934929005358130862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_102
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 614
+        width: 37
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89cc3f469dc7b1140800000000000000
+      internalID: 4691480709979950232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_103
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 630
+        width: 32
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81dc51e14b6cd6b20800000000000000
+      internalID: 3129375792993520920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_104
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 589
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cc3bf56701b263f0800000000000000
+      internalID: -908969529441567551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_105
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 585
+        width: 50
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9510eb56624b8eb70800000000000000
+      internalID: 8928584338270716249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_106
+      rect:
+        serializedVersion: 2
+        x: 213
+        y: 468
+        width: 84
+        height: 122
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04729a0b26efce420800000000000000
+      internalID: 2660781179693246272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_107
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 547
+        width: 59
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98c7c57399d950700800000000000000
+      internalID: 505983814533414025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_108
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 453
+        width: 11
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47cbcab2d84149190800000000000000
+      internalID: -7956712045101138828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_109
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 432
+        width: 15
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a9895dec936aae00800000000000000
+      internalID: 1056766588219918758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_110
+      rect:
+        serializedVersion: 2
+        x: 306
+        y: 389
+        width: 109
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03efd9b15bffcf2e0800000000000000
+      internalID: -2090514973689250256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_111
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 383
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90514c182d9000ba0800000000000000
+      internalID: -6124884693498981111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_112
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 368
+        width: 32
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6c11570458e15be0800000000000000
+      internalID: -1490154554085270419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_113
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 337
+        width: 43
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5824c03b93c1e78d0800000000000000
+      internalID: -2846806880308936059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_114
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 361
+        width: 13
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fab2bf02c06da850800000000000000
+      internalID: 6389869832911895280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_115
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 275
+        width: 74
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b0ba5b98821c5950800000000000000
+      internalID: 6439041945164230832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_116
+      rect:
+        serializedVersion: 2
+        x: 459
+        y: 367
+        width: 11
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 369355441eec25950800000000000000
+      internalID: 6436434284375259491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_117
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 321
+        width: 52
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd22f22094a248210800000000000000
+      internalID: 1334237882666132188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_118
+      rect:
+        serializedVersion: 2
+        x: 484
+        y: 341
+        width: 31
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78233642add541a20800000000000000
+      internalID: 3032151640621920903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_119
+      rect:
+        serializedVersion: 2
+        x: 419
+        y: 323
+        width: 10
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65153373faa25a4b0800000000000000
+      internalID: -5429886843691511466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_120
+      rect:
+        serializedVersion: 2
+        x: 513
+        y: 307
+        width: 11
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 238dbdf07e384da60800000000000000
+      internalID: 7697922691509770290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_121
+      rect:
+        serializedVersion: 2
+        x: 501
+        y: 263
+        width: 11
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2608720486526290800000000000000
+      internalID: -7898655671477336531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_122
+      rect:
+        serializedVersion: 2
+        x: 506
+        y: 249
+        width: 67
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5aacb8d1aea755bd0800000000000000
+      internalID: -2642070460446291291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_123
+      rect:
+        serializedVersion: 2
+        x: 671
+        y: 245
+        width: 6
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3a6221acbea4ced0800000000000000
+      internalID: -2394596976673789382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_124
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 239
+        width: 31
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8ad550898a1f9340800000000000000
+      internalID: 4872642499704117902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_125
+      rect:
+        serializedVersion: 2
+        x: 551
+        y: 234
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e787715761d020e90800000000000000
+      internalID: -7061066875658602370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_126
+      rect:
+        serializedVersion: 2
+        x: 561
+        y: 231
+        width: 14
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6953a0ec576db5a0800000000000000
+      internalID: -6503928638249674387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_127
+      rect:
+        serializedVersion: 2
+        x: 603
+        y: 236
+        width: 26
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 622cdd2bda86323c0800000000000000
+      internalID: -4385546516889222618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_128
+      rect:
+        serializedVersion: 2
+        x: 561
+        y: 227
+        width: 11
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 717b4641c1f879060800000000000000
+      internalID: 6960189099888391959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_129
+      rect:
+        serializedVersion: 2
+        x: 577
+        y: 209
+        width: 38
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6252e221fa6025c50800000000000000
+      internalID: 6652386948573701414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_130
+      rect:
+        serializedVersion: 2
+        x: 601
+        y: 231
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e266991850b21420800000000000000
+      internalID: 2599333827379094245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AscendancyFrame_Inlay_131
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 160
+        width: 187
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32c896d9c2b518b80800000000000000
+      internalID: -8394327983264265181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      AscendancyFrame_Inlay_0: -2170619902646849807
+      AscendancyFrame_Inlay_1: -8232121489589042534
+      AscendancyFrame_Inlay_10: -493063506944146508
+      AscendancyFrame_Inlay_100: -9014069066366469796
+      AscendancyFrame_Inlay_101: 1934929005358130862
+      AscendancyFrame_Inlay_102: 4691480709979950232
+      AscendancyFrame_Inlay_103: 3129375792993520920
+      AscendancyFrame_Inlay_104: -908969529441567551
+      AscendancyFrame_Inlay_105: 8928584338270716249
+      AscendancyFrame_Inlay_106: 2660781179693246272
+      AscendancyFrame_Inlay_107: 505983814533414025
+      AscendancyFrame_Inlay_108: -7956712045101138828
+      AscendancyFrame_Inlay_109: 1056766588219918758
+      AscendancyFrame_Inlay_11: 6012522845870530856
+      AscendancyFrame_Inlay_110: -2090514973689250256
+      AscendancyFrame_Inlay_111: -6124884693498981111
+      AscendancyFrame_Inlay_112: -1490154554085270419
+      AscendancyFrame_Inlay_113: -2846806880308936059
+      AscendancyFrame_Inlay_114: 6389869832911895280
+      AscendancyFrame_Inlay_115: 6439041945164230832
+      AscendancyFrame_Inlay_116: 6436434284375259491
+      AscendancyFrame_Inlay_117: 1334237882666132188
+      AscendancyFrame_Inlay_118: 3032151640621920903
+      AscendancyFrame_Inlay_119: -5429886843691511466
+      AscendancyFrame_Inlay_12: -2605076236930440146
+      AscendancyFrame_Inlay_120: 7697922691509770290
+      AscendancyFrame_Inlay_121: -7898655671477336531
+      AscendancyFrame_Inlay_122: -2642070460446291291
+      AscendancyFrame_Inlay_123: -2394596976673789382
+      AscendancyFrame_Inlay_124: 4872642499704117902
+      AscendancyFrame_Inlay_125: -7061066875658602370
+      AscendancyFrame_Inlay_126: -6503928638249674387
+      AscendancyFrame_Inlay_127: -4385546516889222618
+      AscendancyFrame_Inlay_128: 6960189099888391959
+      AscendancyFrame_Inlay_129: 6652386948573701414
+      AscendancyFrame_Inlay_13: 3502142978203714703
+      AscendancyFrame_Inlay_130: 2599333827379094245
+      AscendancyFrame_Inlay_131: -8394327983264265181
+      AscendancyFrame_Inlay_14: -3865567723091588816
+      AscendancyFrame_Inlay_15: -4646529817905769117
+      AscendancyFrame_Inlay_16: -2979802399970697232
+      AscendancyFrame_Inlay_17: 4980891784104937029
+      AscendancyFrame_Inlay_18: 7412414033812247275
+      AscendancyFrame_Inlay_19: 5769202800412266654
+      AscendancyFrame_Inlay_2: 3587829197816970857
+      AscendancyFrame_Inlay_20: 133700581341915944
+      AscendancyFrame_Inlay_21: -8586327325847991532
+      AscendancyFrame_Inlay_22: 7039390990893703727
+      AscendancyFrame_Inlay_23: -8674950498963910902
+      AscendancyFrame_Inlay_24: 6077143090575161815
+      AscendancyFrame_Inlay_25: -4934531699286139898
+      AscendancyFrame_Inlay_26: 1552253736512331413
+      AscendancyFrame_Inlay_27: -4636010323842941356
+      AscendancyFrame_Inlay_28: 4982555391625231319
+      AscendancyFrame_Inlay_29: 1056334056082116970
+      AscendancyFrame_Inlay_3: -3437840531923858061
+      AscendancyFrame_Inlay_30: -8071389900243852580
+      AscendancyFrame_Inlay_31: -3620034078675936537
+      AscendancyFrame_Inlay_32: -3504690943676003365
+      AscendancyFrame_Inlay_33: -3501829001753658580
+      AscendancyFrame_Inlay_34: -5545496933574018855
+      AscendancyFrame_Inlay_35: -4105469719823611631
+      AscendancyFrame_Inlay_36: -6952014692758598218
+      AscendancyFrame_Inlay_37: -7948031565077283581
+      AscendancyFrame_Inlay_38: -4559569932731061669
+      AscendancyFrame_Inlay_39: 3266189732976796596
+      AscendancyFrame_Inlay_4: -3995076172753798883
+      AscendancyFrame_Inlay_40: -7914106127096966003
+      AscendancyFrame_Inlay_41: 771535457888199054
+      AscendancyFrame_Inlay_42: -7204806374847961250
+      AscendancyFrame_Inlay_43: 5318112606008279991
+      AscendancyFrame_Inlay_44: 5367860286701227546
+      AscendancyFrame_Inlay_45: 1697329260767558473
+      AscendancyFrame_Inlay_46: 2515087387699977511
+      AscendancyFrame_Inlay_47: -7397380950159492713
+      AscendancyFrame_Inlay_48: 3120522131924458208
+      AscendancyFrame_Inlay_49: -1038746202666884713
+      AscendancyFrame_Inlay_5: -8282102879450677890
+      AscendancyFrame_Inlay_50: 6848760725569977763
+      AscendancyFrame_Inlay_51: -7502924526243827880
+      AscendancyFrame_Inlay_52: 4249798431113102929
+      AscendancyFrame_Inlay_53: 1815538890167277009
+      AscendancyFrame_Inlay_54: -1909260811844728903
+      AscendancyFrame_Inlay_55: 4719679954214727802
+      AscendancyFrame_Inlay_56: -5233823583350835727
+      AscendancyFrame_Inlay_57: 3806764016208296677
+      AscendancyFrame_Inlay_58: 1275330701815151952
+      AscendancyFrame_Inlay_59: 7899032859776980644
+      AscendancyFrame_Inlay_6: 2498969903547192565
+      AscendancyFrame_Inlay_60: -368809073357830913
+      AscendancyFrame_Inlay_61: 4372735123370657999
+      AscendancyFrame_Inlay_62: 5195334494707137189
+      AscendancyFrame_Inlay_63: 6192143390810552116
+      AscendancyFrame_Inlay_64: 3902553289995283366
+      AscendancyFrame_Inlay_65: 8378081726769652188
+      AscendancyFrame_Inlay_66: 398138684159954686
+      AscendancyFrame_Inlay_67: -1562365926517678070
+      AscendancyFrame_Inlay_68: 4033036209215381339
+      AscendancyFrame_Inlay_69: -3941875687586162584
+      AscendancyFrame_Inlay_7: -2756152733218381944
+      AscendancyFrame_Inlay_70: -8909100073878307276
+      AscendancyFrame_Inlay_71: 8661147245526415830
+      AscendancyFrame_Inlay_72: -7938535719071028811
+      AscendancyFrame_Inlay_73: -1089726798699000379
+      AscendancyFrame_Inlay_74: -839884818114364089
+      AscendancyFrame_Inlay_75: 2990555432908268870
+      AscendancyFrame_Inlay_76: 3723259980577625127
+      AscendancyFrame_Inlay_77: -3536310875931374344
+      AscendancyFrame_Inlay_78: -1406516486750249168
+      AscendancyFrame_Inlay_79: 3703548004850769989
+      AscendancyFrame_Inlay_8: 4363876265273566700
+      AscendancyFrame_Inlay_80: 2639022122969339656
+      AscendancyFrame_Inlay_81: 4261494221169598050
+      AscendancyFrame_Inlay_82: 2992023347337785029
+      AscendancyFrame_Inlay_83: -1924480039186670340
+      AscendancyFrame_Inlay_84: -2694294989033595141
+      AscendancyFrame_Inlay_85: 8110462249319703217
+      AscendancyFrame_Inlay_86: 2500849392224859092
+      AscendancyFrame_Inlay_87: 6140092915034537916
+      AscendancyFrame_Inlay_88: -5015535060680907999
+      AscendancyFrame_Inlay_89: 4743415017458311093
+      AscendancyFrame_Inlay_9: 5697638468066009313
+      AscendancyFrame_Inlay_90: -5121310237418078209
+      AscendancyFrame_Inlay_91: -5646903865048880241
+      AscendancyFrame_Inlay_92: 986660029876482347
+      AscendancyFrame_Inlay_93: -5723758831560671231
+      AscendancyFrame_Inlay_94: 5089186467999018722
+      AscendancyFrame_Inlay_95: -4477542090707952001
+      AscendancyFrame_Inlay_96: 3137101050820059746
+      AscendancyFrame_Inlay_97: -1909490015442254854
+      AscendancyFrame_Inlay_98: -1192158327408148150
+      AscendancyFrame_Inlay_99: -7372320336237198526
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

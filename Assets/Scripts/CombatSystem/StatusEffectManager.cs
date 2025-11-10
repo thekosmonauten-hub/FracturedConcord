@@ -70,6 +70,8 @@ public class StatusEffectManager : MonoBehaviour
         StatusEffect effect = newEffect.Clone();
         activeStatusEffects.Add(effect);
         
+        ApplyRuntimeStatEffect(effect, true);
+
         Debug.Log($"Added status effect: {effect.effectName} (Duration: {effect.duration}, Magnitude: {effect.magnitude})");
         
         // Update visuals
@@ -101,6 +103,7 @@ public class StatusEffectManager : MonoBehaviour
     {
         if (effect != null && activeStatusEffects.Contains(effect))
         {
+            ApplyRuntimeStatEffect(effect, false);
             activeStatusEffects.Remove(effect);
             Debug.Log($"Removed status effect: {effect.effectName}");
             
@@ -364,6 +367,14 @@ public class StatusEffectManager : MonoBehaviour
                 // Stack shield effects
                 existing.magnitude += newEffect.magnitude;
                 break;
+            case StatusEffectType.TempMaxMana:
+            case StatusEffectType.TempEvasion:
+            {
+                var deltaEffect = new StatusEffect(existing.effectType, existing.effectName, newEffect.magnitude, newEffect.duration, existing.isDebuff);
+                ApplyRuntimeStatEffect(deltaEffect, true);
+                existing.magnitude += newEffect.magnitude;
+                break;
+            }
             default:
                 // For most effects, just refresh duration
                 break;
@@ -427,6 +438,48 @@ public class StatusEffectManager : MonoBehaviour
     public List<StatusEffect> GetActiveStatusEffects()
     {
         return activeStatusEffects.Where(e => e.isActive).ToList();
+    }
+
+    private void ApplyRuntimeStatEffect(StatusEffect effect, bool applying)
+    {
+        if (effect == null) return;
+
+        var playerDisplay = GetComponent<PlayerCombatDisplay>();
+        if (playerDisplay == null) return;
+
+        var characterManager = CharacterManager.Instance;
+        if (characterManager == null || !characterManager.HasCharacter()) return;
+
+        var character = characterManager.GetCurrentCharacter();
+        if (character == null) return;
+
+        float sign = applying ? 1f : -1f;
+
+        switch (effect.effectType)
+        {
+            case StatusEffectType.TempMaxMana:
+            {
+                int delta = Mathf.RoundToInt(effect.magnitude * sign);
+                character.maxMana = Mathf.Max(0, character.maxMana + delta);
+                if (applying)
+                {
+                    character.mana = Mathf.Min(character.maxMana, character.mana + delta);
+                }
+                else
+                {
+                    character.mana = Mathf.Min(character.mana, character.maxMana);
+                }
+                playerDisplay.UpdateManaDisplay();
+                break;
+            }
+            case StatusEffectType.TempEvasion:
+            {
+                float delta = (effect.magnitude / 100f) * sign;
+                character.increasedEvasion = Mathf.Max(0f, character.increasedEvasion + delta);
+                playerDisplay.RefreshDisplay();
+                break;
+            }
+        }
     }
     
     /// <summary>

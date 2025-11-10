@@ -13,13 +13,16 @@ MonoBehaviour:
   m_Name: GroundSlam_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Ground Slam
+  groupKey: Ground_Slam
   cardType: Attack
   playCost: 2
-  description: Deal {damage} physical damage to all {aoeTargets} enemies.
+  description: Deal {damage} physical damage to all enemies.
   rarity: 1
   element: 4
   category: 0
   cardImage: {fileID: 4164643674672263029, guid: 015efe5b1cddb694eb6ce4892836a0dc, type: 3}
+  cardThumbnail: {fileID: -71754869803819583, guid: 88af9c937ee52c34d9865cb0bd0de10c, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -29,6 +32,9 @@ MonoBehaviour:
   isDualWield: 0
   ifDiscardedEffect: 
   dualWieldEffect: 
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 1
@@ -54,7 +60,7 @@ MonoBehaviour:
   effects: []
   enableCombo: 1
   comboWith: 
-  comboDescription: Causes hit enemies to Crumble.
+  comboDescription: Cause enemies hit to Crumble.
   comboWithCardType: 2
   comboAttackIncrease: 0
   comboGuardIncrease: 0
@@ -75,6 +81,16 @@ MonoBehaviour:
   comboLogic: 1
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingDamageMultiplier: 1
+  channelingAdditionalGuard: 0
   tags:
   - Attack
   - Physical
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

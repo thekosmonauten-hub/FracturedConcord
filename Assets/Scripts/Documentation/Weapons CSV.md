@@ -1,0 +1,154 @@
+Name,Damage,Critical Strike Chance,Attacks,Requirements,Implicit 1,Implicit 2,Weapon type,Handedness
+Weathered Club,Physical Damage: 6-8,Critical Strike Chance: 5%,Attack Speed: 1.45,Requires 14 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Tribal Bludgeon,Physical Damage: 8-13,Critical Strike Chance: 5%,Attack Speed: 1.4,Requires Level 5, 26 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Spiked Mallet,Physical Damage: 13-16,Critical Strike Chance: 5%,Attack Speed: 1.45,Requires Level 10, 41 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Stone Maul,Physical Damage: 15-27,Critical Strike Chance: 5%,Attack Speed: 1.3,Requires Level 15, 56 Str,15% reduced Enemy Stagger Threshold,,Mace,One Handed
+War Breaker,Physical Damage: 13-31,Critical Strike Chance: 5%,Attack Speed: 1.45,Requires Level 20, 71 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Bladed Club,Physical Damage: 19-32,Critical Strike Chance: 5%,Attack Speed: 1.4,Requires Level 24, 83 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Ritual Mace,Physical Damage: 32-40,Critical Strike Chance: 5%,Attack Speed: 1.2,Requires Level 28, 95 Str,15% reduced Enemy Stagger Threshold,,Mace,One Handed
+Dreambreaker,Physical Damage: 21-43,Critical Strike Chance: 5%,Attack Speed: 1.4,Requires Level 32, 107 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Wyrmbone Club,Physical Damage: 28-42,Critical Strike Chance: 5%,Attack Speed: 1.35,Requires Level 34, 118 Str,4% increased Attack Speed,,Mace,One Handed
+Petrified Mallet,Physical Damage: 31-51,Critical Strike Chance: 5%,Attack Speed: 1.25,Requires Level 35, 116 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Barbed Hammer,Physical Damage: 33-42,Critical Strike Chance: 5%,Attack Speed: 1.4,Requires Level 38, 125 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Rock Splitter,Physical Damage: 37-69,Critical Strike Chance: 5%,Attack Speed: 1.15,Requires Level 41, 134 Str,15% reduced Enemy Stagger Threshold,,Mace,One Handed
+Battle Maul,Physical Damage: 25-59,Critical Strike Chance: 5%,Attack Speed: 1.4,Requires Level 44, 143 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Flanged Club,Physical Damage: 38-63,Critical Strike Chance: 5%,Attack Speed: 1.3,Requires Level 47, 152 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Ornate Hammer,Physical Damage: 53-67,Critical Strike Chance: 5%,Attack Speed: 1.2,Requires Level 50, 161 Str,15% reduced Enemy Stagger Threshold,,Mace,One Handed
+Phantom Maul,Physical Damage: 33-69,Critical Strike Chance: 5%,Attack Speed: 1.4,Requires Level 53, 170 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Dragon Mace,Physical Damage: 44-66,Critical Strike Chance: 5%,Attack Speed: 1.35,Requires Level 55, 184 Str,4% increased Attack Speed,,Mace,One Handed
+Ancestor’s Club,Physical Damage: 48-80,Critical Strike Chance: 5%,Attack Speed: 1.25,Requires Level 56, 179 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Flesh Tenderizer,Physical Damage: 49-62,Critical Strike Chance: 5%,Attack Speed: 1.4,Requires Level 58, 185 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Ritual Gavel,Physical Damage: 54-101,Critical Strike Chance: 5%,Attack Speed: 1.15,Requires Level 60, 212 Str,15% reduced Enemy Stagger Threshold,,Mace,One Handed
+Legion Maul,Physical Damage: 35-81,Critical Strike Chance: 5%,Attack Speed: 1.4,Requires Level 62, 212 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Pernach Bludgeon,Physical Damage: 49-82,Critical Strike Chance: 5%,Attack Speed: 1.3,Requires Level 64, 212 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Auric Hammer,Physical Damage: 65-82,Critical Strike Chance: 5%,Attack Speed: 1.2,Requires Level 66, 212 Str,15% reduced Enemy Stagger Threshold,,Mace,One Handed
+Nightmare Gavel,Physical Damage: 38-80,Critical Strike Chance: 5%,Attack Speed: 1.4,Requires Level 68, 212 Str,10% reduced Enemy Stagger Threshold,,Mace,One Handed
+Behemoth Mace,Physical Damage: 49-74,Critical Strike Chance: 5%,Attack Speed: 1.35,Requires Level 70, 220 Str,6% increased Attack Speed,,Mace,One Handed,,,,,,,,,,,,,,,,,,,,,,,,
+Worn Sceptre,Physical Damage: 8-11,Critical Strike Chance: 7%,Attack Speed: 1.2,Requires 8 Str, 8 Int,10% increased Elemental Damage,,Sceptre,One Handed
+Shadowwood Sceptre,Physical Damage: 11-17,Critical Strike Chance: 7%,Attack Speed: 1.2,Requires Level 5, 14 Str, 14 Int,12% increased Elemental Damage,,Sceptre,One Handed
+Bronze Rod,Physical Damage: 15-29,Critical Strike Chance: 7%,Attack Speed: 1.1,Requires Level 10, 22 Str, 22 Int,12% increased Elemental Damage,,Sceptre,One Handed
+Quartz Baton,Physical Damage: 21-32,Critical Strike Chance: 8%,Attack Speed: 1.1,Requires Level 15, 25 Str, 35 Int,20% increased Elemental Damage,,Sceptre,One Handed
+Iron Wand,Physical Damage: 27-40,Critical Strike Chance: 7%,Attack Speed: 1.1,Requires Level 20, 38 Str, 38 Int,14% increased Elemental Damage,,Sceptre,One Handed
+Ochre Sceptre,Physical Damage: 24-45,Critical Strike Chance: 7%,Attack Speed: 1.15,Requires Level 24, 44 Str, 44 Int,16% increased Elemental Damage,,Sceptre,One Handed
+Ritual Rod,Physical Damage: 21-50,Critical Strike Chance: 7%,Attack Speed: 1.2,Requires Level 28, 51 Str, 51 Int,16% increased Elemental Damage,,Sceptre,One Handed
+Umbral Sceptre,Physical Damage: 29-44,Critical Strike Chance: 7.3%,Attack Speed: 1.25,Requires Level 32, 52 Str, 62 Int,22% increased Elemental Damage,,Sceptre,One Handed
+Horned Baton,Physical Damage: 27-50,Critical Strike Chance: 7%,Attack Speed: 1.3,Requires Level 36, 66 Str, 66 Int,Damage Penetrates 4% Elemental Resistances,,Sceptre,One Handed
+Grinning Idol,Physical Damage: 24-36,Critical Strike Chance: 7%,Attack Speed: 1.5,Requires Level 35, 62 Str, 62 Int,18% increased Elemental Damage,,Sceptre,One Handed
+Sand Sekhem,Physical Damage: 30-55,Critical Strike Chance: 7%,Attack Speed: 1.25,Requires Level 38, 67 Str, 67 Int,18% increased Elemental Damage,,Sceptre,One Handed
+Crystal Baton,Physical Damage: 35-52,Critical Strike Chance: 8%,Attack Speed: 1.25,Requires Level 41, 59 Str, 85 Int,30% increased Elemental Damage,,Sceptre,One Handed
+Lead Rod,Physical Damage: 38-57,Critical Strike Chance: 7%,Attack Speed: 1.25,Requires Level 44, 77 Str, 77 Int,22% increased Elemental Damage,,Sceptre,One Handed
+Blooded Sceptre,Physical Damage: 30-55,Critical Strike Chance: 7%,Attack Speed: 1.4,Requires Level 47, 81 Str, 81 Int,24% increased Elemental Damage,,Sceptre,One Handed
+Royal Baton,Physical Damage: 34-80,Critical Strike Chance: 7%,Attack Speed: 1.2,Requires Level 50, 86 Str, 86 Int,24% increased Elemental Damage,,Sceptre,One Handed
+Abyssal Rod,Physical Damage: 45-67,Critical Strike Chance: 7.3%,Attack Speed: 1.25,Requires Level 53, 83 Str, 99 Int,30% increased Elemental Damage,,Sceptre,One Handed
+Stag Horn Sceptre,Physical Damage: 39-72,Critical Strike Chance: 7%,Attack Speed: 1.3,Requires Level 55, 98 Str, 98 Int,Damage Penetrates 4% Elemental Resistances,,Sceptre,One Handed
+Karui Baton,Physical Damage: 37-55,Critical Strike Chance: 7%,Attack Speed: 1.5,Requires Level 56, 96 Str, 96 Int,26% increased Elemental Damage,,Sceptre,One Handed
+Tyrant’s Fetish,Physical Damage: 43-80,Critical Strike Chance: 7%,Attack Speed: 1.25,Requires Level 58, 99 Str, 99 Int,26% increased Elemental Damage,,Sceptre,One Handed
+Opaline Sceptre,Physical Damage: 49-73,Critical Strike Chance: 8%,Attack Speed: 1.25,Requires Level 60, 95 Str, 131 Int,40% increased Elemental Damage,,Sceptre,One Handed
+Platinum Rod,Physical Damage: 51-76,Critical Strike Chance: 7%,Attack Speed: 1.25,Requires Level 62, 113 Str, 113 Int,30% increased Elemental Damage,,Sceptre,One Handed
+Vaal Baton,Physical Damage: 37-70,Critical Strike Chance: 7%,Attack Speed: 1.4,Requires Level 64, 113 Str, 113 Int,32% increased Elemental Damage,,Sceptre,One Handed
+Carnal Rod,Physical Damage: 41-95,Critical Strike Chance: 7%,Attack Speed: 1.2,Requires Level 66, 113 Str, 113 Int,32% increased Elemental Damage,,Sceptre,One Handed
+Void Sceptre,Physical Damage: 50-76,Critical Strike Chance: 7.3%,Attack Speed: 1.25,Requires Level 68, 104 Str, 122 Int,40% increased Elemental Damage,,Sceptre,One Handed
+Sambar Baton,Physical Damage: 42-78,Critical Strike Chance: 7%,Attack Speed: 1.3,Requires Level 70, 121 Str, 113 Int,Damage Penetrates 6% Elemental Resistances,,Sceptre,One Handed,,,,,,,,,,,,,,,,,
+Worn Wand,Physical Damage: 5-9,Critical Strike Chance: 8.3%,Attack Speed: 1.6,Requires 14 Int,(8–12)% increased Spell Damage,,Wand,One Handed
+Goat’s Fang,Physical Damage: 7-13,Critical Strike Chance: 9%,Attack Speed: 1.4,Requires Level 6, 29 Int,Adds (1–2) to (3–4) Fire Damage to Spells and Attacks,,Wand,One Handed
+Carved Rod,Physical Damage: 9-16,Critical Strike Chance: 8%,Attack Speed: 1.6,Requires Level 12, 47 Int,(11–15)% increased Spell Damage,,Wand,One Handed
+Quartz Wand,Physical Damage: 12-23,Critical Strike Chance: 9%,Attack Speed: 1.45,Requires Level 18, 65 Int,Adds (2–3) to (4–7) Cold Damage to Spells and Attacks,,Wand,One Handed
+Spiral Rod,Physical Damage: 11-32,Critical Strike Chance: 9%,Attack Speed: 1.45,Requires Level 24, 83 Int,Adds (1–2) to (9–11) Lightning Damage to Spells and Attacks,,Wand,One Handed
+Sage Baton,Physical Damage: 18-34,Critical Strike Chance: 10%,Attack Speed: 1.4,Requires Level 30, 119 Int,(17–21)% increased Spell Damage,,Wand,One Handed
+Pagan Wand,Physical Damage: 20-37,Critical Strike Chance: 8.5%,Attack Speed: 1.45,Requires Level 34, 118 Int,10% increased Cast Speed,,Wand,One Handed
+Faun’s Horn,Physical Damage: 21-38,Critical Strike Chance: 8.5%,Attack Speed: 1.4,Requires Level 35, 116 Int,Adds (5–10) to (11–13) Fire Damage to Spells and Attacks,,Wand,One Handed
+Etched Wand,Physical Damage: 19-36,Critical Strike Chance: 8%,Attack Speed: 1.6,Requires Level 40, 131 Int,(22–26)% increased Spell Damage,,Wand,One Handed
+Crystal Baton,Physical Damage: 24-45,Critical Strike Chance: 9%,Attack Speed: 1.45,Requires Level 45, 146 Int,Adds (4–8) to (10–12) Cold Damage to Spells and Attacks,,Wand,One Handed
+Coiled Rod,Physical Damage: 18-55,Critical Strike Chance: 9%,Attack Speed: 1.45,Requires Level 49, 158 Int,Adds (1–2) to (22–24) Lightning Damage to Spells and Attacks,,Wand,One Handed
+Omen Wand,Physical Damage: 26-49,Critical Strike Chance: 10%,Attack Speed: 1.4,Requires Level 53, 200 Int,(27–31)% increased Spell Damage,,Wand,One Handed
+Heathen Rod,Physical Damage: 28-52,Critical Strike Chance: 8%,Attack Speed: 1.45,Requires Level 55, 184 Int,10% increased Cast Speed,,Wand,One Handed
+Demon’s Fang,Physical Damage: 31-57,Critical Strike Chance: 9.5%,Attack Speed: 1.4,Requires Level 56, 179 Int,Adds (18–36) to (53–59) Fire Damage to Spells and Attacks,,Wand,One Handed
+Imbued Wand,Physical Damage: 27-50,Critical Strike Chance: 8%,Attack Speed: 1.6,Requires Level 59, 188 Int,(33–37)% increased Spell Damage,,Wand,One Handed
+Opaline Rod,Physical Damage: 30-56,Critical Strike Chance: 9%,Attack Speed: 1.45,Requires Level 62, 212 Int,Adds (14–29) to (42–47) Cold Damage to Spells and Attacks,,Wand,One Handed
+Tornado Wand,Physical Damage: 22-65,Critical Strike Chance: 9%,Attack Speed: 1.45,Requires Level 65, 212 Int,Adds (3–5) to (70–82) Lightning Damage to Spells and Attacks,,Wand,One Handed
+Prophecy Rod,Physical Damage: 28-52,Critical Strike Chance: 10%,Attack Speed: 1.4,Requires Level 68, 245 Int,(36–40)% increased Spell Damage,,Wand,One Handed
+Profane Baton,Physical Damage: 30-56,Critical Strike Chance: 8.5%,Attack Speed: 1.45,Requires Level 70, 237 Int,14% increased Cast Speed,,Wand,One Handed,,,,,,,,,,,,,,,,,,,,,,,,
+Glass Shiv,Physical Damage: 6-10,Critical Strike Chance: 7.5%,Attack Speed: 1.5,Requires 9 Dex, 6 Int,30% increased Global Critical Strike Chance,,Dagger,One Handed
+Skinner’s Knife,Physical Damage: 4-17,Critical Strike Chance: 7.5%,Attack Speed: 1.45,Requires Level 5, 16 Dex, 11 Int,30% increased Global Critical Strike Chance,,Dagger,One Handed
+Needle Dagger,Physical Damage: 7-27,Critical Strike Chance: 7.8%,Attack Speed: 1.5,Requires Level 15, 30 Dex, 30 Int,30% increased Global Critical Strike Chance,,Dagger,One Handed
+Pronged Stiletto,Physical Damage: 14-54,Critical Strike Chance: 8%,Attack Speed: 1.35,Requires Level 36, 55 Dex, 77 Int,4% Chance to Block Attack Damage,,Dagger,One Handed
+Flayer’s Knife,Physical Damage: 11-45,Critical Strike Chance: 7.5%,Attack Speed: 1.4,Requires Level 30, 64 Dex, 44 Int,30% increased Global Critical Strike Chance,,Dagger,One Handed
+Poignant Dagger,Physical Damage: 13-52,Critical Strike Chance: 7.8%,Attack Speed: 1.5,Requires Level 41, 72 Dex, 72 Int,30% increased Global Critical Strike Chance,,Dagger,One Handed
+Trisula Blade,Physical Damage: 19-74,Critical Strike Chance: 8.5%,Attack Speed: 1.35,Requires Level 51, 83 Dex, 99 Int,4% Chance to Block Attack Damage,,Dagger,One Handed
+Gut Knife,Physical Damage: 19-76,Critical Strike Chance: 8.5%,Attack Speed: 1.4,Requires Level 56, 113 Dex, 78 Int,30% increased Global Critical Strike Chance,,Dagger,One Handed
+Ambusher’s Edge,Physical Damage: 19-74,Critical Strike Chance: 7.8%,Attack Speed: 1.5,Requires Level 60, 113 Dex, 113 Int,30% increased Global Critical Strike Chance,,Dagger,One Handed
+Sai Blade,Physical Damage: 22-88,Critical Strike Chance: 8%,Attack Speed: 1.35,Requires Level 70, 121 Dex, 121 Int,6% Chance to Block Attack Damage,,Dagger,One Handed,,,,,,,
+Nailed Claw,Physical Damage: 4-11,Critical Strike Chance: 7.3%,Attack Speed: 1.6,Requires Level 3, 11 Dex, 11 Int,Grants 3 Life per Enemy Hit,,Claw,One Handed
+Sharkfang Talon,Physical Damage: 6-17,Critical Strike Chance: 8%,Attack Speed: 1.5,Requires Level 7, 14 Dex, 20 Int,Grants 6 Life per Enemy Hit,,Claw,One Handed
+Awl Claw,Physical Damage: 7-23,Critical Strike Chance: 7.5%,Attack Speed: 1.55,Requires Level 12, 25 Dex, 25 Int,Grants 7 Life per Enemy Hit,,Claw,One Handed
+Cat’s Talon,Physical Damage: 12-22,Critical Strike Chance: 7%,Attack Speed: 1.6,Requires Level 17, 39 Dex, 27 Int,Grants 8 Life per Enemy Hit,,Claw,One Handed
+Blinder Claw,Physical Damage: 12-31,Critical Strike Chance: 7.5%,Attack Speed: 1.55,Requires Level 22, 41 Dex, 41 Int,Grants 12 Life per Enemy Hit,,Claw,One Handed
+Ancient Fang,Physical Damage: 16-43,Critical Strike Chance: 8%,Attack Speed: 1.3,Requires Level 26, 39 Dex, 56 Int,Grants 19 Life per Enemy Hit,,Claw,One Handed
+Sparksteel Claw,Physical Damage: 14-38,Critical Strike Chance: 7%,Attack Speed: 1.6,Requires Level 30, 64 Dex, 44 Int,Grants 15 Life per Enemy Hit,,Claw,One Handed
+Fear Claw,Physical Damage: 12-46,Critical Strike Chance: 7.5%,Attack Speed: 1.5,Requires Level 34, 61 Dex, 61 Int,Grants 20 Life per Enemy Hit,,Claw,One Handed
+Double Talon,Physical Damage: 15-44,Critical Strike Chance: 7.5%,Attack Speed: 1.5,Requires Level 36, 67 Dex, 67 Int,Grants 15 Life per Enemy Hit,Grants 6 Mana per Enemy Hit,Claw,One Handed
+Thresh Claw,Physical Damage: 20-53,Critical Strike Chance: 8%,Attack Speed: 1.3,Requires Level 37, 53 Dex, 77 Int,Grants 25 Life per Enemy Hit,,Claw,One Handed
+Gouger Fang,Physical Damage: 15-51,Critical Strike Chance: 7.5%,Attack Speed: 1.5,Requires Level 40, 70 Dex, 70 Int,Grants 24 Life per Enemy Hit,,Claw,One Handed
+Tiger’s Talon,Physical Damage: 23-43,Critical Strike Chance: 7%,Attack Speed: 1.6,Requires Level 43, 88 Dex, 61 Int,1.6% of Physical Attack Damage Leeched as Life,,Claw,One Handed
+Gut Ripper,Physical Damage: 20-53,Critical Strike Chance: 7.5%,Attack Speed: 1.5,Requires Level 46, 80 Dex, 80 Int,Grants 44 Life per Enemy Hit,,Claw,One Handed
+Primordial Claw,Physical Damage: 26-68,Critical Strike Chance: 8%,Attack Speed: 1.3,Requires Level 49, 69 Dex, 100 Int,2% of Physical Attack Damage Leeched as Life,,Claw,One Handed
+Noble Talon,Physical Damage: 21-56,Critical Strike Chance: 7%,Attack Speed: 1.6,Requires Level 52, 105 Dex, 73 Int,Grants 40 Life per Enemy Hit,,Claw,One Handed
+Eagle Fang,Physical Damage: 17-69,Critical Strike Chance: 7.5%,Attack Speed: 1.5,Requires Level 55, 94 Dex, 94 Int,2% of Physical Attack Damage Leeched as Life,,Claw,One Handed
+Twin Talon,Physical Damage: 21-64,Critical Strike Chance: 7.5%,Attack Speed: 1.5,Requires Level 57, 103 Dex, 103 Int,Grants 28 Life per Enemy Hit,Grants 10 Mana per Enemy Hit,Claw,One Handed
+Whitefang Claw,Physical Damage: 30-78,Critical Strike Chance: 8%,Attack Speed: 1.3,Requires Level 58, 81 Dex, 117 Int,Grants 46 Life per Enemy Hit,,Claw,One Handed
+Throat Ripper,Physical Damage: 21-73,Critical Strike Chance: 7.5%,Attack Speed: 1.5,Requires Level 60, 113 Dex, 113 Int,Grants 40 Life per Enemy Hit,,Claw,One Handed
+Hellion’s Talon,Physical Damage: 29-55,Critical Strike Chance: 7%,Attack Speed: 1.6,Requires Level 62, 131 Dex, 95 Int,1.6% of Physical Attack Damage Leeched as Life,,Claw,One Handed
+Eye Gouger,Physical Damage: 26-68,Critical Strike Chance: 7.5%,Attack Speed: 1.5,Requires Level 64, 113 Dex, 113 Int,Grants 50 Life per Enemy Hit,,Claw,One Handed
+Vaal Claw,Physical Damage: 29-76,Critical Strike Chance: 8%,Attack Speed: 1.3,Requires Level 66, 95 Dex, 131 Int,2% of Physical Attack Damage Leeched as Life,,Claw,One Handed
+Imperial Talon,Physical Damage: 25-65,Critical Strike Chance: 7%,Attack Speed: 1.6,Requires Level 68, 131 Dex, 95 Int,Grants 46 Life per Enemy Hit,,Claw,One Handed
+Terror Fang,Physical Damage: 18-71,Critical Strike Chance: 7.5%,Attack Speed: 1.5,Requires Level 70, 113 Dex, 113 Int,2% of Physical Attack Damage Leeched as Life,,Claw,One Handed
+Gemini Claw,Physical Damage: 23-68,Critical Strike Chance: 7.5%,Attack Speed: 1.5,Requires Level 72, 121 Dex, 121 Int,Grants 38 Life per Enemy Hit,Grants 14 Mana per Enemy Hit,Claw,One Handed,,,,,,,
+Crude Bow,Physical Damage: 5-13,Critical Strike Chance: 5%,Attack Speed: 1.4,Requires 14 Dex,,,Bow,Two Handed
+Short Recurve,Physical Damage: 6-16,Critical Strike Chance: 5%,Attack Speed: 1.5,Requires Level 5, 26 Dex,,,Bow,Two Handed
+Longbow,Physical Damage: 8-33,Critical Strike Chance: 6%,Attack Speed: 1.3,Requires Level 9, 38 Dex,,,Bow,Two Handed
+Composite Bow,Physical Damage: 16-34,Critical Strike Chance: 6%,Attack Speed: 1.3,Requires Level 14, 53 Dex,,,Bow,Two Handed
+Reflex Bow,Physical Damage: 15-45,Critical Strike Chance: 6.7%,Attack Speed: 1.25,Requires Level 18, 65 Dex,"+(15–25)% to Global Critical Strike Multiplier",,Bow,Two Handed
+Bone Recurve,Physical Damage: 15-45,Critical Strike Chance: 6.5%,Attack Speed: 1.4,Requires Level 23, 80 Dex,,,Bow,Two Handed
+Royal Longbow,Physical Damage: 14-56,Critical Strike Chance: 5%,Attack Speed: 1.45,Requires Level 28, 95 Dex,(20–24)% increased Elemental Damage with Attack Skills,,Bow,Two Handed
+Deathstring Bow,Physical Damage: 28-73,Critical Strike Chance: 5%,Attack Speed: 1.2,Requires Level 32, 107 Dex,(30–50)% increased Critical Strike Chance,,Bow,Two Handed
+Grove Recurve,Physical Damage: 37-56,Critical Strike Chance: 5.5%,Attack Speed: 1.4,Requires Level 36, 124 Dex,6% increased Attack Speed,,Bow,Two Handed
+Thorn Bow,Physical Damage: 20-61,Critical Strike Chance: 5%,Attack Speed: 1.5,Requires Level 35, 116 Dex,,,Bow,Two Handed
+Decurve Bow,Physical Damage: 24-96,Critical Strike Chance: 6%,Attack Speed: 1.25,Requires Level 38, 125 Dex,,,Bow,Two Handed
+Compound Recurve,Physical Damage: 37-76,Critical Strike Chance: 6%,Attack Speed: 1.3,Requires Level 41, 134 Dex,,,Bow,Two Handed
+Sniper’s Bow,Physical Damage: 32-96,Critical Strike Chance: 6.7%,Attack Speed: 1.25,Requires Level 44, 143 Dex,"+(15–25)% to Global Critical Strike Multiplier",,Bow,Two Handed
+Ivory Longbow,Physical Damage: 29-86,Critical Strike Chance: 6.5%,Attack Speed: 1.4,Requires Level 47, 152 Dex,,,Bow,Two Handed
+Highborn Recurve,Physical Damage: 24-94,Critical Strike Chance: 5%,Attack Speed: 1.45,Requires Level 50, 161 Dex,(20–24)% increased Elemental Damage with Attack Skills,,Bow,Two Handed
+Decimator Bow,Physical Damage: 44-116,Critical Strike Chance: 5%,Attack Speed: 1.2,Requires Level 53, 170 Dex,(30–50)% increased Critical Strike Chance,,Bow,Two Handed
+Steelwood Bow,Physical Damage: 58-86,Critical Strike Chance: 5.5%,Attack Speed: 1.4,Requires Level 57, 190 Dex,6% increased Attack Speed,,Bow,Two Handed
+Thicket Longbow,Physical Damage: 32-96,Critical Strike Chance: 5%,Attack Speed: 1.5,Requires Level 56, 179 Dex,,,Bow,Two Handed
+Citadel Recurve,Physical Damage: 36-144,Critical Strike Chance: 6%,Attack Speed: 1.25,Requires Level 58, 185 Dex,,,Bow,Two Handed
+Ranger’s Bow,Physical Damage: 56-117,Critical Strike Chance: 6%,Attack Speed: 1.3,Requires Level 60, 212 Dex,,,Bow,Two Handed
+Assassin’s Recurve,Physical Damage: 43-130,Critical Strike Chance: 6.7%,Attack Speed: 1.25,Requires Level 62, 212 Dex,"+(15–25)% to Global Critical Strike Multiplier",,Bow,Two Handed
+Spine Bow,Physical Damage: 38-115,Critical Strike Chance: 6.5%,Attack Speed: 1.4,Requires Level 64, 212 Dex,,,Bow,Two Handed
+Imperial Longbow,Physical Damage: 29-117,Critical Strike Chance: 5%,Attack Speed: 1.45,Requires Level 66, 212 Dex,(20–24)% increased Elemental Damage with Attack Skills,,Bow,Two Handed
+Harbinger’s Bow,Physical Damage: 50-133,Critical Strike Chance: 5%,Attack Speed: 1.2,Requires Level 68, 212 Dex,(30–50)% increased Critical Strike Chance,,Bow,Two Handed,,,,,,
+Worn Hatchet,Physical Damage: 6-11,Critical Strike Chance: 5%,Attack Speed: 1.5,Requires Level 2, 12 Str, 6 Dex,,,Axe,One Handed
+Jade Cleaver,Physical Damage: 10-15,Critical Strike Chance: 5%,Attack Speed: 1.45,Requires Level 6, 21 Str, 10 Dex,,,Axe,One Handed
+Mariner’s Axe,Physical Damage: 11-21,Critical Strike Chance: 5%,Attack Speed: 1.5,Requires Level 11, 28 Str, 19 Dex,,,Axe,One Handed
+Flesh Splitter,Physical Damage: 12-35,Critical Strike Chance: 5%,Attack Speed: 1.3,Requires Level 16, 48 Str, 14 Dex,,,Axe,One Handed
+Hefty Axe,Physical Damage: 19-34,Critical Strike Chance: 5%,Attack Speed: 1.35,Requires Level 21, 54 Str, 25 Dex,,,Axe,One Handed
+War Cutter,Physical Damage: 14-42,Critical Strike Chance: 5%,Attack Speed: 1.4,Requires Level 25, 58 Str, 33 Dex,,,Axe,One Handed
+Ceremonial Cleaver,Physical Damage: 27-50,Critical Strike Chance: 5%,Attack Speed: 1.2,Requires Level 29, 80 Str, 23 Dex,,,Axe,One Handed
+Spectral Reaver,Physical Damage: 29-48,Critical Strike Chance: 5%,Attack Speed: 1.3,Requires Level 33, 85 Str, 37 Dex,,,Axe,One Handed
+Runed Hatchet,Physical Damage: 26-46,Critical Strike Chance: 5%,Attack Speed: 1.35,Requires Level 35, 93 Str, 43 Dex,8% increased Global Physical Damage,,Axe,One Handed
+Malachite Axe,Physical Damage: 32-50,Critical Strike Chance: 5%,Attack Speed: 1.3,Requires Level 36, 86 Str, 40 Dex,,,Axe,One Handed
+Battle Tomahawk,Physical Damage: 25-46,Critical Strike Chance: 5%,Attack Speed: 1.5,Requires Level 39, 81 Str, 56 Dex,,,Axe,One Handed
+Wrist Hacker,Physical Damage: 26-79,Critical Strike Chance: 5%,Attack Speed: 1.2,Requires Level 42, 112 Str, 32 Dex,,,Axe,One Handed
+Blood Axe,Physical Damage: 35-65,Critical Strike Chance: 5%,Attack Speed: 1.3,Requires Level 45, 106 Str, 49 Dex,,,Axe,One Handed
+Heart Splitter,Physical Damage: 24-71,Critical Strike Chance: 5%,Attack Speed: 1.4,Requires Level 48, 105 Str, 60 Dex,,,Axe,One Handed
+Ritual Chopper,Physical Damage: 45-83,Critical Strike Chance: 5%,Attack Speed: 1.2,Requires Level 51, 134 Str, 39 Dex,,,Axe,One Handed
+Wraith Cleaver,Physical Damage: 45-75,Critical Strike Chance: 5%,Attack Speed: 1.3,Requires Level 54, 134 Str, 59 Dex,,,Axe,One Handed
+Elder Hatchet,Physical Damage: 40-71,Critical Strike Chance: 5%,Attack Speed: 1.35,Requires Level 56, 143 Str, 66 Dex,8% increased Global Physical Damage,,Axe,One Handed
+Karui Reaver,Physical Damage: 49-77,Critical Strike Chance: 5%,Attack Speed: 1.3,Requires Level 57, 132 Str, 62 Dex,,,Axe,One Handed
+Siege Breaker,Physical Damage: 38-70,Critical Strike Chance: 5%,Attack Speed: 1.5,Requires Level 59, 119 Str, 82 Dex,,,Axe,One Handed
+Raven Axe,Physical Damage: 38-114,Critical Strike Chance: 5%,Attack Speed: 1.2,Requires Level 61, 167 Str, 57 Dex,,,Axe,One Handed
+Butcher’s Edge,Physical Damage: 47-87,Critical Strike Chance: 5%,Attack Speed: 1.3,Requires Level 63, 149 Str, 76 Dex,,,Axe,One Handed
+Vaal Splitter,Physical Damage: 30-90,Critical Strike Chance: 5%,Attack Speed: 1.4,Requires Level 65, 140 Str, 86 Dex,,,Axe,One Handed
+Royal Cleaver,Physical Damage: 54-100,Critical Strike Chance: 5%,Attack Speed: 1.2,Requires Level 67, 167 Str, 57 Dex,,,Axe,One Handed
+Infernal Hatchet,Physical Damage: 51-85,Critical Strike Chance: 5%,Attack Speed: 1.3,Requires Level 69, 158 Str, 76 Dex,,,Axe,One Handed
+Runic Axe,Physical Damage: 44-79,Critical Strike Chance: 5%,Attack Speed: 1.35,Requires Level 71, 163 Str, 82 Dex,12% increased Global Physical Damage,,Axe,One Handed

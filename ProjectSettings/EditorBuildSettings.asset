@@ -29,6 +29,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DeckBuilderScene.unity
     guid: 0ef602fdf1674254e84c0d514e8f512f
+  - enabled: 0
+    path: Assets/Scenes/EquipmentScreen_New.unity
+    guid: 8d2d28aed67386c44b9b5acb63930e70
+  - enabled: 1
+    path: Assets/Scenes/CharacterDisplayUI.unity
+    guid: ae0471f8c6aa4e94c924eba533a32c1f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

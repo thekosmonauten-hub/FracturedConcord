@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b44d98406e93958488b1aeac5fc335c8, type: 3}
+  m_Name: Flow
+  m_EditorClassIdentifier: Assembly-CSharp::EmbossingEffect
+  embossingName: of Flow
+  embossingId: flow
+  description: +15% more damage per previous skill played
+  embossingIcon: {fileID: 9211353411230367473, guid: 5c9b1553f3dea684ba1d84a9a4fce985, type: 3}
+  embossingColor: {r: 1, g: 1, b: 1, a: 1}
+  category: 4
+  rarity: 1
+  manaCostMultiplier: 0.25
+  flatManaCostIncrease: 0
+  minimumLevel: 10
+  minimumStrength: 0
+  minimumDexterity: 35
+  minimumIntelligence: 0
+  effectType: 31
+  effectValue: 0.15
+  secondaryEffectValue: 0
+  elementType: 1
+  statusEffect: 0
+  statusEffectChance: 0
+  unique: 0
+  exclusivityGroup: 
+  customEffectId: 

@@ -13,13 +13,16 @@ MonoBehaviour:
   m_Name: IntimidatingShout_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Intimidating Shout
+  groupKey: Intimidating_Shout
   cardType: Skill
   playCost: 1
-  description: Apply 1 Vulnerability to all enemies and consumes Crumble stacks.
+  description: Apply 1 Vulnerability to all enemies.
   rarity: 0
   element: 0
   category: 1
   cardImage: {fileID: 8777735229892688746, guid: 9fd0da6e867baea46b60e112c2fbaa4c, type: 3}
+  cardThumbnail: {fileID: -7630920492552756226, guid: a4880d385a703ce4e975e3eccfe7d22f, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -29,6 +32,9 @@ MonoBehaviour:
   isDualWield: 0
   ifDiscardedEffect: 
   dualWieldEffect: 
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 0
@@ -65,7 +71,7 @@ MonoBehaviour:
     condition: 
   enableCombo: 1
   comboWith: 
-  comboDescription: Draw a card
+  comboDescription: Consumes Crumble
   comboWithCardType: 0
   comboAttackIncrease: 0
   comboGuardIncrease: 0
@@ -73,19 +79,29 @@ MonoBehaviour:
   comboManaRefund: 0
   comboApplyAilment: 
   comboBuffs: []
-  comboConsumeAilment: 0
-  comboConsumeAilmentId: 0
+  comboConsumeAilment: 1
+  comboConsumeAilmentId: 9
   comboDrawCards: 0
   comboAilment: 5
   comboAilmentPortion: 1
   comboAilmentDuration: 2
-  consumeAilment: 1
-  consumeAilmentId: 9
+  consumeAilment: 0
+  consumeAilmentId: 0
   comboScaling: 0
   comboScalingDivisor: 1
   comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingDamageMultiplier: 1
+  channelingAdditionalGuard: 0
   tags:
   - Skill
   - Basic
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

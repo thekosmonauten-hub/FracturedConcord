@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Multi-Shot_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Multi-Shot
+  groupKey: MultiShot
   cardType: Attack
   playCost: 2
   description: 'Deal 10 physical damage (+Dex/2) to all enemies. Combo (Focus + Multi-Shot):
-    Apply bleed + Gain Frenzy charge.'
+    Apply bleed to enemies hit and gain 1 Agitate stack.'
   rarity: 0
   element: 4
   category: 0
@@ -35,8 +36,8 @@ MonoBehaviour:
   scalesWithMeleeWeapon: 1
   scalesWithProjectileWeapon: 0
   scalesWithSpellWeapon: 0
-  isAoE: 0
-  aoeTargets: 1
+  isAoE: 1
+  aoeTargets: 0
   damageScaling:
     strengthScaling: 1
     dexterityScaling: 0
@@ -52,8 +53,9 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
-  comboWith: 
-  comboDescription: 
+  enableCombo: 1
+  comboWith: Focus
+  comboDescription: Combo (Focus + Multi-Shot): Apply bleed to enemies hit and gain 1 Agitate stack.
   comboEffect: 
   comboHighlightType: type
   tags:

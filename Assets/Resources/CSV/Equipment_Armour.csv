@@ -1,0 +1,358 @@
+Name,Defence,Defence 2,Defence 3,Requirements,Implicit 1,Implicit 2,Item Type
+Plate Vest,Armour: 19–27,,,"Requires 12 Str",,,Body Armour
+Chestplate,Armour: 68–89,,,"Requires Level 6, 25 Str",,,Body Armour
+Copper Plate,Armour: 176–221,,,"Requires Level 17, 53 Str",,,Body Armour
+War Plate,Armour: 216–248,,,"Requires Level 21, 63 Str",,,Body Armour
+Full Plate,Armour: 284–319,,,"Requires Level 28, 81 Str",,,Body Armour
+Arena Plate,Armour: 324–389,,,"Requires Level 32, 91 Str",,,Body Armour
+Lordly Plate,Armour: 353–417,,,"Requires Level 35, 99 Str",,,Body Armour
+Bronze Plate,Armour: 373–429,,,"Requires Level 37, 104 Str",,,Body Armour
+Battle Plate,Armour: 412–474,,,"Requires Level 41, 114 Str",,,Body Armour
+Sun Plate,Armour: 451–506,,,"Requires Level 45, 124 Str",,,Body Armour
+Colosseum Plate,Armour: 491–589,,,"Requires Level 49, 134 Str",,,Body Armour
+Majestic Plate,Armour: 530–625,,,"Requires Level 53, 145 Str",,,Body Armour
+Golden Plate,Armour: 559–643,,,"Requires Level 56, 152 Str",,,Body Armour
+Crusader Plate,Armour: 601–691,,,"Requires Level 59, 160 Str",,,Body Armour
+Astral Plate,Armour: 711–782,,,"Requires Level 62, 180 Str",+(8–12)% to all Elemental Resistances,,Body Armour
+Gladiator Plate,Armour: 738–848,,,"Requires Level 65, 177 Str","+(20-25)% increased Physical damage","+(5-10)% change to apply bleed on hit",Body Armour
+Glorious Plate,Armour: 776–892,,,"Requires Level 68, 191 Str",,,Body Armour
+Titan Plate,Armour: 877–1009,,,"Requires Level 73, 222 Str",,,Body Armour
+Legion Plate,Armour: 1018–1171,,,"Requires Level 78, 254 Str",,,Body Armour
+Royal Plate,Armour: 1183–1360,,,"Requires Level 84, 293 Str",,,Body Armour
+Kaom's Plate,Armour: 23,,,"Requires 14 Str",,,Body Armour
+Shabby Jerkin,Evasion Rating: 29–41,,,"Requires Level 2, 14 Dex",,,Body Armour
+Strapped Leather,Evasion Rating: 98–127,,,"Requires Level 9, 32 Dex",,,Body Armour
+Buckskin Tunic,Evasion Rating: 176–221,,,"Requires Level 17, 53 Dex",,,Body Armour
+Wild Leather,Evasion Rating: 255–306,,,"Requires Level 25, 73 Dex",,,Body Armour
+Full Leather,Evasion Rating: 284–327,,,"Requires Level 28, 81 Dex",,,Body Armour
+Sun Leather,Evasion Rating: 324–382,,,"Requires Level 32, 91 Dex",,,Body Armour
+Thief's Garb,Evasion Rating: 353–396,,,"Requires Level 35, 99 Dex",,,Body Armour
+Eelskin Tunic,Evasion Rating: 373–429,,,"Requires Level 37, 104 Dex",,,Body Armour
+Frontier Leather,Evasion Rating: 412–495,,,"Requires Level 41, 114 Dex",,,Body Armour
+Glorious Leather,Evasion Rating: 451–519,,,"Requires Level 45, 124 Dex",,,Body Armour
+Coronal Leather,Evasion Rating: 491–579,,,"Requires Level 49, 134 Dex",,,Body Armour
+Cutthroat's Garb,Evasion Rating: 530–594,,,"Requires Level 53, 145 Dex",,,Body Armour
+Sharkskin Tunic,Evasion Rating: 559–643,,,"Requires Level 56, 152 Dex",,,Body Armour
+Destiny Leather,Evasion Rating: 601–721,,,"Requires Level 59, 160 Dex",,,Body Armour
+Exquisite Leather,Evasion Rating: 704–810,,,"Requires Level 62, 170 Dex",,,Body Armour
+Zodiac Leather,Evasion Rating: 854–982,,,"Requires Level 65, 197 Dex",,,Body Armour
+Assassin's Garb,Evasion Rating: 737–811,,,"Requires Level 68, 183 Dex",,,Body Armour
+Supreme Leather,Evasion Rating: 894–1028,,,"Requires Level 73, 222 Dex",,,Body Armour
+Astral Leather,Evasion Rating: 1037–1193,,,"Requires Level 78, 254 Dex",,,Body Armour
+Syndicate's Garb,Evasion Rating: 1205–1386,,,"Requires Level 84, 293 Dex",,,Body Armour
+Simple Robe,Energy Shield: 14–20,,,"Requires Level 3, 17 Int",,,Body Armour
+Silken Vest,Energy Shield: 30–38,,,"Requires Level 11, 37 Int",,,Body Armour
+Scholar's Robe,Energy Shield: 43–53,,,"Requires Level 18, 55 Int",,,Body Armour
+Silken Garb,Energy Shield: 56–64,,,"Requires Level 25, 73 Int",,,Body Armour
+Mage's Vestment,Energy Shield: 62–69,,,"Requires Level 28, 81 Int",,,Body Armour
+Silk Robe,Energy Shield: 69–80,,,"Requires Level 32, 91 Int",,,Body Armour
+Cabalist Regalia,Energy Shield: 75–88,,,"Requires Level 35, 99 Int",,,Body Armour
+Sage's Robe,Energy Shield: 79–90,,,"Requires Level 37, 104 Int",,,Body Armour
+Silken Wrap,Energy Shield: 86–104,,,"Requires Level 41, 114 Int",,,Body Armour
+Conjurer's Vestment,Energy Shield: 94–105,,,"Requires Level 45, 124 Int",,,Body Armour
+Spidersilk Robe,Energy Shield: 101–117,,,"Requires Level 49, 134 Int",,,Body Armour
+Destroyer Regalia,Energy Shield: 109–129,,,"Requires Level 53, 145 Int",,,Body Armour
+Savant's Robe,Energy Shield: 115–132,,,"Requires Level 56, 152 Int",,,Body Armour
+Necromancer Silks,Energy Shield: 123–147,,,"Requires Level 59, 160 Int",,,Body Armour
+Occultist's Vestment,Energy Shield: 137–151,,,"Requires Level 62, 180 Int",(3–10)% increased Spell Damage,,Body Armour
+Widowsilk Robe,Energy Shield: 157–181,,,"Requires Level 65, 187 Int",,,Body Armour
+Vaal Regalia,Energy Shield: 171–197,,,"Requires Level 68, 194 Int",,,Body Armour
+Arcane Vestment,Energy Shield: 196–225,,,"Requires Level 73, 222 Int",,,Body Armour
+Nightweave Robe,Energy Shield: 227–260,,,"Requires Level 78, 254 Int",,,Body Armour
+Twilight Regalia,Energy Shield: 262–302,,,"Requires Level 84, 293 Int",,,Body Armour
+Scale Vest,Armour: 27–38,Evasion Rating: 27–38,,"Requires Level 4, 10 Str, 10 Dex",,,Body Armour
+Light Brigandine,Armour: 48–63,Evasion Rating: 48–63,,"Requires Level 8, 16 Str, 16 Dex",,,Body Armour
+Scale Doublet,Armour: 97–121,Evasion Rating: 97–121,,"Requires Level 17, 28 Str, 28 Dex",,,Body Armour
+Infantry Brigandine,Armour: 119–142,Evasion Rating: 119–142,,"Requires Level 21, 34 Str, 34 Dex",,,Body Armour
+Full Scale Armour,Armour: 156–180,Evasion Rating: 156–180,,"Requires Level 28, 43 Str, 43 Dex",,,Body Armour
+Soldier's Brigandine,Armour: 178–210,Evasion Rating: 178–210,,"Requires Level 32, 48 Str, 48 Dex",,,Body Armour
+Field Lamellar,Armour: 194–223,Evasion Rating: 194–223,,"Requires Level 35, 53 Str, 53 Dex",,,Body Armour
+Wyrmscale Doublet,Armour: 210–236,Evasion Rating: 210–236,,"Requires Level 38, 57 Str, 57 Dex",,,Body Armour
+Hussar Brigandine,Armour: 232–278,Evasion Rating: 232–278,,"Requires Level 42, 62 Str, 62 Dex",,,Body Armour
+Full Wyrmscale,Armour: 254–292,Evasion Rating: 254–292,,"Requires Level 46, 68 Str, 68 Dex",,,Body Armour
+Commander's Brigandine,Armour: 275–325,Evasion Rating: 275–325,,"Requires Level 50, 73 Str, 73 Dex",,,Body Armour
+Battle Lamellar,Armour: 297–341,Evasion Rating: 297–341,,"Requires Level 54, 79 Str, 79 Dex",,,Body Armour
+Dragonscale Doublet,Armour: 313–351,Evasion Rating: 313–351,,"Requires Level 57, 83 Str, 83 Dex",,,Body Armour
+Desert Brigandine,Armour: 376–451,Evasion Rating: 376–451,,"Requires Level 60, 96 Str, 96 Dex",,,Body Armour
+Full Dragonscale,Armour: 470–541,Evasion Rating: 373–429,,"Requires Level 63, 115 Str, 94 Dex",,,Body Armour
+General's Brigandine,Armour: 415–465,Evasion Rating: 415–465,,"Requires Level 66, 103 Str, 103 Dex",,,Body Armour
+Triumphant Lamellar,Armour: 380–437,Evasion Rating: 477–549,,"Requires Level 69, 95 Str, 116 Dex",,,Body Armour
+Full Wyvernscale,Armour: 545–627,Evasion Rating: 545–627,,"Requires Level 73, 133 Str, 133 Dex",,,Body Armour
+Marshall's Brigandine,Armour: 627–721,Evasion Rating: 627–721,,"Requires Level 78, 151 Str, 151 Dex",,,Body Armour
+Conquest Lamellar,Armour: 723–831,Evasion Rating: 723–831,,"Requires Level 84, 173 Str, 173 Dex",,,Body Armour
+Chainmail Vest,Armour: 27–38,Energy Shield: 9–13,,"Requires Level 4, 10 Str, 10 Int",,,Body Armour
+Chainmail Tunic,Armour: 48–63,Energy Shield: 13–17,,"Requires Level 8, 16 Str, 16 Int",,,Body Armour
+Ringmail Coat,Armour: 97–121,Energy Shield: 22–28,,"Requires Level 17, 28 Str, 28 Int",,,Body Armour
+Chainmail Doublet,Armour: 119–140,Energy Shield: 27–31,,"Requires Level 21, 34 Str, 34 Int",,,Body Armour
+Full Ringmail,Armour: 156–180,Energy Shield: 34–39,,"Requires Level 28, 43 Str, 43 Int",,,Body Armour
+Full Chainmail,Armour: 178–199,Energy Shield: 38–43,,"Requires Level 32, 48 Str, 48 Int",,,Body Armour
+Holy Chainmail,Armour: 194–233,Energy Shield: 41–49,,"Requires Level 35, 53 Str, 53 Int",,,Body Armour
+Latticed Ringmail,Armour: 216–248,Energy Shield: 45–52,,"Requires Level 39, 59 Str, 59 Int",,,Body Armour
+Crusader Chainmail,Armour: 237–266,Energy Shield: 50–55,,"Requires Level 43, 64 Str, 64 Int",,,Body Armour
+Ornate Ringmail,Armour: 259–298,Energy Shield: 54–62,,"Requires Level 47, 69 Str, 69 Int",,,Body Armour
+Chain Hauberk,Armour: 281–314,Energy Shield: 58–65,,"Requires Level 51, 75 Str, 75 Int",,,Body Armour
+Devout Chainmail,Armour: 302–363,Energy Shield: 62–74,,"Requires Level 55, 80 Str, 80 Int",,,Body Armour
+Loricated Ringmail,Armour: 325–374,Energy Shield: 66–76,,"Requires Level 58, 84 Str, 84 Int",,,Body Armour
+Conquest Chainmail,Armour: 387–445,Energy Shield: 79–91,,"Requires Level 61, 96 Str, 96 Int",,,Body Armour
+Elegant Ringmail,Armour: 377–433,Energy Shield: 92–105,,"Requires Level 64, 90 Str, 105 Int",,,Body Armour
+Saint's Hauberk,Armour: 443–496,Energy Shield: 76–85,,"Requires Level 67, 109 Str, 94 Int",,,Body Armour
+Saintly Chainmail,Armour: 401–461,Energy Shield: 96–110,,"Requires Level 70, 99 Str, 115 Int",,,Body Armour
+Grand Ringmail,Armour: 545–627,Energy Shield: 110–127,,"Requires Level 73, 133 Str, 133 Int",,,Body Armour
+Paladin's Hauberk,Armour: 627–721,Energy Shield: 126–145,,"Requires Level 78, 151 Str, 151 Int",,,Body Armour
+Sacred Chainmail,Armour: 723–831,Energy Shield: 145–167,,"Requires Level 84, 173 Str, 173 Int",,,Body Armour
+Padded Vest,Evasion Rating: 27–38,Energy Shield: 9–13,,"Requires Level 4, 10 Dex, 10 Int",,,Body Armour
+Oiled Vest,Evasion Rating: 54–70,Energy Shield: 14–18,,"Requires Level 9, 17 Dex, 17 Int",,,Body Armour
+Padded Jacket,Evasion Rating: 102–128,Energy Shield: 24–29,,"Requires Level 18, 30 Dex, 30 Int",,,Body Armour
+Oiled Coat,Evasion Rating: 124–146,Energy Shield: 28–33,,"Requires Level 22, 35 Dex, 35 Int",,,Body Armour
+Scarlet Raiment,Evasion Rating: 156–180,Energy Shield: 34–39,,"Requires Level 28, 43 Dex, 43 Int",,,Body Armour
+Waxed Garb,Evasion Rating: 178–205,Energy Shield: 38–44,,"Requires Level 32, 48 Dex, 48 Int",,,Body Armour
+Bone Armour,Evasion Rating: 194–233,Energy Shield: 41–49,,"Requires Level 35, 53 Dex, 53 Int",,,Body Armour
+Quilted Jacket,Evasion Rating: 221–248,Energy Shield: 46–52,,"Requires Level 40, 60 Dex, 60 Int",,,Body Armour
+Sleek Coat,Evasion Rating: 243–287,Energy Shield: 51–60,,"Requires Level 44, 65 Dex, 65 Int",,,Body Armour
+Crimson Raiment,Evasion Rating: 264–304,Energy Shield: 55–63,,"Requires Level 48, 71 Dex, 71 Int",,,Body Armour
+Lacquered Garb,Evasion Rating: 286–329,Energy Shield: 59–68,,"Requires Level 52, 76 Dex, 76 Int",,,Body Armour
+Crypt Armour,Evasion Rating: 308–369,Energy Shield: 63–76,,"Requires Level 56, 82 Dex, 82 Int",,,Body Armour
+Sentinel Jacket,Evasion Rating: 330–370,Energy Shield: 67–76,,"Requires Level 59, 86 Dex, 86 Int",,,Body Armour
+Varnished Coat,Evasion Rating: 387–434,Energy Shield: 79–89,,"Requires Level 62, 96 Dex, 96 Int",,,Body Armour
+Blood Raiment,Evasion Rating: 436–501,Energy Shield: 73–84,,"Requires Level 65, 107 Dex, 90 Int",,,Body Armour
+Sadist Garb,Evasion Rating: 427–491,Energy Shield: 93–107,,"Requires Level 68, 103 Dex, 109 Int",,,Body Armour
+Carnal Armour,Evasion Rating: 353–388,Energy Shield: 103–113,,"Requires Level 71, 88 Dex, 122 Int",+(5–15) to maximum Mana,,Body Armour
+Sanguine Raiment,Evasion Rating: 545–627,Energy Shield: 110–127,,"Requires Level 73, 133 Dex, 133 Int",,,Body Armour
+Torturer Garb,Evasion Rating: 627–721,Energy Shield: 126–145,,"Requires Level 78, 151 Dex, 151 Int",,,Body Armour
+Necrotic Armour,Evasion Rating: 723–831,Energy Shield: 145–167,,"Requires Level 84, 173 Dex, 173 Int",,,Body Armour
+Sacrificial Garb,Armour: 329–378,Evasion Rating: 329–378,Energy Shield: 67–77,"Requires Level 72, 66 Str, 66 Dex, 66 Int",+1 to Level of all Void Cards,,Body Armour
+Iron Gauntlets,Armour: 6–9,,,"requires: 6 Str",,,Gloves
+Plated Gauntlets,Armour: 39–50,,,"requires: Level 11, 20 Str",,,Gloves
+Bronze Gauntlets,Armour: 77–96,,,"requires: Level 23, 36 Str",,,Gloves
+Steel Gauntlets,Armour: 116–127,,,"requires: Level 35, 52 Str",,,Gloves
+Antique Gauntlets,Armour: 129–154,,,"requires: Level 39, 58 Str",,,Gloves
+Ancient Gauntlets,Armour: 154–173,,,"requires: Level 47, 68 Str",,,Gloves
+Goliath Gauntlets,Armour: 174–200,,,"requires: Level 53, 77 Str",,,Gloves
+Vaal Gauntlets,Armour: 232–266,,,"requires: Level 63, 100 Str",,,Gloves
+Titan Gauntlets,Armour: 242–278,,,"requires: Level 69, 98 Str",,,Gloves
+Precursor Gauntlets,Armour: 307–353,,,"requires: Level 78, 125 Str",,,Gloves
+Leviathan Gauntlets,Armour: 359–413,,,"requires: Level 84, 144 Str",,,Gloves
+Preserving Gauntlets,Armour: 35–41,,,"requires: Level 10, 18 Str","+(3–4)% Chance to Block Attack Damage",You take 10% of Damage from Blocked Hits,Gloves
+Guarding Gauntlets,Armour: 132–152,,,"requires: Level 40, 59 Str","+(4–5)% Chance to Block Attack Damage",You take 10% of Damage from Blocked Hits,Gloves
+Thwarting Gauntlets,Armour: 236–271,,,"requires: Level 70, 101 Str","+(5–6)% Chance to Block Attack Damage",You take 10% of Damage from Blocked Hits,Gloves
+Rawhide Gloves,Evasion Rating: 13–18,,,"requires: Level 3, 9 Dex",,,Gloves
+Goathide Gloves,Evasion Rating: 32–42,,,"requires: Level 9, 17 Dex",,,Gloves
+Deerskin Gloves,Evasion Rating: 71–88,,,"requires: Level 21, 33 Dex",,,Gloves
+Nubuck Gloves,Evasion Rating: 109–122,,,"requires: Level 33, 50 Dex",,,Gloves
+Eelskin Gloves,Evasion Rating: 125–148,,,"requires: Level 38, 56 Dex",,,Gloves
+Sharkskin Gloves,Evasion Rating: 148–163,,,"requires: Level 45, 66 Dex",,,Gloves
+Shagreen Gloves,Evasion Rating: 177–212,,,"requires: Level 54, 78 Dex",,,Gloves
+Stealth Gloves,Evasion Rating: 231–265,,,"requires: Level 62, 97 Dex",,,Gloves
+Slink Gloves,Evasion Rating: 242–278,,,"requires: Level 70, 95 Dex",,,Gloves
+Harpyskin Gloves,Evasion Rating: 307–353,,,"requires: Level 78, 125 Dex",,,Gloves
+Velour Gloves,Evasion Rating: 359–413,,,"requires: Level 84, 144 Dex",,,Gloves
+Tinker Gloves,Evasion Rating: 35–41,,,"requires: Level 10, 18 Dex",30% reduced Cooldown Recovery Rate for throwing Traps,Trap Skills have (10–15)% increased Skill Effect Duration,Gloves
+Apprentice Gloves,Evasion Rating: 132–152,,,"requires: Level 40, 59 Dex",30% reduced Cooldown Recovery Rate for throwing Traps,Trap Skills have (15–20)% increased Skill Effect Duration,Gloves
+Trapsetter Gloves,Evasion Rating: 236–271,,,"requires: Level 70, 101 Dex",30% reduced Cooldown Recovery Rate for throwing Traps,Trap Skills have (20–25)% increased Skill Effect Duration,Gloves
+Wool Gloves,Energy Shield: 5–7,,,"requires: Level 3, 9 Int",,,Gloves
+Velvet Gloves,Energy Shield: 10–13,,,"requires: Level 12, 21 Int",,,Gloves
+Silk Gloves,Energy Shield: 18–23,,,"requires: Level 25, 39 Int",,,Gloves
+Embroidered Gloves,Energy Shield: 25–28,,,"requires: Level 36, 54 Int",,,Gloves
+Satin Gloves,Energy Shield: 28–33,,,"requires: Level 41, 60 Int",,,Gloves
+Samite Gloves,Energy Shield: 32–37,,,"requires: Level 47, 68 Int",,,Gloves
+Conjurer Gloves,Energy Shield: 37–44,,,"requires: Level 55, 79 Int",,,Gloves
+Arcanist Gloves,Energy Shield: 45–52,,,"requires: Level 60, 95 Int",,,Gloves
+Sorcerer Gloves,Energy Shield: 49–57,,,"requires: Level 69, 97 Int",,,Gloves
+Sage Gloves,Energy Shield: 62–71,,,"requires: Level 78, 125 Int",,,Gloves
+Warlock Gloves,Energy Shield: 72–83,,,"requires: Level 84, 144 Int",,,Gloves
+Leyline Gloves,Energy Shield: 9–10,,,"requires: Level 10, 18 Int",,,Gloves
+Aetherwind Gloves,Energy Shield: 28–32,,,"requires: Level 40, 59 Int",30% reduced maximum Mana,(25–30)% chance when you pay a Skill's Cost to gain that much Mana,Gloves
+Nexus Gloves,Energy Shield: 47–54,,,"requires: Level 70, 101 Int",30% reduced maximum Mana,(25–30)% chance when you pay a Skill's Cost to gain that much Mana,Gloves
+Fishscale Gauntlets,Armour: 9–12,Evasion Rating: 9–12,,"requires: Level 4, 5 Str, 5 Dex",,,Gloves
+Ironscale Gauntlets,Armour: 28–37,Evasion Rating: 28–37,,"requires: Level 15, 14 Str, 14 Dex",,,Gloves
+Bronzescale Gauntlets,Armour: 50–62,Evasion Rating: 50–62,,"requires: Level 27, 22 Str, 22 Dex",,,Gloves
+Steelscale Gauntlets,Armour: 65–75,Evasion Rating: 65–75,,"requires: Level 36, 29 Str, 29 Dex",,,Gloves
+Serpentscale Gauntlets,Armour: 78–87,Evasion Rating: 78–87,,"requires: Level 43, 34 Str, 34 Dex",,,Gloves
+Wyrmscale Gauntlets,Armour: 88–104,Evasion Rating: 88–104,,"requires: Level 49, 38 Str, 38 Dex",,,Gloves
+Hydrascale Gauntlets,Armour: 106–122,Evasion Rating: 106–122,,"requires: Level 59, 45 Str, 45 Dex",,,Gloves
+Dragonscale Gauntlets,Armour: 121–139,Evasion Rating: 121–139,,"requires: Level 67, 51 Str, 51 Dex",,,Gloves
+Chimerascale Gauntlets,Armour: 176–203,Evasion Rating: 176–203,,"requires: Level 78, 70 Str, 70 Dex",,,Gloves
+Chain Gloves,Armour: 14–20,Energy Shield: 4–6,,"requires: Level 7, 8 Str, 8 Int",,,Gloves
+Ringmail Gloves,Armour: 35–46,Energy Shield: 8–10,,"requires: Level 19, 16 Str, 16 Int",,,Gloves
+Mesh Gloves,Armour: 58–67,Energy Shield: 12–14,,"requires: Level 32, 26 Str, 26 Int",,,Gloves
+Riveted Gloves,Armour: 67–77,Energy Shield: 14–16,,"requires: Level 37, 29 Str, 29 Int",,,Gloves
+Zealot Gloves,Armour: 78–92,Energy Shield: 16–19,,"requires: Level 43, 34 Str, 34 Int",,,Gloves
+Soldier Gloves,Armour: 92–103,Energy Shield: 19–21,,"requires: Level 51, 40 Str, 40 Int",,,Gloves
+Legion Gloves,Armour: 103–121,Energy Shield: 21–25,,"requires: Level 57, 44 Str, 44 Int",,,Gloves
+Crusader Gloves,Armour: 121–139,Energy Shield: 25–28,,"requires: Level 66, 51 Str, 51 Int",,,Gloves
+Martyr Gloves,Armour: 176–203,Energy Shield: 35–41,,"requires: Level 78, 70 Str, 70 Int",,,Gloves
+Paladin Gloves,Armour: 205–236,Energy Shield: 41–47,,"requires: Level 84, 80 Str, 80 Int",,,Gloves
+Wrapped Mitts,Evasion Rating: 11–15,Energy Shield: 3–5,,"requires: Level 5, 6 Dex, 6 Int",,,Gloves
+Strapped Mitts,Evasion Rating: 30–39,Energy Shield: 7–9,,"requires: Level 16, 14 Dex, 14 Int",,,Gloves
+Clasped Mitts,Evasion Rating: 57–65,Energy Shield: 12–14,,"requires: Level 31, 25 Dex, 25 Int",,,Gloves
+Trapper Mitts,Evasion Rating: 65–77,Energy Shield: 14–16,,"requires: Level 36, 29 Dex, 29 Int",,,Gloves
+Ambush Mitts,Evasion Rating: 81–91,Energy Shield: 17–19,,"requires: Level 45, 35 Dex, 35 Int",,,Gloves
+Carnal Mitts,Evasion Rating: 90–101,Energy Shield: 19–21,,"requires: Level 50, 39 Dex, 39 Int",,,Gloves
+Assassin's Mitts,Evasion Rating: 104–123,Energy Shield: 21–25,,"requires: Level 58, 45 Dex, 45 Int",,,Gloves
+Murder Mitts,Evasion Rating: 121–139,Energy Shield: 25–28,,"requires: Level 67, 51 Dex, 51 Int",,,Gloves
+Infiltrator Mitts,Evasion Rating: 176–203,Energy Shield: 35–41,,"requires: Level 78, 70 Dex, 70 Int",,,Gloves
+Phantom Mitts,Evasion Rating: 205–236,Energy Shield: 41–47,,"requires: Level 84, 80 Dex, 80 Int",,,Gloves
+Spiked Gloves,Armour: 220–253,,,"requires: Level 70, 95 Str",(16–20)% increased Melee Damage,,Gloves
+Gripped Gloves,Evasion Rating: 220–253,,,"requires: Level 70, 95 Dex",(14–18)% increased Projectile Attack Damage,,Gloves
+Fingerless Silk Gloves,Energy Shield: 45–52,,,"requires: Level 70, 95 Int",(12–16)% increased Spell Damage,,Gloves
+Apothecary's Gloves,Armour: 108–124,Energy Shield: 29–33,,"requires: Level 70, 46 Str, 59 Int",(14–18)% increased Damage over Time,,Gloves
+Iron Hat,Armour: 9–13,,,"requires: 9 Str",,,Helmet
+Cone Helmet,Armour: 38–50,,,"requires: Level 7, 21 Str",,,Helmet
+Barbute Helmet,Armour: 92–115,,,"requires: Level 18, 42 Str",,,Helmet
+Close Helmet,Armour: 130–150,,,"requires: Level 26, 58 Str",,,Helmet
+Gladiator Helmet,Armour: 174–195,,,"requires: Level 35, 75 Str",,,Helmet
+Reaver Helmet,Armour: 198–233,,,"requires: Level 40, 85 Str",,,Helmet
+Siege Helmet,Armour: 237–272,,,"requires: Level 48, 101 Str",,,Helmet
+Samnite Helmet,Armour: 276–325,,,"requires: Level 55, 114 Str",,,Helmet
+Ezomyte Burgonet,Armour: 346–381,,,"requires: Level 60, 138 Str",,,Helmet
+Royal Burgonet,Armour: 377–434,,,"requires: Level 65, 148 Str",,,Helmet
+Eternal Burgonet,Armour: 373–429,,,"requires: Level 69, 138 Str",,,Helmet
+General's Helmet,Armour: 431–496,,,"requires: Level 73, 170 Str",,,Helmet
+Conqueror's Helmet,Armour: 501–576,,,"requires: Level 78, 194 Str",,,Helmet
+Giantslayer Helmet,Armour: 582–669,,,"requires: Level 84, 224 Str",,,Helmet
+Leather Cap,Evasion Rating: 19–27,,,"requires: Level 3, 13 Dex",,,Helmet
+Tricorne,Evasion Rating: 53–69,,,"requires: Level 10, 27 Dex",,,Helmet
+Leather Hood,Evasion Rating: 101–127,,,"requires: Level 20, 46 Dex",,,Helmet
+Wolf Pelt,Evasion Rating: 150–172,,,"requires: Level 30, 66 Dex",,,Helmet
+Hunter Hood,Evasion Rating: 203–227,,,"requires: Level 41, 87 Dex",,,Helmet
+Noble Tricorne,Evasion Rating: 232–266,,,"requires: Level 47, 99 Dex",,,Helmet
+Ursine Pelt,Evasion Rating: 276–325,,,"requires: Level 55, 114 Dex",,,Helmet
+Silken Hood,Evasion Rating: 346–381,,,"requires: Level 60, 138 Dex",,,Helmet
+Sinner Tricorne,Evasion Rating: 369–425,,,"requires: Level 64, 138 Dex",,,Helmet
+Lion Pelt,Evasion Rating: 380–437,,,"requires: Level 70, 150 Dex",,,Helmet
+Dire Pelt,Evasion Rating: 431–496,,,"requires: Level 73, 170 Dex",,,Helmet
+Grizzly Pelt,Evasion Rating: 501–576,,,"requires: Level 78, 194 Dex",,,Helmet
+Majestic Pelt,Evasion Rating: 582–669,,,"requires: Level 84, 224 Dex",,,Helmet
+Vine Circlet,Energy Shield: 7–10,,,"requires: Level 3, 13 Int",,,Helmet
+Iron Circlet,Energy Shield: 12–15,,,"requires: Level 8, 23 Int",,,Helmet
+Torture Cage,Energy Shield: 20–25,,,"requires: Level 17, 40 Int",,,Helmet
+Tribal Circlet,Energy Shield: 28–33,,,"requires: Level 26, 58 Int",,,Helmet
+Bone Circlet,Energy Shield: 36–40,,,"requires: Level 34, 73 Int",,,Helmet
+Lunaris Circlet,Energy Shield: 41–48,,,"requires: Level 39, 83 Int",,,Helmet
+Steel Circlet,Energy Shield: 49–55,,,"requires: Level 48, 101 Int",,,Helmet
+Necromancer Circlet,Energy Shield: 55–64,,,"requires: Level 54, 112 Int",,,Helmet
+Solaris Circlet,Energy Shield: 60–68,,,"requires: Level 59, 122 Int",,,Helmet
+Mind Cage,Energy Shield: 73–84,,,"requires: Level 65, 138 Int",,,Helmet
+Hubris Circlet,Energy Shield: 80–92,,,"requires: Level 69, 154 Int",,,Helmet
+Moonlit Circlet,Energy Shield: 87–100,,,"requires: Level 73, 170 Int",,,Helmet
+Sunfire Circlet,Energy Shield: 101–116,,,"requires: Level 78, 194 Int",,,Helmet
+Lich's Circlet,Energy Shield: 117–134,,,"requires: Level 84, 224 Int",,,Helmet
+Battered Helm,Armour: 13–18,Evasion Rating: 13–18,,"requires: Level 4, 8 Str, 8 Dex",,,Helmet
+Sallet,Armour: 37–48,Evasion Rating: 37–48,,"requires: Level 13, 18 Str, 18 Dex",,,Helmet
+Visored Sallet,Armour: 64–80,Evasion Rating: 64–80,,"requires: Level 23, 28 Str, 28 Dex",,,Helmet
+Gilded Sallet,Armour: 90–97,Evasion Rating: 90–97,,"requires: Level 33, 38 Str, 38 Dex",,,Helmet
+Secutor Helm,Armour: 98–116,Evasion Rating: 98–116,,"requires: Level 36, 42 Str, 42 Dex",,,Helmet
+Fencer Helm,Armour: 117–134,Evasion Rating: 117–134,,"requires: Level 43, 49 Str, 49 Dex",,,Helmet
+Lacquered Helmet,Armour: 138–155,Evasion Rating: 138–155,,"requires: Level 51, 57 Str, 57 Dex",,,Helmet
+Fluted Bascinet,Armour: 160–189,Evasion Rating: 160–189,,"requires: Level 58, 64 Str, 64 Dex",,,Helmet
+Pig-Faced Bascinet,Armour: 229–263,Evasion Rating: 159–183,,"requires: Level 63, 85 Str, 62 Dex",,,Helmet
+Nightmare Bascinet,Armour: 162–187,Evasion Rating: 233–268,,"requires: Level 67, 62 Str, 85 Dex",,,Helmet
+Knight Helm,Armour: 268–308,Evasion Rating: 268–308,,"requires: Level 73, 101 Str, 101 Dex",,,Helmet
+Conquest Helmet,Armour: 308–355,Evasion Rating: 308–355,,"requires: Level 78, 116 Str, 116 Dex",,,Helmet
+Haunted Bascinet,Armour: 355–409,Evasion Rating: 355–409,,"requires: Level 84, 132 Str, 132 Dex",,,Helmet
+Sorrow Mask,Armour: 42–49,Evasion Rating: 42–49,,"requires: Level 15, 20 Str, 20 Dex",+2% to maximum Chaos Resistance,You are Weak,Helmet
+Atonement Mask,Armour: 122–140,Evasion Rating: 122–140,,"requires: Level 45, 51 Str, 51 Dex",+3% to maximum Chaos Resistance,You are Weak,Helmet
+Penitent Mask,Armour: 185–212,Evasion Rating: 185–212,,"requires: Level 75, 79 Str, 79 Dex",+4% to maximum Chaos Resistance,You are Weak,Helmet
+Rusted Coif,Armour: 16–22,Energy Shield: 5–7,,"requires: Level 5, 9 Str, 9 Int",,,Helmet
+Soldier Helmet,Armour: 34–45,Energy Shield: 8–11,,"requires: Level 12, 16 Str, 16 Int",,,Helmet
+Great Helmet,Armour: 61–76,Energy Shield: 14–17,,"requires: Level 22, 27 Str, 27 Int",,,Helmet
+Crusader Helmet,Armour: 85–95,Energy Shield: 18–20,,"requires: Level 31, 36 Str, 36 Int",,,Helmet
+Aventail Helmet,Armour: 101–119,Energy Shield: 21–25,,"requires: Level 37, 42 Str, 42 Int",,,Helmet
+Zealot Helmet,Armour: 119–137,Energy Shield: 25–29,,"requires: Level 44, 50 Str, 50 Int",,,Helmet
+Great Crown,Armour: 143–161,Energy Shield: 29–33,,"requires: Level 53, 59 Str, 59 Int",,,Helmet
+Magistrate Crown,Armour: 160–189,Energy Shield: 33–39,,"requires: Level 58, 64 Str, 64 Int",,,Helmet
+Prophet Crown,Armour: 224–258,Energy Shield: 32–37,,"requires: Level 63, 85 Str, 62 Int",,,Helmet
+Praetor Crown,Armour: 161–185,Energy Shield: 51–58,,"requires: Level 68, 62 Str, 91 Int",,,Helmet
+Faithful Helmet,Armour: 268–308,Energy Shield: 54–62,,"requires: Level 73, 101 Str, 101 Int",,,Helmet
+Paladin Crown,Armour: 308–355,Energy Shield: 62–71,,"requires: Level 78, 116 Str, 116 Int",,,Helmet
+Divine Crown,Armour: 355–409,Energy Shield: 71–82,,"requires: Level 84, 132 Str, 132 Int",,,Helmet
+Imp Crown,Armour: 42–49,Energy Shield: 10–12,,"requires: Level 15, 20 Str, 20 Int",-1 to Level of Embossed effects,"+1 to Level of Cards",Helmet
+Demon Crown,Armour: 122–140,Energy Shield: 25–29,,"requires: Level 45, 51 Str, 51 Int",-1 to Level of Embossed effects,"+1 to Level of Cards",Helmet
+Archdemon Crown,Armour: 185–212,Energy Shield: 38–43,,"requires: Level 75, 79 Str, 79 Int",-2 to Level of Embossed effects,"+2 to Level of Cards",Helmet
+Scare Mask,Evasion Rating: 13–18,Energy Shield: 4–6,,"requires: Level 4, 8 Dex, 8 Int",,,Helmet
+Plague Mask,Evasion Rating: 29–38,Energy Shield: 7–10,,"requires: Level 10, 14 Dex, 14 Int",,,Helmet
+Iron Mask,Evasion Rating: 48–60,Energy Shield: 11–14,,"requires: Level 17, 21 Dex, 21 Int",,,Helmet
+Festival Mask,Evasion Rating: 77–88,Energy Shield: 17–19,,"requires: Level 28, 33 Dex, 33 Int",,,Helmet
+Golden Mask,Evasion Rating: 96–103,Energy Shield: 20–22,,"requires: Level 35, 40 Dex, 40 Int",,,Helmet
+Raven Mask,Evasion Rating: 104–119,Energy Shield: 22–25,,"requires: Level 38, 44 Dex, 44 Int",,,Helmet
+Callous Mask,Evasion Rating: 122–137,Energy Shield: 25–28,,"requires: Level 45, 51 Dex, 51 Int",,,Helmet
+Regicide Mask,Evasion Rating: 141–158,Energy Shield: 29–32,,"requires: Level 52, 58 Dex, 58 Int",,,Helmet
+Harlequin Mask,Evasion Rating: 157–185,Energy Shield: 32–38,,"requires: Level 57, 64 Dex, 64 Int",,,Helmet
+Vaal Mask,Evasion Rating: 207–239,Energy Shield: 37–43,,"requires: Level 62, 79 Dex, 72 Int",,,Helmet
+Deicide Mask,Evasion Rating: 190–219,Energy Shield: 47–54,,"requires: Level 67, 73 Dex, 88 Int",,,Helmet
+Jester Mask,Evasion Rating: 268–308,Energy Shield: 54–62,,"requires: Level 73, 101 Dex, 101 Int",,,Helmet
+Ancient Mask,Evasion Rating: 308–355,Energy Shield: 62–71,,"requires: Level 78, 116 Dex, 116 Int",,,Helmet
+Torturer's Mask,Evasion Rating: 355–409,Energy Shield: 71–82,,"requires: Level 84, 132 Dex, 132 Int",,,Helmet
+Iron Greaves,Armour: 6–9,,,"Requires 8 Str",,,Boots
+Steel Greaves,Armour: 32–42,,,"Requires Level 9, 21 Str",,,Boots
+Plated Greaves,Armour: 77–96,,,"Requires Level 23, 44 Str",,,Boots
+Reinforced Greaves,Armour: 109–120,,,"Requires Level 33, 61 Str",,,Boots
+Antique Greaves,Armour: 122–144,,,"Requires Level 37, 67 Str",,,Boots
+Ancient Greaves,Armour: 151–174,,,"Requires Level 46, 82 Str",,,Boots
+Goliath Greaves,Armour: 177–209,,,"Requires Level 54, 95 Str",,,Boots
+Vaal Greaves,Armour: 220–253,,,"Requires Level 62, 117 Str",,,Boots
+Titan Greaves,Armour: 241–278,,,"Requires Level 68, 120 Str",,,Boots
+Precursor Greaves,Armour: 307–353,,,"Requires Level 78, 153 Str",,,Boots
+Leviathan Greaves,Armour: 359–413,,,"Requires Level 84, 177 Str",,,Boots
+Basemetal Treads,Armour: 68–78,,,"Requires Level 20, 39 Str",30% increased Stagger and Block Recovery,20% reduced Stagger Threshold,Boots
+Darksteel Treads,Armour: 164–189,,,"Requires Level 50, 89 Str",40% increased Stagger and Block Recovery,20% reduced Stagger Threshold,Boots
+Brimstone Treads,Armour: 236–271,,,"Requires Level 80, 124 Str",50% increased Stagger and Block Recovery,20% reduced Stagger Threshold,Boots
+Rawhide Boots,Evasion Rating: 13–18,,,"Requires Level 3, 11 Dex",,,Boots
+Goathide Boots,Evasion Rating: 42–54,,,"Requires Level 12, 26 Dex",,,Boots
+Deerskin Boots,Evasion Rating: 74–92,,,"Requires Level 22, 42 Dex",,,Boots
+Nubuck Boots,Evasion Rating: 113–126,,,"Requires Level 34, 62 Dex",,,Boots
+Eelskin Boots,Evasion Rating: 129–148,,,"Requires Level 39, 70 Dex",,,Boots
+Sharkskin Boots,Evasion Rating: 145–171,,,"Requires Level 44, 79 Dex",,,Boots
+Shagreen Boots,Evasion Rating: 180–216,,,"Requires Level 55, 97 Dex",,,Boots
+Stealth Boots,Evasion Rating: 220–253,,,"Requires Level 62, 117 Dex",,,Boots
+Slink Boots,Evasion Rating: 246–283,,,"Requires Level 69, 120 Dex",,,Boots
+Harpyskin Boots,Evasion Rating: 307–353,,,"Requires Level 78, 153 Dex",,,Boots
+Velour Boots,Evasion Rating: 359–413,,,"Requires Level 84, 177 Dex",,,Boots
+Cloudwhisper Boots,Evasion Rating: 68–78,,,"Requires Level 20, 39 Dex",1 to (5–6) Added Attack Lightning Damage per 200 Accuracy Rating,25% less Accuracy Rating,Boots
+Windbreak Boots,Evasion Rating: 164–189,,,"Requires Level 50, 89 Dex",1 to (5–6) Added Attack Lightning Damage per 200 Accuracy Rating,25% less Accuracy Rating,Boots
+Stormrider Boots,Evasion Rating: 236–271,,,"Requires Level 80, 124 Dex",1 to (5–6) Added Attack Lightning Damage per 200 Accuracy Rating,25% less Accuracy Rating,Boots
+Wool Shoes,Energy Shield: 5–7,,,"Requires Level 3, 11 Int",,,Boots
+Velvet Slippers,Energy Shield: 8–11,,,"Requires Level 9, 21 Int",,,Boots
+Silk Slippers,Energy Shield: 17–21,,,"Requires Level 22, 42 Int",,,Boots
+Scholar Boots,Energy Shield: 23–25,,,"Requires Level 32, 59 Int",,,Boots
+Satin Slippers,Energy Shield: 26–30,,,"Requires Level 38, 69 Int",,,Boots
+Samite Slippers,Energy Shield: 30–35,,,"Requires Level 44, 79 Int",,,Boots
+Conjurer Boots,Energy Shield: 36–42,,,"Requires Level 53, 94 Int",,,Boots
+Arcanist Slippers,Energy Shield: 47–55,,,"Requires Level 61, 119 Int",,,Boots
+Sorcerer Boots,Energy Shield: 51–59,,,"Requires Level 67, 123 Int",,,Boots
+Sage Slippers,Energy Shield: 62–71,,,"Requires Level 78, 153 Int",,,Boots
+Warlock Boots,Energy Shield: 72–83,,,"Requires Level 84, 177 Int",,,Boots
+Duskwalk Slippers,Energy Shield: 15–18,,,"Requires Level 20, 39 Int",-1 Card draw,Select 1 additional Card to Discard,Boots
+Nightwind Slippers,Energy Shield: 34–39,,,"Requires Level 50, 89 Int",-1 Card draw,Select 1 additional Card to Discard,Boots
+Dreamquest Slippers,Energy Shield: 50–57,,,"Requires Level 80, 124 Int",-1 Card draw,Select (1-2) additional Card to Discard,Boots
+Leatherscale Boots,Armour: 12–17,Evasion Rating: 12–17,,"Requires Level 6, 9 Str, 9 Dex",,,Boots
+Ironscale Boots,Armour: 34–44,Evasion Rating: 34–44,,"Requires Level 18, 19 Str, 19 Dex",,,Boots
+Bronzescale Boots,Armour: 55–63,Evasion Rating: 55–63,,"Requires Level 30, 30 Str, 30 Dex",,,Boots
+Steelscale Boots,Armour: 65–75,Evasion Rating: 65–75,,"Requires Level 36, 35 Str, 35 Dex",,,Boots
+Serpentscale Boots,Armour: 76–90,Evasion Rating: 76–90,,"Requires Level 42, 40 Str, 40 Dex",,,Boots
+Wyrmscale Boots,Armour: 92–103,Evasion Rating: 92–103,,"Requires Level 51, 48 Str, 48 Dex",,,Boots
+Hydrascale Boots,Armour: 106–122,Evasion Rating: 106–122,,"Requires Level 59, 56 Str, 56 Dex",,,Boots
+Dragonscale Boots,Armour: 121–139,Evasion Rating: 121–139,,"Requires Level 65, 62 Str, 62 Dex",,,Boots
+Chimerascale Boots,Armour: 176–203,Evasion Rating: 176–203,,"Requires Level 78, 85 Str, 85 Dex",,,Boots
+Wyvernscale Boots,Armour: 205–236,Evasion Rating: 205–236,,"Requires Level 84, 98 Str, 98 Dex",,,Boots
+Chain Boots,Armour: 11–15,Energy Shield: 3–5,,"Requires Level 5, 8 Str, 8 Int",,,Boots
+Ringmail Boots,Armour: 25–32,Energy Shield: 6–8,,"Requires Level 13, 15 Str, 15 Int",,,Boots
+Mesh Boots,Armour: 51–64,Energy Shield: 11–14,,"Requires Level 28, 28 Str, 28 Int",,,Boots
+Riveted Boots,Armour: 65–71,Energy Shield: 14–15,,"Requires Level 36, 35 Str, 35 Int",,,Boots
+Zealot Boots,Armour: 73–87,Energy Shield: 15–18,,"Requires Level 40, 39 Str, 39 Int",,,Boots
+Soldier Boots,Armour: 88–99,Energy Shield: 18–20,,"Requires Level 49, 47 Str, 47 Int",,,Boots
+Legion Boots,Armour: 104–120,Energy Shield: 21–25,,"Requires Level 58, 54 Str, 54 Int",,,Boots
+Crusader Boots,Armour: 121–139,Energy Shield: 25–28,,"Requires Level 64, 62 Str, 62 Int",,,Boots
+Martyr Boots,Armour: 176–203,Energy Shield: 35–41,,"Requires Level 78, 85 Str, 85 Int",,,Boots
+Paladin Boots,Armour: 205–236,Energy Shield: 41–47,,"Requires Level 84, 98 Str, 98 Int",,,Boots
+Wrapped Boots,Evasion Rating: 12–17,Energy Shield: 4–5,,"Requires Level 6, 9 Dex, 9 Int",,,Boots
+Strapped Boots,Evasion Rating: 30–39,Energy Shield: 7–9,,"Requires Level 16, 18 Dex, 18 Int",,,Boots
+Clasped Boots,Evasion Rating: 50–57,Energy Shield: 11–12,,"Requires Level 27, 27 Dex, 27 Int",,,Boots
+Shackled Boots,Evasion Rating: 62–71,Energy Shield: 13–15,,"Requires Level 34, 34 Dex, 34 Int",,,Boots
+Trapper Boots,Evasion Rating: 74–85,Energy Shield: 16–18,,"Requires Level 41, 40 Dex, 40 Int",,,Boots
+Ambush Boots,Evasion Rating: 85–95,Energy Shield: 18–20,,"Requires Level 47, 45 Dex, 45 Int",,,Boots
+Carnal Boots,Evasion Rating: 99–117,Energy Shield: 20–24,,"Requires Level 55, 52 Dex, 52 Int",,,Boots
+Assassin's Boots,Evasion Rating: 121–139,Energy Shield: 25–28,,"Requires Level 63, 62 Dex, 62 Int",,,Boots
+Murder Boots,Evasion Rating: 185–213,Energy Shield: 18–21,,"Requires Level 69, 82 Dex, 42 Int",,,Boots
+Infiltrator Boots,Evasion Rating: 176–203,Energy Shield: 35–41,,"Requires Level 78, 85 Dex, 85 Int",,,Boots
+Phantom Boots,Evasion Rating: 205–236,Energy Shield: 41–47,,"Requires Level 84, 98 Dex, 98 Int",,,Boots

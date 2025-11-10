@@ -3,6 +3,7 @@ using UnityEngine.UIElements;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using System;
+using System.Linq;
 using Dexiled.Data.Items;
 
 public class EquipmentScreen : MonoBehaviour
@@ -117,6 +118,19 @@ public class EquipmentScreen : MonoBehaviour
     // Tooltip system
     private VisualElement tooltipElement;
     
+    // Effigy system
+    private EffigyGrid effigyGrid;
+    private VisualElement effigyGridContainer;
+    private List<Effigy> playerEffigies = new List<Effigy>();
+    
+    // Effigy Storage Panel
+    private VisualElement effigyStoragePanel;
+    private VisualElement effigyStorageContent;
+    private Button closeEffigyStorageButton;
+    private Button openEffigyStorageButton;
+    private bool isEffigyStorageOpen = false;
+    private float storagePanelWidth = 400f;
+    
     private void Start()
     {
         // Ensure correct grid dimensions
@@ -132,10 +146,413 @@ public class EquipmentScreen : MonoBehaviour
         GenerateStashGrid();
         InitializeStashTabs();
         InitializeCurrencySystem();
+        InitializeEffigyGrid();
+        LoadEffigiesFromResources(); // Load all effigies for storage display
         
         // Debug: Log grid creation
         Debug.Log($"Inventory grid created with {inventorySlots.Count} slots ({inventoryWidth}x{inventoryHeight} = {inventoryWidth * inventoryHeight} expected) - 60x60px slots");
         Debug.Log($"Stash grid created with {stashSlots.Count} slots ({inventoryWidth}x{inventoryHeight} = {inventoryWidth * inventoryHeight} expected) - 60x60px slots");
+    }
+    
+    /// <summary>
+    /// Initialize the Effigy grid system
+    /// </summary>
+    private void InitializeEffigyGrid()
+    {
+        if (effigyGridContainer == null)
+        {
+            Debug.LogError("[EquipmentScreen] EffigyGridContainer not found - cannot initialize Effigy grid");
+            return;
+        }
+        
+        try
+        {
+            // Create the effigy grid
+            effigyGrid = new EffigyGrid(effigyGridContainer);
+            
+            // Load player's effigies (TODO: Load from save data)
+            Debug.Log("[EquipmentScreen] Effigy grid initialized (6x4 grid)");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"[EquipmentScreen] Error initializing Effigy grid: {ex.Message}\n{ex.StackTrace}");
+        }
+    }
+    
+    /// <summary>
+    /// Initialize Effigy Storage Panel
+    /// </summary>
+    private void InitializeEffigyStorage()
+    {
+        if (effigyStoragePanel == null)
+        {
+            Debug.LogWarning("[EquipmentScreen] EffigyStoragePanel not found");
+            return;
+        }
+        
+        // Setup panel positioning
+        effigyStoragePanel.style.position = Position.Absolute;
+        effigyStoragePanel.style.top = 0;
+        effigyStoragePanel.style.bottom = 0;
+        effigyStoragePanel.style.right = -storagePanelWidth; // Start off-screen
+        effigyStoragePanel.style.width = storagePanelWidth;
+        effigyStoragePanel.style.display = DisplayStyle.None;
+        
+        // Ensure panel appears on top of other elements
+        effigyStoragePanel.BringToFront();
+        
+        Debug.Log($"[EffigyStorage] Panel initialized - width: {storagePanelWidth}, initial right: {-storagePanelWidth}");
+        
+        // Setup close button
+        if (closeEffigyStorageButton != null)
+        {
+            closeEffigyStorageButton.clicked += ToggleEffigyStorage;
+        }
+        
+        Debug.Log("[EquipmentScreen] Effigy Storage Panel initialized");
+    }
+    
+    /// <summary>
+    /// Create button to open Effigy Storage
+    /// </summary>
+    private void CreateEffigyStorageButton(VisualElement root)
+    {
+        if (effigyGridContainer == null) return;
+        
+        // Find or create header container
+        VisualElement headerLabel = effigyGridContainer.Q<Label>();
+        if (headerLabel != null && headerLabel.parent != null)
+        {
+            // Check if button already exists
+            VisualElement existingButton = headerLabel.parent.Q<Button>("OpenEffigyStorageButton");
+            if (existingButton != null)
+            {
+                openEffigyStorageButton = existingButton as Button;
+            }
+            else
+            {
+                // Create button container
+                VisualElement headerContainer = new VisualElement();
+                headerContainer.name = "EffigyHeaderContainer";
+                headerContainer.AddToClassList("effigy-header-container");
+                
+                // Create storage button
+                openEffigyStorageButton = new Button();
+                openEffigyStorageButton.name = "OpenEffigyStorageButton";
+                openEffigyStorageButton.text = "📦 Storage";
+                openEffigyStorageButton.AddToClassList("effigy-storage-button");
+                openEffigyStorageButton.clicked += ToggleEffigyStorage;
+                
+                // Replace label with header container (button + label)
+                VisualElement parent = headerLabel.parent;
+                int labelIndex = parent.IndexOf(headerLabel);
+                headerLabel.RemoveFromHierarchy();
+                headerContainer.Add(openEffigyStorageButton);
+                headerContainer.Add(headerLabel);
+                parent.Insert(labelIndex, headerContainer);
+            }
+        }
+        else
+        {
+            // Fallback: add directly to container
+            openEffigyStorageButton = new Button();
+            openEffigyStorageButton.name = "OpenEffigyStorageButton";
+            openEffigyStorageButton.text = "📦 Storage";
+            openEffigyStorageButton.AddToClassList("effigy-storage-button");
+            openEffigyStorageButton.clicked += ToggleEffigyStorage;
+            effigyGridContainer.Insert(0, openEffigyStorageButton);
+        }
+    }
+    
+    /// <summary>
+    /// Toggle Effigy Storage Panel
+    /// </summary>
+    private void ToggleEffigyStorage()
+    {
+        if (effigyStoragePanel == null) return;
+        
+        isEffigyStorageOpen = !isEffigyStorageOpen;
+        
+        if (isEffigyStorageOpen)
+        {
+            ShowEffigyStorage();
+        }
+        else
+        {
+            HideEffigyStorage();
+        }
+    }
+    
+    /// <summary>
+    /// Show Effigy Storage Panel
+    /// </summary>
+    private void ShowEffigyStorage()
+    {
+        if (effigyStoragePanel == null) return;
+        
+        // Build storage content if needed
+        if (effigyStorageContent != null && effigyStorageContent.childCount == 0)
+        {
+            BuildEffigyStorageContent();
+        }
+        
+        // Ensure panel is visible and on top
+        effigyStoragePanel.style.display = DisplayStyle.Flex;
+        effigyStoragePanel.BringToFront();
+        
+        // Use simple animation without coroutine
+        effigyStoragePanel.style.right = 0;
+        StartCoroutine(AnimatePanelSlide(-storagePanelWidth, 0f, 0.3f));
+    }
+    
+    /// <summary>
+    /// Hide Effigy Storage Panel
+    /// </summary>
+    private void HideEffigyStorage()
+    {
+        if (effigyStoragePanel == null) return;
+        
+        StartCoroutine(AnimatePanelSlide(0f, -storagePanelWidth, 0.3f, () => {
+            effigyStoragePanel.style.display = DisplayStyle.None;
+        }));
+    }
+    
+    /// <summary>
+    /// Animate panel slide
+    /// </summary>
+    private System.Collections.IEnumerator AnimatePanelSlide(float startRight, float endRight, float duration, System.Action onComplete = null)
+    {
+        float elapsed = 0f;
+        
+        while (elapsed < duration && effigyStoragePanel != null)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            
+            // Ease out quad
+            t = 1f - (1f - t) * (1f - t);
+            
+            float currentRight = Mathf.Lerp(startRight, endRight, t);
+            effigyStoragePanel.style.right = currentRight;
+            
+            // Keep bringing to front during animation
+            effigyStoragePanel.BringToFront();
+            
+            yield return null;
+        }
+        
+        if (effigyStoragePanel != null)
+        {
+            effigyStoragePanel.style.right = endRight;
+        }
+        
+        onComplete?.Invoke();
+    }
+    
+    /// <summary>
+    /// Load all Effigies from Resources
+    /// </summary>
+    private void LoadEffigiesFromResources()
+    {
+        playerEffigies.Clear();
+        
+        // Load all Effigy assets from Resources
+        Effigy[] allEffigies = Resources.LoadAll<Effigy>("Items");
+        playerEffigies.AddRange(allEffigies);
+        
+        Debug.Log($"[EquipmentScreen] Loaded {playerEffigies.Count} effigies from Resources");
+    }
+    
+    /// <summary>
+    /// Build the storage content with grouped effigies
+    /// </summary>
+    private void BuildEffigyStorageContent()
+    {
+        if (effigyStorageContent == null) return;
+        
+        effigyStorageContent.Clear();
+        
+        // Group effigies by element
+        var groupedByElement = playerEffigies.GroupBy(e => e.element).OrderBy(g => g.Key);
+        
+        foreach (var elementGroup in groupedByElement)
+        {
+            // Create section header
+            VisualElement sectionHeader = new VisualElement();
+            sectionHeader.name = $"EffigySection_{elementGroup.Key}";
+            sectionHeader.AddToClassList("effigy-storage-section-header");
+            
+            Label headerLabel = new Label(elementGroup.Key.ToString().ToUpper());
+            headerLabel.style.fontSize = 16;
+            headerLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+            headerLabel.style.color = GetElementColor(elementGroup.Key);
+            sectionHeader.Add(headerLabel);
+            
+            effigyStorageContent.Add(sectionHeader);
+            
+            // Create grid for this element
+            VisualElement elementGrid = new VisualElement();
+            elementGrid.name = $"EffigyGrid_{elementGroup.Key}";
+            elementGrid.AddToClassList("effigy-storage-grid");
+            elementGrid.style.flexDirection = FlexDirection.Row;
+            elementGrid.style.flexWrap = Wrap.Wrap;
+            elementGrid.style.marginBottom = 20;
+            
+            // Add effigies to grid
+            foreach (Effigy effigy in elementGroup.OrderBy(e => e.rarity).ThenBy(e => e.effigyName))
+            {
+                VisualElement effigySlot = CreateEffigyStorageSlot(effigy);
+                elementGrid.Add(effigySlot);
+            }
+            
+            effigyStorageContent.Add(elementGrid);
+        }
+    }
+    
+    /// <summary>
+    /// Create a visual slot for an effigy in storage
+    /// </summary>
+    private VisualElement CreateEffigyStorageSlot(Effigy effigy)
+    {
+        VisualElement slot = new VisualElement();
+        slot.name = $"EffigySlot_{effigy.name}";
+        slot.AddToClassList("effigy-storage-slot");
+        
+        // Size based on cell count
+        int cellCount = effigy.GetCellCount();
+        float slotSize = 60 + (cellCount - 1) * 10; // Scale slightly with size
+        slot.style.width = slotSize;
+        slot.style.height = slotSize;
+        slot.style.minWidth = 60;
+        slot.style.minHeight = 60;
+        
+        // Background color based on element and rarity
+        Color elementColor = effigy.GetElementColor();
+        float rarityBrightness = GetRarityBrightness(effigy.rarity);
+        slot.style.backgroundColor = elementColor * rarityBrightness;
+        slot.style.borderLeftWidth = 2;
+        slot.style.borderRightWidth = 2;
+        slot.style.borderTopWidth = 2;
+        slot.style.borderBottomWidth = 2;
+        slot.style.borderLeftColor = GetRarityColor(effigy.rarity);
+        slot.style.borderRightColor = GetRarityColor(effigy.rarity);
+        slot.style.borderTopColor = GetRarityColor(effigy.rarity);
+        slot.style.borderBottomColor = GetRarityColor(effigy.rarity);
+        slot.style.borderTopLeftRadius = 4;
+        slot.style.borderTopRightRadius = 4;
+        slot.style.borderBottomLeftRadius = 4;
+        slot.style.borderBottomRightRadius = 4;
+        slot.style.marginLeft = 5;
+        slot.style.marginRight = 5;
+        slot.style.marginTop = 5;
+        slot.style.marginBottom = 5;
+        
+        // Add icon if available
+        if (effigy.icon != null)
+        {
+            Image iconImage = new Image();
+            iconImage.image = effigy.icon.texture;
+            iconImage.style.width = Length.Percent(100);
+            iconImage.style.height = Length.Percent(100);
+            slot.Add(iconImage);
+        }
+        
+        // Add name label
+        Label nameLabel = new Label(effigy.effigyName);
+        nameLabel.style.fontSize = 10;
+        nameLabel.style.color = Color.white;
+        nameLabel.style.unityTextAlign = TextAnchor.LowerCenter;
+        nameLabel.style.position = Position.Absolute;
+        nameLabel.style.bottom = 2;
+        nameLabel.style.left = 2;
+        nameLabel.style.right = 2;
+        nameLabel.style.backgroundColor = new Color(0, 0, 0, 0.7f);
+        slot.Add(nameLabel);
+        
+        // Add click handler to drag to grid
+        slot.RegisterCallback<MouseDownEvent>(evt => OnStorageEffigyClicked(effigy, evt));
+        
+        return slot;
+    }
+    
+    private void OnStorageEffigyClicked(Effigy effigy, MouseDownEvent evt)
+    {
+        // Start drag from storage to grid
+        if (effigyGrid != null)
+        {
+            effigyGrid.StartDragFromStorage(effigy);
+            Debug.Log($"[EquipmentScreen] Started dragging effigy from storage: {effigy.effigyName}");
+        }
+    }
+    
+    private Color GetElementColor(EffigyElement element)
+    {
+        switch (element)
+        {
+            case EffigyElement.Fire: return new Color(1f, 0.3f, 0.2f);
+            case EffigyElement.Cold: return new Color(0.2f, 0.6f, 1f);
+            case EffigyElement.Lightning: return new Color(1f, 0.9f, 0.2f);
+            case EffigyElement.Physical: return new Color(0.7f, 0.7f, 0.7f);
+            case EffigyElement.Chaos: return new Color(0.8f, 0.2f, 0.8f);
+            default: return Color.white;
+        }
+    }
+    
+    /// <summary>
+    /// Get rarity color for borders and text
+    /// </summary>
+    private Color GetRarityColor(ItemRarity rarity)
+    {
+        switch (rarity)
+        {
+            case ItemRarity.Normal: return Color.white;
+            case ItemRarity.Magic: return new Color(0.3f, 0.6f, 1f); // Blue
+            case ItemRarity.Rare: return new Color(1f, 0.8f, 0.2f); // Gold
+            case ItemRarity.Unique: return new Color(1f, 0.5f, 0f); // Orange
+            default: return Color.white;
+        }
+    }
+    
+    private float GetRarityBrightness(ItemRarity rarity)
+    {
+        switch (rarity)
+        {
+            case ItemRarity.Normal: return 0.7f;
+            case ItemRarity.Magic: return 0.85f;
+            case ItemRarity.Rare: return 1.0f;
+            case ItemRarity.Unique: return 1.1f;
+            default: return 0.8f;
+        }
+    }
+    
+    /// <summary>
+    /// Try to place an effigy from inventory into the grid
+    /// </summary>
+    public bool TryPlaceEffigyFromInventory(Effigy effigy, int gridX, int gridY)
+    {
+        if (effigyGrid == null || effigy == null)
+            return false;
+        
+        if (effigyGrid.TryPlaceEffigy(effigy, gridX, gridY))
+        {
+            // Remove from inventory if successful
+            // TODO: Implement inventory removal
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
+    /// Remove an effigy from the grid and return it to inventory
+    /// </summary>
+    public void RemoveEffigyFromGrid(Effigy effigy)
+    {
+        if (effigyGrid == null || effigy == null)
+            return;
+        
+        effigyGrid.RemoveEffigy(effigy);
+        // TODO: Add back to inventory
     }
     
     private void InitializeUI()
@@ -151,6 +568,47 @@ public class EquipmentScreen : MonoBehaviour
         inventoryPanel = root.Q<VisualElement>("InventoryPanel");
         inventoryGrid = root.Q<VisualElement>("InventoryGrid");
         stashGrid = root.Q<VisualElement>("StashGrid");
+        
+        // Validate critical UI elements
+        if (inventoryGrid == null)
+        {
+            Debug.LogError("[EquipmentScreen] InventoryGrid not found in UXML! Cannot generate inventory slots.");
+        }
+        
+        if (stashGrid == null)
+        {
+            Debug.LogError("[EquipmentScreen] StashGrid not found in UXML! Cannot generate stash slots.");
+        }
+        
+        // Initialize Effigy grid container
+        effigyGridContainer = root.Q<VisualElement>("EffigyGridContainer");
+        if (effigyGridContainer == null)
+        {
+            // Create container if it doesn't exist in UXML
+            effigyGridContainer = new VisualElement();
+            effigyGridContainer.name = "EffigyGridContainer";
+            effigyGridContainer.style.width = Length.Percent(100);
+            effigyGridContainer.style.height = 300; // Approximate height for 4 rows
+            equipmentPanel.Add(effigyGridContainer);
+        }
+        
+        // Initialize Effigy Storage Panel
+        effigyStoragePanel = root.Q<VisualElement>("EffigyStoragePanel");
+        effigyStorageContent = root.Q<VisualElement>("EffigyStorageContent");
+        closeEffigyStorageButton = root.Q<Button>("CloseEffigyStorageButton");
+        
+        if (effigyStoragePanel != null)
+        {
+            // Move storage panel to end of root to ensure it renders on top
+            effigyStoragePanel.RemoveFromHierarchy();
+            root.Add(effigyStoragePanel);
+            
+            // Setup storage panel
+            InitializeEffigyStorage();
+        }
+        
+        // Create button to open storage (add to header or near effigy grid)
+        CreateEffigyStorageButton(root);
         
         // Get section elements
         inventorySection = root.Q<VisualElement>("InventorySection");
@@ -237,25 +695,47 @@ public class EquipmentScreen : MonoBehaviour
     private void SetupEventHandlers()
     {
         // Navigation buttons
-        returnButton.clicked += OnReturnButtonClicked;
-        characterButton.clicked += OnCharacterButtonClicked;
-        skillsButton.clicked += OnSkillsButtonClicked;
+        if (returnButton != null)
+            returnButton.clicked += OnReturnButtonClicked;
+        
+        if (characterButton != null)
+            characterButton.clicked += OnCharacterButtonClicked;
+        
+        if (skillsButton != null)
+            skillsButton.clicked += OnSkillsButtonClicked;
         
         // Inventory buttons
-        sortButton.clicked += OnSortButtonClicked;
-        filterButton.clicked += OnFilterButtonClicked;
+        if (sortButton != null)
+            sortButton.clicked += OnSortButtonClicked;
+        
+        if (filterButton != null)
+            filterButton.clicked += OnFilterButtonClicked;
         
         // Stash buttons
-        stashSortButton.clicked += OnStashSortButtonClicked;
-        stashFilterButton.clicked += OnStashFilterButtonClicked;
-        addStashTabButton.clicked += OnAddStashTabClicked;
-        renameTabButton.clicked += OnRenameTabClicked;
+        if (stashSortButton != null)
+            stashSortButton.clicked += OnStashSortButtonClicked;
+        
+        if (stashFilterButton != null)
+            stashFilterButton.clicked += OnStashFilterButtonClicked;
+        
+        if (addStashTabButton != null)
+            addStashTabButton.clicked += OnAddStashTabClicked;
+        
+        if (renameTabButton != null)
+            renameTabButton.clicked += OnRenameTabClicked;
         
         // Currency tab buttons
-        orbsTabButton.clicked += () => SwitchCurrencyTab("Orbs");
-        spiritsTabButton.clicked += () => SwitchCurrencyTab("Spirits");
-        sealsTabButton.clicked += () => SwitchCurrencyTab("Seals");
-        fragmentsTabButton.clicked += () => SwitchCurrencyTab("Fragments");
+        if (orbsTabButton != null)
+            orbsTabButton.clicked += () => SwitchCurrencyTab("Orbs");
+        
+        if (spiritsTabButton != null)
+            spiritsTabButton.clicked += () => SwitchCurrencyTab("Spirits");
+        
+        if (sealsTabButton != null)
+            sealsTabButton.clicked += () => SwitchCurrencyTab("Seals");
+        
+        if (fragmentsTabButton != null)
+            fragmentsTabButton.clicked += () => SwitchCurrencyTab("Fragments");
         
         // Equipment slot events
         SetupEquipmentSlotEvents();
@@ -263,17 +743,36 @@ public class EquipmentScreen : MonoBehaviour
     
     private void SetupEquipmentSlotEvents()
     {
-        // Add click events to all equipment slots
-        helmetSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.Helmet));
-        amuletSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.Amulet));
-        mainHandSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.MainHand));
-        bodyArmourSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.BodyArmour));
-        offHandSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.OffHand));
-        glovesSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.Gloves));
-        leftRingSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.LeftRing));
-        rightRingSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.RightRing));
-        beltSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.Belt));
-        bootsSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.Boots));
+        // Add click events to all equipment slots (with null checks)
+        if (helmetSlotElement != null)
+            helmetSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.Helmet));
+        
+        if (amuletSlotElement != null)
+            amuletSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.Amulet));
+        
+        if (mainHandSlotElement != null)
+            mainHandSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.MainHand));
+        
+        if (bodyArmourSlotElement != null)
+            bodyArmourSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.BodyArmour));
+        
+        if (offHandSlotElement != null)
+            offHandSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.OffHand));
+        
+        if (glovesSlotElement != null)
+            glovesSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.Gloves));
+        
+        if (leftRingSlotElement != null)
+            leftRingSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.LeftRing));
+        
+        if (rightRingSlotElement != null)
+            rightRingSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.RightRing));
+        
+        if (beltSlotElement != null)
+            beltSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.Belt));
+        
+        if (bootsSlotElement != null)
+            bootsSlotElement.RegisterCallback<ClickEvent>(evt => OnEquipmentSlotClicked(EquipmentType.Boots));
         
         // Add hover events for tooltips
         SetupTooltipEvents();
@@ -281,31 +780,76 @@ public class EquipmentScreen : MonoBehaviour
     
     private void SetupTooltipEvents()
     {
-        // Add hover events to equipment slots for tooltips
-        helmetSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.Helmet, evt.mousePosition));
-        helmetSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
-        amuletSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.Amulet, evt.mousePosition));
-        amuletSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
-        mainHandSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.MainHand, evt.mousePosition));
-        mainHandSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
-        bodyArmourSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.BodyArmour, evt.mousePosition));
-        bodyArmourSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
-        offHandSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.OffHand, evt.mousePosition));
-        offHandSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
-        glovesSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.Gloves, evt.mousePosition));
-        glovesSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
-        leftRingSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.LeftRing, evt.mousePosition));
-        leftRingSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
-        rightRingSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.RightRing, evt.mousePosition));
-        rightRingSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
-        beltSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.Belt, evt.mousePosition));
-        beltSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
-        bootsSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.Boots, evt.mousePosition));
-        bootsSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
+        // Add hover events to equipment slots for tooltips (with null checks)
+        if (helmetSlotElement != null)
+        {
+            helmetSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.Helmet, evt.mousePosition));
+            helmetSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
+        }
+        
+        if (amuletSlotElement != null)
+        {
+            amuletSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.Amulet, evt.mousePosition));
+            amuletSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
+        }
+        
+        if (mainHandSlotElement != null)
+        {
+            mainHandSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.MainHand, evt.mousePosition));
+            mainHandSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
+        }
+        
+        if (bodyArmourSlotElement != null)
+        {
+            bodyArmourSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.BodyArmour, evt.mousePosition));
+            bodyArmourSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
+        }
+        
+        if (offHandSlotElement != null)
+        {
+            offHandSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.OffHand, evt.mousePosition));
+            offHandSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
+        }
+        
+        if (glovesSlotElement != null)
+        {
+            glovesSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.Gloves, evt.mousePosition));
+            glovesSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
+        }
+        
+        if (leftRingSlotElement != null)
+        {
+            leftRingSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.LeftRing, evt.mousePosition));
+            leftRingSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
+        }
+        
+        if (rightRingSlotElement != null)
+        {
+            rightRingSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.RightRing, evt.mousePosition));
+            rightRingSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
+        }
+        
+        if (beltSlotElement != null)
+        {
+            beltSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.Belt, evt.mousePosition));
+            beltSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
+        }
+        
+        if (bootsSlotElement != null)
+        {
+            bootsSlotElement.RegisterCallback<MouseEnterEvent>(evt => ShowEquipmentTooltip(EquipmentType.Boots, evt.mousePosition));
+            bootsSlotElement.RegisterCallback<MouseLeaveEvent>(evt => HideTooltip());
+        }
     }
     
     private void GenerateInventoryGrid()
     {
+        if (inventoryGrid == null)
+        {
+            Debug.LogError("[EquipmentScreen] Cannot generate inventory grid - InventoryGrid element is null!");
+            return;
+        }
+        
         Debug.Log($"GenerateInventoryGrid called - inventoryWidth: {inventoryWidth}, inventoryHeight: {inventoryHeight}");
         Debug.Log($"Expected total slots: {inventoryWidth * inventoryHeight}");
         inventoryGrid.Clear();
@@ -366,6 +910,12 @@ public class EquipmentScreen : MonoBehaviour
     
     private void GenerateStashGrid()
     {
+        if (stashGrid == null)
+        {
+            Debug.LogError("[EquipmentScreen] Cannot generate stash grid - StashGrid element is null!");
+            return;
+        }
+        
         Debug.Log($"GenerateStashGrid called - inventoryWidth: {inventoryWidth}, inventoryHeight: {inventoryHeight}");
         Debug.Log($"Expected total slots: {inventoryWidth * inventoryHeight}");
         stashGrid.Clear();
@@ -395,6 +945,21 @@ public class EquipmentScreen : MonoBehaviour
                 slot.style.marginTop = 1;
                 slot.style.marginBottom = 1;
                 slot.style.flexShrink = 0;
+                
+                // Explicit styling to ensure visibility (matching inventory slots)
+                slot.style.backgroundColor = new Color(0.12f, 0.14f, 0.16f, 1f); // rgb(30, 35, 40)
+                slot.style.borderLeftWidth = 2;
+                slot.style.borderRightWidth = 2;
+                slot.style.borderTopWidth = 2;
+                slot.style.borderBottomWidth = 2;
+                slot.style.borderLeftColor = new Color(0.39f, 0.43f, 0.47f, 1f); // rgb(100, 110, 120)
+                slot.style.borderRightColor = new Color(0.39f, 0.43f, 0.47f, 1f);
+                slot.style.borderTopColor = new Color(0.39f, 0.43f, 0.47f, 1f);
+                slot.style.borderBottomColor = new Color(0.39f, 0.43f, 0.47f, 1f);
+                slot.style.borderTopLeftRadius = 4;
+                slot.style.borderTopRightRadius = 4;
+                slot.style.borderBottomLeftRadius = 4;
+                slot.style.borderBottomRightRadius = 4;
                 
                 // Add click event
                 int slotIndex = y * inventoryWidth + x;
@@ -1273,22 +1838,6 @@ public class EquipmentScreen : MonoBehaviour
         }
     }
     
-    private Color GetRarityColor(ItemRarity rarity)
-    {
-        switch (rarity)
-        {
-            case ItemRarity.Normal:
-                return Color.white;
-            case ItemRarity.Magic:
-                return new Color(0.3f, 0.6f, 1f); // Blue
-            case ItemRarity.Rare:
-                return new Color(1f, 0.8f, 0.2f); // Gold
-            case ItemRarity.Unique:
-                return new Color(1f, 0.5f, 0f); // Orange
-            default:
-                return Color.white;
-        }
-    }
     
 
     
@@ -1553,6 +2102,8 @@ public class EquipmentScreen : MonoBehaviour
         // Get the appropriate slots for the current tab
         List<VisualElement> currentSlots = GetCurrentTabSlots();
         
+        Debug.Log($"[Currency] Updating display for tab '{currentCurrencyTab}' with {currentSlots.Count} slots");
+        
         for (int i = 0; i < currentSlots.Count; i++)
         {
             VisualElement slot = currentSlots[i];
@@ -1567,11 +2118,57 @@ public class EquipmentScreen : MonoBehaviour
             // Always show the currency sprite (placeholder) if available
             if (currency != null && currency.currencySprite != null)
             {
-                Image currencyImage = new Image();
-                currencyImage.sprite = currency.currencySprite;
-                currencyImage.AddToClassList("currency-image");
-                currencyImage.style.backgroundSize = new BackgroundSize(BackgroundSizeType.Contain);
-                slot.Add(currencyImage);
+                try
+                {
+                    Image currencyImage = new Image();
+                    
+                    // Extract the specific sprite region from the texture atlas
+                    Sprite sprite = currency.currencySprite;
+                    Texture2D fullTexture = sprite.texture;
+                    Rect spriteRect = sprite.rect;
+                    
+                    // Validate rect bounds
+                    if (spriteRect.width > 0 && spriteRect.height > 0 && 
+                        spriteRect.x >= 0 && spriteRect.y >= 0 &&
+                        spriteRect.x + spriteRect.width <= fullTexture.width &&
+                        spriteRect.y + spriteRect.height <= fullTexture.height)
+                    {
+                        // Create a new texture with just the sprite region
+                        Texture2D croppedTexture = new Texture2D((int)spriteRect.width, (int)spriteRect.height, fullTexture.format, false);
+                        Color[] pixels = fullTexture.GetPixels((int)spriteRect.x, (int)spriteRect.y, (int)spriteRect.width, (int)spriteRect.height);
+                        croppedTexture.SetPixels(pixels);
+                        croppedTexture.Apply();
+                        
+                        currencyImage.image = croppedTexture;
+                        currencyImage.AddToClassList("currency-image");
+                        currencyImage.style.width = 60;
+                        currencyImage.style.height = 60;
+                        currencyImage.style.alignSelf = Align.Center;
+                        slot.Add(currencyImage);
+                        
+                        Debug.Log($"[Currency] Added sprite for {currency.currencyName} at slot {i} (extracted from atlas)");
+                    }
+                    else
+                    {
+                        Debug.LogError($"[Currency] Invalid sprite rect for {currency.currencyName}: {spriteRect} (texture size: {fullTexture.width}x{fullTexture.height})");
+                        // Fallback to placeholder
+                        Label placeholderLabel = new Label(currency.currencyName);
+                        placeholderLabel.style.fontSize = 10;
+                        placeholderLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
+                        placeholderLabel.style.color = new Color(0.7f, 0.7f, 0.7f, 0.5f);
+                        slot.Add(placeholderLabel);
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"[Currency] Error extracting sprite for {currency.currencyName}: {ex.Message}");
+                    // Fallback to placeholder
+                    Label placeholderLabel = new Label(currency.currencyName);
+                    placeholderLabel.style.fontSize = 10;
+                    placeholderLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
+                    placeholderLabel.style.color = new Color(0.7f, 0.7f, 0.7f, 0.5f);
+                    slot.Add(placeholderLabel);
+                }
             }
             else
             {
@@ -1581,6 +2178,11 @@ public class EquipmentScreen : MonoBehaviour
                 placeholderLabel.style.unityTextAlign = TextAnchor.MiddleCenter;
                 placeholderLabel.style.color = new Color(0.7f, 0.7f, 0.7f, 0.5f);
                 slot.Add(placeholderLabel);
+                
+                if (currency != null)
+                {
+                    Debug.LogWarning($"[Currency] No sprite for {currency.currencyName} at slot {i} - showing placeholder");
+                }
             }
             
             // Add currency name label

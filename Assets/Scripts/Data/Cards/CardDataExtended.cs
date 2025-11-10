@@ -102,8 +102,44 @@ public class CardDataExtended : CardData
     [Tooltip("Legacy combo highlight type (e.g., 'specific', 'type', 'tag')")]
     public string comboHighlightType = "specific";
     
+    [Header("Channeling Bonuses")]
+    [Tooltip("Enable automatic bonuses when the player is channeling this card's group key")]
+    public bool channelingBonusEnabled = false;
+    [Tooltip("Minimum consecutive casts required before the bonus applies (default 2)")]
+    [Min(1)] public int channelingMinStacks = 2;
+    [Tooltip("Additional guard granted while channeling (added before percentages)")]
+    public float channelingAdditionalGuard = 0f;
+    [Tooltip("% increased damage while channeling (additive)")]
+    public float channelingDamageIncreasedPercent = 0f;
+    [Tooltip("% more damage while channeling (multiplicative)")]
+    public float channelingDamageMorePercent = 0f;
+    [Tooltip("% increased guard while channeling (additive)")]
+    public float channelingGuardIncreasedPercent = 0f;
+    [Tooltip("% more guard while channeling (multiplicative)")]
+    public float channelingGuardMorePercent = 0f;
+    
     [Header("Tags")]
     public List<string> tags = new List<string>();
+    
+    [Header("Preparation System")]
+    [Tooltip("Can this card be prepared for later unleashing?")]
+    public bool canPrepare = false;
+    
+    [Tooltip("Maximum turns this card can be prepared (base value, modified by INT)")]
+    public int maxPrepTurns = 3;
+    
+    [Tooltip("Damage/effect multiplier gained per turn prepared (e.g., 0.5 = +50% per turn)")]
+    public float multiplierPerTurn = 0.5f;
+    
+    [Tooltip("Unleash condition: 'manual' (click), 'auto_on_max' (auto at max), 'triggered' (needs trigger card), 'decay' (auto with penalty)")]
+    public string unleashCondition = "manual";
+    
+    [Tooltip("Unleash effect type: 'deal_stored_damage', 'apply_buffs', 'hybrid'")]
+    public string unleashEffect = "deal_stored_damage";
+    
+    [Tooltip("Additional text describing the preparation/unleash effect")]
+    [TextArea(2,3)]
+    public string prepareDescription = "";
     
     // IMPORTANT: Add all Card methods here
     
@@ -162,9 +198,8 @@ public class CardDataExtended : CardData
         string dynamicDesc = description;
         
         // Replace damage placeholders
-        if (category == CardCategory.Attack && damage > 0)
+        if (damage > 0)
         {
-            // Calculate with CardData (not Card!)
             float totalDamage = damage;
             totalDamage += damageScaling.CalculateScalingBonus(character);
             totalDamage += GetWeaponScalingDamage(character);
@@ -173,8 +208,8 @@ public class CardDataExtended : CardData
             dynamicDesc = dynamicDesc.Replace("{baseDamage}", damage.ToString());
         }
         
-        // Replace guard placeholders
-        if (category == CardCategory.Guard && block > 0)
+        // Replace guard placeholders for any card that grants block
+        if (block > 0)
         {
             float totalGuard = block;
             totalGuard += guardScaling.CalculateScalingBonus(character);
@@ -196,11 +231,15 @@ public class CardDataExtended : CardData
             dynamicDesc = dynamicDesc.Replace("{dex}", character.dexterity.ToString());
             dynamicDesc = dynamicDesc.Replace("{int}", character.intelligence.ToString());
             
-            // Scaling bonuses
             if (damageScaling.strengthScaling > 0)
             {
                 float strBonus = character.strength * damageScaling.strengthScaling;
                 dynamicDesc = dynamicDesc.Replace("{strBonus}", strBonus.ToString("F0"));
+            }
+            if (damageScaling.strengthDivisor > 0)
+            {
+                float strDivBonus = character.strength / damageScaling.strengthDivisor;
+                dynamicDesc = dynamicDesc.Replace("{strDivisor}", strDivBonus.ToString("F0"));
             }
             
             if (damageScaling.dexterityScaling > 0)
@@ -208,14 +247,56 @@ public class CardDataExtended : CardData
                 float dexBonus = character.dexterity * damageScaling.dexterityScaling;
                 dynamicDesc = dynamicDesc.Replace("{dexBonus}", dexBonus.ToString("F0"));
             }
+            if (damageScaling.dexterityDivisor > 0)
+            {
+                float dexDivBonus = character.dexterity / damageScaling.dexterityDivisor;
+                dynamicDesc = dynamicDesc.Replace("{dexDivisor}", dexDivBonus.ToString("F0"));
+            }
             
             if (damageScaling.intelligenceScaling > 0)
             {
                 float intBonus = character.intelligence * damageScaling.intelligenceScaling;
                 dynamicDesc = dynamicDesc.Replace("{intBonus}", intBonus.ToString("F0"));
             }
+            if (damageScaling.intelligenceDivisor > 0)
+            {
+                float intDivBonus = character.intelligence / damageScaling.intelligenceDivisor;
+                dynamicDesc = dynamicDesc.Replace("{intDivisor}", intDivBonus.ToString("F0"));
+            }
             
-            // Weapon damage
+            if (guardScaling.strengthScaling > 0)
+            {
+                float guardStrBonus = character.strength * guardScaling.strengthScaling;
+                dynamicDesc = dynamicDesc.Replace("{guardStrBonus}", guardStrBonus.ToString("F0"));
+            }
+            if (guardScaling.strengthDivisor > 0)
+            {
+                float guardStrDivBonus = character.strength / guardScaling.strengthDivisor;
+                dynamicDesc = dynamicDesc.Replace("{guardStrDivisor}", guardStrDivBonus.ToString("F0"));
+            }
+            
+            if (guardScaling.dexterityScaling > 0)
+            {
+                float guardDexBonus = character.dexterity * guardScaling.dexterityScaling;
+                dynamicDesc = dynamicDesc.Replace("{guardDexBonus}", guardDexBonus.ToString("F0"));
+            }
+            if (guardScaling.dexterityDivisor > 0)
+            {
+                float guardDexDivBonus = character.dexterity / guardScaling.dexterityDivisor;
+                dynamicDesc = dynamicDesc.Replace("{guardDexDivisor}", guardDexDivBonus.ToString("F0"));
+            }
+            
+            if (guardScaling.intelligenceScaling > 0)
+            {
+                float guardIntBonus = character.intelligence * guardScaling.intelligenceScaling;
+                dynamicDesc = dynamicDesc.Replace("{guardIntBonus}", guardIntBonus.ToString("F0"));
+            }
+            if (guardScaling.intelligenceDivisor > 0)
+            {
+                float guardIntDivBonus = character.intelligence / guardScaling.intelligenceDivisor;
+                dynamicDesc = dynamicDesc.Replace("{guardIntDivisor}", guardIntDivBonus.ToString("F0"));
+            }
+            
             if (scalesWithMeleeWeapon)
             {
                 float weaponDamage = character.weapons.GetWeaponDamage(WeaponType.Melee);
@@ -400,6 +481,61 @@ public class CardDataExtended : CardData
     }
     
     /// <summary>
+    /// Calculate the card's current mana cost with embossing modifiers
+    /// Formula: (Base + N_embossings) × (1 + Σ Multipliers)
+    /// Note: This calculates based on a Card instance with applied embossings
+    /// </summary>
+    public int GetCurrentManaCost(Card card)
+    {
+        if (card == null || card.appliedEmbossings == null || card.appliedEmbossings.Count == 0)
+            return playCost;
+        
+        // Use EmbossingDatabase if available
+        if (EmbossingDatabase.Instance != null)
+        {
+            return EmbossingDatabase.Instance.CalculateCardManaCost(card, playCost);
+        }
+        
+        // Fallback calculation if database not available
+        int embossingCount = card.appliedEmbossings.Count;
+        return playCost + embossingCount;
+    }
+    
+    /// <summary>
+    /// Get formatted mana cost display with embossing increase
+    /// Shows increase if card has embossings: "5 (+3)"
+    /// </summary>
+    public string GetManaCostDisplay(Card card)
+    {
+        int currentCost = GetCurrentManaCost(card);
+        
+        if (currentCost == playCost)
+            return currentCost.ToString();
+        
+        // Show increase: "5 (+3)"
+        int increase = currentCost - playCost;
+        return $"{currentCost} <color=#FF6B6B>(+{increase})</color>";
+    }
+    
+    /// <summary>
+    /// Get mana cost breakdown for tooltip
+    /// Shows how embossings affect the mana cost
+    /// </summary>
+    public string GetManaCostBreakdown(Card card)
+    {
+        if (card == null || card.appliedEmbossings == null || card.appliedEmbossings.Count == 0)
+            return $"Mana Cost: {playCost}";
+        
+        if (EmbossingDatabase.Instance != null)
+        {
+            return EmbossingDatabase.Instance.GetManaCostBreakdown(card, playCost);
+        }
+        
+        int finalCost = GetCurrentManaCost(card);
+        return $"Base: {playCost}\nWith {card.appliedEmbossings.Count} Embossings: {finalCost}";
+    }
+    
+    /// <summary>
     /// Get base damage as float (for combat calculations)
     /// </summary>
     public float GetBaseDamage()
@@ -422,9 +558,10 @@ public class CardDataExtended : CardData
     [System.Obsolete("Use CardDataExtended directly instead of converting to Card")]
     public Card ToCard()
     {
-        return new Card
+        var card = new Card
         {
             cardName = this.cardName,
+            groupKey = this.groupKey,
             description = this.description,
             cardType = GetCardTypeEnum(),
             manaCost = this.playCost,
@@ -453,8 +590,24 @@ public class CardDataExtended : CardData
             comboAilmentPortion = this.comboAilmentPortion,
             comboAilmentDuration = this.comboAilmentDuration,
             consumeAilmentEnabled = this.consumeAilment,
-            consumeAilmentId = this.consumeAilmentId
+            consumeAilmentId = this.consumeAilmentId,
+            channelingBonusEnabled = this.channelingBonusEnabled,
+            channelingMinStacks = this.channelingMinStacks,
+            channelingAdditionalGuard = this.channelingAdditionalGuard,
+            channelingDamageIncreasedPercent = this.channelingDamageIncreasedPercent,
+            channelingDamageMorePercent = this.channelingDamageMorePercent,
+            channelingGuardIncreasedPercent = this.channelingGuardIncreasedPercent,
+            channelingGuardMorePercent = this.channelingGuardMorePercent,
+            embossingSlots = this.embossingSlots,
+            appliedEmbossings = new List<EmbossingInstance>(), // Start with empty embossings
+            cardLevel = this.cardLevel,
+            cardExperience = this.cardExperience
         };
+        
+        // Set source reference for preparation system
+        card.sourceCardData = this;
+        
+        return card;
     }
 }
 
@@ -479,6 +632,7 @@ public enum AilmentId
     None,
     Poison,
     Burn,
+    Chill,
     Freeze,
     Stun,
     Vulnerable,

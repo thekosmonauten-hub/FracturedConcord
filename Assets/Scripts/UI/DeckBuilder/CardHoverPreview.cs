@@ -16,6 +16,28 @@ public class CardHoverPreview : MonoBehaviour
     
     private GameObject currentPreview;
     
+    private void Awake()
+    {
+        // Ensure the preview panel itself doesn't block raycasts
+        if (previewPanel != null)
+        {
+            // Disable all graphics on the panel itself
+            var panelGraphics = previewPanel.GetComponents<Graphic>();
+            foreach (var graphic in panelGraphics)
+            {
+                graphic.raycastTarget = false;
+            }
+            
+            // Ensure CanvasGroup doesn't block if it exists
+            var panelCanvasGroup = previewPanel.GetComponent<CanvasGroup>();
+            if (panelCanvasGroup != null)
+            {
+                panelCanvasGroup.blocksRaycasts = false;
+                panelCanvasGroup.interactable = false;
+            }
+        }
+    }
+    
     /// <summary>
     /// Show an enlarged preview of the card.
     /// </summary>
@@ -39,6 +61,20 @@ public class CardHoverPreview : MonoBehaviour
             previewUI.Initialize(cardData, null);
             // Disable interaction on preview
             previewUI.enabled = false;
+        }
+        
+        // CRITICAL: Disable raycasting on ALL graphics in the preview to prevent blocking
+        var allGraphics = currentPreview.GetComponentsInChildren<Graphic>(true);
+        foreach (var graphic in allGraphics)
+        {
+            graphic.raycastTarget = false;
+        }
+        
+        // Also disable any CanvasGroup to ensure no blocking
+        var canvasGroups = currentPreview.GetComponentsInChildren<CanvasGroup>(true);
+        foreach (var cg in canvasGroups)
+        {
+            cg.blocksRaycasts = false;
         }
         
         // Position near the source card

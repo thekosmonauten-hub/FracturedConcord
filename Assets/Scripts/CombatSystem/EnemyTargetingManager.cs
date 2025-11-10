@@ -81,11 +81,11 @@ public class EnemyTargetingManager : MonoBehaviour
     /// </summary>
     private void SetupEnemyClickHandlers()
     {
-        if (combatManager == null || combatManager.enemyDisplays == null) return;
+        if (combatManager == null || combatManager.GetActiveEnemyDisplays() == null) return;
         
-        for (int i = 0; i < combatManager.enemyDisplays.Count; i++)
+        for (int i = 0; i < combatManager.GetActiveEnemyDisplays().Count; i++)
         {
-            EnemyCombatDisplay display = combatManager.enemyDisplays[i];
+            EnemyCombatDisplay display = combatManager.GetActiveEnemyDisplays()[i];
             if (display != null)
             {
                 // Add button if not present
@@ -119,15 +119,15 @@ public class EnemyTargetingManager : MonoBehaviour
     /// </summary>
     public void SelectEnemy(int enemyIndex)
     {
-        if (combatManager == null || combatManager.enemyDisplays == null) return;
+        if (combatManager == null || combatManager.GetActiveEnemyDisplays() == null) return;
         
-        if (enemyIndex < 0 || enemyIndex >= combatManager.enemyDisplays.Count)
+        if (enemyIndex < 0 || enemyIndex >= combatManager.GetActiveEnemyDisplays().Count)
         {
             Debug.LogWarning($"Invalid enemy index: {enemyIndex}");
             return;
         }
         
-        EnemyCombatDisplay display = combatManager.enemyDisplays[enemyIndex];
+        EnemyCombatDisplay display = combatManager.GetActiveEnemyDisplays()[enemyIndex];
         Enemy enemy = display.GetCurrentEnemy();
         
         // Can't target dead enemies
@@ -171,6 +171,11 @@ public class EnemyTargetingManager : MonoBehaviour
         return selectedEnemy;
     }
 
+    public int GetTargetedEnemyIndex()
+    {
+        return selectedEnemyIndex;
+    }
+
     /// <summary>
     /// Simple hit-roll based on player's accuracy and enemy evasion (if added later).
     /// </summary>
@@ -207,9 +212,9 @@ public class EnemyTargetingManager : MonoBehaviour
     {
         if (combatManager == null) return;
         
-        for (int i = 0; i < combatManager.enemyDisplays.Count; i++)
+        for (int i = 0; i < combatManager.GetActiveEnemyDisplays().Count; i++)
         {
-            Enemy enemy = combatManager.enemyDisplays[i].GetCurrentEnemy();
+            Enemy enemy = combatManager.GetActiveEnemyDisplays()[i].GetCurrentEnemy();
             if (enemy != null && enemy.currentHealth > 0)
             {
                 SelectEnemy(i);
@@ -228,23 +233,23 @@ public class EnemyTargetingManager : MonoBehaviour
         if (combatManager == null) return;
         
         int startIndex = selectedEnemyIndex;
-        int checkIndex = (startIndex + 1) % combatManager.enemyDisplays.Count;
+        int checkIndex = (startIndex + 1) % combatManager.GetActiveEnemyDisplays().Count;
         
         // Search for next alive enemy
         while (checkIndex != startIndex)
         {
-            Enemy enemy = combatManager.enemyDisplays[checkIndex].GetCurrentEnemy();
+            Enemy enemy = combatManager.GetActiveEnemyDisplays()[checkIndex].GetCurrentEnemy();
             if (enemy != null && enemy.currentHealth > 0)
             {
                 SelectEnemy(checkIndex);
                 return;
             }
             
-            checkIndex = (checkIndex + 1) % combatManager.enemyDisplays.Count;
+            checkIndex = (checkIndex + 1) % combatManager.GetActiveEnemyDisplays().Count;
         }
         
         // Check starting index as last resort
-        Enemy startEnemy = combatManager.enemyDisplays[startIndex].GetCurrentEnemy();
+        Enemy startEnemy = combatManager.GetActiveEnemyDisplays()[startIndex].GetCurrentEnemy();
         if (startEnemy != null && startEnemy.currentHealth > 0)
         {
             SelectEnemy(startIndex);

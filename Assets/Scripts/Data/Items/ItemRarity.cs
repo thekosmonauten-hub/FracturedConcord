@@ -24,9 +24,11 @@ public class Affix
     public AffixType affixType; // Prefix or Suffix
     public AffixTier tier;      // Tier 1-10 for random generation
     public List<AffixModifier> modifiers = new List<AffixModifier>();
-    public List<string> requiredTags = new List<string>(); // Item tags this affix can apply to
+    public List<string> requiredTags = new List<string>(); // Item tags this affix can apply to (legacy)
+    public List<string> compatibleTags = new List<string>(); // New smart compatibility tags
     public float weight = 100f; // Drop weight for random generation
     public Handedness handedness = Handedness.Both; // Handedness requirement
+    public int minLevel = 1; // Minimum item level required for this affix to roll
     
     // Range values for the affix (parsed from description)
     public int minValue = 0;
@@ -78,11 +80,13 @@ public class Affix
         rolledAffix.maxValue = maxValue;
         rolledAffix.hasRange = hasRange;
         
+        // Roll modifiers (handle dual-range for damage affixes)
+        System.Random random = new System.Random(seed);
+        
         // Roll a single value from the range
         if (hasRange && minValue > 0 && maxValue > 0)
         {
             // Use the seed to generate a random value within the range
-            System.Random random = new System.Random(seed + name.GetHashCode());
             rolledAffix.rolledValue = random.Next(minValue, maxValue + 1); // +1 because Next is exclusive of max
             rolledAffix.isRolled = true;
         }
@@ -91,11 +95,40 @@ public class Affix
             rolledAffix.rolledValue = 0;
             rolledAffix.isRolled = false;
         }
-        
-        // Copy modifiers (simplified - no complex rolling needed)
         foreach (var modifier in modifiers)
         {
-            rolledAffix.modifiers.Add(modifier);
+            // Create a copy of the modifier
+            AffixModifier rolledModifier = new AffixModifier(
+                modifier.statName,
+                modifier.minValue,
+                modifier.maxValue,
+                modifier.modifierType
+            );
+            
+            // Copy all properties
+            rolledModifier.scope = modifier.scope;
+            rolledModifier.damageType = modifier.damageType;
+            rolledModifier.description = modifier.description;
+            rolledModifier.originalMinValue = modifier.originalMinValue;
+            rolledModifier.originalMaxValue = modifier.originalMaxValue;
+            
+            // Handle dual-range modifiers
+            if (modifier.isDualRange)
+            {
+                rolledModifier.isDualRange = true;
+                rolledModifier.firstRangeMin = modifier.firstRangeMin;
+                rolledModifier.firstRangeMax = modifier.firstRangeMax;
+                rolledModifier.secondRangeMin = modifier.secondRangeMin;
+                rolledModifier.secondRangeMax = modifier.secondRangeMax;
+                
+                // ROLL THE DUAL-RANGE VALUES ONCE!
+                rolledModifier.rolledFirstValue = random.Next((int)modifier.firstRangeMin, (int)modifier.firstRangeMax + 1);
+                rolledModifier.rolledSecondValue = random.Next((int)modifier.secondRangeMin, (int)modifier.secondRangeMax + 1);
+                
+                Debug.Log($"Rolled dual-range {modifier.statName}: {rolledModifier.rolledFirstValue} to {rolledModifier.rolledSecondValue}");
+            }
+            
+            rolledAffix.modifiers.Add(rolledModifier);
         }
         
         return rolledAffix;
@@ -301,11 +334,6 @@ public enum ModifierType
     Less
 }
 
-public enum ModifierScope
-{
-    Local,
-    Global
-}
 
 public static class ItemRarityCalculator
 {

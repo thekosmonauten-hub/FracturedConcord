@@ -15,7 +15,7 @@ public class MainGameNavController : MonoBehaviour
 	public Button DeckManagerButton;
 
 	[Header("Scene Names")]
-	public string equipmentSceneName = "EquipmentScene";
+	public string equipmentSceneName = "EquipmentScreen_New";
 	public string passiveTreeSceneName = "PassiveTreeScene";
 	public string deckBuilderSceneName = "DeckBuilderScene";
 

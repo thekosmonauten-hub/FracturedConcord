@@ -85,6 +85,16 @@ public class CharacterManager : MonoBehaviour
                 }
             }
             catch { }
+            
+            // Load character's deck presets
+            LoadCharacterDecks(currentCharacter);
+            
+            // Load card experience data
+            if (CardExperienceManager.Instance != null)
+            {
+                CardExperienceManager.Instance.LoadFromCharacter(currentCharacter);
+            }
+            
             OnCharacterLoaded?.Invoke(currentCharacter);
             Debug.Log($"Loaded character: {currentCharacter.characterName}");
         }
@@ -98,6 +108,10 @@ public class CharacterManager : MonoBehaviour
     public void CreateCharacter(string characterName, string characterClass)
     {
         currentCharacter = new Character(characterName, characterClass);
+        
+        // Initialize starter deck and cards
+        InitializeStarterDeck(currentCharacter);
+        
         SaveCharacter();
         OnCharacterLoaded?.Invoke(currentCharacter);
         Debug.Log($"Created new character: {currentCharacter.characterName}");
@@ -111,6 +125,12 @@ public class CharacterManager : MonoBehaviour
         if (currentCharacter != null)
         {
             currentCharacter.lastSaveTime = System.DateTime.Now;
+            
+            // Save card experience data
+            if (CardExperienceManager.Instance != null)
+            {
+                CardExperienceManager.Instance.SaveToCharacter(currentCharacter);
+            }
             
             // Save to CharacterSaveSystem
             CharacterData characterData = currentCharacter.ToCharacterData();
@@ -218,7 +238,7 @@ public class CharacterManager : MonoBehaviour
         }
     }
     
-    public void AddExperience(int exp)
+    public void AddExperience(int exp, bool shareWithCards = true)
     {
         if (currentCharacter != null)
         {
@@ -230,6 +250,12 @@ public class CharacterManager : MonoBehaviour
             if (currentCharacter.level > oldLevel)
             {
                 OnCharacterLevelUp?.Invoke(currentCharacter);
+            }
+            
+            // Also give experience to cards in active deck
+            if (shareWithCards && CardExperienceManager.Instance != null)
+            {
+                CardExperienceManager.Instance.ApplyCombatExperience(exp);
             }
         }
     }
@@ -338,4 +364,147 @@ public class CharacterManager : MonoBehaviour
         }
         return 0f;
     }
+    
+    #region Deck Management
+    /// <summary>
+    /// Initialize starter deck for a new character
+    /// Creates a DeckPreset from the StarterDeckDefinition and sets it as active
+    /// </summary>
+    private void InitializeStarterDeck(Character character)
+    {
+        if (character == null) return;
+        
+        // Initialize deck data if needed
+        if (character.deckData == null)
+        {
+            character.deckData = new CharacterDeckData();
+        }
+        
+        // Get starter deck manager
+        StarterDeckManager sdm = StarterDeckManager.Instance;
+        if (sdm == null)
+        {
+            Debug.LogWarning("StarterDeckManager not found. Cannot initialize starter deck.");
+            return;
+        }
+        
+        // Assign starter cards to character's collection
+        sdm.AssignStarterToCharacterDeckData(character);
+        
+        // Get the starter deck definition
+        StarterDeckDefinition starterDef = sdm.GetDefinitionForClass(character.characterClass);
+        if (starterDef == null)
+        {
+            Debug.LogWarning($"No StarterDeckDefinition found for class: {character.characterClass}");
+            return;
+        }
+        
+        // Create DeckPreset from starter definition
+        DeckPreset starterDeckPreset = CreateDeckPresetFromStarterDefinition(starterDef, character.characterClass);
+        if (starterDeckPreset == null)
+        {
+            Debug.LogError("Failed to create starter deck preset.");
+            return;
+        }
+        
+        // Save the deck preset to disk
+        if (DeckManager.Instance != null)
+        {
+            DeckManager.Instance.SaveDeck(starterDeckPreset);
+            
+            // Set as active deck in DeckManager
+            DeckManager.Instance.SetActiveDeck(starterDeckPreset);
+            
+            Debug.Log($"Created and activated starter deck: {starterDeckPreset.deckName} for {character.characterName}");
+        }
+    }
+    
+    /// <summary>
+    /// Create a DeckPreset from a StarterDeckDefinition
+    /// </summary>
+    private DeckPreset CreateDeckPresetFromStarterDefinition(StarterDeckDefinition definition, string characterClass)
+    {
+        if (definition == null) return null;
+        
+        // Create new DeckPreset
+        DeckPreset preset = ScriptableObject.CreateInstance<DeckPreset>();
+        preset.deckName = $"{characterClass} Starter";
+        preset.description = $"Starter deck for the {characterClass} class";
+        preset.characterClass = characterClass;
+        preset.createdDate = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        preset.lastModifiedDate = preset.createdDate;
+        
+        // Get card database
+        CardDatabase cardDatabase = CardDatabase.Instance;
+        if (cardDatabase == null)
+        {
+            Debug.LogError("CardDatabase not found!");
+            return null;
+        }
+        
+        // Add cards from definition
+        foreach (var entry in definition.cards)
+        {
+            if (entry == null || entry.card == null) continue;
+            
+            // Find the CardData in the database by name
+            CardData cardData = cardDatabase.allCards.Find(c => c.cardName == entry.card.cardName);
+            
+            if (cardData != null)
+            {
+                preset.AddCard(cardData, entry.count);
+            }
+            else
+            {
+                Debug.LogWarning($"Card not found in database: {entry.card.cardName}");
+            }
+        }
+        
+        Debug.Log($"Created DeckPreset '{preset.deckName}' with {preset.GetTotalCardCount()} cards");
+        return preset;
+    }
+    
+    /// <summary>
+    /// Load character's decks from disk when loading a saved character
+    /// Sets the active deck based on character.deckData.activeDeckName
+    /// </summary>
+    public void LoadCharacterDecks(Character character)
+    {
+        if (character == null || character.deckData == null) return;
+        
+        string activeDeckName = character.deckData.activeDeckName;
+        if (string.IsNullOrEmpty(activeDeckName))
+        {
+            Debug.Log("No active deck name set for character");
+            return;
+        }
+        
+        // Try to load the active deck from DeckManager
+        if (DeckManager.Instance != null)
+        {
+            // Load all saved decks first
+            DeckManager.Instance.LoadAllDecks();
+            
+            // Try to find and set the active deck
+            DeckPreset activeDeck = DeckManager.Instance.GetAllDecks()
+                .Find(d => d.deckName == activeDeckName);
+            
+            if (activeDeck != null)
+            {
+                DeckManager.Instance.SetActiveDeck(activeDeck);
+                Debug.Log($"Loaded active deck: {activeDeckName} for {character.characterName}");
+            }
+            else
+            {
+                Debug.LogWarning($"Active deck '{activeDeckName}' not found. May need to recreate starter deck.");
+                
+                // If it's a starter deck that doesn't exist, recreate it
+                if (activeDeckName.Contains("Starter"))
+                {
+                    InitializeStarterDeck(character);
+                }
+            }
+        }
+    }
+    #endregion
 }

@@ -11,6 +11,96 @@ A deckbuilder ARPG with Path of Exile influences, built in Unity.
 
 ---
 
+## Session 12: Channeling Mechanic Tracking
+
+### Date: 2025-11-07
+### Goal: Introduce character-level channeling tracking and expose hooks for repeated-cast bonuses.
+
+### Key Decisions Made
+
+#### 1. **Treat Channeling as Character Combat State**
+**Decision**: Store channeling streaks on `Character.Channeling` instead of per-card tags.
+**Why**:
+- Keeps streak logic independent from asset mutations
+- Allows any combat system to query the same state
+- Enables future mechanics (AI, status effects) to react uniformly
+
+#### 2. **Centralize Updates in CombatDeckManager**
+**Decision**: Let `CombatDeckManager` register casts, fire `OnChannelingStateChanged`, and reset state on deck load.
+**Why**:
+- Single point of truth during card play
+- Ensures events fire before damage/effects resolve
+- Provides utility function `ResetChannelingState()` for turn/scene boundaries
+
+#### 3. **Attach Channeling Metadata to Runtime Cards**
+**Decision**: Enrich the temporary `Card` instance with channeling flags and stack counts.
+**Why**:
+- Effect processors and combo logic can read channeling without re-querying the tracker
+- Supports “start/stop” triggers by exposing `channelingStartedThisCast` / `channelingStoppedThisCast`
+
+### Systems Implemented
+
+1. `ChannelingTracker` with `RegisterCast`, `BreakChannel`, and snapshot struct.
+2. `CombatDeckManager` updates streaks for both animated and instant plays and surfaces `OnChannelingStateChanged`.
+3. Runtime `Card` metadata so effect logic can branch on channeling state.
+4. Documentation: `CHANNELING_MECHANIC_GUIDE.md` describing designer & engineer workflow.
+
+---
+
+## Session 13: Speed Meter Foundations
+
+### Date: 2025-11-07
+### Goal: Capture attack/cast speed progress into visible meters without overwhelming the HUD.
+
+### Key Decisions Made
+
+#### 1. **One Ring, Dual Purpose**
+**Decision**: Render Aggression (attack) and Focus (cast) as paired fills around the existing player display instead of adding new bars.
+**Why**:
+- Keeps the HUD lightweight
+- Reuses the floating combat text system for “Meter ready” popups
+- Easy to expand with charge-based effects later
+
+#### 2. **Event-first Implementation**
+**Decision**: `CombatDeckManager` raises a consolidated `SpeedMeterState`; UI simply listens and updates. No gameplay discounts yet.
+**Why**:
+- Lets us tune pacing before hooking real discounts/combos
+- Keeps future consumer systems (mana discounts, free combos) decoupled
+
+### Systems Implemented
+
+1. Character helpers (`GetAttackSpeedMultiplier`, etc.) for lightweight speed multipliers.
+2. Meter tracking in `CombatDeckManager` with overflow → charges, reset hooks, and UI events.
+3. `SpeedMeterRing` UI component plus subscriptions from `PlayerCombatDisplay`.
+4. Documentation: `COMBAT_SPEED_METERS.md` capturing design intent and TODOs.
+
+---
+
+## Session 14: Ranger Starter Deck & Stack Systems
+
+### Date: 2025-11-08
+### Goal: Bring the Ranger starter deck online with bespoke combo logic and introduce long-term stack mechanics.
+
+### Key Decisions Made
+
+1. **Centralise Class-Specific Logic**
+   - Created `CardAbilityRouter` so card-specific rules live in one module rather than scattered across effect processors.
+2. **Reusable Stack Infrastructure**
+   - Implemented `StackSystem` to own Agitate/Tolerance/Potential with helper multipliers instead of hard-coding bonuses per mechanic.
+3. **Hybrid Temporary Stat Handling**
+   - Added `TemporaryStatSystem` for real-time duration buffs (seconds) while reserving `StatusEffectManager` for turn-based icons and adjustments.
+
+### Systems Implemented
+
+- `StackSystem` singleton with Agitate/Tolerance/Potential tracking, speed/damage/mitigation helpers, and lazy initialisation.
+- `TemporaryStatSystem` singleton supporting second- or turn-based stat shifts plus player UI refreshes.
+- New status effect types (`Bleed`, `TempMaxMana`, `TempEvasion`) with runtime application hooks inside `StatusEffectManager`.
+- `CardAbilityRouter` coverage for Focus, Dodge, Pack Hunter, Poison Arrow, Multi-Shot, and Quickstep including combo outcomes.
+- Combo metadata & asset updates for Ranger starter cards (AOE flags, group keys, combo text).
+- Documentation update (this entry) describing architecture choices for card ability routing and stack systems.
+
+---
+
 ## Session 1: Encounter System & UI Navigation
 
 ### Date: [Current Date]

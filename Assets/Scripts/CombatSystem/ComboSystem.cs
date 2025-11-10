@@ -28,6 +28,7 @@ public class ComboSystem : MonoBehaviour
 	// New: Track last played info for asset-driven combos
 	private CardType? lastPlayedCardType = null;
 	private string lastPlayedCardName = null;
+	private string lastPlayedGroupKey = null;
 	
 	private void Awake()
 	{
@@ -45,10 +46,11 @@ public class ComboSystem : MonoBehaviour
 	/// <summary>
 	/// Register last played card type/name (call after successfully playing a card)
 	/// </summary>
-	public void RegisterLastPlayed(CardType cardType, string cardName)
+	public void RegisterLastPlayed(CardType cardType, string cardName, string groupKey = null)
 	{
 		lastPlayedCardType = cardType;
 		lastPlayedCardName = cardName;
+		lastPlayedGroupKey = groupKey;
 	}
 	
 	public CardType? GetLastPlayedType()
@@ -59,6 +61,11 @@ public class ComboSystem : MonoBehaviour
 	public string GetLastPlayedName()
 	{
 		return lastPlayedCardName;
+	}
+
+	public string GetLastPlayedGroupKey()
+	{
+		return lastPlayedGroupKey;
 	}
 	
 	/// <summary>
@@ -83,9 +90,11 @@ public class ComboSystem : MonoBehaviour
 			else if (!string.IsNullOrEmpty(cardData.comboWith))
 			{
 				// Fallback: free text matching
-				if (cardData.comboWith.Contains(lastPlayedCardType.Value.ToString()))
+				if (cardData.comboWith.IndexOf(lastPlayedCardType.Value.ToString(), System.StringComparison.OrdinalIgnoreCase) >= 0)
 					triggers = true;
-				if (!triggers && !string.IsNullOrEmpty(lastPlayedCardName) && cardData.comboWith.Contains(lastPlayedCardName))
+				if (!triggers && !string.IsNullOrEmpty(lastPlayedCardName) && cardData.comboWith.IndexOf(lastPlayedCardName, System.StringComparison.OrdinalIgnoreCase) >= 0)
+					triggers = true;
+				if (!triggers && !string.IsNullOrEmpty(lastPlayedGroupKey) && cardData.comboWith.IndexOf(lastPlayedGroupKey, System.StringComparison.OrdinalIgnoreCase) >= 0)
 					triggers = true;
 			}
 		}
@@ -387,6 +396,9 @@ public class ComboSystem : MonoBehaviour
 	{
 		comboHistory.Clear();
 		highlightedCards.Clear();
+		lastPlayedCardType = null;
+		lastPlayedCardName = null;
+		lastPlayedGroupKey = null;
 		Debug.Log("Combo history cleared");
 	}
 	

@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acb10ebe3b1fccb4db0460f273da7305, type: 3}
+  m_Name: Flanged Club
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponItem
+  itemName: Flanged Club
+  description: A mace weapon.
+  itemIcon: {fileID: 0}
+  rarity: 0
+  requiredLevel: 47
+  itemType: 0
+  equipmentType: 2
+  isStackable: 0
+  maxStackSize: 1
+  quality: 0
+  implicitModifiers:
+  - name: Implicit
+    description: 10% reduced Enemy Stagger Threshold
+    affixType: 0
+    tier: 0
+    modifiers:
+    - statName: reducedEnemyStaggerThreshold
+      minValue: 10
+      maxValue: 10
+      modifierType: 3
+      damageType: 0
+      scope: 1
+      description: 
+      originalMinValue: 10
+      originalMaxValue: 10
+      isDualRange: 0
+      firstRangeMin: 0
+      firstRangeMax: 0
+      secondRangeMin: 0
+      secondRangeMax: 0
+      rolledFirstValue: 0
+      rolledSecondValue: 0
+    requiredTags: []
+    compatibleTags: []
+    weight: 1000
+    handedness: 0
+    minLevel: 1
+    minValue: 0
+    maxValue: 0
+    hasRange: 0
+    rolledValue: 0
+    isRolled: 0
+  prefixes: []
+  suffixes: []
+  isUnique: 0
+  itemTags:
+  - weapon
+  - mace
+  - onehanded
+  - melee
+  - attack
+  - strength
+  weaponType: 5
+  handedness: 0
+  attackSpeed: 1.3
+  criticalStrikeChance: 5
+  criticalStrikeMultiplier: 150
+  minDamage: 38
+  maxDamage: 63
+  primaryDamageType: 1
+  secondaryDamageType: 0
+  secondaryDamageMin: 0
+  secondaryDamageMax: 0
+  requiredStrength: 152
+  requiredDexterity: 0
+  requiredIntelligence: 0

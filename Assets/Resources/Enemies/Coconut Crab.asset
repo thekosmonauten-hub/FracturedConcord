@@ -25,18 +25,22 @@ MonoBehaviour:
   criticalChance: 0.05
   criticalMultiplier: 1.5
   dodgeChance: 0
+  accuracyRating: 100
+  evasionRating: 0
   physicalResistance: 0
   fireResistance: 0
   coldResistance: 0
   lightningResistance: 0
   chaosResistance: 0
-  displayScale: 1
+  displayScale: 0.7
   basePanelHeight: 280
   aiPattern: 0
   attackPreference: 0.8
   specialAbilities: []
   abilities: []
   summonPool: []
+  spiritTags: 0400000006000000
+  guaranteedSpiritDrop: 0
   minGoldDrop: 5
   maxGoldDrop: 15
   experienceReward: 5

@@ -24,6 +24,9 @@ public class CharacterDeckData
     public string lastUsedDeck = ""; // For quick-switching
     public int deckSlotsUnlocked = 5; // How many deck presets can be saved
     
+    [Header("Card Experience System")]
+    public List<CardExperienceData> cardExperienceData = new List<CardExperienceData>(); // Experience per groupKey
+    
     /// <summary>
     /// Check if character owns a specific card.
     /// </summary>

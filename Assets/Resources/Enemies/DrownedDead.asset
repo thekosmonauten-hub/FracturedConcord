@@ -25,12 +25,14 @@ MonoBehaviour:
   criticalChance: 0.05
   criticalMultiplier: 1.5
   dodgeChance: 0
+  accuracyRating: 100
+  evasionRating: 0
   physicalResistance: 0
   fireResistance: 0
   coldResistance: 0
   lightningResistance: 0
   chaosResistance: 0
-  displayScale: 1
+  displayScale: 1.2
   basePanelHeight: 320
   aiPattern: 0
   attackPreference: 0.8
@@ -38,10 +40,12 @@ MonoBehaviour:
   abilities:
   - {fileID: 11400000, guid: bb3d0bbc3d46bbf4580cc106cbdba50b, type: 2}
   summonPool: []
+  spiritTags: 0400000003000000
+  guaranteedSpiritDrop: 0
   minGoldDrop: 10
   maxGoldDrop: 21
   experienceReward: 5
   cardDropChance: 0.1
   excludeFromRandom: 0
   healthBarColor: {r: 1, g: 0, b: 0, a: 1}
-  animatorController: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: e69ee967cbbba27428157d56c3f87460, type: 2}

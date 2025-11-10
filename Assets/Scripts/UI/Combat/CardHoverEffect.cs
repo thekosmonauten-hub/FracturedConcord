@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 /// <summary>
@@ -9,9 +10,10 @@ using UnityEngine.EventSystems;
 public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Ordering")]
-    [SerializeField] private bool raiseBySibling = false; // disable to avoid layout cycling
-    [SerializeField] private bool raiseByCanvas = true;   // prefer canvas sorting for hover
+    [SerializeField] private bool raiseBySibling = true; // Use sibling index for hover (safest method for cards in layouts)
+    [SerializeField] private bool raiseByCanvas = false;   // Disabled - Canvas sorting causes raycast blocking issues
     [SerializeField] private bool stayWithinMask = false;  // when false, allows canvas override for hover (set true only if mask clipping required)
+    [SerializeField] private bool forceRaiseOnHover = false; // Disabled to prevent Canvas-related issues
 	[HideInInspector]
 	public CombatAnimationManager animationManager;
 	
@@ -182,21 +184,76 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
         }
 
         // Prefer raising via canvas sorting which doesn't alter layout order
-        if (raiseByCanvas && !stayWithinMask)
+        bool shouldRaise = raiseByCanvas && (!stayWithinMask || forceRaiseOnHover);
+        
+        if (shouldRaise)
         {
             if (cardCanvas == null)
             {
                 // Add a Canvas once to control sorting without affecting layout
                 cardCanvas = gameObject.AddComponent<Canvas>();
+                hadCanvas = false; // Track that we created this canvas
+                originalOverrideSorting = false;
+                originalSortingOrder = 0;
                 Debug.Log($"[CardHover] {gameObject.name}: Added Canvas component for sorting");
+                
+                // CRITICAL: Ensure canvas doesn't block raycasts or interfere with pointer events
+                var graphicRaycaster = gameObject.GetComponent<UnityEngine.UI.GraphicRaycaster>();
+                if (graphicRaycaster != null)
+                {
+                    // Remove GraphicRaycaster if it was auto-added (it blocks pointer events)
+                    Destroy(graphicRaycaster);
+                    Debug.Log($"[CardHover] {gameObject.name}: Removed GraphicRaycaster to prevent pointer blocking");
+                }
+                
+                // ADDITIONAL FIX: Ensure the card's own graphics remain raycast targets
+                // The card that's hovering MUST still receive raycasts
+                var cardGraphics = gameObject.GetComponentsInChildren<Graphic>();
+                foreach (var graphic in cardGraphics)
+                {
+                    // Keep raycastTarget TRUE so the card itself remains interactive
+                    // Only child/preview elements should have it disabled
+                    if (graphic.gameObject == gameObject || graphic.transform.parent == transform)
+                    {
+                        graphic.raycastTarget = true;
+                    }
+                }
+                
+                Debug.Log($"[CardHover] {gameObject.name}: Ensured card graphics remain raycast targets ({cardGraphics.Length} graphics checked)");
             }
+            else if (!hadCanvas && cardCanvas != null)
+            {
+                // Canvas was added previously but we didn't track it - update tracking
+                hadCanvas = false;
+                originalOverrideSorting = false;
+                originalSortingOrder = 0;
+                
+                // Also ensure raycasts work for this case
+                var cardGraphics = gameObject.GetComponentsInChildren<Graphic>();
+                foreach (var graphic in cardGraphics)
+                {
+                    if (graphic.gameObject == gameObject || graphic.transform.parent == transform)
+                    {
+                        graphic.raycastTarget = true;
+                    }
+                }
+            }
+            
             cardCanvas.overrideSorting = true;
             cardCanvas.sortingOrder = HoverSortingOrder;
-            Debug.Log($"[CardHover] {gameObject.name}: Canvas sorting set to {HoverSortingOrder} (bring to front)");
+            
+            if (stayWithinMask && forceRaiseOnHover)
+            {
+                Debug.Log($"[CardHover] {gameObject.name}: Canvas sorting forced to {HoverSortingOrder} (forceRaiseOnHover=true)");
+            }
+            else
+            {
+                Debug.Log($"[CardHover] {gameObject.name}: Canvas sorting set to {HoverSortingOrder} (bring to front)");
+            }
         }
-        else if (raiseByCanvas && stayWithinMask)
+        else if (raiseByCanvas && stayWithinMask && !forceRaiseOnHover)
         {
-            Debug.LogWarning($"[CardHover] {gameObject.name}: Canvas sorting disabled (stayWithinMask=true). Card won't come to front on hover.");
+            Debug.LogWarning($"[CardHover] {gameObject.name}: Canvas sorting disabled (stayWithinMask=true, forceRaiseOnHover=false). Card won't come to front on hover.");
         }
 	}
 
@@ -358,6 +415,9 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 			case AilmentId.Burn:
 				list.Add("Burn: Deals fire damage over time");
 				break;
+		case AilmentId.Chill:
+			list.Add("Chill: Slows the target and reduces action speed");
+			break;
 			case AilmentId.Freeze:
 				list.Add("Freeze: Skips next action");
 				break;
@@ -391,6 +451,7 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 			int maxIndex = transform.parent.childCount - 1;
 			int target = Mathf.Clamp(originalSiblingIndex, 0, maxIndex);
 			transform.SetSiblingIndex(target);
+			Debug.Log($"[CardHover] {gameObject.name}: Restored sibling index to {target}");
 		}
 		originalSiblingIndex = -1;
 
@@ -399,14 +460,17 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		{
             if (hadCanvas)
             {
+                // Canvas existed before we modified it - restore original settings
                 cardCanvas.overrideSorting = originalOverrideSorting;
                 cardCanvas.sortingOrder = originalSortingOrder;
+                Debug.Log($"[CardHover] {gameObject.name}: Restored canvas to original (override={originalOverrideSorting}, order={originalSortingOrder})");
             }
             else
             {
-                // If we created a canvas, only use it when not constrained by mask
+                // We created this canvas - disable override sorting
                 cardCanvas.overrideSorting = false;
                 cardCanvas.sortingOrder = 0;
+                Debug.Log($"[CardHover] {gameObject.name}: Disabled canvas override sorting (created canvas)");
             }
 		}
 	}

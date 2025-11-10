@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 2cc40830c10eba046aac0d3072b3daaf, type: 3}
   m_Name: CurrencyDatabase
-  m_EditorClassIdentifier: Assembly-CSharp:Dexiled.Data.Items:CurrencyDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::Dexiled.Data.Items.CurrencyDatabase
   currencies:
   - currencyType: 0
     currencyName: Orb of Generation
@@ -19,7 +19,7 @@ MonoBehaviour:
     rarity: 0
     currencySprite: {fileID: 6879035185737174137, guid: 6369d77d7f9b06347a15ce69d54f594e, type: 3}
     quantity: 0
-    canTargetCards: 1
+    canTargetCards: 0
     canTargetEquipment: 0
     validEquipmentRarities: 
     maxAffixesForTarget: 0
@@ -30,11 +30,11 @@ MonoBehaviour:
     currencyName: Orb of Infusion
     description: Reforges Normal equipment, making it Magic and adds a random affix
     rarity: 0
-    currencySprite: {fileID: 3438012760674874984, guid: 6369d77d7f9b06347a15ce69d54f594e, type: 3}
+    currencySprite: {fileID: -1176463662525446447, guid: 6369d77d7f9b06347a15ce69d54f594e, type: 3}
     quantity: 0
     canTargetCards: 0
-    canTargetEquipment: 1
-    validEquipmentRarities: 00000000
+    canTargetEquipment: 0
+    validEquipmentRarities: 
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
@@ -43,255 +43,257 @@ MonoBehaviour:
     currencyName: Orb of Perfection
     description: Reforges Magic equipment making it Rare and adds a random affix
     rarity: 1
-    currencySprite: {fileID: -1688862635081633124, guid: 6369d77d7f9b06347a15ce69d54f594e, type: 3}
+    currencySprite: {fileID: 7055937660387581569, guid: f7a22e37ba124db49bfa9b895052b591, type: 3}
     quantity: 0
     canTargetCards: 0
-    canTargetEquipment: 1
-    validEquipmentRarities: 01000000
+    canTargetEquipment: 0
+    validEquipmentRarities: 
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
     slotIndex: 2
   - currencyType: 3
     currencyName: Orb of Perpetuity
-    description: Adds an affix to a Rare equipment
-    rarity: 2
-    currencySprite: {fileID: 7074882959536873569, guid: f7a22e37ba124db49bfa9b895052b591, type: 3}
+    description: Adds a random affix to Rare equipment
+    rarity: 1
+    currencySprite: {fileID: 698161679061589658, guid: d99137782d99ea54abb965d0faec4696, type: 3}
     quantity: 0
     canTargetCards: 0
-    canTargetEquipment: 1
-    validEquipmentRarities: 02000000
+    canTargetEquipment: 0
+    validEquipmentRarities: 
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
     slotIndex: 3
   - currencyType: 4
     currencyName: Orb of Redundancy
-    description: Removes an affix from selected Magic or Rare equipment
-    rarity: 2
-    currencySprite: {fileID: 7761651563577624110, guid: f7a22e37ba124db49bfa9b895052b591, type: 3}
+    description: Rerolls values of all affixes on an item
+    rarity: 0
+    currencySprite: {fileID: 2199263390821148738, guid: f7a22e37ba124db49bfa9b895052b591, type: 3}
     quantity: 0
     canTargetCards: 0
-    canTargetEquipment: 1
-    validEquipmentRarities: 0100000002000000
+    canTargetEquipment: 0
+    validEquipmentRarities: 
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
     slotIndex: 4
   - currencyType: 5
     currencyName: Orb of the Void
-    description: Corrupts the equipment or card unpredictably
-    rarity: 1
+    description: Corrupts an item, adding powerful but unpredictable modifiers
+    rarity: 2
     currencySprite: {fileID: -1404985628929053815, guid: 6369d77d7f9b06347a15ce69d54f594e, type: 3}
     quantity: 0
-    canTargetCards: 1
-    canTargetEquipment: 1
-    validEquipmentRarities: 00000000010000000200000003000000
+    canTargetCards: 0
+    canTargetEquipment: 0
+    validEquipmentRarities: 
     maxAffixesForTarget: 0
     isCorruption: 1
     preservesLockedAffixes: 0
     slotIndex: 5
   - currencyType: 6
     currencyName: Orb of Mutation
-    description: Rerolls all affixes on a Magic item
+    description: Transforms one affix into another random affix
     rarity: 1
-    currencySprite: {fileID: 5575383850227715494, guid: d99137782d99ea54abb965d0faec4696, type: 3}
+    currencySprite: {fileID: 0}
     quantity: 0
     canTargetCards: 0
-    canTargetEquipment: 1
-    validEquipmentRarities: 01000000
+    canTargetEquipment: 0
+    validEquipmentRarities: 
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
     slotIndex: 6
   - currencyType: 7
     currencyName: Orb of Proliferation
-    description: Adds an affix to a Magic item
+    description: Duplicates a random affix on an item
     rarity: 2
-    currencySprite: {fileID: 3542486597517012886, guid: f7a22e37ba124db49bfa9b895052b591, type: 3}
+    currencySprite: {fileID: -8414447316884037343, guid: f7a22e37ba124db49bfa9b895052b591, type: 3}
     quantity: 0
     canTargetCards: 0
-    canTargetEquipment: 1
-    validEquipmentRarities: 01000000
-    maxAffixesForTarget: 2
+    canTargetEquipment: 0
+    validEquipmentRarities: 
+    maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
     slotIndex: 7
   - currencyType: 8
     currencyName: Orb of Amnesia
-    description: Removes all current affixes and sets the item to Normal (does not
-      remove locked affixes)
-    rarity: 2
-    currencySprite: {fileID: 395552964025554009, guid: d99137782d99ea54abb965d0faec4696, type: 3}
+    description: Removes a random affix while preserving locked affixes
+    rarity: 1
+    currencySprite: {fileID: 7761651563577624110, guid: f7a22e37ba124db49bfa9b895052b591, type: 3}
     quantity: 0
     canTargetCards: 0
-    canTargetEquipment: 1
-    validEquipmentRarities: 010000000200000003000000
+    canTargetEquipment: 0
+    validEquipmentRarities: 
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 1
     slotIndex: 8
   - currencyType: 9
     currencyName: Fire Spirit
-    description: Guarantees Fire-themed affix
-    rarity: 1
-    currencySprite: {fileID: 6737506049035785143, guid: d99137782d99ea54abb965d0faec4696, type: 3}
+    description: Adds or rerolls fire damage affixes on equipment
+    rarity: 0
+    currencySprite: {fileID: -622337404, guid: 2304d6d536f2f154b825947741e6214a, type: 3}
     quantity: 0
     canTargetCards: 0
-    canTargetEquipment: 1
-    validEquipmentRarities: 0100000002000000
-    maxAffixesForTarget: 0
+    canTargetEquipment: 0
+    validEquipmentRarities: 000000000100000001000000
+    maxAffixesForTarget: 6
     isCorruption: 0
-    preservesLockedAffixes: 0
-    slotIndex: 0
+    preservesLockedAffixes: 1
+    slotIndex: 9
   - currencyType: 10
     currencyName: Cold Spirit
-    description: Guarantees Cold-themed affix
-    rarity: 1
-    currencySprite: {fileID: 2903497401764258011, guid: d99137782d99ea54abb965d0faec4696, type: 3}
+    description: Adds or rerolls cold damage affixes on equipment
+    rarity: 0
+    currencySprite: {fileID: -1274499953, guid: 2304d6d536f2f154b825947741e6214a, type: 3}
     quantity: 0
     canTargetCards: 0
     canTargetEquipment: 1
-    validEquipmentRarities: 0100000002000000
+    validEquipmentRarities: 000000000100000002000000
     maxAffixesForTarget: 0
     isCorruption: 0
-    preservesLockedAffixes: 0
-    slotIndex: 1
+    preservesLockedAffixes: 1
+    slotIndex: 10
   - currencyType: 11
     currencyName: Lightning Spirit
-    description: Guarantees Lightning-themed affix
-    rarity: 1
-    currencySprite: {fileID: -7643215483322688294, guid: d99137782d99ea54abb965d0faec4696, type: 3}
+    description: Adds or rerolls lightning damage affixes on equipment
+    rarity: 0
+    currencySprite: {fileID: -1903948320, guid: 2304d6d536f2f154b825947741e6214a, type: 3}
     quantity: 0
     canTargetCards: 0
     canTargetEquipment: 1
-    validEquipmentRarities: 0100000002000000
-    maxAffixesForTarget: 0
+    validEquipmentRarities: 000000000100000002000000
+    maxAffixesForTarget: 6
     isCorruption: 0
-    preservesLockedAffixes: 0
-    slotIndex: 2
+    preservesLockedAffixes: 1
+    slotIndex: 11
   - currencyType: 12
     currencyName: Chaos Spirit
-    description: Guarantees Chaos-themed affix
-    rarity: 2
-    currencySprite: {fileID: -7972731863169427405, guid: f7a22e37ba124db49bfa9b895052b591, type: 3}
+    description: Adds or rerolls chaos damage affixes on equipment
+    rarity: 1
+    currencySprite: {fileID: -1936854900, guid: 2304d6d536f2f154b825947741e6214a, type: 3}
     quantity: 0
     canTargetCards: 0
     canTargetEquipment: 1
-    validEquipmentRarities: 0100000002000000
-    maxAffixesForTarget: 0
+    validEquipmentRarities: 000000000100000002000000
+    maxAffixesForTarget: 6
     isCorruption: 0
-    preservesLockedAffixes: 0
-    slotIndex: 3
+    preservesLockedAffixes: 1
+    slotIndex: 12
   - currencyType: 13
     currencyName: Physical Spirit
-    description: Guarantees Physical Damage affix
-    rarity: 1
-    currencySprite: {fileID: -1642007593504869832, guid: d99137782d99ea54abb965d0faec4696, type: 3}
+    description: Adds or rerolls physical damage affixes on equipment
+    rarity: 0
+    currencySprite: {fileID: 1542036328, guid: 2304d6d536f2f154b825947741e6214a, type: 3}
     quantity: 0
     canTargetCards: 0
     canTargetEquipment: 1
-    validEquipmentRarities: 0100000002000000
-    maxAffixesForTarget: 0
+    validEquipmentRarities: 000000000100000002000000
+    maxAffixesForTarget: 6
     isCorruption: 0
-    preservesLockedAffixes: 0
-    slotIndex: 4
+    preservesLockedAffixes: 1
+    slotIndex: 13
   - currencyType: 14
     currencyName: Life Spirit
-    description: Guarantees Life affix
-    rarity: 1
-    currencySprite: {fileID: 7137080680636486513, guid: 6369d77d7f9b06347a15ce69d54f594e, type: 3}
+    description: Adds or rerolls life affixes on equipment
+    rarity: 0
+    currencySprite: {fileID: -784369497, guid: 2304d6d536f2f154b825947741e6214a, type: 3}
     quantity: 0
     canTargetCards: 0
     canTargetEquipment: 1
-    validEquipmentRarities: 0100000002000000
-    maxAffixesForTarget: 0
+    validEquipmentRarities: 000000000100000002000000
+    maxAffixesForTarget: 6
     isCorruption: 0
-    preservesLockedAffixes: 0
-    slotIndex: 5
+    preservesLockedAffixes: 1
+    slotIndex: 14
   - currencyType: 15
     currencyName: Defense Spirit
-    description: Guarantees Armor, Evasion or Energy Shield affix
-    rarity: 1
-    currencySprite: {fileID: -8414447316884037343, guid: f7a22e37ba124db49bfa9b895052b591, type: 3}
+    description: Adds or rerolls defense affixes on equipment
+    rarity: 0
+    currencySprite: {fileID: -538077988, guid: 2304d6d536f2f154b825947741e6214a, type: 3}
     quantity: 0
     canTargetCards: 0
-    canTargetEquipment: 1
-    validEquipmentRarities: 0100000002000000
+    canTargetEquipment: 0
+    validEquipmentRarities: 
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    slotIndex: 6
+    slotIndex: 15
   - currencyType: 16
     currencyName: Crit Spirit
-    description: Guarantees Critical Strike affix
-    rarity: 2
-    currencySprite: {fileID: 7889970418053028341, guid: d99137782d99ea54abb965d0faec4696, type: 3}
+    description: Adds or rerolls critical strike affixes on equipment
+    rarity: 1
+    currencySprite: {fileID: 395613299, guid: 2304d6d536f2f154b825947741e6214a, type: 3}
     quantity: 0
     canTargetCards: 0
     canTargetEquipment: 1
-    validEquipmentRarities: 0100000002000000
-    maxAffixesForTarget: 0
+    validEquipmentRarities: 000000000100000002000000
+    maxAffixesForTarget: 6
     isCorruption: 0
-    preservesLockedAffixes: 0
-    slotIndex: 7
+    preservesLockedAffixes: 1
+    slotIndex: 16
   - currencyType: 17
     currencyName: Divine Spirit
-    description: Guarantees a mix of various affixes
+    description: Rerolls the value of a random affix to maximum
     rarity: 2
-    currencySprite: {fileID: 7055937660387581569, guid: f7a22e37ba124db49bfa9b895052b591, type: 3}
+    currencySprite: {fileID: 2108439201, guid: 2304d6d536f2f154b825947741e6214a, type: 3}
     quantity: 0
     canTargetCards: 0
     canTargetEquipment: 1
-    validEquipmentRarities: 0100000002000000
-    maxAffixesForTarget: 0
+    validEquipmentRarities: 01000000
+    maxAffixesForTarget: 6
     isCorruption: 0
-    preservesLockedAffixes: 0
-    slotIndex: 8
+    preservesLockedAffixes: 1
+    slotIndex: 17
   - currencyType: 18
     currencyName: Transposition Seal
-    description: Transposes affixes between items
-    rarity: 2
-    currencySprite: {fileID: 0}
+    description: Swaps a random affix between two items. You get to decide between
+      Prefix or Suffix.
+    rarity: 1
+    currencySprite: {fileID: 4347076617198035896, guid: e157a8c0a2e867a48a548e0f955044c7, type: 3}
     quantity: 0
     canTargetCards: 0
     canTargetEquipment: 1
     validEquipmentRarities: 0100000002000000
-    maxAffixesForTarget: 0
+    maxAffixesForTarget: 6
     isCorruption: 0
-    preservesLockedAffixes: 0
-    slotIndex: 0
+    preservesLockedAffixes: 1
+    slotIndex: 18
   - currencyType: 19
     currencyName: Chaos Seal
-    description: Rerolls all affixes on Rare items
+    description: Randomly generates new affixes on targetted item.
+    rarity: 0
+    currencySprite: {fileID: -800721950116373833, guid: 16d044815e5b6334a9fcd27651c8875e, type: 3}
+    quantity: 0
+    canTargetCards: 0
+    canTargetEquipment: 1
+    validEquipmentRarities: 
+    maxAffixesForTarget: 0
+    isCorruption: 0
+    preservesLockedAffixes: 1
+    slotIndex: 19
+  - currencyType: 20
+    currencyName: Memory Seal
+    description: Randomly locks an affix on an item with 3 or more affixes. The locked
+      affix is preserved forever, even when crafting with other Orbs or Seals. When
+      applied, the locked affix has a 10% chance to upgrade its tier.
     rarity: 2
-    currencySprite: {fileID: 0}
+    currencySprite: {fileID: 63833236384688555, guid: b28d97a81652a444f9aa645c0370bec6, type: 3}
     quantity: 0
     canTargetCards: 0
     canTargetEquipment: 1
     validEquipmentRarities: 02000000
-    maxAffixesForTarget: 0
+    maxAffixesForTarget: 6
     isCorruption: 0
     preservesLockedAffixes: 0
-    slotIndex: 1
-  - currencyType: 20
-    currencyName: Memory Seal
-    description: Locks one random affix in place
-    rarity: 2
-    currencySprite: {fileID: 0}
-    quantity: 0
-    canTargetCards: 0
-    canTargetEquipment: 1
-    validEquipmentRarities: 0100000002000000
-    maxAffixesForTarget: 3
-    isCorruption: 0
-    preservesLockedAffixes: 0
-    slotIndex: 2
+    slotIndex: 20
   - currencyType: 21
     currencyName: Inscription Seal
-    description: Adds empty embossing slots to cards
+    description: Adds an Embossing Slot to a card
     rarity: 1
-    currencySprite: {fileID: 0}
+    currencySprite: {fileID: 8305027916700451413, guid: 0b09fe79a242be744aab3f99760de860, type: 3}
     quantity: 0
     canTargetCards: 1
     canTargetEquipment: 0
@@ -299,23 +301,10 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    slotIndex: 3
+    slotIndex: 21
   - currencyType: 22
     currencyName: Adaptation Seal
-    description: Allows the user to add an embossing effect to a card
-    rarity: 2
-    currencySprite: {fileID: 0}
-    quantity: 0
-    canTargetCards: 1
-    canTargetEquipment: 0
-    validEquipmentRarities: 
-    maxAffixesForTarget: 0
-    isCorruption: 0
-    preservesLockedAffixes: 0
-    slotIndex: 4
-  - currencyType: 23
-    currencyName: Correction Seal
-    description: Removes embossing effects from cards
+    description: Changes the type of an affix while keeping its tier
     rarity: 1
     currencySprite: {fileID: 0}
     quantity: 0
@@ -325,11 +314,11 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    slotIndex: 5
-  - currencyType: 24
-    currencyName: Etching Seal
-    description: Allows the user to try to etch another affix onto a card
-    rarity: 2
+    slotIndex: 22
+  - currencyType: 23
+    currencyName: Correction Seal
+    description: Removes the lowest tier affix from an item
+    rarity: 0
     currencySprite: {fileID: 0}
     quantity: 0
     canTargetCards: 1
@@ -338,43 +327,4 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    slotIndex: 6
-  - currencyType: 25
-    currencyName: Fragment 1
-    description: Placeholder fragment
-    rarity: 0
-    currencySprite: {fileID: 0}
-    quantity: 0
-    canTargetCards: 0
-    canTargetEquipment: 0
-    validEquipmentRarities: 
-    maxAffixesForTarget: 0
-    isCorruption: 0
-    preservesLockedAffixes: 0
-    slotIndex: 0
-  - currencyType: 26
-    currencyName: Fragment 2
-    description: Placeholder fragment
-    rarity: 0
-    currencySprite: {fileID: 0}
-    quantity: 0
-    canTargetCards: 0
-    canTargetEquipment: 0
-    validEquipmentRarities: 
-    maxAffixesForTarget: 0
-    isCorruption: 0
-    preservesLockedAffixes: 0
-    slotIndex: 1
-  - currencyType: 27
-    currencyName: Fragment 3
-    description: Placeholder fragment
-    rarity: 0
-    currencySprite: {fileID: 0}
-    quantity: 0
-    canTargetCards: 0
-    canTargetEquipment: 0
-    validEquipmentRarities: 
-    maxAffixesForTarget: 0
-    isCorruption: 0
-    preservesLockedAffixes: 0
-    slotIndex: 2
+    slotIndex: 23

@@ -9,12 +9,16 @@ public class CombatDisplayManager : MonoBehaviour
     public Transform enemyDisplayRoot;
     [Header("Combat Participants")]
     public PlayerCombatDisplay playerDisplay;
-    public List<EnemyCombatDisplay> enemyDisplays = new List<EnemyCombatDisplay>();
+    
+    [Header("Enemy Spawning")]
+    [Tooltip("Dynamic enemy spawner that manages enemy display instantiation")]
+    public EnemySpawner enemySpawner;
     
     [Header("Combat Settings")]
     public int maxEnemies = 3;
     public bool autoStartCombat = true;
     public float turnDelay = 1f;
+    public float waveTransitionDelay = 2f; // Delay before spawning next wave
     
     [Header("Combat State")]
     public CombatState currentState = CombatState.Setup;
@@ -24,6 +28,11 @@ public class CombatDisplayManager : MonoBehaviour
 	[Header("Waves")]
 	public int totalWaves = 1; // 1 means old behavior
 	public int currentWave = 0; // 1-based when active
+	private int enemiesPerWave = 3; // Set from encounter or default
+	private bool randomizeEnemyCount = true; // Whether to randomize enemy spawn count
+	private bool isWaveTransitioning = false; // Prevent multiple wave transitions
+	private Coroutine collectEnemiesCoroutine; // Track the collect coroutine
+	private bool isAoEAttackInProgress = false; // Prevent cascading wave completion checks during AoE
     
     [Header("Test Configuration")]
     public bool createTestEnemies = true;
@@ -32,8 +41,15 @@ public class CombatDisplayManager : MonoBehaviour
     [Header("Enemy Data")]
     [SerializeField] private EnemyDatabase enemyDatabase;
     
+    [Header("Loot System")]
+    [Tooltip("Loot table for this combat encounter")]
+    public LootTable encounterLootTable;
+    private LootDropResult pendingLoot;
+    private List<EnemyData> defeatedEnemiesData = new List<EnemyData>();
+    
     [Header("Combat Effects")]
     private CombatEffectManager combatEffectManager;
+    private FloatingDamageManager floatingDamageManager;
     
 	// Combat events
     public System.Action<CombatState> OnCombatStateChanged;
@@ -66,6 +82,12 @@ public class CombatDisplayManager : MonoBehaviour
         // Get references
         characterManager = CharacterManager.Instance;
         combatUI = FindFirstObjectByType<AnimatedCombatUI>();
+        floatingDamageManager = FindFirstObjectByType<FloatingDamageManager>();
+        
+        if (floatingDamageManager == null)
+        {
+            Debug.LogWarning("[CombatDisplayManager] FloatingDamageManager not found. Damage numbers will not display.");
+        }
         
         // Auto-find player display if not assigned
         if (playerDisplay == null)
@@ -73,32 +95,23 @@ public class CombatDisplayManager : MonoBehaviour
             playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
         }
         
-		// Auto-find enemy displays if not assigned
-		if (enemyDisplays.Count == 0)
+		// Validate enemy spawner is assigned
+		if (enemySpawner == null)
 		{
-			if (enemyDisplayRoot != null)
+			enemySpawner = FindFirstObjectByType<EnemySpawner>();
+			if (enemySpawner == null)
 			{
-				var children = enemyDisplayRoot.GetComponentsInChildren<EnemyCombatDisplay>(true);
-				if (children != null && children.Length > 0) enemyDisplays.AddRange(children);
+				Debug.LogError("[CombatDisplayManager] EnemySpawner not found! Please assign EnemySpawner component.");
 			}
-			if (enemyDisplays.Count == 0)
+			else
 			{
-				var foundActive = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
-				if (foundActive != null && foundActive.Length > 0) enemyDisplays.AddRange(foundActive);
-			}
-			if (enemyDisplays.Count == 0)
-			{
-				var foundAll = Resources.FindObjectsOfTypeAll<EnemyCombatDisplay>();
-				foreach (var disp in foundAll)
-				{
-					if (disp != null && disp.gameObject.scene.IsValid()) enemyDisplays.Add(disp);
-				}
+				Debug.Log("[CombatDisplayManager] Auto-found EnemySpawner");
 			}
 		}
-
-		if (enemyDisplays.Count == 0)
+		
+		if (enemySpawner != null)
 		{
-			Debug.LogError("CombatDisplayManager: No EnemyCombatDisplay panels found in scene. Assign enemyDisplayRoot or add panels.");
+			Debug.Log($"[CombatDisplayManager] Enemy spawner ready with {enemySpawner.GetMaxSpawnPoints()} spawn points");
 		}
 		
 		// Ensure EnemyDatabase singleton exists so spawning always works
@@ -121,12 +134,24 @@ public class CombatDisplayManager : MonoBehaviour
         if (enc != null)
         {
             totalWaves = Mathf.Max(1, enc.totalWaves);
-            Debug.Log($"[EncounterDebug] CombatDisplayManager: Starting encounter {enc.encounterID} '{enc.encounterName}' with {totalWaves} waves.");
+            enemiesPerWave = Mathf.Max(1, enc.maxEnemiesPerWave);
+            randomizeEnemyCount = enc.randomizeEnemyCount;
+            encounterLootTable = enc.lootTable; // Set loot table from encounter
+            Debug.Log($"[EncounterDebug] CombatDisplayManager: Starting encounter {enc.encounterID} '{enc.encounterName}' with {totalWaves} waves and {enemiesPerWave} enemies per wave (randomize: {randomizeEnemyCount}).");
+            
+            // Verify loot table configuration for this encounter's area level
+            if (AreaLootManager.Instance != null)
+            {
+                AreaLootManager.Instance.VerifyLootTableForArea(enc.areaLevel, $"Encounter '{enc.encounterName}' (ID: {enc.encounterID})");
+            }
+            
             StartFirstWave();
         }
         else if (createTestEnemies)
         {
             Debug.LogWarning("[EncounterDebug] CombatDisplayManager: No current encounter found on load. Spawning test enemies.");
+            enemiesPerWave = testEnemyCount;
+            randomizeEnemyCount = true;
             StartFirstWave();
         }
         
@@ -145,28 +170,113 @@ public class CombatDisplayManager : MonoBehaviour
 	private void StartFirstWave()
 	{
 		currentWave = 1;
+		isWaveTransitioning = false; // Reset transition flag
 		OnWaveChanged?.Invoke(currentWave, totalWaves);
 		// Ensure clean state
-		DisableAllEnemyDisplays();
+		if (enemySpawner != null)
+		{
+			enemySpawner.DespawnAllEnemies();
+		}
 		activeEnemies.Clear();
-		SpawnWaveInternal(testEnemyCount);
+		defeatedEnemiesData.Clear(); // Clear defeated enemies for new combat
+		// Randomize enemy count between 1 and max enemies per wave, or use exact count
+		int spawnCount = randomizeEnemyCount ? Random.Range(1, enemiesPerWave + 1) : enemiesPerWave;
+		Debug.Log($"[EncounterDebug] Wave {currentWave}: Spawning {spawnCount} enemies (max: {enemiesPerWave}, randomized: {randomizeEnemyCount})");
+		SpawnWaveInternal(spawnCount);
 	}
 
-	private void StartNextWave()
+	private IEnumerator DelayedWaveTransition()
+	{
+		isWaveTransitioning = true; // Mark that transition is starting
+		Debug.Log($"[Wave Transition] All enemies defeated! Waiting {waveTransitionDelay} seconds before next wave...");
+		
+		// Wait for animations and cleanup to complete
+		yield return new WaitForSeconds(waveTransitionDelay);
+		
+		// Start the next wave (as coroutine)
+		StartCoroutine(StartNextWaveCoroutine());
+	}
+
+	private IEnumerator StartNextWaveCoroutine()
 	{
 		currentWave = Mathf.Clamp(currentWave + 1, 1, totalWaves);
 		OnWaveChanged?.Invoke(currentWave, totalWaves);
-		DisableAllEnemyDisplays();
+		
+		Debug.Log($"[Wave Transition] ========== Starting Wave {currentWave}/{totalWaves} ==========");
+		
+		// Reset transition flag after wave starts
+		isWaveTransitioning = false;
+		
+		// Clear all enemy displays and reset indices
+		if (enemySpawner != null)
+		{
+			enemySpawner.DespawnAllEnemies();
+		}
 		activeEnemies.Clear();
-		SpawnWaveInternal(testEnemyCount);
+		
+		// Wait for cleanup to fully process
+		yield return new WaitForSeconds(0.5f);
+		Debug.Log($"[Wave Transition] Cleanup complete, spawning enemies...");
+		
+		// Draw cards for new wave (based on character stat)
+		if (characterManager != null && characterManager.HasCharacter())
+		{
+			Character character = characterManager.GetCurrentCharacter();
+			int cardsToDrawForWave = character.GetCardsDrawnPerWave();
+			
+			if (cardsToDrawForWave > 0)
+			{
+				Debug.Log($"<color=yellow>[Wave Transition] Drawing {cardsToDrawForWave} cards for new wave...</color>");
+				
+				CombatDeckManager deckManager = CombatDeckManager.Instance;
+				if (deckManager != null)
+				{
+					deckManager.DrawCards(cardsToDrawForWave);
+				}
+				else
+				{
+					Debug.LogWarning("[Wave Transition] CombatDeckManager not found! Cannot draw cards for wave.");
+				}
+			}
+		}
+		
+		// Wait a moment for card draw animation
+		yield return new WaitForSeconds(0.3f);
+		
+		// Randomize enemy count between 1 and max enemies per wave, or use exact count
+		int spawnCount = randomizeEnemyCount ? Random.Range(1, enemiesPerWave + 1) : enemiesPerWave;
+		Debug.Log($"[EncounterDebug] Wave {currentWave}: Spawning {spawnCount} enemies (max: {enemiesPerWave}, randomized: {randomizeEnemyCount})");
+		
+		// Spawn new enemies (indices reset to 0-N)
+		SpawnWaveInternal(spawnCount);
+		
+		// Wait for spawn to complete and UI to update
+		yield return new WaitForSeconds(0.3f);
+		Debug.Log($"[Wave Transition] Enemy spawn complete, starting player turn...");
+		
 		// Begin next player turn automatically
 		StartPlayerTurn();
 	}
 
 	private void SpawnWaveInternal(int desiredCount)
 	{
-		// First, disable all enemy displays
-		DisableAllEnemyDisplays();
+		// Validate spawner is available
+		if (enemySpawner == null)
+		{
+			Debug.LogError("[SpawnWave] EnemySpawner is null! Cannot spawn enemies.");
+			return;
+		}
+		
+		// Cancel any running collect coroutines from previous waves
+		if (collectEnemiesCoroutine != null)
+		{
+			StopCoroutine(collectEnemiesCoroutine);
+			collectEnemiesCoroutine = null;
+		}
+		
+		// Despawn all enemies from previous wave and ensure clean state
+		enemySpawner.DespawnAllEnemies();
+		activeEnemies.Clear();
 		
 		// Try to use Enemy Database if available
 		if (enemyDatabase == null)
@@ -180,37 +290,39 @@ public class CombatDisplayManager : MonoBehaviour
 			Debug.Log($"CombatDisplayManager: EnemyDatabase loaded {enemyDatabase.allEnemies.Count} enemies.");
 		}
 		
-		int spawnCount = Mathf.Clamp(desiredCount, 1, Mathf.Min(maxEnemies, enemyDisplays.Count));
-		if (spawnCount <= 0)
-		{
-			Debug.LogError("CombatDisplayManager: spawnCount resolved to 0 because no enemy displays are available.");
-			return;
-		}
+		// Get max spawn points from spawner
+		int maxSpawns = enemySpawner.GetMaxSpawnPoints();
+		int spawnCount = Mathf.Clamp(desiredCount, 1, Mathf.Min(maxEnemies, maxSpawns));
+		
+		Debug.Log($"[SpawnWave] Spawning {spawnCount} enemies (requested: {desiredCount}, max spawns: {maxSpawns})");
+		
 		if (enemyDatabase != null && enemyDatabase.allEnemies.Count > 0)
 		{
 		List<EnemyData> encounterData;
 		// If this is the final wave and the encounter has a unique boss, force it here
 		var currentEncounter = EncounterManager.Instance != null ? EncounterManager.Instance.GetCurrentEncounter() : null;
 		bool isFinalWave = currentWave >= totalWaves;
+			
 		if (isFinalWave && currentEncounter != null && currentEncounter.uniqueEnemy != null)
 		{
 			encounterData = new List<EnemyData> { currentEncounter.uniqueEnemy };
 			// If boss has a summon pool, allow additional minions to co-spawn on final wave
 			if (currentEncounter.uniqueEnemy.summonPool != null && currentEncounter.uniqueEnemy.summonPool.Count > 0)
 			{
-				int remainingSlots = Mathf.Clamp(spawnCount - 1, 0, enemyDisplays.Count - 1);
+					int remainingSlots = Mathf.Clamp(spawnCount - 1, 0, maxSpawns - 1);
 				for (int s = 0; s < remainingSlots; s++)
 				{
 					var pick = currentEncounter.uniqueEnemy.summonPool[Random.Range(0, currentEncounter.uniqueEnemy.summonPool.Count)];
 					encounterData.Add(pick);
 				}
 			}
-			spawnCount = Mathf.Min(encounterData.Count, enemyDisplays.Count);
+				spawnCount = Mathf.Min(encounterData.Count, maxSpawns);
 		}
 		else
 		{
 			encounterData = enemyDatabase.GetRandomEncounter(spawnCount, EnemyTier.Boss);
 		}
+			
 			if (encounterData == null || encounterData.Count == 0)
 			{
 				encounterData = new List<EnemyData>();
@@ -221,45 +333,41 @@ public class CombatDisplayManager : MonoBehaviour
 				}
 				Debug.LogWarning("[EncounterDebug] EnemyDatabase returned no encounter by tier. Falling back to any random enemies.");
 			}
-			for (int i = 0; i < encounterData.Count && i < enemyDisplays.Count; i++)
-			{
-				EnemyRarity rolled = enemyDatabase.RollRarity(false);
-				Enemy enemy = encounterData[i].CreateEnemyWithRarity(rolled);
-				enemyDisplays[i].SetEnemy(enemy, encounterData[i]);
-				switch (rolled)
-				{
-					case EnemyRarity.Magic: enemy.enemyName = $"{enemy.enemyName} (Magic)"; break;
-					case EnemyRarity.Rare: enemy.enemyName = $"{enemy.enemyName} (Rare)"; break;
-					case EnemyRarity.Unique: enemy.enemyName = $"{enemy.enemyName} (Unique)"; break;
-				}
-				activeEnemies.Add(enemy);
-				EnableEnemyDisplay(i);
-			}
-			Debug.Log($"[EncounterDebug] <color=green>✓ Wave {currentWave}/{totalWaves}: Spawned {activeEnemies.Count} enemies</color>");
-			for (int di = 0; di < enemyDisplays.Count; di++)
-			{
-				var e = enemyDisplays[di].GetCurrentEnemy();
-				Debug.Log($"[EncounterDebug]   Slot {di}: {(e != null ? e.enemyName : "[empty]")}");
-			}
+			
+			// Use the new animation system for spawning enemies
+			enemySpawner.SpawnEnemiesWithAnimation(encounterData);
+			
+			// Add enemies to active list after spawning (they'll be added individually in SpawnEnemy)
+			// We need to wait a frame for the coroutines to complete, then collect the active enemies
+			collectEnemiesCoroutine = StartCoroutine(CollectSpawnedEnemies(encounterData));
+			
+			Debug.Log($"[EncounterDebug] <color=green>✓ Wave {currentWave}/{totalWaves}: Started spawning {spawnCount} enemies (collecting via coroutine...)</color>");
 		}
 		else
 		{
 			// Fallback: Create hardcoded test enemies if no database
-			List<Enemy> testEnemies = new List<Enemy>
+			List<string> testEnemyNames = new List<string> { "Goblin Scout", "Orc Warrior", "Dark Mage" };
+			
+			for (int i = 0; i < Mathf.Min(spawnCount, testEnemyNames.Count); i++)
 			{
-				new Enemy("Goblin Scout", 30, 6),
-				new Enemy("Orc Warrior", 45, 8),
-				new Enemy("Dark Mage", 35, 10)
-			};
-			for (int i = 0; i < Mathf.Min(spawnCount, enemyDisplays.Count); i++)
-			{
-				if (i < testEnemies.Count)
+				// Create a basic EnemyData for testing
+				EnemyData testData = ScriptableObject.CreateInstance<EnemyData>();
+				testData.enemyName = testEnemyNames[i];
+				testData.minHealth = 30 + (i * 15);
+				testData.maxHealth = 30 + (i * 15);
+				testData.baseDamage = 6 + (i * 2);
+				
+				EnemyCombatDisplay display = enemySpawner.SpawnEnemy(testData, i);
+				if (display != null)
 				{
-					enemyDisplays[i].SetEnemy(testEnemies[i]);
-					activeEnemies.Add(testEnemies[i]);
-					EnableEnemyDisplay(i);
+					Enemy enemy = display.GetEnemy();
+					if (enemy != null)
+					{
+						activeEnemies.Add(enemy);
+					}
 				}
 			}
+			
 			Debug.Log($"[EncounterDebug] Wave {currentWave}/{totalWaves}: Spawned {activeEnemies.Count} fallback enemies");
 		}
 	}
@@ -289,6 +397,12 @@ public class CombatDisplayManager : MonoBehaviour
     {
         currentState = CombatState.PlayerTurn;
         isPlayerTurn = true;
+        
+        // Safety check: Clean up any stuck defeated enemies before player turn
+        CleanupDefeatedEnemies();
+        
+        // Additional safety: Force cleanup any enemies that should be dead
+        ForceCleanupDeadEnemies();
         
         // Advance status effects at the start of each turn
         AdvanceAllStatusEffects();
@@ -349,16 +463,33 @@ public class CombatDisplayManager : MonoBehaviour
     
     private IEnumerator ExecuteEnemyActions()
     {
+        // Create a copy of active enemies to avoid modification during iteration
+        List<Enemy> enemiesToAct = new List<Enemy>(activeEnemies);
+        
+        Debug.Log($"[Enemy Turn] {enemiesToAct.Count} enemies will take actions");
+        
         // Execute each enemy's action
-        for (int i = 0; i < activeEnemies.Count; i++)
+        for (int i = 0; i < enemiesToAct.Count; i++)
         {
-            Enemy enemy = activeEnemies[i];
-            if (enemy.currentHealth > 0)
+            Enemy enemy = enemiesToAct[i];
+            
+            // Skip if enemy is no longer alive or was removed from combat
+            if (enemy == null || enemy.currentHealth <= 0 || !activeEnemies.Contains(enemy))
             {
-                yield return ExecuteEnemyAction(enemy, i);
+                Debug.Log($"[Enemy Turn] Skipping enemy at index {i} (defeated or removed)");
+                continue;
+            }
+            
+            // Find the current index of this enemy in active enemies
+            int currentIndex = activeEnemies.IndexOf(enemy);
+            if (currentIndex >= 0)
+            {
+                yield return ExecuteEnemyAction(enemy, currentIndex);
                 yield return new WaitForSeconds(turnDelay);
             }
         }
+        
+        Debug.Log($"[Enemy Turn] All enemy actions complete. Active enemies remaining: {activeEnemies.Count}");
         
         // End enemy turn and start next player turn
         EndEnemyTurn();
@@ -368,15 +499,32 @@ public class CombatDisplayManager : MonoBehaviour
     {
         Debug.Log($"{enemy.enemyName} is taking action...");
         
+        // Get the enemy display for animation
+        var activeDisplays = enemySpawner != null ? enemySpawner.GetActiveEnemies() : new List<EnemyCombatDisplay>();
+        EnemyCombatDisplay enemyDisplay = (enemyIndex >= 0 && enemyIndex < activeDisplays.Count) ? activeDisplays[enemyIndex] : null;
+        
         switch (enemy.currentIntent)
         {
             case EnemyIntent.Attack:
+                // Play attack animation
+                if (enemyDisplay != null)
+                {
+                    enemyDisplay.PlayAttackAnimation();
+                    yield return new WaitForSeconds(0.3f); // Wait for animation to start
+                }
+                
                 // Attack the player
                 if (characterManager != null && characterManager.HasCharacter())
                 {
                     int damage = enemy.GetAttackDamage();
                     characterManager.TakeDamage(damage);
                     Debug.Log($"{enemy.enemyName} attacks for {damage} damage!");
+                    
+                    // Show floating damage on player
+                    if (floatingDamageManager != null && playerDisplay != null)
+                    {
+                        floatingDamageManager.ShowDamage(damage, false, playerDisplay.transform);
+                    }
                 }
                 break;
                 
@@ -390,9 +538,9 @@ public class CombatDisplayManager : MonoBehaviour
         enemy.SetIntent();
         
         // Update enemy display
-        if (enemyIndex < enemyDisplays.Count)
+        if (enemyDisplay != null)
         {
-            enemyDisplays[enemyIndex].UpdateIntent();
+            enemyDisplay.UpdateIntent();
         }
         
         yield return null;
@@ -409,6 +557,13 @@ public class CombatDisplayManager : MonoBehaviour
         // This would be called when the player finishes their turn
         // (e.g., after playing cards or clicking "End Turn")
         Debug.Log("Player ended their turn. Starting enemy turn...");
+        
+        // Safety check: Remove any enemies that reached 0 HP but weren't removed
+        CleanupDefeatedEnemies();
+        
+        // Additional safety: Force cleanup any enemies that should be dead
+        ForceCleanupDeadEnemies();
+        
         StartEnemyTurn();
     }
     
@@ -424,54 +579,300 @@ public class CombatDisplayManager : MonoBehaviour
     
     public void PlayerAttackEnemy(int enemyIndex, float damage)
     {
-        if (enemyIndex >= 0 && enemyIndex < activeEnemies.Count)
+        // enemyIndex is a DISPLAY index, not an activeEnemies list index!
+        // We need to get the enemy from the display, not from activeEnemies
+        var activeDisplays = enemySpawner != null ? enemySpawner.GetActiveEnemies() : new List<EnemyCombatDisplay>();
+        
+        if (enemyIndex < 0 || enemyIndex >= activeDisplays.Count)
         {
-            Enemy targetEnemy = activeEnemies[enemyIndex];
-            bool wasCritical = Random.Range(0f, 1f) < 0.1f; // 10% critical chance for demo
+            Debug.LogWarning($"[PlayerAttackEnemy] Invalid display index: {enemyIndex} (total displays: {activeDisplays.Count})");
+            return;
+        }
+        
+        EnemyCombatDisplay targetDisplay = activeDisplays[enemyIndex];
+        Enemy targetEnemy = targetDisplay.GetEnemy();
+        
+        if (targetEnemy == null)
+        {
+            Debug.LogWarning($"[PlayerAttackEnemy] No enemy at display index {enemyIndex}");
+            return;
+        }
+        
+        Debug.Log($"<color=cyan>[PlayerAttackEnemy] Attacking display {enemyIndex}: {targetEnemy.enemyName} (HP: {targetEnemy.currentHealth}/{targetEnemy.maxHealth})</color>");
+        
+        bool wasCritical = Random.Range(0f, 1f) < 0.1f; // 10% critical chance for demo
             
             if (wasCritical)
             {
                 damage *= 1.5f; // Critical damage multiplier
             }
             
-            targetEnemy.TakeDamage(damage);
+            // REMOVED: targetEnemy.TakeDamage(damage) - was causing double damage
+            // The EnemyCombatDisplay.TakeDamage() below handles applying damage to the enemy
             
             // Play damage impact effect
-            if (combatEffectManager != null && enemyIndex < enemyDisplays.Count)
+            if (combatEffectManager != null && enemyIndex < activeDisplays.Count)
             {
                 // Use physical damage as default for direct attacks
-                combatEffectManager.PlayElementalDamageEffectOnTarget(enemyDisplays[enemyIndex].transform, DamageType.Physical, wasCritical);
+                combatEffectManager.PlayElementalDamageEffectOnTarget(activeDisplays[enemyIndex].transform, DamageType.Physical, wasCritical);
             }
             
-            // Update enemy display
-            if (enemyIndex < enemyDisplays.Count)
+            // Update enemy display and apply damage
+            if (enemyIndex < activeDisplays.Count)
             {
-                enemyDisplays[enemyIndex].TakeDamage(damage);
-                enemyDisplays[enemyIndex].PlayDamageAnimation();
+                activeDisplays[enemyIndex].TakeDamage(damage);
+                activeDisplays[enemyIndex].PlayDamageAnimation();
+                
+                // Show floating damage number
+                if (floatingDamageManager != null)
+                {
+                    floatingDamageManager.ShowDamage(damage, wasCritical, activeDisplays[enemyIndex].transform);
+                }
             }
             
-			// Check if enemy is defeated
-			if (targetEnemy.currentHealth <= 0)
-            {
-                OnEnemyDefeated?.Invoke(targetEnemy);
-                activeEnemies.RemoveAt(enemyIndex);
-                
-                // Disable the enemy display
-                DisableEnemyDisplay(enemyIndex);
-                
-				// If no enemies remain, either start next wave or end combat
-				if (activeEnemies.Count == 0)
+				// Check if enemy is defeated
+				if (targetEnemy.currentHealth <= 0)
 				{
-					if (currentWave < totalWaves)
+					Debug.Log($"[Enemy Defeat] {targetEnemy.enemyName} defeated! HP: {targetEnemy.currentHealth}");
+					
+					// Prevent double-defeat by immediately marking enemy as defeated
+					if (activeEnemies.Contains(targetEnemy))
 					{
-						StartNextWave();
+						// Generate and apply immediate loot drops from this enemy
+						var enemyDisplaysList = enemySpawner != null ? enemySpawner.GetActiveEnemies() : new List<EnemyCombatDisplay>();
+						var disp = (enemyIndex < enemyDisplaysList.Count) ? enemyDisplaysList[enemyIndex] : null;
+						
+						if (disp != null)
+						{
+							EnemyData enemyData = disp.GetEnemyData();
+							if (enemyData != null)
+							{
+								// Track for end-of-combat loot table
+								if (!defeatedEnemiesData.Contains(enemyData))
+								{
+									defeatedEnemiesData.Add(enemyData);
+								}
+								
+								// Generate immediate loot drops
+								GenerateAndApplyImmediateLoot(enemyData);
+							}
+						}
+						
+						// Remove from active enemies IMMEDIATELY to prevent stuck enemies
+						OnEnemyDefeated?.Invoke(targetEnemy);
+						int idx = activeEnemies.IndexOf(targetEnemy);
+						if (idx >= 0) 
+						{
+							activeEnemies.RemoveAt(idx);
+							Debug.Log($"[Enemy Defeat] Removed {targetEnemy.enemyName} from active enemies. Remaining: {activeEnemies.Count}");
+						}
+						
+						// Start fade-out animation and despawn after
+						System.Action despawnEnemy = () => {
+							DespawnEnemyAtIndex(enemyIndex);
+							Debug.Log($"[Enemy Defeat] Despawned enemy at index {enemyIndex}");
+							
+							// Check if wave is complete (only if not in AoE attack)
+							if (!isAoEAttackInProgress)
+							{
+								CheckWaveCompletion();
+							}
+						};
+						
+						if (disp != null && disp.gameObject.activeInHierarchy)
+						{
+							// Start fade-out with safety timeout
+							disp.StartDeathFadeOut(despawnEnemy);
+							
+							// Safety fallback: Force despawn after 1 second if animation doesn't complete
+							StartCoroutine(ForceDespawnAfterDelay(enemyIndex, disp, 1.0f));
+						}
+						else
+						{
+							// No display or display inactive - despawn immediately
+							Debug.LogWarning($"[Enemy Defeat] Display null or inactive for {targetEnemy.enemyName}, despawning immediately");
+							despawnEnemy();
+						}
 					}
 					else
 					{
-						EndCombat(true);
+						Debug.LogWarning($"[Enemy Defeat] {targetEnemy.enemyName} already removed from active enemies (double-defeat prevented)");
 					}
 				}
+    }
+    
+    /// <summary>
+    /// Safety cleanup for enemies stuck at 0 HP
+    /// </summary>
+    private void CleanupDefeatedEnemies()
+    {
+        List<Enemy> enemiesToRemove = new List<Enemy>();
+        
+        // Find all enemies at or below 0 HP
+        foreach (Enemy enemy in activeEnemies)
+        {
+            if (enemy != null && enemy.currentHealth <= 0)
+            {
+                enemiesToRemove.Add(enemy);
+                Debug.LogWarning($"[Cleanup] Found stuck defeated enemy: {enemy.enemyName} (HP: {enemy.currentHealth})");
             }
+        }
+        
+        // Remove them
+        foreach (Enemy enemy in enemiesToRemove)
+        {
+            Debug.Log($"[Cleanup] Force removing stuck enemy: {enemy.enemyName}");
+            
+            // Find and despawn the display
+            if (enemySpawner != null)
+            {
+                var activeDisplays = enemySpawner.GetActiveEnemies();
+                for (int i = 0; i < activeDisplays.Count; i++)
+                {
+                    if (activeDisplays[i] != null && activeDisplays[i].GetEnemy() == enemy)
+                    {
+                        DespawnEnemyAtIndex(i);
+                        break;
+                    }
+                }
+            }
+            
+            activeEnemies.Remove(enemy);
+        }
+        
+        if (enemiesToRemove.Count > 0)
+        {
+            Debug.Log($"[Cleanup] Removed {enemiesToRemove.Count} stuck enemies. Remaining: {activeEnemies.Count}");
+            
+            // Check if wave is now complete
+            CheckWaveCompletion();
+        }
+    }
+    
+    /// <summary>
+    /// More aggressive cleanup - checks visual displays and forces removal of dead enemies
+    /// </summary>
+    private void ForceCleanupDeadEnemies()
+    {
+        if (enemySpawner == null) return;
+        
+        var activeDisplays = enemySpawner.GetActiveEnemies();
+        List<int> indicesToRemove = new List<int>();
+        
+        // Check each display for dead enemies
+        for (int i = 0; i < activeDisplays.Count; i++)
+        {
+            var display = activeDisplays[i];
+            if (display != null && display.gameObject.activeInHierarchy)
+            {
+                var enemy = display.GetEnemy();
+                if (enemy != null && enemy.currentHealth <= 0)
+                {
+                    Debug.LogWarning($"[Force Cleanup] Found dead enemy in display {i}: {enemy.enemyName} (HP: {enemy.currentHealth})");
+                    indicesToRemove.Add(i);
+                }
+            }
+        }
+        
+        // Remove dead enemies from both active list and despawn displays
+        for (int i = indicesToRemove.Count - 1; i >= 0; i--)
+        {
+            int index = indicesToRemove[i];
+            if (index < activeDisplays.Count)
+            {
+                var display = activeDisplays[index];
+                if (display != null)
+                {
+                    var enemy = display.GetEnemy();
+                    if (enemy != null)
+                    {
+                        // Remove from active enemies list
+                        if (activeEnemies.Contains(enemy))
+                        {
+                            activeEnemies.Remove(enemy);
+                            Debug.Log($"[Force Cleanup] Removed dead enemy from active list: {enemy.enemyName}");
+                        }
+                        
+                        // Force despawn the display
+                        display.gameObject.SetActive(false);
+                        Debug.Log($"[Force Cleanup] Force despawned dead enemy display at index {index}");
+                    }
+                }
+            }
+        }
+        
+        if (indicesToRemove.Count > 0)
+        {
+            Debug.Log($"[Force Cleanup] Force cleaned {indicesToRemove.Count} dead enemies. Remaining: {activeEnemies.Count}");
+            CheckWaveCompletion();
+        }
+    }
+    
+    /// <summary>
+    /// Mark that an AoE attack is starting (prevents cascading wave completion checks)
+    /// </summary>
+    public void StartAoEAttack()
+    {
+        isAoEAttackInProgress = true;
+        Debug.Log("[AoE] Marking AoE attack as in progress - wave completion checks deferred");
+    }
+    
+    /// <summary>
+    /// Mark that an AoE attack is complete (allows wave completion check)
+    /// </summary>
+    public void EndAoEAttack()
+    {
+        isAoEAttackInProgress = false;
+        Debug.Log("[AoE] AoE attack complete - checking wave completion");
+        CheckWaveCompletion();
+    }
+    
+    /// <summary>
+    /// Check if wave is complete and trigger next wave or victory
+    /// </summary>
+    private void CheckWaveCompletion()
+    {
+		if (activeEnemies.Count == 0)
+		{
+			// Prevent multiple wave transitions when multiple enemies die simultaneously
+			if (isWaveTransitioning)
+			{
+				Debug.Log($"[Wave Complete] Wave transition already in progress, ignoring duplicate check");
+				return;
+			}
+			
+			Debug.Log($"[Wave Complete] All enemies defeated. Current wave: {currentWave}/{totalWaves}");
+			
+			if (currentWave < totalWaves)
+			{
+				Debug.Log($"[Wave Complete] Starting wave transition to wave {currentWave + 1}");
+				StartCoroutine(DelayedWaveTransition());
+			}
+			else
+			{
+				Debug.Log($"[Wave Complete] All waves complete! Victory!");
+				EndCombat(true);
+			}
+		}
+		else
+		{
+			Debug.Log($"[Wave Status] {activeEnemies.Count} enemies remaining");
+		}
+    }
+    
+    /// <summary>
+    /// Safety coroutine to force despawn if animation fails
+    /// </summary>
+    private IEnumerator ForceDespawnAfterDelay(int enemyIndex, EnemyCombatDisplay display, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        
+        // Check if display is still active (animation might not have completed)
+        if (display != null && display.gameObject.activeInHierarchy)
+        {
+            Debug.LogWarning($"[Force Despawn] Enemy at index {enemyIndex} still active after {delay}s, forcing despawn");
+            display.gameObject.SetActive(false);
+            // Don't call CheckWaveCompletion again as despawnEnemy callback already did
         }
     }
     
@@ -485,6 +886,12 @@ public class CombatDisplayManager : MonoBehaviour
             if (combatEffectManager != null && playerDisplay != null)
             {
                 combatEffectManager.PlayHealEffectOnTarget(playerDisplay.transform);
+            }
+            
+            // Show floating heal number
+            if (floatingDamageManager != null && playerDisplay != null)
+            {
+                floatingDamageManager.ShowHeal(amount, playerDisplay.transform);
             }
         }
     }
@@ -532,8 +939,8 @@ public class CombatDisplayManager : MonoBehaviour
         }
         
         // Advance enemy status effects
-        EnemyCombatDisplay[] enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
-        foreach (var enemyDisplay in enemyDisplays)
+        EnemyCombatDisplay[] activeEnemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+        foreach (var enemyDisplay in activeEnemyDisplays)
         {
             if (enemyDisplay != null && enemyDisplay.gameObject.activeInHierarchy)
             {
@@ -552,10 +959,107 @@ public class CombatDisplayManager : MonoBehaviour
     {
         currentState = victory ? CombatState.Victory : CombatState.Defeat;
         
+        if (victory)
+        {
+            // Generate loot rewards
+            GenerateLootRewards();
+        }
+        
         OnCombatStateChanged?.Invoke(currentState);
         OnCombatEnded?.Invoke();
         
         Debug.Log($"Combat ended: {(victory ? "Victory!" : "Defeat!")}");
+    }
+    
+    private void GenerateLootRewards()
+    {
+        // Get area level from current encounter
+        int areaLevel = 1;
+        var currentEncounter = EncounterManager.Instance != null ? EncounterManager.Instance.GetCurrentEncounter() : null;
+        if (currentEncounter != null)
+        {
+            areaLevel = currentEncounter.areaLevel;
+        }
+        
+        // Generate loot from loot table
+        LootManager lootManager = LootManager.Instance;
+        if (lootManager != null)
+        {
+            // Pass defeated enemies data to enable tag-based spirit drops
+            pendingLoot = lootManager.GenerateLoot(encounterLootTable, areaLevel, defeatedEnemiesData);
+            
+            if (pendingLoot != null && pendingLoot.rewards.Count > 0)
+            {
+                Debug.Log($"[Combat Victory] Generated {pendingLoot.rewards.Count} rewards (from {defeatedEnemiesData.Count} defeated enemies):");
+                foreach (var reward in pendingLoot.rewards)
+                {
+                    Debug.Log($"  - {reward.GetDisplayName()}");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[Combat Victory] No loot generated!");
+            }
+        }
+        else
+        {
+            Debug.LogError("[Combat Victory] LootManager not found!");
+        }
+    }
+    
+    public LootDropResult GetPendingLoot()
+    {
+        return pendingLoot;
+    }
+    
+    public void ApplyPendingLoot()
+    {
+        if (pendingLoot != null)
+        {
+            LootManager lootManager = LootManager.Instance;
+            if (lootManager != null)
+            {
+                lootManager.ApplyRewards(pendingLoot);
+                Debug.Log("[Combat] Loot rewards applied to character");
+                pendingLoot = null; // Clear pending loot
+            }
+        }
+    }
+    
+    private void GenerateAndApplyImmediateLoot(EnemyData enemyData)
+    {
+        if (enemyData == null)
+            return;
+        
+        // Get area level
+        int areaLevel = 1;
+        var currentEncounter = EncounterManager.Instance != null ? EncounterManager.Instance.GetCurrentEncounter() : null;
+        if (currentEncounter != null)
+        {
+            areaLevel = currentEncounter.areaLevel;
+        }
+        
+        // Generate loot for this specific enemy
+        EnemyLootDropper lootDropper = EnemyLootDropper.Instance;
+        if (lootDropper != null)
+        {
+            List<LootReward> drops = lootDropper.GenerateEnemyLoot(enemyData, areaLevel);
+            
+            if (drops != null && drops.Count > 0)
+            {
+                // Apply drops immediately
+                lootDropper.ApplyImmediateDrops(drops);
+                
+                // Display in combat log
+                CombatLog combatLog = CombatLog.Instance;
+                if (combatLog != null)
+                {
+                    combatLog.AddEnemyLootDrops(enemyData.enemyName, drops);
+                }
+                
+                Debug.Log($"[Immediate Loot] {enemyData.enemyName} dropped {drops.Count} items");
+            }
+        }
     }
     
     private void RefreshAllDisplays()
@@ -565,87 +1069,45 @@ public class CombatDisplayManager : MonoBehaviour
             playerDisplay.RefreshDisplay();
         }
         
-        foreach (EnemyCombatDisplay enemyDisplay in enemyDisplays)
+        if (enemySpawner != null)
         {
-            if (enemyDisplay != null)
+            foreach (EnemyCombatDisplay enemyDisplay in enemySpawner.GetActiveEnemies())
             {
-                enemyDisplay.RefreshDisplay();
-            }
-        }
-    }
-    
-    /// <summary>
-    /// Disable all enemy display GameObjects
-    /// </summary>
-    private void DisableAllEnemyDisplays()
-    {
-        for (int i = 0; i < enemyDisplays.Count; i++)
-        {
-            if (enemyDisplays[i] != null)
-            {
-                enemyDisplays[i].gameObject.SetActive(false);
-                Debug.Log($"Disabled enemy display {i}: {enemyDisplays[i].name}");
-            }
-        }
-    }
-    
-    /// <summary>
-    /// Enable a specific enemy display GameObject
-    /// </summary>
-    private void EnableEnemyDisplay(int index)
-    {
-        if (index >= 0 && index < enemyDisplays.Count && enemyDisplays[index] != null)
-        {
-            enemyDisplays[index].gameObject.SetActive(true);
-            Debug.Log($"Enabled enemy display {index}: {enemyDisplays[index].name}");
-        }
-    }
-    
-    /// <summary>
-    /// Disable a specific enemy display GameObject
-    /// </summary>
-    private void DisableEnemyDisplay(int index)
-    {
-        if (index >= 0 && index < enemyDisplays.Count && enemyDisplays[index] != null)
-        {
-            enemyDisplays[index].gameObject.SetActive(false);
-            Debug.Log($"Disabled enemy display {index}: {enemyDisplays[index].name}");
-        }
-    }
-    
-    // Public methods for external control
-    public void AddEnemy(Enemy enemy)
-    {
-        if (activeEnemies.Count < maxEnemies)
-        {
-            activeEnemies.Add(enemy);
-            
-            // Find available enemy display
-            for (int i = 0; i < enemyDisplays.Count; i++)
-            {
-                if (enemyDisplays[i].GetCurrentEnemy() == null)
+                if (enemyDisplay != null)
                 {
-                    enemyDisplays[i].SetEnemy(enemy);
-                    EnableEnemyDisplay(i);
-                    break;
+                    enemyDisplay.RefreshDisplay();
                 }
             }
         }
     }
     
+    /// <summary>
+    /// Despawn an enemy at a specific index (when defeated)
+    /// </summary>
+    private void DespawnEnemyAtIndex(int enemyIndex)
+    {
+        if (enemySpawner == null) return;
+        
+        // Find the enemy display at this index
+        var activeDisplays = enemySpawner.GetActiveEnemies();
+        if (enemyIndex >= 0 && enemyIndex < activeDisplays.Count)
+        {
+            enemySpawner.DespawnEnemy(activeDisplays[enemyIndex]);
+            Debug.Log($"[Despawn] Despawned enemy at index {enemyIndex}");
+        }
+    }
+    
+    // Public methods for external control
+    [System.Obsolete("Use SpawnSpecificEnemy with EnemyData instead", true)]
+    public void AddEnemy(Enemy enemy)
+    {
+        Debug.LogWarning("[CombatManager] AddEnemy is deprecated. Use SpawnSpecificEnemy with EnemyData.");
+    }
+    
+    [System.Obsolete("Use DespawnEnemyAtIndex or enemySpawner.DespawnEnemy instead", true)]
     public void RemoveEnemy(Enemy enemy)
     {
-        activeEnemies.Remove(enemy);
-        
-        // Clear enemy display
-        foreach (EnemyCombatDisplay enemyDisplay in enemyDisplays)
-        {
-            if (enemyDisplay.GetCurrentEnemy() == enemy)
-            {
-                enemyDisplay.SetEnemy(null);
-                break;
-            }
-        }
+        Debug.LogWarning("[CombatManager] RemoveEnemy is deprecated.");
     }
 
     /// <summary>
@@ -655,35 +1117,63 @@ public class CombatDisplayManager : MonoBehaviour
     public bool SpawnSpecificEnemy(EnemyData data, EnemyRarity rarity)
     {
         if (data == null) return false;
-        // Find an available panel (inactive or empty)
-        for (int i = 0; i < enemyDisplays.Count; i++)
+        if (enemySpawner == null)
         {
-            var disp = enemyDisplays[i];
-            if (disp == null) continue;
-            var existing = disp.GetCurrentEnemy();
-            if (disp.gameObject.activeSelf == false || existing == null || existing.currentHealth <= 0)
+            Debug.LogError("[SpawnSpecificEnemy] EnemySpawner is null!");
+            return false;
+        }
+        
+        // Find first available spawn point
+        int maxSpawns = enemySpawner.GetMaxSpawnPoints();
+        var activeDisplays = enemySpawner.GetActiveEnemies();
+        
+        for (int i = 0; i < maxSpawns; i++)
+        {
+            // Check if this spawn point is available
+            if (i >= activeDisplays.Count || activeDisplays[i] == null)
             {
-                var enemy = data.CreateEnemyWithRarity(rarity);
-                // Name suffix for clarity if not Normal
+                // Spawn the enemy
+                EnemyCombatDisplay display = enemySpawner.SpawnEnemy(data, i);
+                if (display != null)
+                {
+                    Enemy enemy = display.GetEnemy();
+                    if (enemy != null)
+                    {
+                        // Apply rarity name suffix
                 switch (rarity)
                 {
                     case EnemyRarity.Magic: enemy.enemyName = $"{enemy.enemyName} (Magic)"; break;
                     case EnemyRarity.Rare: enemy.enemyName = $"{enemy.enemyName} (Rare)"; break;
                     case EnemyRarity.Unique: enemy.enemyName = $"{enemy.enemyName} (Unique)"; break;
                 }
-                disp.SetEnemy(enemy, data);
-                if (!disp.gameObject.activeSelf) EnableEnemyDisplay(i);
+                        
                 activeEnemies.Add(enemy);
+                        Debug.Log($"[SpawnSpecificEnemy] Spawned {enemy.enemyName} at spawn point {i}");
                 return true;
             }
         }
-        Debug.LogWarning("No available enemy slots to spawn specific enemy.");
+            }
+        }
+        
+        Debug.LogWarning("[SpawnSpecificEnemy] No available spawn points to spawn specific enemy.");
         return false;
     }
     
     public List<Enemy> GetActiveEnemies()
     {
         return new List<Enemy>(activeEnemies);
+    }
+    
+    /// <summary>
+    /// Get list of currently active enemy displays (for external systems)
+    /// </summary>
+    public List<EnemyCombatDisplay> GetActiveEnemyDisplays()
+    {
+        if (enemySpawner != null)
+        {
+            return enemySpawner.GetActiveEnemies();
+        }
+        return new List<EnemyCombatDisplay>();
     }
     
     public bool IsPlayerTurn()
@@ -729,23 +1219,46 @@ public class CombatDisplayManager : MonoBehaviour
     /// </summary>
     public void SpawnEnemies(int enemyCount)
     {
-        // Limit to max enemies and available displays
-        enemyCount = Mathf.Min(enemyCount, maxEnemies, enemyDisplays.Count);
+        if (enemySpawner == null)
+        {
+            Debug.LogError("[SpawnEnemies] EnemySpawner is null!");
+            return;
+        }
+        
+        // Limit to max enemies and available spawn points
+        int maxSpawns = enemySpawner.GetMaxSpawnPoints();
+        enemyCount = Mathf.Min(enemyCount, maxEnemies, maxSpawns);
         
         // Clear existing enemies
+        enemySpawner.DespawnAllEnemies();
         activeEnemies.Clear();
-        DisableAllEnemyDisplays();
         
-        // Set test enemy count to match requested count
-        testEnemyCount = enemyCount;
+        // Spawn test enemies
+        List<string> testEnemyNames = new List<string> { "Goblin Scout", "Orc Warrior", "Dark Mage", "Skeleton", "Zombie" };
         
-        // Create new enemies
-        CreateTestEnemies();
+        for (int i = 0; i < enemyCount; i++)
+        {
+            EnemyData testData = ScriptableObject.CreateInstance<EnemyData>();
+            testData.enemyName = i < testEnemyNames.Count ? testEnemyNames[i] : $"Test Enemy {i+1}";
+            testData.minHealth = 30 + (i * 15);
+            testData.maxHealth = 30 + (i * 15);
+            testData.baseDamage = 6 + (i * 2);
+            
+            EnemyCombatDisplay display = enemySpawner.SpawnEnemy(testData, i);
+            if (display != null)
+            {
+                Enemy enemy = display.GetEnemy();
+                if (enemy != null)
+                {
+                    activeEnemies.Add(enemy);
+                }
+            }
+        }
         
         // Update displays
         RefreshAllDisplays();
         
-        Debug.Log($"<color=green>Spawned {activeEnemies.Count} enemies</color>");
+        Debug.Log($"<color=green>Spawned {activeEnemies.Count} test enemies</color>");
     }
     
     [ContextMenu("Test Spawn 1 Enemy")]
@@ -770,6 +1283,140 @@ public class CombatDisplayManager : MonoBehaviour
     public void DebugCreateEnemies()
     {
         CreateTestEnemies();
+    }
+    
+    [ContextMenu("Force Cleanup Defeated Enemies")]
+    public void DebugForceCleanup()
+    {
+        Debug.Log("=== FORCE CLEANUP DEFEATED ENEMIES ===");
+        CleanupDefeatedEnemies();
+        ForceCleanupDeadEnemies();
+        Debug.Log("Cleanup complete!");
+    }
+    
+    [ContextMenu("Debug Enemy Status")]
+    public void DebugEnemyStatus()
+    {
+        Debug.Log("=== ENEMY STATUS DEBUG ===");
+        Debug.Log($"Active Enemies Count: {activeEnemies.Count}");
+        
+        for (int i = 0; i < activeEnemies.Count; i++)
+        {
+            var enemy = activeEnemies[i];
+            if (enemy != null)
+            {
+                Debug.Log($"  Enemy {i}: {enemy.enemyName} - HP: {enemy.currentHealth}/{enemy.maxHealth}");
+            }
+            else
+            {
+                Debug.LogWarning($"  Enemy {i}: NULL!");
+            }
+        }
+        
+        if (enemySpawner != null)
+        {
+            var displays = enemySpawner.GetActiveEnemies();
+            Debug.Log($"Active Displays Count: {displays.Count}");
+            
+            for (int i = 0; i < displays.Count; i++)
+            {
+                var display = displays[i];
+                if (display != null)
+                {
+                    var enemy = display.GetEnemy();
+                    if (enemy != null)
+                    {
+                        Debug.Log($"  Display {i}: {enemy.enemyName} - HP: {enemy.currentHealth}/{enemy.maxHealth} - Active: {display.gameObject.activeInHierarchy}");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"  Display {i}: NULL enemy!");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"  Display {i}: NULL display!");
+                }
+            }
+        }
+        
+        Debug.Log("=== END ENEMY STATUS DEBUG ===");
+    }
+    
+    [ContextMenu("Fix AoE Stuck Enemies")]
+    public void DebugFixAoEStuckEnemies()
+    {
+        Debug.Log("=== FIXING AoE STUCK ENEMIES ===");
+        
+        if (enemySpawner != null)
+        {
+            var displays = enemySpawner.GetActiveEnemies();
+            int fixedCount = 0;
+            
+            for (int i = 0; i < displays.Count; i++)
+            {
+                var display = displays[i];
+                if (display != null && display.gameObject.activeInHierarchy)
+                {
+                    var enemy = display.GetEnemy();
+                    if (enemy != null && enemy.currentHealth <= 0)
+                    {
+                        Debug.Log($"<color=red>FIXING: Display {i} has dead enemy {enemy.enemyName} (HP: {enemy.currentHealth})</color>");
+                        
+                        // Remove from active enemies list
+                        if (activeEnemies.Contains(enemy))
+                        {
+                            activeEnemies.Remove(enemy);
+                            Debug.Log($"  ✓ Removed from active enemies list");
+                        }
+                        
+                        // Force despawn the display
+                        display.gameObject.SetActive(false);
+                        Debug.Log($"  ✓ Force despawned display");
+                        
+                        fixedCount++;
+                    }
+                }
+            }
+            
+            Debug.Log($"<color=green>Fixed {fixedCount} stuck enemies</color>");
+            
+            if (fixedCount > 0)
+            {
+                CheckWaveCompletion();
+            }
+        }
+        
+		Debug.Log("=== END AoE STUCK ENEMIES FIX ===");
+    }
+    
+    /// <summary>
+    /// Collect enemies that were spawned with animations and add them to the active list
+    /// </summary>
+    private IEnumerator CollectSpawnedEnemies(List<EnemyData> encounterData)
+    {
+        // Wait for all spawn animations to complete
+        float maxWaitTime = (encounterData.Count * enemySpawner.spawnStaggerDelay) + enemySpawner.spawnAnimationDuration + 0.5f;
+        yield return new WaitForSeconds(maxWaitTime);
+        
+        // Collect all active enemies from the spawner
+        var activeDisplays = enemySpawner.GetActiveEnemies();
+        activeEnemies.Clear();
+        
+        foreach (var display in activeDisplays)
+        {
+            if (display != null && display.gameObject.activeInHierarchy)
+            {
+                var enemy = display.GetEnemy();
+                if (enemy != null)
+                {
+                    activeEnemies.Add(enemy);
+                    Debug.Log($"[Wave Spawn] ✓ Collected {enemy.enemyName} from spawner");
+                }
+            }
+        }
+        
+        Debug.Log($"[EncounterDebug] <color=green>✓ Wave {currentWave}/{totalWaves}: Collected {activeEnemies.Count} enemies with animations</color>");
     }
     
     [ContextMenu("Check Enemy Setup")]
@@ -803,24 +1450,34 @@ public class CombatDisplayManager : MonoBehaviour
             Debug.LogError("✗ EnemyDatabase not found!");
         }
         
-        // Check displays
-        Debug.Log($"\nEnemy Displays: {enemyDisplays.Count}");
-        for (int i = 0; i < enemyDisplays.Count; i++)
+        // Check spawner and displays
+        if (enemySpawner != null)
         {
-            if (enemyDisplays[i] != null)
+            var activeDisplays = enemySpawner.GetActiveEnemies();
+            Debug.Log($"\nEnemy Spawner: {enemySpawner.GetMaxSpawnPoints()} spawn points, {activeDisplays.Count} active enemies");
+            
+            for (int i = 0; i < activeDisplays.Count; i++)
             {
-                Enemy enemy = enemyDisplays[i].GetCurrentEnemy();
+                if (activeDisplays[i] != null)
+                {
+                    Enemy enemy = activeDisplays[i].GetEnemy();
                 if (enemy != null)
                 {
-                    Debug.Log($"  Panel {i}: {enemy.enemyName} (HP: {enemy.currentHealth}/{enemy.maxHealth})");
+                        Debug.Log($"  Spawn Point {i}: {enemy.enemyName} (HP: {enemy.currentHealth}/{enemy.maxHealth})");
                 }
                 else
                 {
-                    Debug.Log($"  Panel {i}: No enemy assigned");
+                        Debug.Log($"  Spawn Point {i}: Display active but no enemy data");
                 }
             }
+            }
+        }
+        else
+        {
+            Debug.LogError("✗ EnemySpawner not found!");
         }
         
         Debug.Log($"\nActive Enemies: {activeEnemies.Count}");
     }
 }
+

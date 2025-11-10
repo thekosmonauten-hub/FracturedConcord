@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,8 +15,13 @@ public class DeckPreset : ScriptableObject
     public string deckName = "New Deck";
     [TextArea(2, 4)]
     public string description = "Custom deck description";
+    [TextArea(2, 6)]
+    public string additionalEffectsText = "";
     public string characterClass = ""; // Optional class restriction
     public Sprite deckIcon; // Optional deck icon
+    public Sprite categoryIcon; // Optional deck category icon
+    [Tooltip("Optional Resources path (e.g. 'UI/DeckIcons/Attack'). Used when exporting/importing decks to restore the icon.")]
+    public string categoryIconResourcePath = "";
     
     [Header("Deck Configuration")]
     [SerializeField] private List<DeckCardEntry> cardEntries = new List<DeckCardEntry>();
@@ -122,7 +128,51 @@ public class DeckPreset : ScriptableObject
     /// </summary>
     public List<DeckCardEntry> GetCardEntries()
     {
-        return new List<DeckCardEntry>(cardEntries);
+        return cardEntries.Select(entry => entry.Clone()).ToList();
+    }
+
+    public DeckCardEntry GetEntryReference(CardData card)
+    {
+        return cardEntries.FirstOrDefault(entry => entry.cardData == card);
+    }
+
+    public DeckCardEntry GetEntryByGroupKey(string groupKey)
+    {
+        if (string.IsNullOrWhiteSpace(groupKey))
+            return null;
+
+        return cardEntries.FirstOrDefault(entry =>
+            string.Equals(ResolveGroupKey(entry.cardData), groupKey, StringComparison.OrdinalIgnoreCase));
+    }
+
+    public bool UpdateEmbossingsForGroup(string groupKey, IEnumerable<EmbossingInstance> embossingSource)
+    {
+        DeckCardEntry entry = GetEntryByGroupKey(groupKey);
+        if (entry == null)
+            return false;
+
+        entry.embossings = DeckCardEntry.CopyEmbossings(embossingSource);
+        lastModifiedDate = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        return true;
+    }
+
+    public IList<EmbossingInstance> GetEmbossingsForGroup(string groupKey)
+    {
+        DeckCardEntry entry = GetEntryByGroupKey(groupKey);
+        return entry != null
+            ? DeckCardEntry.CopyEmbossings(entry.embossings)
+            : new List<EmbossingInstance>();
+    }
+
+    private static string ResolveGroupKey(CardData card)
+    {
+        if (card is CardDataExtended extended)
+        {
+            if (!string.IsNullOrEmpty(extended.groupKey))
+                return extended.groupKey;
+        }
+
+        return card != null ? card.cardName : string.Empty;
     }
     
     /// <summary>
@@ -188,18 +238,39 @@ public class DeckPreset : ScriptableObject
         DeckPreset clone = CreateInstance<DeckPreset>();
         clone.deckName = this.deckName + " (Copy)";
         clone.description = this.description;
+        clone.additionalEffectsText = this.additionalEffectsText;
         clone.characterClass = this.characterClass;
         clone.deckIcon = this.deckIcon;
+        clone.categoryIcon = this.categoryIcon;
+        clone.categoryIconResourcePath = this.categoryIconResourcePath;
         clone.createdDate = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         clone.lastModifiedDate = clone.createdDate;
         clone.version = this.version;
         
         foreach (DeckCardEntry entry in cardEntries)
         {
-            clone.cardEntries.Add(new DeckCardEntry(entry.cardData, entry.quantity));
+            clone.cardEntries.Add(entry.Clone());
         }
         
         return clone;
+    }
+    
+    /// <summary>
+    /// Resolve the deck's category icon, loading from Resources if needed.
+    /// </summary>
+    public Sprite ResolveCategoryIcon()
+    {
+        if (categoryIcon != null)
+            return categoryIcon;
+        
+        if (!string.IsNullOrWhiteSpace(categoryIconResourcePath))
+        {
+            Sprite loaded = Resources.Load<Sprite>(categoryIconResourcePath);
+            if (loaded != null)
+                return loaded;
+        }
+        
+        return null;
     }
     
     /// <summary>
@@ -222,7 +293,17 @@ public class DeckPreset : ScriptableObject
             
             deckName = data.deckName;
             description = data.description;
+            additionalEffectsText = data.additionalEffectsText ?? string.Empty;
             characterClass = data.characterClass;
+            categoryIconResourcePath = data.categoryIconResourcePath ?? categoryIconResourcePath;
+            if (!string.IsNullOrWhiteSpace(categoryIconResourcePath))
+            {
+                var loaded = Resources.Load<Sprite>(categoryIconResourcePath);
+                if (loaded != null)
+                {
+                    categoryIcon = loaded;
+                }
+            }
             version = data.version;
             cardEntries.Clear();
             
@@ -233,7 +314,7 @@ public class DeckPreset : ScriptableObject
                 
                 if (card != null)
                 {
-                    cardEntries.Add(new DeckCardEntry(card, entryData.quantity));
+                    cardEntries.Add(new DeckCardEntry(card, entryData.quantity, entryData.embossings));
                 }
                 else
                 {
@@ -285,11 +366,47 @@ public class DeckCardEntry
 {
     public CardData cardData;
     public int quantity;
+    public List<EmbossingInstance> embossings = new List<EmbossingInstance>();
     
     public DeckCardEntry(CardData card, int qty)
     {
         cardData = card;
         quantity = qty;
+    }
+    
+    public DeckCardEntry(CardData card, int qty, IEnumerable<EmbossingInstance> embossingSource)
+    {
+        cardData = card;
+        quantity = qty;
+        embossings = CopyEmbossings(embossingSource);
+    }
+    
+    public DeckCardEntry Clone()
+    {
+        return new DeckCardEntry(cardData, quantity, embossings);
+    }
+    
+    public static List<EmbossingInstance> CopyEmbossings(IEnumerable<EmbossingInstance> source)
+    {
+        List<EmbossingInstance> clone = new List<EmbossingInstance>();
+        if (source == null)
+            return clone;
+        
+        foreach (EmbossingInstance instance in source)
+        {
+            if (instance == null)
+                continue;
+            
+            clone.Add(new EmbossingInstance
+            {
+                embossingId = instance.embossingId,
+                slotIndex = instance.slotIndex,
+                level = instance.level,
+                experience = instance.experience
+            });
+        }
+        
+        return clone;
     }
 }
 
@@ -302,7 +419,9 @@ public class DeckPresetData
 {
     public string deckName;
     public string description;
+    public string additionalEffectsText;
     public string characterClass;
+    public string categoryIconResourcePath;
     public int version;
     public List<DeckCardEntryData> cardEntries = new List<DeckCardEntryData>();
     
@@ -310,7 +429,9 @@ public class DeckPresetData
     {
         deckName = preset.deckName;
         description = preset.description;
+        additionalEffectsText = preset.additionalEffectsText;
         characterClass = preset.characterClass;
+        categoryIconResourcePath = preset.categoryIconResourcePath;
         version = preset.version;
         
         foreach (DeckCardEntry entry in preset.GetCardEntries())
@@ -318,7 +439,8 @@ public class DeckPresetData
             cardEntries.Add(new DeckCardEntryData
             {
                 cardName = entry.cardData.cardName,
-                quantity = entry.quantity
+                quantity = entry.quantity,
+                embossings = DeckCardEntry.CopyEmbossings(entry.embossings)
             });
         }
     }
@@ -329,6 +451,7 @@ public class DeckCardEntryData
 {
     public string cardName;
     public int quantity;
+    public List<EmbossingInstance> embossings = new List<EmbossingInstance>();
 }
 
 /// <summary>

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -26,6 +27,9 @@ public class DeckBuilderUI : MonoBehaviour
     [SerializeField] private TMP_InputField deckNameInputField; // Changed from TextMeshProUGUI to InputField
     [SerializeField] private TextMeshProUGUI deckSizeText;
     [SerializeField] private TMP_InputField deckDescriptionInputField; // Also make description editable
+    [SerializeField] private TextMeshProUGUI deckAdditionalEffectsText;
+    [SerializeField] private Image deckCategoryIcon;
+    [SerializeField] private Sprite defaultCategoryIcon;
     [SerializeField] private Image deckValidityIndicator;
     [SerializeField] private Color validDeckColor = Color.green;
     [SerializeField] private Color invalidDeckColor = Color.red;
@@ -63,6 +67,14 @@ public class DeckBuilderUI : MonoBehaviour
     private List<CardData> filteredCards = new List<CardData>();
     private Dictionary<CardData, DeckBuilderCardUI> cardUIMap = new Dictionary<CardData, DeckBuilderCardUI>();
     private Dictionary<CardData, DeckCardListUI> deckCardUIMap = new Dictionary<CardData, DeckCardListUI>();
+
+    public DeckPreset CurrentDeck => currentDeck;
+
+    public DeckCardEntry GetDeckEntry(CardData card)
+    {
+        if (currentDeck == null || card == null) return null;
+        return currentDeck.GetEntryReference(card);
+    }
     
     // Filters
     private string searchFilter = "";
@@ -70,6 +82,8 @@ public class DeckBuilderUI : MonoBehaviour
     private CardCategory? categoryFilter = null;
     private CardRarity? rarityFilter = null;
     private CardElement? elementFilter = null;
+
+    private const string AdditionalEffectsFallbackText = "No additional effects recorded.";
     
     #region Unity Lifecycle
     private void Start()
@@ -101,6 +115,7 @@ public class DeckBuilderUI : MonoBehaviour
     #region Initialization
     private void Initialize()
     {
+        ResolveMetadataReferences();
         // Load card database if not assigned
         if (cardDatabase == null)
         {
@@ -142,6 +157,17 @@ public class DeckBuilderUI : MonoBehaviour
         {
             deckDescriptionInputField.onEndEdit.AddListener(OnDeckDescriptionChanged);
             deckDescriptionInputField.characterLimit = 200; // Max 200 characters
+        }
+        
+        if (deckAdditionalEffectsText != null)
+        {
+            deckAdditionalEffectsText.text = AdditionalEffectsFallbackText;
+        }
+        
+        if (deckCategoryIcon != null)
+        {
+            deckCategoryIcon.sprite = defaultCategoryIcon;
+            deckCategoryIcon.gameObject.SetActive(defaultCategoryIcon != null);
         }
     }
     
@@ -250,8 +276,29 @@ public class DeckBuilderUI : MonoBehaviour
         }
         else
         {
-            // Create a new deck
-            currentDeck = DeckManager.Instance.CreateNewDeck("New Deck");
+            // Try to load from character's active deck name
+            Character character = CharacterManager.Instance?.GetCurrentCharacter();
+            if (character != null && character.deckData != null && !string.IsNullOrEmpty(character.deckData.activeDeckName))
+            {
+                // Load character's decks
+                CharacterManager.Instance.LoadCharacterDecks(character);
+                
+                // Try again after loading
+                if (DeckManager.Instance.HasActiveDeck())
+                {
+                    currentDeck = DeckManager.Instance.GetActiveDeck();
+                }
+                else
+                {
+                    // If still no deck, create a new one
+                    currentDeck = DeckManager.Instance.CreateNewDeck("New Deck", character.characterClass);
+                }
+            }
+            else
+            {
+                // Create a new deck if no character is loaded
+                currentDeck = DeckManager.Instance.CreateNewDeck("New Deck");
+            }
         }
         
         RefreshDeckDisplay();
@@ -388,42 +435,46 @@ public class DeckBuilderUI : MonoBehaviour
     
     private void UpdateDeckInfoDisplay()
     {
-        if (currentDeck == null) return;
+        if (currentDeck == null)
+            return;
+
+        ResolveMetadataReferences();
         
-        // Update deck name input field
         if (deckNameInputField != null)
         {
             deckNameInputField.text = currentDeck.deckName;
         }
         
-        // Update deck size
         if (deckSizeText != null)
         {
             int totalCards = currentDeck.GetTotalCardCount();
             deckSizeText.text = $"{totalCards}/{DeckBuilderConstants.MAX_DECK_SIZE}";
-            
-            // Color code based on deck validity
-            if (totalCards < DeckBuilderConstants.MIN_DECK_SIZE)
-            {
-                deckSizeText.color = Color.red;
-            }
-            else if (totalCards > DeckBuilderConstants.MAX_DECK_SIZE)
-            {
-                deckSizeText.color = Color.red;
-            }
-            else
-            {
-                deckSizeText.color = Color.green;
-            }
+            bool withinBounds = totalCards >= DeckBuilderConstants.MIN_DECK_SIZE && totalCards <= DeckBuilderConstants.MAX_DECK_SIZE;
+            deckSizeText.color = withinBounds ? Color.green : Color.red;
         }
         
-        // Update description input field
         if (deckDescriptionInputField != null)
         {
             deckDescriptionInputField.text = currentDeck.description;
         }
+
+        if (deckAdditionalEffectsText != null)
+        {
+            string summary = !string.IsNullOrWhiteSpace(currentDeck.additionalEffectsText)
+                ? currentDeck.additionalEffectsText
+                : BuildAdditionalEffectsSummary();
+            deckAdditionalEffectsText.text = string.IsNullOrWhiteSpace(summary)
+                ? AdditionalEffectsFallbackText
+                : summary;
+        }
+
+        if (deckCategoryIcon != null)
+        {
+            Sprite iconToUse = ResolveDeckCategoryIcon(currentDeck);
+            deckCategoryIcon.sprite = iconToUse;
+            deckCategoryIcon.gameObject.SetActive(iconToUse != null);
+        }
         
-        // Update validity indicator
         if (deckValidityIndicator != null)
         {
             string errorMessage;
@@ -522,6 +573,114 @@ public class DeckBuilderUI : MonoBehaviour
         {
             UpdateCardUIState(card);
         }
+    }
+    #endregion
+
+    #region Metadata Helpers
+    private void ResolveMetadataReferences()
+    {
+        if (deckDescriptionInputField == null)
+        {
+            deckDescriptionInputField = GetComponentsInChildren<TMP_InputField>(true)
+                .FirstOrDefault(input => input != null && input.name.IndexOf("Description", StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+
+        if (deckAdditionalEffectsText == null)
+        {
+            deckAdditionalEffectsText = GetComponentsInChildren<TextMeshProUGUI>(true)
+                .FirstOrDefault(text =>
+                    text != null &&
+                    text.name.IndexOf("Additional", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                    text.GetComponentInParent<DeckBuilderCardUI>() == null &&
+                    text.transform.GetComponentInParent<DeckCardListUI>() == null);
+        }
+
+        if (deckAdditionalEffectsText == null)
+        {
+            deckAdditionalEffectsText = GetComponentsInChildren<TextMeshProUGUI>(true)
+                .FirstOrDefault(text =>
+                    text != null &&
+                    text.name.IndexOf("DeckDescription", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                    text.GetComponentInParent<DeckBuilderCardUI>() == null &&
+                    text.transform.GetComponentInParent<DeckCardListUI>() == null);
+        }
+
+        if (deckCategoryIcon == null)
+        {
+            deckCategoryIcon = GetComponentsInChildren<Image>(true)
+                .FirstOrDefault(img =>
+                    img != null &&
+                    (img.name.IndexOf("Category", StringComparison.OrdinalIgnoreCase) >= 0 || img.name.IndexOf("DeckIcon", StringComparison.OrdinalIgnoreCase) >= 0) &&
+                    img.GetComponentInParent<DeckBuilderCardUI>() == null &&
+                    img.transform.GetComponentInParent<DeckCardListUI>() == null);
+        }
+
+        if (deckCategoryIcon == null)
+        {
+            deckCategoryIcon = GetComponentsInChildren<Image>(true)
+                .FirstOrDefault(img =>
+                    img != null &&
+                    img.name.IndexOf("DiamondShape", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                    img.GetComponentInParent<DeckBuilderCardUI>() == null &&
+                    img.transform.GetComponentInParent<DeckCardListUI>() == null);
+        }
+    }
+
+    private string BuildAdditionalEffectsSummary()
+    {
+        if (currentDeck == null)
+        {
+            return AdditionalEffectsFallbackText;
+        }
+
+        HashSet<string> highlights = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (DeckCardEntry entry in currentDeck.GetCardEntries())
+        {
+            if (entry?.cardData == null)
+            {
+                continue;
+            }
+
+            CardDataExtended extended = entry.cardData as CardDataExtended;
+            if (extended != null && !string.IsNullOrWhiteSpace(extended.comboDescription))
+            {
+                string formatted = $"{extended.cardName}: {extended.comboDescription.Trim()}";
+                highlights.Add(formatted);
+            }
+        }
+
+        if (highlights.Count == 0)
+        {
+            return AdditionalEffectsFallbackText;
+        }
+
+        return string.Join("\n", highlights);
+    }
+
+    private Sprite ResolveDeckCategoryIcon(DeckPreset deck)
+    {
+        if (deck == null)
+        {
+            return defaultCategoryIcon;
+        }
+
+        Sprite resolved = deck.ResolveCategoryIcon();
+        if (resolved != null)
+        {
+            return resolved;
+        }
+
+        if (!string.IsNullOrWhiteSpace(deck.categoryIconResourcePath))
+        {
+            resolved = Resources.Load<Sprite>(deck.categoryIconResourcePath);
+            if (resolved != null)
+            {
+                return resolved;
+            }
+        }
+
+        return defaultCategoryIcon;
     }
     #endregion
     
@@ -935,12 +1094,131 @@ public class DeckBuilderUI : MonoBehaviour
             return;
         }
         
-        // Set as active deck
+        // Set as active deck in DeckManager (persists across scenes)
         DeckManager.Instance.SetActiveDeck(currentDeck);
         DeckManager.Instance.SaveDeck(currentDeck);
         
+        // Also sync to Character.currentDeck for backward compatibility
+        SyncDeckToCharacter();
+        
         // Return to previous scene (you can customize this)
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainGameUI");
+    }
+    
+    /// <summary>
+    /// Sync the current deck to the Character for backward compatibility.
+    /// Converts DeckPreset to legacy Deck format.
+    /// </summary>
+    private void SyncDeckToCharacter()
+    {
+        if (currentDeck == null) return;
+        
+        Character character = CharacterManager.Instance?.GetCurrentCharacter();
+        if (character == null) return;
+        
+        // Convert DeckPreset to legacy Deck format
+        Deck legacyDeck = new Deck
+        {
+            deckName = currentDeck.deckName,
+            description = currentDeck.description,
+            characterClass = currentDeck.characterClass
+        };
+        
+        // Convert CardData entries to Card objects
+        foreach (DeckCardEntry entry in currentDeck.GetCardEntries())
+        {
+            for (int i = 0; i < entry.quantity; i++)
+            {
+                Card card = ConvertCardDataToCard(entry.cardData);
+                if (card != null)
+                {
+                    ApplyDeckEntryMetadata(card, entry);
+                    legacyDeck.AddCard(card);
+                }
+            }
+        }
+        
+        // Assign to character
+        character.currentDeck = legacyDeck;
+        CharacterManager.Instance.SaveCharacter();
+        
+        Debug.Log($"Synced deck '{currentDeck.deckName}' to Character with {legacyDeck.cards.Count} cards");
+    }
+    
+    /// <summary>
+    /// Convert CardData to legacy Card format.
+    /// </summary>
+    private Card ConvertCardDataToCard(CardData cardData)
+    {
+        if (cardData == null) return null;
+        
+        Card card = new Card
+        {
+            cardName = cardData.cardName,
+            description = string.IsNullOrWhiteSpace(cardData.description) ? cardData.GetFullDescription() : cardData.description,
+            manaCost = cardData.playCost,
+            baseDamage = cardData.damage,
+            baseGuard = cardData.block
+        };
+        
+        // Map category to CardType
+        switch (cardData.category)
+        {
+            case CardCategory.Attack:
+                card.cardType = CardType.Attack;
+                break;
+            case CardCategory.Guard:
+                card.cardType = CardType.Guard;
+                break;
+            case CardCategory.Skill:
+                card.cardType = CardType.Skill;
+                break;
+            case CardCategory.Power:
+                card.cardType = CardType.Power;
+                break;
+        }
+        
+        // Add tags based on element and properties
+        card.tags = new List<string>();
+        if (cardData.element != CardElement.Basic)
+        {
+            card.tags.Add(cardData.element.ToString());
+        }
+        
+        if (cardData.isDualWield)
+        {
+            card.tags.Add("Dual");
+        }
+        
+        if (cardData.isDiscardCard)
+        {
+            card.tags.Add("Discard");
+        }
+        
+        return card;
+    }
+    
+    private void ApplyDeckEntryMetadata(Card card, DeckCardEntry entry)
+    {
+        if (card == null || entry == null || entry.cardData == null)
+            return;
+
+        card.embossingSlots = entry.cardData.embossingSlots;
+        card.appliedEmbossings = DeckCardEntry.CopyEmbossings(entry.embossings);
+        card.groupKey = ResolveGroupKey(entry.cardData);
+
+        if (entry.cardData is CardDataExtended extended)
+        {
+            card.sourceCardData = extended;
+        }
+    }
+
+    private static string ResolveGroupKey(CardData cardData)
+    {
+        if (cardData is CardDataExtended extended && !string.IsNullOrEmpty(extended.groupKey))
+            return extended.groupKey;
+
+        return cardData != null ? cardData.cardName : string.Empty;
     }
     
     private void OnBackClicked()

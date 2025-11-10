@@ -172,3 +172,20 @@ public class AutoSaveManager : MonoBehaviour
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fc25a7765c05a341a11149eb31bcbbf, type: 3}
+  m_Name: Colossal Tower Shield
+  m_EditorClassIdentifier: Assembly-CSharp::Armour
+  itemName: Colossal Tower Shield
+  description: A shield providing defense.
+  itemIcon: {fileID: 0}
+  rarity: 0
+  requiredLevel: 0
+  itemType: 1
+  equipmentType: 4
+  isStackable: 0
+  maxStackSize: 1
+  quality: 0
+  implicitModifiers:
+  - name: Implicit
+    description: Requires Level 67, 159 Str
+    affixType: 0
+    tier: 0
+    modifiers:
+    - statName: requiresLevel67159Str
+      minValue: 1
+      maxValue: 1
+      modifierType: 0
+      damageType: 0
+      scope: 1
+      description: 
+      originalMinValue: 1
+      originalMaxValue: 1
+      isDualRange: 0
+      firstRangeMin: 0
+      firstRangeMax: 0
+      secondRangeMin: 0
+      secondRangeMax: 0
+      rolledFirstValue: 0
+      rolledSecondValue: 0
+    requiredTags: []
+    weight: 1000
+    handedness: 0
+    minValue: 0
+    maxValue: 0
+    hasRange: 0
+    rolledValue: 0
+    isRolled: 0
+  - name: Implicit
+    description: "+(10\u201320) to maximum life"
+    affixType: 0
+    tier: 0
+    modifiers:
+    - statName: 1020ToMaximumLife
+      minValue: 1
+      maxValue: 1
+      modifierType: 0
+      damageType: 0
+      scope: 1
+      description: 
+      originalMinValue: 1
+      originalMaxValue: 1
+      isDualRange: 0
+      firstRangeMin: 0
+      firstRangeMax: 0
+      secondRangeMin: 0
+      secondRangeMax: 0
+      rolledFirstValue: 0
+      rolledSecondValue: 0
+    requiredTags: []
+    weight: 1000
+    handedness: 0
+    minValue: 0
+    maxValue: 0
+    hasRange: 0
+    rolledValue: 0
+    isRolled: 0
+  prefixes: []
+  suffixes: []
+  isUnique: 0
+  itemTags:
+  - armour
+  - defence
+  - shield
+  - plate
+  - armor
+  armourSlot: 4
+  armourType: 3
+  armour: 522
+  evasion: 0
+  energyShield: 0
+  ward: 0
+  requiredStrength: 0
+  requiredDexterity: 0
+  requiredIntelligence: 0
+  movementSpeedPenalty: 0
+  attackSpeedPenalty: 0

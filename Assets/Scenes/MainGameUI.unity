@@ -226,7 +226,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -6540967114086432393, guid: e0eedb76fef3a9240b5796be05a0f492, type: 3}
+  m_Sprite: {fileID: -3786784406564551191, guid: d493696db0b153a46b093b7bfb5fa070, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -263,7 +263,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -67}
+  m_AnchoredPosition: {x: 0, y: -166.4}
   m_SizeDelta: {x: 317.517, y: 117.20691}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &354773
@@ -347,7 +347,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 1
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 2
@@ -355,7 +358,10 @@ MonoBehaviour:
     sceneName: TownScene
     areaLevel: 1
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 3
@@ -363,7 +369,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 2
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 4
@@ -371,7 +380,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 3
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 5
@@ -379,7 +391,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 4
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 6
@@ -387,7 +402,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 5
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 7
@@ -395,7 +413,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 6
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 8
@@ -403,7 +424,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 7
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 9
@@ -411,7 +435,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 8
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 10
@@ -419,7 +446,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 9
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 11
@@ -427,7 +457,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 10
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 12
@@ -435,7 +468,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 14
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 13
@@ -443,7 +479,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 15
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 14
@@ -451,7 +490,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 16
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 15
@@ -459,7 +501,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 17
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 16
@@ -467,7 +512,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 18
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 17
@@ -475,7 +523,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 21
     totalWaves: 0
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   act2Encounters: []
@@ -748,7 +799,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 1
     totalWaves: 5
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 11400000, guid: 77767db2eaea7644f821c7442d9eb9f0, type: 2}
+    lootTable: {fileID: 11400000, guid: c8f663c631e134944a9c3fc28c42c8df, type: 2}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 2
@@ -756,7 +810,10 @@ MonoBehaviour:
     sceneName: TownScene
     areaLevel: 1
     totalWaves: 1
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 11400000, guid: c8f663c631e134944a9c3fc28c42c8df, type: 2}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 3
@@ -764,7 +821,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 2
     totalWaves: 8
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 11400000, guid: c8f663c631e134944a9c3fc28c42c8df, type: 2}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 4
@@ -772,7 +832,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 3
     totalWaves: 10
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 11400000, guid: c8f663c631e134944a9c3fc28c42c8df, type: 2}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 5
@@ -780,7 +843,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 4
     totalWaves: 10
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 11400000, guid: c8f663c631e134944a9c3fc28c42c8df, type: 2}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 6
@@ -788,7 +854,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 5
     totalWaves: 10
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 11400000, guid: c8f663c631e134944a9c3fc28c42c8df, type: 2}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 7
@@ -796,7 +865,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 6
     totalWaves: 10
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 11400000, guid: c8f663c631e134944a9c3fc28c42c8df, type: 2}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 8
@@ -804,7 +876,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 7
     totalWaves: 10
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 11400000, guid: c8f663c631e134944a9c3fc28c42c8df, type: 2}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 9
@@ -812,7 +887,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 8
     totalWaves: 10
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 11400000, guid: c8f663c631e134944a9c3fc28c42c8df, type: 2}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 10
@@ -820,7 +898,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 9
     totalWaves: 10
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 11
@@ -828,7 +909,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 10
     totalWaves: 10
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 12
@@ -836,7 +920,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 14
     totalWaves: 10
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 13
@@ -844,7 +931,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 15
     totalWaves: 10
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 14
@@ -852,7 +942,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 16
     totalWaves: 10
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 15
@@ -860,7 +953,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 17
     totalWaves: 10
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 16
@@ -868,7 +964,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 18
     totalWaves: 12
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   - encounterID: 17
@@ -876,7 +975,10 @@ MonoBehaviour:
     sceneName: CombatScene
     areaLevel: 21
     totalWaves: 12
+    maxEnemiesPerWave: 0
+    randomizeEnemyCount: 0
     uniqueEnemy: {fileID: 0}
+    lootTable: {fileID: 0}
     isUnlocked: 1
     isCompleted: 0
   act2Encounters: []
@@ -1073,7 +1175,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -122.5, y: 324.4}
+  m_AnchoredPosition: {x: -122.5, y: 261}
   m_SizeDelta: {x: 245, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &358092888
@@ -1122,7 +1224,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2049810806}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: LoadEquipmentScreen
+        m_MethodName: ToggleEquipment
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1152,7 +1254,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -6540967114086432393, guid: e0eedb76fef3a9240b5796be05a0f492, type: 3}
+  m_Sprite: {fileID: -3786784406564551191, guid: d493696db0b153a46b093b7bfb5fa070, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1203,11 +1305,164 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &645523478
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 645523483}
+  - component: {fileID: 645523482}
+  - component: {fileID: 645523481}
+  - component: {fileID: 645523480}
+  - component: {fileID: 645523479}
+  - component: {fileID: 645523484}
+  m_Layer: 0
+  m_Name: 'SimpleItemGenerator '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &645523479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645523478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71539ea1e43f3384b81656f4d36bee3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponTagChecker
+--- !u!114 &645523480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645523478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a760fdf08d53af438d50d790b8e08b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AffixGenerationDiagnostics
+  testItemLevel: 80
+--- !u!114 &645523481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645523478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fe7491aa67484d43af056095f75afcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LootSystemDiagnostics
+--- !u!114 &645523482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645523478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b221d33ec9643d646ac56d2ed3789d53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleItemGenerator
+  testAreaLevel: 45
+  itemsPerTest: 5
+  forceRarity: 1
+  forcedRarity: 2
+  forceItemType: 1
+  forcedItemType: 1
+  generateKey: 286
+  generateRareKey: 287
+--- !u!4 &645523483
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645523478}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 833.1659, y: 420.76984, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &645523484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645523478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a95debfb9034a3c4180f7b64e4adf8d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArmorLevelDiagnostic
+  testAreaLevel: 45
 --- !u!224 &656389253 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5425507090845987592, guid: e0006085f0200a94db67e68c471150c7, type: 3}
   m_PrefabInstance: {fileID: 881798215}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &836235776
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 836235778}
+  - component: {fileID: 836235777}
+  m_Layer: 0
+  m_Name: AreaLootManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &836235777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 836235776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fe7e940c50a3264fba155334291e333, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AreaLootManager
+  defaultLootTable: {fileID: 11400000, guid: 8524675a62584d04aa6c1a9bb0f2ab60, type: 2}
+  areaLootTableRanges: []
+  enableDebugLogs: 0
+--- !u!4 &836235778
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 836235776}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 833.1659, y: 420.76984, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &858207142
 GameObject:
   m_ObjectHideFlags: 0
@@ -1267,8 +1522,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Marauder
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 281592e96d06dd94589438599351dbb7, type: 2}
+  m_sharedMaterial: {fileID: 4326722954951912636, guid: 281592e96d06dd94589438599351dbb7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1403,8 +1658,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Passives
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 281592e96d06dd94589438599351dbb7, type: 2}
+  m_sharedMaterial: {fileID: 4326722954951912636, guid: 281592e96d06dd94589438599351dbb7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2146,7 +2401,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -122.5, y: 153.3}
+  m_AnchoredPosition: {x: -122.5, y: 89.89998}
   m_SizeDelta: {x: 245, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1002934021
@@ -2225,7 +2480,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -6540967114086432393, guid: e0eedb76fef3a9240b5796be05a0f492, type: 3}
+  m_Sprite: {fileID: -3786784406564551191, guid: d493696db0b153a46b093b7bfb5fa070, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2294,13 +2549,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -7629947917083336605, guid: a608c3605f95bb948805b65ee38b794d, type: 3}
+  m_Sprite: {fileID: -7629947917083336605, guid: dd33a253120d1cf4185b2765737b05cd, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2377,8 +2632,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Level
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 281592e96d06dd94589438599351dbb7, type: 2}
+  m_sharedMaterial: {fileID: 4326722954951912636, guid: 281592e96d06dd94589438599351dbb7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2511,10 +2766,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Equipment
+  m_text: Inventory
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 281592e96d06dd94589438599351dbb7, type: 2}
+  m_sharedMaterial: {fileID: 4326722954951912636, guid: 281592e96d06dd94589438599351dbb7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2942,8 +3197,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -123, y: 237.6}
-  m_SizeDelta: {x: 246, y: 75}
+  m_AnchoredPosition: {x: -122.5, y: 174.19998}
+  m_SizeDelta: {x: 245, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1508037914
 MonoBehaviour:
@@ -3021,7 +3276,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -6540967114086432393, guid: e0eedb76fef3a9240b5796be05a0f492, type: 3}
+  m_Sprite: {fileID: -3786784406564551191, guid: d493696db0b153a46b093b7bfb5fa070, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3039,6 +3294,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1508037912}
   m_CullTransparentMesh: 1
+--- !u!1 &1508147504
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1508147506}
+  - component: {fileID: 1508147505}
+  m_Layer: 0
+  m_Name: RarityAffixTester
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1508147505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1508147504}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a8e8eca438e4e4984fd09cac1d44c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RarityAffixTester
+  testAreaLevel: 30
+  testItemsPerRarity: 10
+  showDetailedAffixInfo: 1
+  testSpecificItemTypes: 1
+  forceNormalRarity: 0
+  forceMagicRarity: 0
+  forceRareRarity: 0
+--- !u!4 &1508147506
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1508147504}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 833.1659, y: 420.76984, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1601212346
 GameObject:
   m_ObjectHideFlags: 0
@@ -3078,7 +3384,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -165, y: 0}
+  m_AnchoredPosition: {x: -207, y: 53}
   m_SizeDelta: {x: 301.2, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1601212348
@@ -3095,7 +3401,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3478,8 +3784,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Name
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 281592e96d06dd94589438599351dbb7, type: 2}
+  m_sharedMaterial: {fileID: 4326722954951912636, guid: 281592e96d06dd94589438599351dbb7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3893,6 +4199,7 @@ GameObject:
   - component: {fileID: 2049810802}
   - component: {fileID: 2049810806}
   - component: {fileID: 2049810807}
+  - component: {fileID: 2049810808}
   m_Layer: 5
   m_Name: UIManager
   m_TagString: Untagged
@@ -4026,6 +4333,18 @@ MonoBehaviour:
   passiveTreeSceneName: PassiveTreeScene
   deckBuilderSceneName: DeckBuilderScene
   uiManager: {fileID: 2049810806}
+--- !u!225 &2049810808
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049810801}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!114 &2052107005 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3571441573733618926, guid: e0006085f0200a94db67e68c471150c7, type: 3}
@@ -4080,6 +4399,7 @@ MonoBehaviour:
     maxMana: 3
     manaRecoveryPerTurn: 3
     cardsDrawnPerTurn: 0
+    cardsDrawnPerWave: 0
     reliance: 0
     maxReliance: 0
     currentGuard: 0
@@ -4096,6 +4416,9 @@ MonoBehaviour:
     accuracyRating: 0
     increasedEvasion: 0
     baseEvasionRating: 0
+    attackSpeedIncreasedPercent: 0
+    castSpeedIncreasedPercent: 0
+    movementSpeedIncreasedPercent: 0
     damageModifiers:
       baseDamage: 0
       addedPhysicalDamage: 0
@@ -4132,6 +4455,7 @@ MonoBehaviour:
       meleeWeapon:
         weaponName: 
         weaponType: 0
+        attackSpeed: 1
         baseDamageMin: 0
         baseDamageMax: 0
         baseDamageType: 1
@@ -4141,6 +4465,7 @@ MonoBehaviour:
       projectileWeapon:
         weaponName: 
         weaponType: 0
+        attackSpeed: 1
         baseDamageMin: 0
         baseDamageMax: 0
         baseDamageType: 1
@@ -4150,6 +4475,7 @@ MonoBehaviour:
       spellWeapon:
         weaponName: 
         weaponType: 0
+        attackSpeed: 1
         baseDamageMin: 0
         baseDamageMax: 0
         baseDamageType: 1
@@ -4165,9 +4491,10 @@ MonoBehaviour:
       activeDeckName: Default Deck
       savedDeckNames: []
       unlockedCards: []
-      hasAllCards: 0
+      hasAllCards: 1
       lastUsedDeck: 
       deckSlotsUnlocked: 5
+      cardExperienceData: []
   inventoryItems: []
 --- !u!4 &2066298124
 Transform:
@@ -4243,8 +4570,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Deck
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 281592e96d06dd94589438599351dbb7, type: 2}
+  m_sharedMaterial: {fileID: 4326722954951912636, guid: 281592e96d06dd94589438599351dbb7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4371,7 +4698,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -4397,6 +4724,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2127693524}
   - component: {fileID: 2127693523}
+  - component: {fileID: 2127693525}
   m_Layer: 0
   m_Name: EnemyDatabase
   m_TagString: Untagged
@@ -4417,10 +4745,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDatabase
   allEnemies:
-  - {fileID: 11400000, guid: 661b1d27eedc889468f5776f2da27f30, type: 2}
-  - {fileID: 11400000, guid: 77767db2eaea7644f821c7442d9eb9f0, type: 2}
   - {fileID: 11400000, guid: 740a4b51ba724844db0cfe5d3cf48656, type: 2}
   - {fileID: 11400000, guid: e7905150cd5b0a341812d82f6c56e366, type: 2}
+  - {fileID: 11400000, guid: 3ded391f8930d5d46a1cc9209f8f3a7c, type: 2}
   resourcePaths:
   - Enemies
   normalWeight: 80
@@ -4430,14 +4757,14 @@ MonoBehaviour:
   normalEnemies:
   - {fileID: 11400000, guid: 740a4b51ba724844db0cfe5d3cf48656, type: 2}
   - {fileID: 11400000, guid: e7905150cd5b0a341812d82f6c56e366, type: 2}
+  - {fileID: 11400000, guid: 3ded391f8930d5d46a1cc9209f8f3a7c, type: 2}
   eliteEnemies: []
-  bossEnemies:
-  - {fileID: 11400000, guid: 77767db2eaea7644f821c7442d9eb9f0, type: 2}
+  bossEnemies: []
   meleeEnemies:
-  - {fileID: 11400000, guid: 77767db2eaea7644f821c7442d9eb9f0, type: 2}
   - {fileID: 11400000, guid: 740a4b51ba724844db0cfe5d3cf48656, type: 2}
   - {fileID: 11400000, guid: e7905150cd5b0a341812d82f6c56e366, type: 2}
-  rangedEnemies: []
+  rangedEnemies:
+  - {fileID: 11400000, guid: 3ded391f8930d5d46a1cc9209f8f3a7c, type: 2}
   casterEnemies: []
 --- !u!4 &2127693524
 Transform:
@@ -4454,6 +4781,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2127693525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2127693522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02314433721b5904f9eddec3e78cd039, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1001 &475140677214691496
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4466,6 +4805,10 @@ PrefabInstance:
       propertyPath: button
       value: 
       objectReference: {fileID: 2097718463}
+    - target: {fileID: 217078142497731612, guid: 8139047883d7567498f15f7dd01bceb9, type: 3}
+      propertyPath: encounterAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 7210adf267ba4ce4fb743ad7f017d38e, type: 2}
     - target: {fileID: 2336486153724940155, guid: 8139047883d7567498f15f7dd01bceb9, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -4540,11 +4883,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6077865047895670028, guid: 8139047883d7567498f15f7dd01bceb9, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 10.400024
+      value: 1555
       objectReference: {fileID: 0}
     - target: {fileID: 6077865047895670028, guid: 8139047883d7567498f15f7dd01bceb9, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 28.799988
+      value: -532
       objectReference: {fileID: 0}
     - target: {fileID: 6077865047895670028, guid: 8139047883d7567498f15f7dd01bceb9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4618,3 +4961,6 @@ SceneRoots:
   - {fileID: 1954861361}
   - {fileID: 273823360}
   - {fileID: 2127693524}
+  - {fileID: 836235778}
+  - {fileID: 1508147506}
+  - {fileID: 645523483}

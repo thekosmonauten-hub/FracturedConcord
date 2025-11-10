@@ -13,38 +13,50 @@ MonoBehaviour:
   m_Name: FrostNova_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Frost Nova
+  groupKey: Frost_Nova
   cardType: Attack
   playCost: 2
-  description: 'Deal {damage} cold damage to all enemies. Apply 3 Chill. Combo (Frost
-    Nova + Fireball): Apply 2x Chill duration.'
+  description: 'Deal {damage} cold damage to all enemies.\nApply 3 Chill. '
   rarity: 0
   element: 2
   category: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 7724984264952215167, guid: b7c0c53201abf70409ed8c81f41b6fbf, type: 3}
+  cardThumbnail: {fileID: -6074527901796950353, guid: 27823db6c342f6f4e8894ef20d49211f, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
-  damage: 8
+  damage: 6
   block: 0
   isDiscardCard: 0
   isDualWield: 0
   ifDiscardedEffect: 
   dualWieldEffect: 
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 3
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 0
   scalesWithProjectileWeapon: 0
   scalesWithSpellWeapon: 1
-  isAoE: 0
-  aoeTargets: 1
+  isAoE: 1
+  aoeTargets: 5
+  aoeRowScope: 0
   damageScaling:
     strengthScaling: 0
     dexterityScaling: 0
-    intelligenceScaling: 1
+    intelligenceScaling: 0.25
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -52,10 +64,43 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
+  enableCombo: 1
   comboWith: 
-  comboDescription: 
+  comboDescription: 'Combo: Freeze all Chilled enemies'
+  comboWithCardType: 2
+  comboAttackIncrease: 0
+  comboGuardIncrease: 0
+  comboIsAoE: 0
+  comboManaRefund: 0
+  comboApplyAilment: 
+  comboBuffs: []
+  comboConsumeAilment: 1
+  comboConsumeAilmentId: 3
+  comboDrawCards: 0
+  comboAilment: 4
+  comboAilmentPortion: 1
+  comboAilmentDuration: 1
+  consumeAilment: 0
+  consumeAilmentId: 0
+  comboScaling: 0
+  comboScalingDivisor: 1
+  comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Attack
   - Cold
+  - Spell
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

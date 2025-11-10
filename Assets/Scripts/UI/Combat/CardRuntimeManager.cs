@@ -402,11 +402,27 @@ public class CardRuntimeManager : MonoBehaviour
     {
         Debug.Log($"<color=magenta>Repositioning {cardList.Count} cards (animated: {animated})...</color>");
         
+        // Additional safety check: Remove any null cards from the list
+        cardList.RemoveAll(card => card == null);
+        
+        // Additional safety check: Verify all cards are properly parented
+        foreach (GameObject card in cardList)
+        {
+            if (card != null && card.transform.parent != cardHandParent)
+            {
+                Debug.LogWarning($"<color=yellow>Card {card.name} has wrong parent! Reparenting to hand...</color>");
+                card.transform.SetParent(cardHandParent, false);
+            }
+        }
+        
         for (int i = 0; i < cardList.Count; i++)
         {
             if (cardList[i] != null && cardList[i].activeInHierarchy)
             {
                 Debug.Log($"  Repositioning card {i}: {cardList[i].name}");
+                
+                // Additional safety: Cancel any existing position tweens before repositioning
+                LeanTween.cancel(cardList[i], false);
                 
                 if (animated)
                 {
@@ -417,7 +433,13 @@ public class CardRuntimeManager : MonoBehaviour
                     PositionCardInHand(cardList[i], i, cardList.Count);
                 }
             }
+            else if (cardList[i] == null)
+            {
+                Debug.LogWarning($"<color=red>Card at index {i} is NULL during reposition!</color>");
+            }
         }
+        
+        Debug.Log($"<color=green>✓ Reposition complete for {cardList.Count} cards</color>");
     }
     
     /// <summary>

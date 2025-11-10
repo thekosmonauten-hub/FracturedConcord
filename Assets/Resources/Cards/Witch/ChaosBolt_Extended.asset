@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: ChaosBolt_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Chaos Bolt
+  groupKey: Chaos_Bolt
   cardType: Attack
   playCost: 2
-  description: 'Deal {damage} chaos damage to a single enemy. Apply 3 Poison. Combo
-    (Fireball + Chaos Bolt): Apply 2x Poison damage.'
+  description: 'Deal {damage} chaos damage to a single enemy. Apply 3 Poison. '
   rarity: 0
   element: 5
   category: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: -1175009987924456960, guid: 2d9bdf6c8e63f2e48b6cfd15d0e9b8f4, type: 3}
+  cardThumbnail: {fileID: -7947233344578206263, guid: 353e62c50f8513e439f2db1110977f1e, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -30,6 +32,9 @@ MonoBehaviour:
   isDualWield: 0
   ifDiscardedEffect: 
   dualWieldEffect: 
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 5
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 0
@@ -37,6 +42,7 @@ MonoBehaviour:
   scalesWithSpellWeapon: 1
   isAoE: 0
   aoeTargets: 1
+  aoeRowScope: 0
   damageScaling:
     strengthScaling: 0
     dexterityScaling: 0
@@ -52,10 +58,43 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
+  enableCombo: 1
   comboWith: 
-  comboDescription: 
+  comboDescription: Apply 2x Poison stacks.
+  comboWithCardType: 0
+  comboAttackIncrease: 0
+  comboGuardIncrease: 0
+  comboIsAoE: 0
+  comboManaRefund: 0
+  comboApplyAilment: 
+  comboBuffs: []
+  comboConsumeAilment: 0
+  comboConsumeAilmentId: 0
+  comboDrawCards: 0
+  comboAilment: 1
+  comboAilmentPortion: 6
+  comboAilmentDuration: 0
+  consumeAilment: 0
+  consumeAilmentId: 0
+  comboScaling: 0
+  comboScalingDivisor: 1
+  comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Attack
   - Chaos
+  - Spell
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

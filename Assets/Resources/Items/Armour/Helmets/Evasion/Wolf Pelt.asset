@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fc25a7765c05a341a11149eb31bcbbf, type: 3}
+  m_Name: Wolf Pelt
+  m_EditorClassIdentifier: Assembly-CSharp::Armour
+  itemName: Wolf Pelt
+  description: A helmet providing defense.
+  itemIcon: {fileID: 0}
+  rarity: 0
+  requiredLevel: 30
+  itemType: 1
+  equipmentType: 0
+  isStackable: 0
+  maxStackSize: 1
+  quality: 0
+  implicitModifiers: []
+  prefixes: []
+  suffixes: []
+  isUnique: 0
+  itemTags:
+  - armour
+  - defence
+  - helmet
+  - leather
+  - evasion
+  - dexterity
+  armourSlot: 0
+  armourType: 1
+  armour: 0
+  evasion: 150
+  energyShield: 0
+  ward: 0
+  requiredStrength: 0
+  requiredDexterity: 66
+  requiredIntelligence: 0
+  movementSpeedPenalty: 0
+  attackSpeedPenalty: 0

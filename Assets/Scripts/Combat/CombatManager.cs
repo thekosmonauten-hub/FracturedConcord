@@ -92,14 +92,22 @@ public class CombatManager : MonoBehaviour
         discardPile.Clear();
         currentHand.Clear();
         
-        // Get starter deck for character
-        if (playerCharacter.currentDeck != null)
+        // Priority 1: Check DeckManager for active deck (from DeckBuilder)
+        if (DeckManager.Instance != null && DeckManager.Instance.HasActiveDeck())
+        {
+            List<Card> deckCards = DeckManager.Instance.GetActiveDeckAsCards();
+            drawPile.AddRange(deckCards);
+            Debug.Log($"Loaded active deck from DeckManager with {deckCards.Count} cards");
+        }
+        // Priority 2: Fall back to Character's current deck (legacy)
+        else if (playerCharacter.currentDeck != null)
         {
             drawPile.AddRange(playerCharacter.currentDeck.cards);
+            Debug.Log($"Loaded deck from Character.currentDeck with {playerCharacter.currentDeck.cards.Count} cards");
         }
+        // Priority 3: Create starter deck if none exists
         else
         {
-            // Create Marauder starter deck if none exists
             CreateMarauderStarterDeck();
         }
         
@@ -201,6 +209,100 @@ public class CombatManager : MonoBehaviour
             return;
         }
         
+        // Check if this card should be prepared instead of played immediately
+        CardDataExtended extendedCard = card.sourceCardData;
+        if (extendedCard != null && extendedCard.canPrepare)
+        {
+            // Check if player wants to prepare (could add UI prompt here)
+            // For now, check for "Prepare" tag or automatically prepare
+            if (card.tags != null && card.tags.Contains("Prepare"))
+            {
+                var prepManager = PreparationManager.Instance;
+                if (prepManager != null && prepManager.CanPrepareCard(extendedCard))
+                {
+                    // Remove from hand
+                    currentHand.Remove(card);
+                    
+                    // Spend mana
+                    if (!playerCharacter.UseMana(card.manaCost))
+                    {
+                        Debug.LogWarning($"[CombatManager] Failed to spend mana for preparing {card.cardName}");
+                        currentHand.Add(card);
+                        return;
+                    }
+                    
+                    // Prepare the card
+                    bool prepared = prepManager.PrepareCard(extendedCard, playerCharacter);
+                    
+                    if (prepared)
+                    {
+                        Debug.Log($"<color=cyan>[CombatManager] Prepared card: {card.cardName}</color>");
+                        
+                        // Update UI
+                        if (combatUI != null)
+                        {
+                            combatUI.UpdateCombatUI();
+                        }
+                        
+                        // Trigger event
+                        OnCardPlayed?.Invoke(card);
+                        return;
+                    }
+                    else
+                    {
+                        // Failed to prepare, refund mana and return card to hand
+                        playerCharacter.RestoreMana(card.manaCost);
+                        currentHand.Add(card);
+                        Debug.LogWarning($"[CombatManager] Failed to prepare {card.cardName}");
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // Check if this is an "Unleash" card that triggers prepared cards
+        if (card.tags != null && card.tags.Contains("Unleash"))
+        {
+            var prepManager = PreparationManager.Instance;
+            if (prepManager != null)
+            {
+                // Remove from hand
+                currentHand.Remove(card);
+                
+                // Spend mana
+                if (!playerCharacter.UseMana(card.manaCost))
+                {
+                    Debug.LogWarning($"[CombatManager] Failed to spend mana for unleash card {card.cardName}");
+                    currentHand.Add(card);
+                    return;
+                }
+                
+                // Unleash all prepared cards (or specific ones based on card effect)
+                // For now, unleash all
+                var preparedCards = prepManager.GetPreparedCards();
+                foreach (var prepared in preparedCards.ToList())
+                {
+                    prepManager.UnleashCardFree(prepared, playerCharacter, false);
+                }
+                
+                Debug.Log($"<color=yellow>[CombatManager] Unleashed {preparedCards.Count} prepared cards!</color>");
+                
+                // Add to discard pile
+                discardPile.Add(card);
+                
+                // Update UI
+                if (combatUI != null)
+                {
+                    combatUI.UpdateCombatUI();
+                }
+                
+                // Trigger event
+                OnCardPlayed?.Invoke(card);
+                return;
+            }
+        }
+        
+        // Normal card play logic
         // Remove from hand
         currentHand.Remove(card);
         
@@ -245,15 +347,23 @@ public class CombatManager : MonoBehaviour
 		var dm = GetDisplayManager();
 		if (dm != null)
 		{
-			if (selectedEnemyIndex >= 0)
-			{
-				dm.PlayerAttackEnemy(selectedEnemyIndex, damage);
-				Debug.Log($"{playerCharacter.characterName} played {card.cardName} for {damage:F1} damage on enemy index {selectedEnemyIndex} (DisplayManager)");
-			}
-			else
-			{
-				Debug.LogWarning("No valid target index for card (DisplayManager)!");
-			}
+            int targetIdx = selectedEnemyIndex;
+            var targetingMgr = EnemyTargetingManager.Instance;
+            var active = dm.GetActiveEnemies();
+            int total = active != null ? active.Count : 0;
+            if (targetingMgr != null)
+            {
+                targetIdx = Mathf.Clamp(targetingMgr.GetTargetedEnemyIndex(), 0, Mathf.Max(0, total - 1));
+            }
+            if (targetIdx >= 0 && targetIdx < total && active[targetIdx] != null && active[targetIdx].currentHealth > 0)
+            {
+                dm.PlayerAttackEnemy(targetIdx, damage);
+                Debug.Log($"{playerCharacter.characterName} played {card.cardName} for {damage:F1} damage on enemy index {targetIdx} (DisplayManager)");
+            }
+            else
+            {
+                Debug.LogWarning($"No valid target index {targetIdx} for card (DisplayManager)! total={total}");
+            }
 			return;
 		}
 
@@ -295,8 +405,13 @@ public class CombatManager : MonoBehaviour
             }
             else
             {
-                // adjacency from selectedEnemyIndex
+                // adjacency starting from targeted enemy index (sync with EnemyTargetingManager)
                 int start = selectedEnemyIndex;
+                var targetingMgr = EnemyTargetingManager.Instance;
+                if (targetingMgr != null)
+                {
+                    start = Mathf.Clamp(targetingMgr.GetTargetedEnemyIndex(), 0, Mathf.Max(0, total - 1));
+                }
                 if (!isAliveAt(start))
                 {
                     // find nearest alive
@@ -558,6 +673,13 @@ public class CombatManager : MonoBehaviour
         
         Debug.Log("Player ended turn. Enemy's turn now.");
         
+        // Update prepared cards (accumulate bonuses, check for auto-unleash)
+        var prepManager = PreparationManager.Instance;
+        if (prepManager != null)
+        {
+            prepManager.OnTurnEnd();
+        }
+        
         // Update UI
         if (combatUI != null)
         {
@@ -568,6 +690,7 @@ public class CombatManager : MonoBehaviour
         StartCoroutine(EnemyTurn());
         
         OnTurnEnded?.Invoke();
+        TemporaryStatSystem.Instance?.AdvanceTurn();
     }
     
     private System.Collections.IEnumerator EnemyTurn()
@@ -629,12 +752,13 @@ public class CombatManager : MonoBehaviour
         if (playerWon)
         {
             Debug.Log("Combat won! Enemy defeated.");
-            // Add experience, rewards, etc.
-            playerCharacter.AddExperience(50);
             
-            // Auto-save after victory
+            // Add experience to character and cards
             if (CharacterManager.Instance != null)
             {
+                CharacterManager.Instance.AddExperience(50, shareWithCards: true);
+                
+                // Auto-save after victory
                 CharacterManager.Instance.SaveCharacter();
                 Debug.Log("[Auto-Save] Character saved after combat victory.");
             }

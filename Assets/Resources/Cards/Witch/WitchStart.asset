@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cc97289223b8f943b58c307b0877854, type: 3}
   m_Name: WitchStart
   m_EditorClassIdentifier: Assembly-CSharp::StarterDeckDefinition
-  characterClass: Marauder
+  characterClass: Witch
   cards:
   - card: {fileID: 11400000, guid: f4d20fc8372647e47aeaeb76476d6819, type: 2}
     count: 6

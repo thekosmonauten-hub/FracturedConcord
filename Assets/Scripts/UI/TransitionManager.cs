@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
 using System.Collections;
 
 public class TransitionManager : MonoBehaviour
@@ -9,12 +10,22 @@ public class TransitionManager : MonoBehaviour
     public Image transitionFrame;
     public float transitionDuration = 1.5f;
     public AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [Tooltip("Optional curve controlling curtain motion. Defaults to fadeCurve when null.")]
+    public AnimationCurve curtainCurve = null;
     
     [Header("Transition Frame")]
     public Sprite transitionFrameSprite;
-
+    
     [Header("Background Image")]
     public Sprite backgroundSprite; // Add this new field
+    
+    private GameObject transitionCanvas;
+    private CanvasGroup transitionCanvasGroup;
+    private Image backgroundImageOverlay;
+    private RectTransform topCurtainRect;
+    private RectTransform bottomCurtainRect;
+    private RectTransform leftCurtainRect;
+    private RectTransform rightCurtainRect;
     
     private static TransitionManager _instance;
     public static TransitionManager Instance
@@ -63,18 +74,13 @@ public class TransitionManager : MonoBehaviour
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920, 1080);
         
-        // Create background panel (black overlay)
-        GameObject backgroundGO = new GameObject("TransitionBackground");
-        backgroundGO.transform.SetParent(canvasGO.transform);
-        
-        Image backgroundImage = backgroundGO.AddComponent<Image>();
-        backgroundImage.color = Color.black;
-        
-        RectTransform backgroundRect = backgroundGO.GetComponent<RectTransform>();
-        backgroundRect.anchorMin = Vector2.zero;
-        backgroundRect.anchorMax = Vector2.one;
-        backgroundRect.offsetMin = Vector2.zero;
-        backgroundRect.offsetMax = Vector2.zero;
+        transitionCanvas = canvasGO;
+        transitionCanvasGroup = canvasGO.GetComponent<CanvasGroup>();
+        if (transitionCanvasGroup == null)
+        {
+            transitionCanvasGroup = canvasGO.AddComponent<CanvasGroup>();
+        }
+        transitionCanvasGroup.alpha = 0f;
         
         // Create background image that fills the entire canvas
         GameObject backgroundImageGO = new GameObject("BackgroundImage");
@@ -85,9 +91,10 @@ public class TransitionManager : MonoBehaviour
         {
             bgImage.sprite = transitionFrameSprite; // Use the same sprite as transition frame
         }
-        bgImage.color = Color.white;
+        bgImage.color = Color.black;
         bgImage.preserveAspect = false; // Allow it to stretch to fill
         bgImage.type = Image.Type.Sliced; // Or use Simple if you prefer
+        backgroundImageOverlay = bgImage;
         
         RectTransform bgImageRect = backgroundImageGO.GetComponent<RectTransform>();
         bgImageRect.anchorMin = Vector2.zero;
@@ -113,6 +120,55 @@ public class TransitionManager : MonoBehaviour
         frameRect.offsetMin = Vector2.zero;  // No offset
         frameRect.offsetMax = Vector2.zero;  // No offset
         
+        // Create curtains for optional transitions
+        GameObject topCurtainGO = new GameObject("TopCurtain");
+        topCurtainGO.transform.SetParent(canvasGO.transform);
+        Image topCurtainImage = topCurtainGO.AddComponent<Image>();
+        topCurtainImage.color = Color.black;
+        topCurtainRect = topCurtainGO.GetComponent<RectTransform>();
+        topCurtainRect.anchorMin = new Vector2(0f, 1f);
+        topCurtainRect.anchorMax = new Vector2(1f, 1f);
+        topCurtainRect.pivot = new Vector2(0.5f, 1f);
+        topCurtainRect.offsetMin = Vector2.zero;
+        topCurtainRect.offsetMax = Vector2.zero;
+        topCurtainGO.SetActive(false);
+
+        GameObject bottomCurtainGO = new GameObject("BottomCurtain");
+        bottomCurtainGO.transform.SetParent(canvasGO.transform);
+        Image bottomCurtainImage = bottomCurtainGO.AddComponent<Image>();
+        bottomCurtainImage.color = Color.black;
+        bottomCurtainRect = bottomCurtainGO.GetComponent<RectTransform>();
+        bottomCurtainRect.anchorMin = new Vector2(0f, 0f);
+        bottomCurtainRect.anchorMax = new Vector2(1f, 0f);
+        bottomCurtainRect.pivot = new Vector2(0.5f, 0f);
+        bottomCurtainRect.offsetMin = Vector2.zero;
+        bottomCurtainRect.offsetMax = Vector2.zero;
+        bottomCurtainGO.SetActive(false);
+
+        GameObject leftCurtainGO = new GameObject("LeftCurtain");
+        leftCurtainGO.transform.SetParent(canvasGO.transform);
+        Image leftCurtainImage = leftCurtainGO.AddComponent<Image>();
+        leftCurtainImage.color = Color.black;
+        leftCurtainRect = leftCurtainGO.GetComponent<RectTransform>();
+        leftCurtainRect.anchorMin = new Vector2(0f, 0f);
+        leftCurtainRect.anchorMax = new Vector2(0f, 1f);
+        leftCurtainRect.pivot = new Vector2(0f, 0.5f);
+        leftCurtainRect.offsetMin = Vector2.zero;
+        leftCurtainRect.offsetMax = Vector2.zero;
+        leftCurtainGO.SetActive(false);
+        
+        GameObject rightCurtainGO = new GameObject("RightCurtain");
+        rightCurtainGO.transform.SetParent(canvasGO.transform);
+        Image rightCurtainImage = rightCurtainGO.AddComponent<Image>();
+        rightCurtainImage.color = Color.black;
+        rightCurtainRect = rightCurtainGO.GetComponent<RectTransform>();
+        rightCurtainRect.anchorMin = new Vector2(1f, 0f);
+        rightCurtainRect.anchorMax = new Vector2(1f, 1f);
+        rightCurtainRect.pivot = new Vector2(1f, 0.5f);
+        rightCurtainRect.offsetMin = Vector2.zero;
+        rightCurtainRect.offsetMax = Vector2.zero;
+        rightCurtainGO.SetActive(false);
+        
         // Initially hide the transition
         canvasGO.SetActive(false);
     }
@@ -124,29 +180,41 @@ public class TransitionManager : MonoBehaviour
     
     private IEnumerator TransitionCoroutine(string sceneName)
     {
-        // Show transition UI
-        transform.GetChild(0).gameObject.SetActive(true);
+        if (transitionCanvas == null)
+        {
+            SetupTransitionUI();
+        }
+        
+        transitionCanvas.SetActive(true);
+        if (transitionCanvasGroup == null)
+        {
+            transitionCanvasGroup = transitionCanvas.GetComponent<CanvasGroup>();
+            if (transitionCanvasGroup == null)
+                transitionCanvasGroup = transitionCanvas.AddComponent<CanvasGroup>();
+        }
+        transitionCanvasGroup.alpha = 0f;
+    if (leftCurtainRect != null) leftCurtainRect.gameObject.SetActive(false);
+    if (rightCurtainRect != null) rightCurtainRect.gameObject.SetActive(false);
+        if (backgroundImageOverlay != null) backgroundImageOverlay.enabled = true;
         
         // Fade in the transition frame
         float elapsedTime = 0f;
-        CanvasGroup canvasGroup = transform.GetChild(0).GetComponent<CanvasGroup>();
-        if (canvasGroup == null)
-        {
-            canvasGroup = transform.GetChild(0).gameObject.AddComponent<CanvasGroup>();
-        }
         
-        // Fade in
         while (elapsedTime < transitionDuration * 0.5f)
         {
             elapsedTime += Time.deltaTime;
             float progress = elapsedTime / (transitionDuration * 0.5f);
             float curveValue = fadeCurve.Evaluate(progress);
+            if (curtainCurve != null)
+            {
+                curveValue = curtainCurve.Evaluate(progress);
+            }
             
-            canvasGroup.alpha = curveValue;
+            transitionCanvasGroup.alpha = curveValue;
             yield return null;
         }
         
-        canvasGroup.alpha = 1f;
+        transitionCanvasGroup.alpha = 1f;
         
         // Load the new scene
         SceneManager.LoadScene(sceneName);
@@ -161,15 +229,19 @@ public class TransitionManager : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float progress = elapsedTime / (transitionDuration * 0.5f);
             float curveValue = fadeCurve.Evaluate(1f - progress);
+            if (curtainCurve != null)
+            {
+                curveValue = curtainCurve.Evaluate(1f - progress);
+            }
             
-            canvasGroup.alpha = curveValue;
+            transitionCanvasGroup.alpha = curveValue;
             yield return null;
         }
         
-        canvasGroup.alpha = 0f;
+        transitionCanvasGroup.alpha = 0f;
         
         // Hide transition UI
-        transform.GetChild(0).gameObject.SetActive(false);
+        transitionCanvas.SetActive(false);
     }
     
     // Alternative transition with scale effect
@@ -181,14 +253,28 @@ public class TransitionManager : MonoBehaviour
     private IEnumerator TransitionWithScaleCoroutine(string sceneName)
     {
         // Show transition UI
-        GameObject transitionCanvas = transform.GetChild(0).gameObject;
-        transitionCanvas.SetActive(true);
-        
-        CanvasGroup canvasGroup = transitionCanvas.GetComponent<CanvasGroup>();
-        if (canvasGroup == null)
+        if (transitionCanvas == null)
         {
-            canvasGroup = transitionCanvas.AddComponent<CanvasGroup>();
+            SetupTransitionUI();
         }
+        
+        transitionCanvas.SetActive(true);
+        if (transitionCanvasGroup == null)
+        {
+            transitionCanvasGroup = transitionCanvas.GetComponent<CanvasGroup>();
+            if (transitionCanvasGroup == null)
+                transitionCanvasGroup = transitionCanvas.AddComponent<CanvasGroup>();
+        }
+        transitionCanvasGroup.alpha = 0f;
+        if (topCurtainRect != null) topCurtainRect.gameObject.SetActive(false);
+        if (bottomCurtainRect != null) bottomCurtainRect.gameObject.SetActive(false);
+        if (leftCurtainRect != null) leftCurtainRect.gameObject.SetActive(false);
+        if (rightCurtainRect != null) rightCurtainRect.gameObject.SetActive(false);
+        if (topCurtainRect != null) topCurtainRect.gameObject.SetActive(false);
+        if (bottomCurtainRect != null) bottomCurtainRect.gameObject.SetActive(false);
+        if (leftCurtainRect != null) leftCurtainRect.gameObject.SetActive(false);
+        if (rightCurtainRect != null) rightCurtainRect.gameObject.SetActive(false);
+        if (backgroundImageOverlay != null) backgroundImageOverlay.enabled = true;
         
         RectTransform frameRect = transitionFrame.GetComponent<RectTransform>();
         
@@ -199,13 +285,17 @@ public class TransitionManager : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float progress = elapsedTime / (transitionDuration * 0.5f);
             float curveValue = fadeCurve.Evaluate(progress);
+            if (curtainCurve != null)
+            {
+                curveValue = curtainCurve.Evaluate(progress);
+            }
             
-            canvasGroup.alpha = curveValue;
+            transitionCanvasGroup.alpha = curveValue;
             frameRect.localScale = Vector3.one * (0.5f + curveValue * 0.5f);
             yield return null;
         }
         
-        canvasGroup.alpha = 1f;
+        transitionCanvasGroup.alpha = 1f;
         frameRect.localScale = Vector3.one;
         
         // Load the new scene
@@ -221,17 +311,153 @@ public class TransitionManager : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float progress = elapsedTime / (transitionDuration * 0.5f);
             float curveValue = fadeCurve.Evaluate(1f - progress);
+            if (curtainCurve != null)
+            {
+                curveValue = curtainCurve.Evaluate(1f - progress);
+            }
             
-            canvasGroup.alpha = curveValue;
+            transitionCanvasGroup.alpha = curveValue;
             frameRect.localScale = Vector3.one * (0.5f + curveValue * 0.5f);
             yield return null;
         }
         
-        canvasGroup.alpha = 0f;
+        transitionCanvasGroup.alpha = 0f;
         frameRect.localScale = Vector3.one * 0.5f;
         
         // Hide transition UI
         transitionCanvas.SetActive(false);
+    }
+
+    public void TransitionToSceneWithCurtain(string sceneName)
+    {
+        StartCoroutine(TransitionCurtainCoroutine(sceneName));
+    }
+
+    private IEnumerator TransitionCurtainCoroutine(string sceneName)
+    {
+        if (transitionCanvas == null)
+        {
+            SetupTransitionUI();
+        }
+
+        bool frameWasActive = transitionFrame != null && transitionFrame.gameObject.activeSelf;
+        if (transitionFrame != null)
+        {
+            transitionFrame.gameObject.SetActive(false);
+        }
+
+        transitionCanvas.SetActive(true);
+        if (transitionCanvasGroup == null)
+        {
+            transitionCanvasGroup = transitionCanvas.GetComponent<CanvasGroup>();
+            if (transitionCanvasGroup == null)
+                transitionCanvasGroup = transitionCanvas.AddComponent<CanvasGroup>();
+        }
+        transitionCanvasGroup.alpha = 0f;
+
+        RectTransform canvasRect = transitionCanvas.GetComponent<RectTransform>();
+        if (backgroundImageOverlay != null)
+        {
+            backgroundImageOverlay.enabled = true;
+            Color overlayColor = backgroundImageOverlay.color;
+            overlayColor.a = 0f;
+            backgroundImageOverlay.color = overlayColor;
+        }
+
+        ActivateCurtains(true);
+
+        float closeDuration = transitionDuration * 0.5f;
+        Sequence closeSequence = DOTween.Sequence();
+        closeSequence.Append(transitionCanvasGroup.DOFade(1f, closeDuration).SetEase(fadeCurve));
+
+        if (topCurtainRect != null)
+        {
+            topCurtainRect.anchorMin = new Vector2(0f, 1f);
+            topCurtainRect.anchorMax = new Vector2(1f, 1f);
+            closeSequence.Join(topCurtainRect.DOAnchorMin(new Vector2(0f, 0.5f), closeDuration).SetEase(fadeCurve));
+            closeSequence.Join(topCurtainRect.DOAnchorMax(new Vector2(1f, 0.5f), closeDuration).SetEase(fadeCurve));
+        }
+        if (bottomCurtainRect != null)
+        {
+            bottomCurtainRect.anchorMin = new Vector2(0f, 0f);
+            bottomCurtainRect.anchorMax = new Vector2(1f, 0f);
+            closeSequence.Join(bottomCurtainRect.DOAnchorMin(new Vector2(0f, 0.5f), closeDuration).SetEase(fadeCurve));
+            closeSequence.Join(bottomCurtainRect.DOAnchorMax(new Vector2(1f, 0.5f), closeDuration).SetEase(fadeCurve));
+        }
+        if (leftCurtainRect != null)
+        {
+            leftCurtainRect.anchorMin = new Vector2(0f, 0f);
+            leftCurtainRect.anchorMax = new Vector2(0f, 1f);
+            closeSequence.Join(leftCurtainRect.DOAnchorMin(new Vector2(0.5f, 0f), closeDuration).SetEase(fadeCurve));
+            closeSequence.Join(leftCurtainRect.DOAnchorMax(new Vector2(0.5f, 1f), closeDuration).SetEase(fadeCurve));
+        }
+        if (rightCurtainRect != null)
+        {
+            rightCurtainRect.anchorMin = new Vector2(1f, 0f);
+            rightCurtainRect.anchorMax = new Vector2(1f, 1f);
+            closeSequence.Join(rightCurtainRect.DOAnchorMin(new Vector2(0.5f, 0f), closeDuration).SetEase(fadeCurve));
+            closeSequence.Join(rightCurtainRect.DOAnchorMax(new Vector2(0.5f, 1f), closeDuration).SetEase(fadeCurve));
+        }
+        if (backgroundImageOverlay != null)
+        {
+            closeSequence.Join(backgroundImageOverlay.DOFade(1f, closeDuration).SetEase(fadeCurve));
+        }
+
+        yield return closeSequence.WaitForCompletion();
+
+        SceneManager.LoadScene(sceneName);
+        yield return null;
+
+        float openDuration = transitionDuration * 0.5f;
+        Sequence openSequence = DOTween.Sequence();
+        openSequence.Append(transitionCanvasGroup.DOFade(0f, openDuration).SetEase(fadeCurve));
+
+        if (topCurtainRect != null)
+        {
+            openSequence.Join(topCurtainRect.DOAnchorMin(new Vector2(0f, 1f), openDuration).SetEase(fadeCurve));
+            openSequence.Join(topCurtainRect.DOAnchorMax(new Vector2(1f, 1f), openDuration).SetEase(fadeCurve));
+        }
+        if (bottomCurtainRect != null)
+        {
+            openSequence.Join(bottomCurtainRect.DOAnchorMin(new Vector2(0f, 0f), openDuration).SetEase(fadeCurve));
+            openSequence.Join(bottomCurtainRect.DOAnchorMax(new Vector2(1f, 0f), openDuration).SetEase(fadeCurve));
+        }
+        if (leftCurtainRect != null)
+        {
+            openSequence.Join(leftCurtainRect.DOAnchorMin(new Vector2(0f, 0f), openDuration).SetEase(fadeCurve));
+            openSequence.Join(leftCurtainRect.DOAnchorMax(new Vector2(0f, 1f), openDuration).SetEase(fadeCurve));
+        }
+        if (rightCurtainRect != null)
+        {
+            openSequence.Join(rightCurtainRect.DOAnchorMin(new Vector2(1f, 0f), openDuration).SetEase(fadeCurve));
+            openSequence.Join(rightCurtainRect.DOAnchorMax(new Vector2(1f, 1f), openDuration).SetEase(fadeCurve));
+        }
+        if (backgroundImageOverlay != null)
+        {
+            openSequence.Join(backgroundImageOverlay.DOFade(0f, openDuration).SetEase(fadeCurve));
+        }
+
+        yield return openSequence.WaitForCompletion();
+
+        ActivateCurtains(false);
+        if (backgroundImageOverlay != null)
+        {
+            backgroundImageOverlay.enabled = false;
+        }
+        transitionCanvas.SetActive(false);
+
+        if (transitionFrame != null)
+        {
+            transitionFrame.gameObject.SetActive(frameWasActive);
+        }
+    }
+
+    private void ActivateCurtains(bool active)
+    {
+        if (topCurtainRect != null) topCurtainRect.gameObject.SetActive(active);
+        if (bottomCurtainRect != null) bottomCurtainRect.gameObject.SetActive(active);
+        if (leftCurtainRect != null) leftCurtainRect.gameObject.SetActive(active);
+        if (rightCurtainRect != null) rightCurtainRect.gameObject.SetActive(active);
     }
 
     // Comment out or remove these methods for now:

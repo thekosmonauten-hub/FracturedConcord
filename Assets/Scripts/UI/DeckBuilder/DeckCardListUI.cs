@@ -124,9 +124,12 @@ public class DeckCardListUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         // Set background to card art when available; center-anchored and scalable
         if (cardBackground != null)
         {
-            if (card.cardImage != null)
+            // Use thumbnail sprite for list view (falls back to cardImage if not assigned)
+            Sprite displaySprite = card.GetCardSprite(CardSpriteContext.Thumbnail);
+            
+            if (displaySprite != null)
             {
-                cardBackground.sprite = card.cardImage;
+                cardBackground.sprite = displaySprite;
                 cardBackground.preserveAspect = false; // we will control scaling
                 cardBackground.color = Color.white; // ensure art isn't tinted
 

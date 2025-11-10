@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: Fireball_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Fireball
+  groupKey: Fireball
   cardType: Attack
   playCost: 2
-  description: 'Deal {damage} fire damage to all enemies. Apply 2 Ignite. Combo (Arcane
-    Bolt + Fireball): Apply 3x Ignite duration.'
+  description: Deal {damage} fire damage to all enemies. Apply 2 Ignite.
   rarity: 0
   element: 1
   category: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 8319293988844191233, guid: 81fd136285e201848b673da58b60da36, type: 3}
+  cardThumbnail: {fileID: 4904190285409195731, guid: 933a507121dee5a498287c9d7a75fc8d, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -30,13 +32,17 @@ MonoBehaviour:
   isDualWield: 0
   ifDiscardedEffect: 
   dualWieldEffect: 
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 2
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 0
   scalesWithProjectileWeapon: 0
   scalesWithSpellWeapon: 1
-  isAoE: 0
-  aoeTargets: 1
+  isAoE: 1
+  aoeTargets: 5
+  aoeRowScope: 0
   damageScaling:
     strengthScaling: 0
     dexterityScaling: 0
@@ -52,10 +58,43 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
+  enableCombo: 1
   comboWith: 
-  comboDescription: 
+  comboDescription: 'Combo: Refund 1 mana'
+  comboWithCardType: 2
+  comboAttackIncrease: 0
+  comboGuardIncrease: 0
+  comboIsAoE: 0
+  comboManaRefund: 1
+  comboApplyAilment: 
+  comboBuffs: []
+  comboConsumeAilment: 0
+  comboConsumeAilmentId: 0
+  comboDrawCards: 0
+  comboAilment: 2
+  comboAilmentPortion: 4
+  comboAilmentDuration: 0
+  consumeAilment: 0
+  consumeAilmentId: 0
+  comboScaling: 0
+  comboScalingDivisor: 1
+  comboLogic: 1
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Attack
   - Fire
+  - Spell
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

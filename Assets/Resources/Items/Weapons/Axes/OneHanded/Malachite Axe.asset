@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acb10ebe3b1fccb4db0460f273da7305, type: 3}
+  m_Name: Malachite Axe
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponItem
+  itemName: Malachite Axe
+  description: A axe weapon.
+  itemIcon: {fileID: 0}
+  rarity: 0
+  requiredLevel: 36
+  itemType: 0
+  equipmentType: 2
+  isStackable: 0
+  maxStackSize: 1
+  quality: 0
+  implicitModifiers: []
+  prefixes: []
+  suffixes: []
+  isUnique: 0
+  itemTags:
+  - weapon
+  - axe
+  - onehanded
+  - melee
+  - attack
+  - strength
+  - dexterity
+  weaponType: 0
+  handedness: 0
+  attackSpeed: 1.3
+  criticalStrikeChance: 5
+  criticalStrikeMultiplier: 150
+  minDamage: 32
+  maxDamage: 50
+  primaryDamageType: 1
+  secondaryDamageType: 0
+  secondaryDamageMin: 0
+  secondaryDamageMax: 0
+  requiredStrength: 86
+  requiredDexterity: 40
+  requiredIntelligence: 0

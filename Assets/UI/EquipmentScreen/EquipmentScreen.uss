@@ -54,6 +54,7 @@
 
 .equipment-panel {
     flex: 1;
+    flex-direction: column;
     background-color: rgba(30, 40, 50, 0);
     border-color: rgb(80, 90, 100);
     border-width: 2px;
@@ -65,6 +66,144 @@
     border-top-color: rgba(80, 90, 100, 0);
     border-bottom-color: rgba(80, 90, 100, 0);
     margin-left: 64px;
+    gap: 15px;
+}
+
+.equipment-panel-top {
+    flex-direction: row;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.effigy-grid-container {
+    flex-direction: column;
+    width: 400px;
+    min-width: 400px;
+    padding: 10px;
+    background-color: rgba(20, 25, 30, 0.7);
+    border-color: rgb(60, 70, 80);
+    border-width: 1px;
+    border-radius: 4px;
+    align-items: flex-start;
+}
+
+.effigy-section-label {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(255, 215, 100);
+    margin-bottom: 8px;
+    -unity-text-align: middle-left;
+    width: 100%;
+}
+
+/* Effigy Storage Panel */
+.effigy-storage-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 400px;
+    background-color: rgba(20, 25, 30, 0.98);
+    border-left-color: rgb(80, 90, 100);
+    border-left-width: 3px;
+    flex-direction: column;
+}
+
+.effigy-storage-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: rgba(30, 35, 40, 0.9);
+    border-bottom-color: rgb(60, 70, 80);
+    border-bottom-width: 1px;
+}
+
+.effigy-storage-title {
+    font-size: 18px;
+    -unity-font-style: bold;
+    color: rgb(255, 215, 100);
+}
+
+.close-button {
+    width: 30px;
+    height: 30px;
+    background-color: rgb(60, 70, 80);
+    border-color: rgb(100, 110, 120);
+    border-width: 1px;
+    border-radius: 4px;
+    color: rgb(255, 255, 255);
+    font-size: 18px;
+    padding: 0;
+    margin: 0;
+}
+
+.close-button:hover {
+    background-color: rgb(80, 90, 100);
+    border-color: rgb(150, 200, 255);
+}
+
+.effigy-storage-scrollview {
+    flex: 1;
+    margin: 10px;
+}
+
+.effigy-storage-content {
+    flex-direction: column;
+    padding: 10px;
+}
+
+.effigy-storage-section-header {
+    flex-direction: row;
+    padding: 10px 5px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+    border-bottom-width: 1px;
+}
+
+.effigy-storage-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.effigy-storage-slot {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    align-items: center;
+    justify-content: center;
+}
+
+.effigy-storage-slot:hover {
+    opacity: 0.8;
+    border-width: 3px;
+}
+
+.effigy-header-container {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.effigy-storage-button {
+    background-color: rgb(40, 60, 40);
+    border-color: rgb(80, 120, 80);
+    border-width: 2px;
+    border-radius: 6px;
+    color: rgb(150, 255, 150);
+    font-size: 12px;
+    -unity-font-style: bold;
+    padding: 5px 10px;
+    margin-right: 10px;
+    min-width: 80px;
+    cursor: pointer;
+}
+
+.effigy-storage-button:hover {
+    background-color: rgb(50, 70, 50);
+    border-color: rgb(100, 140, 100);
 }
 
 .equipment-slots {
@@ -72,6 +211,7 @@
     align-items: center;
     justify-content: center;
     height: 100%;
+    flex: 1;
 }
 
 .equipment-row {
@@ -115,12 +255,12 @@
 }
 
 .slot-label {
-    font-size: 10px;
+    font-size: 8px;
     -unity-font-style: bold;
     color: rgb(150, 150, 150);
     -unity-text-align: middle-center;
-    margin: 5px;
-    white-space: pre-wrap;
+    margin: 2px;
+    white-space: nowrap;
 }
 
 .helmet-slot {
@@ -129,11 +269,19 @@
     margin-left: 88px;
 }
 
+.helmet-slot .slot-label {
+    font-size: 7px;
+}
+
 .amulet-slot {
     width: 65px;
     height: 65px;
     margin-left: 15px;
     margin-top: 47px;
+}
+
+.amulet-slot .slot-label {
+    font-size: 7px;
 }
 
 .mainhand-slot {
@@ -704,7 +852,7 @@
     border-color: rgb(200, 150, 200);
 }
 
-.inventory-slot {
+.inventory-slot, .stash-slot {
     width: 60px;
     height: 60px;
     background-color: rgb(30, 35, 40);
@@ -720,12 +868,12 @@
     justify-content: center;
 }
 
-.inventory-slot:hover {
+.inventory-slot:hover, .stash-slot:hover {
     border-color: rgb(150, 200, 255);
     background-color: rgb(30, 40, 50);
 }
 
-.inventory-slot.occupied {
+.inventory-slot.occupied, .stash-slot.occupied {
     border-color: rgb(150, 200, 150);
     background-color: rgb(30, 50, 30);
     border-width: 2px;

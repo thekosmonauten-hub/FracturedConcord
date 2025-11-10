@@ -1,0 +1,167 @@
+# Effigy System Guide
+
+## Overview
+The Effigy system is similar to Last Epoch's Idols or Path of Exile's Cluster Jewels. It's a 6x4 grid where you place puzzle-piece-shaped effigies that provide passive bonuses.
+
+## System Architecture
+
+### Core Components
+
+1. **Effigy.cs** - ScriptableObject for effigy data
+   - Defines shape (width, height, mask)
+   - Contains modifiers/affixes
+   - Stores requirements
+
+2. **EffigyGrid.cs** - Manages the 6x4 grid
+   - Handles placement validation
+   - Visual representation
+   - Drag-and-drop logic
+
+3. **EquipmentScreen.cs** - Integration point
+   - Initializes EffigyGrid
+   - Connects to inventory system
+
+## Creating an Effigy
+
+### Step 1: Create Effigy Asset
+1. Right-click in Project window
+2. `Create > Dexiled > Items > Effigy`
+3. Name it (e.g., "Small_2x1_Health")
+
+### Step 2: Configure Shape
+The shape system uses a 2D boolean mask:
+- `shapeWidth` / `shapeHeight`: Dimensions (e.g., 2x1, 3x2)
+- `shapeMask`: Boolean array (true = occupied cell)
+
+**Example Shapes:**
+
+**2x1 (Horizontal line):**
+```
+Width: 2, Height: 1
+Mask: [true, true]
+Shape:
+[X][X]
+```
+
+**L-Shape (2x2):**
+```
+Width: 2, Height: 2
+Mask: [true, false,
+       true, true]
+Shape:
+[X][ ]
+[X][X]
+```
+
+**T-Shape (3x2):**
+```
+Width: 3, Height: 2
+Mask: [false, true, false,
+       true,  true,  true]
+Shape:
+[ ][X][ ]
+[X][X][X]
+```
+
+### Step 3: Add Modifiers
+- Add Affix instances to the `modifiers` list
+- These provide the passive bonuses
+
+### Step 4: Set Requirements
+- `requiredLevel`: Minimum level to use
+
+## UI Integration
+
+### Adding to UXML (Optional)
+You can add this to your `EquipmentScreen.uxml`:
+
+```xml
+<ui:VisualElement name="EffigyGridContainer" class="effigy-container">
+    <ui:Label text="EFFIGIES" class="section-label" />
+</ui:VisualElement>
+```
+
+If the container doesn't exist in UXML, it will be created automatically.
+
+### Manual Placement from Code
+
+```csharp
+// Get EquipmentScreen reference
+EquipmentScreen equipmentScreen = FindObjectOfType<EquipmentScreen>();
+
+// Place effigy at position (0, 0) in grid
+Effigy myEffigy = // Load from Resources or asset reference
+equipmentScreen.TryPlaceEffigyFromInventory(myEffigy, 0, 0);
+```
+
+## Grid System Details
+
+### Grid Coordinates
+- **Origin**: Top-left is (0, 0)
+- **X-axis**: Left to right (0-5)
+- **Y-axis**: Top to bottom (0-3)
+
+### Placement Rules
+1. Effigy must fit entirely within 6x4 bounds
+2. No overlapping with existing effigies
+3. All cells in shape mask must be unoccupied
+
+### Drag and Drop
+- **Click and drag**: Moves existing effigy
+- **Release**: Validates and places (or returns to original position)
+- **Visual feedback**: TODO - add placement preview
+
+## Current Limitations & TODOs
+
+1. **Visual Feedback**: Placement preview while dragging needs enhancement
+2. **Rotation**: Shapes cannot be rotated (future feature)
+3. **Inventory Integration**: Need to connect to inventory/stash system
+4. **Save/Load**: Effigy placements not persisted yet
+5. **Tooltips**: Need tooltips showing effigy stats
+
+## Switching to UGUI
+
+If you want to switch to GameObject-based UI:
+
+### Pros:
+- More tutorials/examples available
+- Better editor support for complex interactions
+- Easier drag-and-drop implementation
+
+### Cons:
+- More GameObjects (performance)
+- Less flexible styling
+
+### Migration Path:
+1. Create Canvas for Effigy grid
+2. Use `GridLayoutGroup` for 6x4 layout
+3. Implement `IDragHandler`, `IDropHandler` interfaces
+4. Follow similar patterns to your inventory drag-drop
+
+## Next Steps
+
+1. **Create Test Effigies**: Make a few different shapes to test
+2. **Add Visual Polish**: Improve colors, borders, hover effects
+3. **Connect Inventory**: Allow dragging from inventory to grid
+4. **Add Validation UI**: Show why placement failed
+5. **Implement Save System**: Persist effigy placements
+
+## Example: Creating a Simple Health Effigy
+
+1. Create Effigy asset: "Small_Health_Boost"
+2. Set `shapeWidth = 1`, `shapeHeight = 1`
+3. Set `shapeMask = [true]` (single cell)
+4. Create Affix:
+   - Name: "Health Boost"
+   - Modifier: `maximumLife` (+20 to +50)
+5. Add Affix to `modifiers` list
+6. Set `requiredLevel = 1`
+7. Place in grid at (0, 0)
+
+The system is now ready to use! Start by creating a few test effigies to see how the puzzle mechanics work.
+
+
+
+
+
+

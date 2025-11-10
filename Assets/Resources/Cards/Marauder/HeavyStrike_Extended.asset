@@ -13,13 +13,16 @@ MonoBehaviour:
   m_Name: HeavyStrike_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Heavy Strike
+  groupKey: Heavy_Strike
   cardType: Attack
   playCost: 1
   description: Deal {damage} physical damage.
   rarity: 0
   element: 4
   category: 0
-  cardImage: {fileID: 1691931528568111337, guid: bfb48cc3ede77b54aac2d17c155c17ec, type: 3}
+  cardImage: {fileID: 21300000, guid: bfb48cc3ede77b54aac2d17c155c17ec, type: 3}
+  cardThumbnail: {fileID: -4102947046623247423, guid: 3e7961d6f2fdc2542866a30fb4244880, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -29,6 +32,9 @@ MonoBehaviour:
   isDualWield: 0
   ifDiscardedEffect: 
   dualWieldEffect: 
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 1
@@ -38,7 +44,7 @@ MonoBehaviour:
   aoeTargets: 1
   aoeRowScope: 0
   damageScaling:
-    strengthScaling: 0.75
+    strengthScaling: 0.5
     dexterityScaling: 0
     intelligenceScaling: 0
   guardScaling:
@@ -68,13 +74,23 @@ MonoBehaviour:
   comboAilment: 0
   comboAilmentPortion: 0
   comboAilmentDuration: 0
-  consumeAilment: 0
-  consumeAilmentId: 0
+  consumeAilment: 1
+  consumeAilmentId: 4
   comboScaling: 1
   comboScalingDivisor: 4
   comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingDamageMultiplier: 1
+  channelingAdditionalGuard: 0
   tags:
   - Attack
   - Physical
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

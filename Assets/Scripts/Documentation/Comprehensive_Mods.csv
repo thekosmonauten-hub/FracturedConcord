@@ -1,0 +1,485 @@
+Category,Prefix/Suffix,Name,Stat Text,Min,Max,Item Types,Stat Name,Tier,Min Level,Scope
+# CORE ATTRIBUTES
+Strength,Suffix,of the Bear,+3–6 to Strength,3,6,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,strength,9,1,Global
+Strength,Suffix,of the Bull,+7–10 to Strength,7,10,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,strength,8,10,Global
+Strength,Suffix,of the Ox,+11–15 to Strength,11,15,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,strength,7,20,Global
+Strength,Suffix,of the Titan,+16–20 to Strength,16,20,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,strength,6,30,Global
+Strength,Suffix,of the Giant,+21–27 to Strength,21,27,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,strength,5,40,Global
+Strength,Suffix,of the Mountain,+28–35 to Strength,28,35,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,strength,4,50,Global
+Strength,Suffix,of the Colossus,+36–43 to Strength,36,43,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,strength,3,60,Global
+Strength,Suffix,of the Behemoth,+44–52 to Strength,44,52,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,strength,2,70,Global
+Strength,Suffix,of the Primordial,+53–60 to Strength,53,60,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,strength,1,80,Global
+Dexterity,Suffix,of the Cat,+3–6 to Dexterity,3,6,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,dexterity,9,1,Global
+Dexterity,Suffix,of the Lynx,+7–10 to Dexterity,7,10,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,dexterity,8,10,Global
+Dexterity,Suffix,of the Fox,+11–15 to Dexterity,11,15,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,dexterity,7,20,Global
+Dexterity,Suffix,of the Cheetah,+16–20 to Dexterity,16,20,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,dexterity,6,30,Global
+Dexterity,Suffix,of the Falcon,+21–27 to Dexterity,21,27,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,dexterity,5,40,Global
+Dexterity,Suffix,of the Wind,+28–35 to Dexterity,28,35,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,dexterity,4,50,Global
+Dexterity,Suffix,of the Hurricane,+36–43 to Dexterity,36,43,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,dexterity,3,60,Global
+Dexterity,Suffix,of the Lightning,+44–52 to Dexterity,44,52,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,dexterity,2,70,Global
+Dexterity,Suffix,of the Quantum,+53–60 to Dexterity,53,60,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,dexterity,1,80,Global
+Intelligence,Suffix,of the Mouse,+3–6 to Intelligence,3,6,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,intelligence,9,1,Global
+Intelligence,Suffix,of the Owl,+7–10 to Intelligence,7,10,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,intelligence,8,10,Global
+Intelligence,Suffix,of the Sage,+11–15 to Intelligence,11,15,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,intelligence,7,20,Global
+Intelligence,Suffix,of the Scholar,+16–20 to Intelligence,16,20,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,intelligence,6,30,Global
+Intelligence,Suffix,of the Savant,+21–27 to Intelligence,21,27,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,intelligence,5,40,Global
+Intelligence,Suffix,of the Archon,+28–35 to Intelligence,28,35,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,intelligence,4,50,Global
+Intelligence,Suffix,of the Oracle,+36–43 to Intelligence,36,43,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,intelligence,3,60,Global
+Intelligence,Suffix,of the Omniscient,+44–52 to Intelligence,44,52,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,intelligence,2,70,Global
+Intelligence,Suffix,of the Transcendent,+53–60 to Intelligence,53,60,Weapon Helmet Body Armour Gloves Boots Shield Jewelry,intelligence,1,80,Global
+
+# COMBAT RESOURCES
+Life,Prefix,Healthy,+10–19 to Maximum Life,10,19,Helmet Body Armour Gloves Boots Shield Jewelry,maxHealth,8,10,Global
+Life,Prefix,Stout,+20–29 to Maximum Life,20,29,Helmet Body Armour Gloves Boots Shield Jewelry,maxHealth,7,20,Global
+Life,Prefix,Vigorous,+30–39 to Maximum Life,30,39,Helmet Body Armour Gloves Boots Shield Jewelry,maxHealth,6,30,Global
+Life,Prefix,Sanguine,+40–49 to Maximum Life,40,49,Helmet Body Armour Gloves Boots Shield Jewelry,maxHealth,5,40,Global
+Life,Prefix,Fecund,+50–59 to Maximum Life,50,59,Helmet Body Armour Gloves Boots Shield Jewelry,maxHealth,4,50,Global
+Life,Prefix,Saturated,+60–79 to Maximum Life,60,79,Helmet Body Armour Gloves Boots Shield Jewelry,maxHealth,2,70,Global
+Life,Prefix,Titanic,+80–99 to Maximum Life,80,99,Helmet Body Armour Gloves Boots Shield Jewelry,maxHealth,1,80,Global
+Mana,Prefix,Mana Infused,+5–9 to Maximum Mana,5,9,Jewelry,maxMana,9,1,Global
+Mana,Prefix,Mindful,+10–14 to Maximum Mana,10,14,Jewelry,maxMana,8,10,Global
+Mana,Prefix,Enlightened,+15–19 to Maximum Mana,15,19,Jewelry,maxMana,7,20,Global
+Mana,Prefix,Spiritual,+20–24 to Maximum Mana,20,24,Jewelry,maxMana,6,30,Global
+Mana,Prefix,Arcane,+25–29 to Maximum Mana,25,29,Jewelry,maxMana,4,50,Global
+Mana,Prefix,Sage's,+30–39 to Maximum Mana,30,39,Jewelry,maxMana,2,70,Global
+Energy Shield,Prefix,Charged,+8–15% increased Energy Shield,8,15,ES Base Armour,energyShield,9,1,Local
+Energy Shield,Prefix,Guarded,+16–25% increased Energy Shield,16,25,ES Base Armour,energyShield,8,10,Local
+Energy Shield,Prefix,Energized,+26–36% increased Energy Shield,26,36,ES Base Armour,energyShield,7,20,Local
+Energy Shield,Prefix,Shielded,+37–48% increased Energy Shield,37,48,ES Base Armour,energyShield,6,30,Local
+Energy Shield,Prefix,Overcharged,+49–61% increased Energy Shield,49,61,ES Base Armour,energyShield,5,40,Local
+Energy Shield,Prefix,Warded,+62–75% increased Energy Shield,62,75,ES Base Armour,energyShield,4,50,Local
+Energy Shield,Prefix,Aegis,+76–90% increased Energy Shield,76,90,ES Base Armour,energyShield,3,60,Local
+Energy Shield,Prefix,Sanctified,+91–107% increased Energy Shield,91,107,ES Base Armour,energyShield,2,70,Local
+Energy Shield,Prefix,Transcendent Barrier,+108–138% increased Energy Shield,108,138,ES Base Armour,energyShield,1,80,Local
+Reliance,Prefix,Determined,+20–39 to Maximum Reliance,20,39,Jewelry,maxReliance,7,20,Global
+Reliance,Prefix,Resolute,+40–59 to Maximum Reliance,40,59,Jewelry,maxReliance,4,50,Global
+Reliance,Prefix,Unwavering,+60–79 to Maximum Reliance,60,79,Jewelry,maxReliance,2,70,Global
+
+# PHYSICAL DAMAGE (WEAPONS)
+Physical Damage,Prefix,Jagged,Adds 2 to (4–5) Physical Damage,2,5,Weapon,addedPhysicalDamage,9,1,Local
+Physical Damage,Prefix,Serrated,Adds (3–4) to (7–9) Physical Damage,3,9,Weapon,addedPhysicalDamage,8,10,Local
+Physical Damage,Prefix,Wicked,Adds (5–7) to (11–14) Physical Damage,5,14,Weapon,addedPhysicalDamage,7,20,Local
+Physical Damage,Prefix,Vicious,Adds (8–11) to (17–21) Physical Damage,8,21,Weapon,addedPhysicalDamage,6,30,Local
+Physical Damage,Prefix,Feral,Adds (12–16) to (25–31) Physical Damage,12,31,Weapon,addedPhysicalDamage,5,40,Local
+Physical Damage,Prefix,Brutal,Adds (17–23) to (36–44) Physical Damage,17,44,Weapon,addedPhysicalDamage,4,50,Local
+Physical Damage,Prefix,Tyrannical,Adds (24–33) to (50–62) Physical Damage,24,62,Weapon,addedPhysicalDamage,3,60,Local
+Physical Damage,Prefix,Merciless,Adds (29–40) to (61–71) Physical Damage,29,71,Weapon,addedPhysicalDamage,2,70,Local
+Physical Damage,Prefix,Devastating,Adds (34–47) to (72–84) Physical Damage,34,84,Weapon,addedPhysicalDamage,1,80,Local
+Physical Damage Percent,Prefix,Rough,+8–14% increased Physical Damage,8,14,Weapon,increasedPhysicalDamage,9,1,Local
+Physical Damage Percent,Prefix,Heavy,+15–24% increased Physical Damage,15,24,Weapon,increasedPhysicalDamage,8,10,Local
+Physical Damage Percent,Prefix,Sharp,+25–34% increased Physical Damage,25,34,Weapon,increasedPhysicalDamage,7,20,Local
+Physical Damage Percent,Prefix,Tempered,+35–44% increased Physical Damage,35,44,Weapon,increasedPhysicalDamage,6,30,Local
+Physical Damage Percent,Prefix,Vicious,+45–54% increased Physical Damage,45,54,Weapon,increasedPhysicalDamage,5,40,Local
+Physical Damage Percent,Prefix,Bloodthirsty,+55–64% increased Physical Damage,55,64,Weapon,increasedPhysicalDamage,4,50,Local
+Physical Damage Percent,Prefix,Ruthless,+65–74% increased Physical Damage,65,74,Weapon,increasedPhysicalDamage,3,60,Local
+Physical Damage Percent,Prefix,Cruel,+75–84% increased Physical Damage,75,84,Weapon,increasedPhysicalDamage,2,70,Local
+Physical Damage Percent,Prefix,Tyrannical,+85–99% increased Physical Damage,85,99,Weapon,increasedPhysicalDamage,1,80,Local
+
+# ELEMENTAL DAMAGE (WEAPONS)
+Fire Damage,Prefix,Flaming,Adds (3–6) to (7–10) Fire Damage,3,10,Weapon,addedFireDamage,9,1,Local
+Fire Damage,Prefix,Burning,Adds (7–11) to (15–20) Fire Damage,7,20,Weapon,addedFireDamage,8,10,Local
+Fire Damage,Prefix,Heated,Adds (14–19) to (28–35) Fire Damage,14,35,Weapon,addedFireDamage,7,20,Local
+Fire Damage,Prefix,Scorching,Adds (22–30) to (45–55) Fire Damage,22,55,Weapon,addedFireDamage,6,30,Local
+Fire Damage,Prefix,Searing,Adds (33–45) to (67–82) Fire Damage,33,82,Weapon,addedFireDamage,5,40,Local
+Fire Damage,Prefix,Incinerating,Adds (47–63) to (95–115) Fire Damage,47,115,Weapon,addedFireDamage,4,50,Local
+Fire Damage,Prefix,Infernal,Adds (63–85) to (127–155) Fire Damage,63,155,Weapon,addedFireDamage,3,60,Local
+Fire Damage,Prefix,Volcanic,Adds (76–103) to (154–178) Fire Damage,76,178,Weapon,addedFireDamage,2,70,Local
+Fire Damage,Prefix,Apocalyptic Flame,Adds (89–121) to (180–210) Fire Damage,89,210,Weapon,addedFireDamage,1,80,Local
+Fire Damage Percent,Prefix,Smoldering,+8–14% increased Fire Damage,8,14,Weapon,increasedFireDamage,9,1,Local
+Fire Damage Percent,Prefix,Heated,+15–24% increased Fire Damage,15,24,Weapon,increasedFireDamage,8,10,Local
+Fire Damage Percent,Prefix,Blazing,+25–34% increased Fire Damage,25,34,Weapon,increasedFireDamage,7,20,Local
+Fire Damage Percent,Prefix,Scorching,+35–44% increased Fire Damage,35,44,Weapon,increasedFireDamage,6,30,Local
+Fire Damage Percent,Prefix,Searing,+45–54% increased Fire Damage,45,54,Weapon,increasedFireDamage,5,40,Local
+Fire Damage Percent,Prefix,Incinerating,+55–64% increased Fire Damage,55,64,Weapon,increasedFireDamage,4,50,Local
+Fire Damage Percent,Prefix,Infernal,+65–74% increased Fire Damage,65,74,Weapon,increasedFireDamage,3,60,Local
+Fire Damage Percent,Prefix,Volcanic,+75–84% increased Fire Damage,75,84,Weapon,increasedFireDamage,2,70,Local
+Fire Damage Percent,Prefix,Apocalyptic,+85–99% increased Fire Damage,85,99,Weapon,increasedFireDamage,1,80,Local
+Cold Damage,Prefix,Chilled,Adds (3–6) to (6–9) Cold Damage,3,9,Weapon,addedColdDamage,9,1,Local
+Cold Damage,Prefix,Icy,Adds (6–10) to (13–18) Cold Damage,6,18,Weapon,addedColdDamage,8,10,Local
+Cold Damage,Prefix,Frosted,Adds (13–17) to (26–32) Cold Damage,13,32,Weapon,addedColdDamage,7,20,Local
+Cold Damage,Prefix,Frigid,Adds (20–27) to (41–50) Cold Damage,20,50,Weapon,addedColdDamage,6,30,Local
+Cold Damage,Prefix,Polar,Adds (30–40) to (60–74) Cold Damage,30,74,Weapon,addedColdDamage,5,40,Local
+Cold Damage,Prefix,Freezing,Adds (42–57) to (86–105) Cold Damage,42,105,Weapon,addedColdDamage,4,50,Local
+Cold Damage,Prefix,Arctic,Adds (57–76) to (115–140) Cold Damage,57,140,Weapon,addedColdDamage,3,60,Local
+Cold Damage,Prefix,Glacial,Adds (69–93) to (139–161) Cold Damage,69,161,Weapon,addedColdDamage,2,70,Local
+Cold Damage,Prefix,Absolute Zero,Adds (81–111) to (163–189) Cold Damage,81,189,Weapon,addedColdDamage,1,80,Local
+Cold Damage Percent,Prefix,Cool,+8–14% increased Cold Damage,8,14,Weapon,increasedColdDamage,9,1,Local
+Cold Damage Percent,Prefix,Frosted,+15–24% increased Cold Damage,15,24,Weapon,increasedColdDamage,8,10,Local
+Cold Damage Percent,Prefix,Chilled,+25–34% increased Cold Damage,25,34,Weapon,increasedColdDamage,7,20,Local
+Cold Damage Percent,Prefix,Frigid,+35–44% increased Cold Damage,35,44,Weapon,increasedColdDamage,6,30,Local
+Cold Damage Percent,Prefix,Freezing,+45–54% increased Cold Damage,45,54,Weapon,increasedColdDamage,5,40,Local
+Cold Damage Percent,Prefix,Polar,+55–64% increased Cold Damage,55,64,Weapon,increasedColdDamage,4,50,Local
+Cold Damage Percent,Prefix,Arctic,+65–74% increased Cold Damage,65,74,Weapon,increasedColdDamage,3,60,Local
+Cold Damage Percent,Prefix,Glacial,+75–84% increased Cold Damage,75,84,Weapon,increasedColdDamage,2,70,Local
+Cold Damage Percent,Prefix,Absolute Zero,+85–99% increased Cold Damage,85,99,Weapon,increasedColdDamage,1,80,Local
+Lightning Damage,Prefix,Sparking,Adds (1–2) to (18–25) Lightning Damage,1,25,Weapon,addedLightningDamage,9,1,Local
+Lightning Damage,Prefix,Crackling,Adds (1–3) to (38–52) Lightning Damage,1,52,Weapon,addedLightningDamage,8,10,Local
+Lightning Damage,Prefix,Charged,Adds (2–5) to (68–88) Lightning Damage,2,88,Weapon,addedLightningDamage,7,20,Local
+Lightning Damage,Prefix,Arcing,Adds (3–7) to (105–130) Lightning Damage,3,130,Weapon,addedLightningDamage,6,30,Local
+Lightning Damage,Prefix,Electric,Adds (5–10) to (147–178) Lightning Damage,5,178,Weapon,addedLightningDamage,5,40,Local
+Lightning Damage,Prefix,Shocking,Adds (7–13) to (195–234) Lightning Damage,7,234,Weapon,addedLightningDamage,4,50,Local
+Lightning Damage,Prefix,Voltaic,Adds (10–16) to (240–280) Lightning Damage,10,280,Weapon,addedLightningDamage,3,60,Local
+Lightning Damage,Prefix,Thunderous,Adds (13–19) to (270–315) Lightning Damage,13,315,Weapon,addedLightningDamage,2,70,Local
+Lightning Damage,Prefix,Divine Storm,Adds (15–21) to (296–344) Lightning Damage,15,344,Weapon,addedLightningDamage,1,80,Local
+Lightning Damage Percent,Prefix,Static,+8–14% increased Lightning Damage,8,14,Weapon,increasedLightningDamage,9,1,Local
+Lightning Damage Percent,Prefix,Charged,+15–24% increased Lightning Damage,15,24,Weapon,increasedLightningDamage,8,10,Local
+Lightning Damage Percent,Prefix,Electric,+25–34% increased Lightning Damage,25,34,Weapon,increasedLightningDamage,7,20,Local
+Lightning Damage Percent,Prefix,Voltaic,+35–44% increased Lightning Damage,35,44,Weapon,increasedLightningDamage,6,30,Local
+Lightning Damage Percent,Prefix,Shocking,+45–54% increased Lightning Damage,45,54,Weapon,increasedLightningDamage,5,40,Local
+Lightning Damage Percent,Prefix,Tempestuous,+55–64% increased Lightning Damage,55,64,Weapon,increasedLightningDamage,4,50,Local
+Lightning Damage Percent,Prefix,Storm-touched,+65–74% increased Lightning Damage,65,74,Weapon,increasedLightningDamage,3,60,Local
+Lightning Damage Percent,Prefix,Thunderous,+75–84% increased Lightning Damage,75,84,Weapon,increasedLightningDamage,2,70,Local
+Lightning Damage Percent,Prefix,Divine Storm,+85–99% increased Lightning Damage,85,99,Weapon,increasedLightningDamage,1,80,Local
+Chaos Damage,Prefix,Tainted,Adds (3–6) to (7–10) Chaos Damage,3,10,Weapon,addedChaosDamage,9,1,Local
+Chaos Damage,Prefix,Corrupted,Adds (7–11) to (15–20) Chaos Damage,7,20,Weapon,addedChaosDamage,8,10,Local
+Chaos Damage,Prefix,Defiled,Adds (14–19) to (28–35) Chaos Damage,14,35,Weapon,addedChaosDamage,7,20,Local
+Chaos Damage,Prefix,Vile,Adds (22–30) to (45–55) Chaos Damage,22,55,Weapon,addedChaosDamage,6,30,Local
+Chaos Damage,Prefix,Unholy,Adds (33–45) to (67–82) Chaos Damage,33,82,Weapon,addedChaosDamage,5,40,Local
+Chaos Damage,Prefix,Noxious,Adds (47–63) to (95–115) Chaos Damage,47,115,Weapon,addedChaosDamage,4,50,Local
+Chaos Damage,Prefix,Abyssal,Adds (63–85) to (127–155) Chaos Damage,63,155,Weapon,addedChaosDamage,3,60,Local
+Chaos Damage,Prefix,Void-touched,Adds (76–103) to (154–178) Chaos Damage,76,178,Weapon,addedChaosDamage,2,70,Local
+Chaos Damage,Prefix,Entropic Annihilation,Adds (89–121) to (180–210) Chaos Damage,89,210,Weapon,addedChaosDamage,1,80,Local
+Chaos Damage Percent,Prefix,Tainted,+8–14% increased Chaos Damage,8,14,Weapon,increasedChaosDamage,9,1,Local
+Chaos Damage Percent,Prefix,Defiled,+15–24% increased Chaos Damage,15,24,Weapon,increasedChaosDamage,8,10,Local
+Chaos Damage Percent,Prefix,Corrupted,+25–34% increased Chaos Damage,25,34,Weapon,increasedChaosDamage,7,20,Local
+Chaos Damage Percent,Prefix,Unholy,+35–44% increased Chaos Damage,35,44,Weapon,increasedChaosDamage,6,30,Local
+Chaos Damage Percent,Prefix,Vile,+45–54% increased Chaos Damage,45,54,Weapon,increasedChaosDamage,5,40,Local
+Chaos Damage Percent,Prefix,Noxious,+55–64% increased Chaos Damage,55,64,Weapon,increasedChaosDamage,4,50,Local
+Chaos Damage Percent,Prefix,Abyssal,+65–74% increased Chaos Damage,65,74,Weapon,increasedChaosDamage,3,60,Local
+Chaos Damage Percent,Prefix,Void-touched,+75–84% increased Chaos Damage,75,84,Weapon,increasedChaosDamage,2,70,Local
+Chaos Damage Percent,Prefix,Entropic,+85–99% increased Chaos Damage,85,99,Weapon,increasedChaosDamage,1,80,Local
+
+# ELEMENTAL DAMAGE WITH ATTACK SKILLS (GLOBAL)
+Elemental Attack Damage,Prefix,Elemental,+19–34% increased Elemental Damage with Attack Skills,19,34,Weapon,increasedElementalAttackDamage,6,30,Global
+Elemental Attack Damage,Prefix,Prismatic,+35–50% increased Elemental Damage with Attack Skills,35,50,Weapon,increasedElementalAttackDamage,5,40,Global
+Elemental Attack Damage,Prefix,Chromatic,+51–63% increased Elemental Damage with Attack Skills,51,63,Weapon,increasedElementalAttackDamage,4,50,Global
+Elemental Attack Damage,Prefix,Spectral,+64–76% increased Elemental Damage with Attack Skills,64,76,Weapon,increasedElementalAttackDamage,3,60,Global
+Elemental Attack Damage,Prefix,Rainbow,+77–86% increased Elemental Damage with Attack Skills,77,86,Weapon,increasedElementalAttackDamage,2,70,Global
+Elemental Attack Damage,Prefix,Tri-Elemental,+87–100% increased Elemental Damage with Attack Skills,87,100,Weapon,increasedElementalAttackDamage,1,80,Global
+
+# SPELL DAMAGE (CASTER WEAPONS & JEWELRY)
+Spell Damage,Prefix,Apprentice's,+8–19% increased Spell Damage,8,19,Caster Weapon,increasedSpellDamage,9,1,Local
+Spell Damage,Prefix,Adept's,+20–29% increased Spell Damage,20,29,Caster Weapon,increasedSpellDamage,8,10,Local
+Spell Damage,Prefix,Scholar's,+30–39% increased Spell Damage,30,39,Caster Weapon,increasedSpellDamage,7,20,Local
+Spell Damage,Prefix,Occultist's,+40–49% increased Spell Damage,40,49,Caster Weapon,increasedSpellDamage,6,30,Local
+Spell Damage,Prefix,Ritualist's,+50–59% increased Spell Damage,50,59,Caster Weapon,increasedSpellDamage,5,40,Local
+Spell Damage,Prefix,Thaumaturge's,+60–69% increased Spell Damage,60,69,Caster Weapon,increasedSpellDamage,4,50,Local
+Spell Damage,Prefix,Sorcerer's,+70–79% increased Spell Damage,70,79,Caster Weapon,increasedSpellDamage,3,60,Local
+Spell Damage,Prefix,Archmage's,+80–89% increased Spell Damage,80,89,Caster Weapon,increasedSpellDamage,2,70,Local
+Spell Damage,Prefix,Transcendent,+90–110% increased Spell Damage,90,110,Caster Weapon,increasedSpellDamage,1,80,Local
+Spell Damage,Prefix,Minor,+8–14% increased Spell Damage,8,14,Jewelry,increasedSpellDamage,9,1,Global
+Spell Damage,Prefix,Mystic,+15–24% increased Spell Damage,15,24,Jewelry,increasedSpellDamage,8,10,Global
+Spell Damage,Prefix,Arcane,+25–34% increased Spell Damage,25,34,Jewelry,increasedSpellDamage,7,20,Global
+Spell Damage,Prefix,Eldritch,+35–44% increased Spell Damage,35,44,Jewelry,increasedSpellDamage,6,30,Global
+Spell Damage,Prefix,Otherworldly,+45–54% increased Spell Damage,45,54,Jewelry,increasedSpellDamage,5,40,Global
+Spell Damage,Prefix,Cosmic,+55–64% increased Spell Damage,55,64,Jewelry,increasedSpellDamage,4,50,Global
+Spell Damage,Prefix,Void-touched,+65–74% increased Spell Damage,65,74,Jewelry,increasedSpellDamage,3,60,Global
+Spell Damage,Prefix,Reality-bending,+75–84% increased Spell Damage,75,84,Jewelry,increasedSpellDamage,2,70,Global
+Spell Damage,Prefix,Omnipotent,+85–99% increased Spell Damage,85,99,Jewelry,increasedSpellDamage,1,80,Global
+
+# ATTACK SPEED & CAST SPEED
+Attack Speed,Suffix,of Skill,+2–4% increased Attack Speed,2,4,Weapon,attackSpeed,9,1,Local
+Attack Speed,Suffix,of Haste,+5–7% increased Attack Speed,5,7,Weapon,attackSpeed,8,10,Local
+Attack Speed,Suffix,of Swiftness,+8–10% increased Attack Speed,8,10,Weapon,attackSpeed,7,20,Local
+Attack Speed,Suffix,of Fury,+11–13% increased Attack Speed,11,13,Weapon,attackSpeed,6,30,Local
+Attack Speed,Suffix,of Flurry,+14–17% increased Attack Speed,14,17,Weapon,attackSpeed,5,40,Local
+Attack Speed,Suffix,of Alacrity,+18–21% increased Attack Speed,18,21,Weapon,attackSpeed,4,50,Local
+Attack Speed,Suffix,of Lightning,+22–25% increased Attack Speed,22,25,Weapon,attackSpeed,3,60,Local
+Attack Speed,Suffix,of Zeal,+26–29% increased Attack Speed,26,29,Weapon,attackSpeed,2,70,Local
+Attack Speed,Suffix,of Blinding Speed,+30–32% increased Attack Speed,30,32,Weapon,attackSpeed,1,80,Local
+Cast Speed,Suffix,of Incantation,+2–4% increased Cast Speed,2,4,Caster Weapon,castSpeed,9,1,Local
+Cast Speed,Suffix,of Swiftness,+5–7% increased Cast Speed,5,7,Caster Weapon,castSpeed,8,10,Local
+Cast Speed,Suffix,of Celerity,+8–10% increased Cast Speed,8,10,Caster Weapon,castSpeed,7,20,Local
+Cast Speed,Suffix,of Velocity,+11–13% increased Cast Speed,11,13,Caster Weapon,castSpeed,6,30,Local
+Cast Speed,Suffix,of Acceleration,+14–17% increased Cast Speed,14,17,Caster Weapon,castSpeed,5,40,Local
+Cast Speed,Suffix,of Rapidity,+18–21% increased Cast Speed,18,21,Caster Weapon,castSpeed,4,50,Local
+Cast Speed,Suffix,of Temporal Flux,+22–25% increased Cast Speed,22,25,Caster Weapon,castSpeed,3,60,Local
+Cast Speed,Suffix,of Time Dilation,+26–29% increased Cast Speed,26,29,Caster Weapon,castSpeed,2,70,Local
+Cast Speed,Suffix,of Instantaneous,+30–32% increased Cast Speed,30,32,Caster Weapon,castSpeed,1,80,Local
+
+# CRITICAL STRIKES
+Critical Chance,Suffix,of Precision,+8–12% increased Critical Strike Chance,8,12,Weapon,criticalChance,8,10,Local
+Critical Chance,Suffix,of the Sniper,+13–17% increased Critical Strike Chance,13,17,Weapon,criticalChance,7,20,Local
+Critical Chance,Suffix,of Puncturing,+18–22% increased Critical Strike Chance,18,22,Weapon,criticalChance,6,30,Local
+Critical Chance,Suffix,of the Assassin,+23–27% increased Critical Strike Chance,23,27,Weapon,criticalChance,5,40,Local
+Critical Chance,Suffix,of the Executioner,+28–35% increased Critical Strike Chance,28,35,Weapon,criticalChance,3,60,Local
+Critical Multiplier,Suffix,of Lethality,+12–18% increased Critical Strike Multiplier,12,18,Weapon Jewelry,criticalMultiplier,8,10,Global
+Critical Multiplier,Suffix,of Devastation,+19–25% increased Critical Strike Multiplier,19,25,Weapon Jewelry,criticalMultiplier,6,30,Global
+Critical Multiplier,Suffix,of Annihilation,+26–32% increased Critical Strike Multiplier,26,32,Weapon Jewelry,criticalMultiplier,3,60,Global
+
+# RESISTANCES
+Fire Resistance,Suffix,of the Ember,+5–8% to Fire Resistance,5,8,Helmet Body Armour Gloves Boots Shield,fireResistance,9,1,Global
+Fire Resistance,Suffix,of the Drake,+9–12% to Fire Resistance,9,12,Helmet Body Armour Gloves Boots Shield,fireResistance,8,10,Global
+Fire Resistance,Suffix,of the Salamander,+13–17% to Fire Resistance,13,17,Helmet Body Armour Gloves Boots Shield,fireResistance,7,20,Global
+Fire Resistance,Suffix,of the Forge,+18–22% to Fire Resistance,18,22,Helmet Body Armour Gloves Boots Shield,fireResistance,6,30,Global
+Fire Resistance,Suffix,of the Volcano,+23–27% to Fire Resistance,23,27,Helmet Body Armour Gloves Boots Shield,fireResistance,5,40,Global
+Fire Resistance,Suffix,of the Phoenix,+28–32% to Fire Resistance,28,32,Helmet Body Armour Gloves Boots Shield,fireResistance,4,50,Global
+Fire Resistance,Suffix,of the Solar Flare,+33–37% to Fire Resistance,33,37,Helmet Body Armour Gloves Boots Shield,fireResistance,3,60,Global
+Fire Resistance,Suffix,of the Inferno,+38–40% to Fire Resistance,38,40,Helmet Body Armour Gloves Boots Shield,fireResistance,2,70,Global
+Fire Resistance,Suffix,of the Supernova,+41–42% to Fire Resistance,41,42,Helmet Body Armour Gloves Boots Shield,fireResistance,1,80,Global
+Cold Resistance,Suffix,of the Frost,+5–8% to Cold Resistance,5,8,Helmet Body Armour Gloves Boots Shield,coldResistance,9,1,Global
+Cold Resistance,Suffix,of the Penguin,+9–12% to Cold Resistance,9,12,Helmet Body Armour Gloves Boots Shield,coldResistance,8,10,Global
+Cold Resistance,Suffix,of the Yeti,+13–17% to Cold Resistance,13,17,Helmet Body Armour Gloves Boots Shield,coldResistance,7,20,Global
+Cold Resistance,Suffix,of the Blizzard,+18–22% to Cold Resistance,18,22,Helmet Body Armour Gloves Boots Shield,coldResistance,6,30,Global
+Cold Resistance,Suffix,of the Glacier,+23–27% to Cold Resistance,23,27,Helmet Body Armour Gloves Boots Shield,coldResistance,5,40,Global
+Cold Resistance,Suffix,of the Iceborn,+28–32% to Cold Resistance,28,32,Helmet Body Armour Gloves Boots Shield,coldResistance,4,50,Global
+Cold Resistance,Suffix,of the Polar Vortex,+33–37% to Cold Resistance,33,37,Helmet Body Armour Gloves Boots Shield,coldResistance,3,60,Global
+Cold Resistance,Suffix,of the Tundra,+38–40% to Cold Resistance,38,40,Helmet Body Armour Gloves Boots Shield,coldResistance,2,70,Global
+Cold Resistance,Suffix,of Absolute Zero,+41–42% to Cold Resistance,41,42,Helmet Body Armour Gloves Boots Shield,coldResistance,1,80,Global
+Lightning Resistance,Suffix,of the Static,+5–8% to Lightning Resistance,5,8,Helmet Body Armour Gloves Boots Shield,lightningResistance,9,1,Global
+Lightning Resistance,Suffix,of the Spark,+9–12% to Lightning Resistance,9,12,Helmet Body Armour Gloves Boots Shield,lightningResistance,8,10,Global
+Lightning Resistance,Suffix,of the Storm,+13–17% to Lightning Resistance,13,17,Helmet Body Armour Gloves Boots Shield,lightningResistance,7,20,Global
+Lightning Resistance,Suffix,of the Thunder,+18–22% to Lightning Resistance,18,22,Helmet Body Armour Gloves Boots Shield,lightningResistance,6,30,Global
+Lightning Resistance,Suffix,of the Tempest,+23–27% to Lightning Resistance,23,27,Helmet Body Armour Gloves Boots Shield,lightningResistance,5,40,Global
+Lightning Resistance,Suffix,of the Hurricane,+28–32% to Lightning Resistance,28,32,Helmet Body Armour Gloves Boots Shield,lightningResistance,4,50,Global
+Lightning Resistance,Suffix,of the Thunderstorm,+33–37% to Lightning Resistance,33,37,Helmet Body Armour Gloves Boots Shield,lightningResistance,3,60,Global
+Lightning Resistance,Suffix,of the Maelstrom,+38–40% to Lightning Resistance,38,40,Helmet Body Armour Gloves Boots Shield,lightningResistance,2,70,Global
+Lightning Resistance,Suffix,of Divine Lightning,+41–42% to Lightning Resistance,41,42,Helmet Body Armour Gloves Boots Shield,lightningResistance,1,80,Global
+Chaos Resistance,Suffix,of the Shadow,+3–5% to Chaos Resistance,3,5,Helmet Body Armour Gloves Boots Shield,chaosResistance,9,1,Global
+Chaos Resistance,Suffix,of the Void,+6–8% to Chaos Resistance,6,8,Helmet Body Armour Gloves Boots Shield,chaosResistance,8,10,Global
+Chaos Resistance,Suffix,of Entropy,+9–12% to Chaos Resistance,9,12,Helmet Body Armour Gloves Boots Shield,chaosResistance,7,20,Global
+Chaos Resistance,Suffix,of the Abyss,+13–16% to Chaos Resistance,13,16,Helmet Body Armour Gloves Boots Shield,chaosResistance,6,30,Global
+Chaos Resistance,Suffix,of Corruption,+17–20% to Chaos Resistance,17,20,Helmet Body Armour Gloves Boots Shield,chaosResistance,5,40,Global
+Chaos Resistance,Suffix,of the Nightmare,+21–24% to Chaos Resistance,21,24,Helmet Body Armour Gloves Boots Shield,chaosResistance,4,50,Global
+Chaos Resistance,Suffix,of the Eldritch,+25–28% to Chaos Resistance,25,28,Helmet Body Armour Gloves Boots Shield,chaosResistance,3,60,Global
+Chaos Resistance,Suffix,of the Unspeakable,+29–31% to Chaos Resistance,29,31,Helmet Body Armour Gloves Boots Shield,chaosResistance,2,70,Global
+Chaos Resistance,Suffix,of the Primordial Chaos,+32–32% to Chaos Resistance,32,32,Helmet Body Armour Gloves Boots Shield,chaosResistance,1,80,Global
+All Resistances,Suffix,of the Elements,+3–5% to all Resistances,3,5,Jewelry,allResistance,8,10,Global
+All Resistances,Suffix,of Harmony,+6–8% to all Resistances,6,8,Jewelry,allResistance,6,30,Global
+All Resistances,Suffix,of Balance,+9–12% to all Resistances,9,12,Jewelry,allResistance,3,60,Global
+
+# DEFENSE STATS
+Armour,Prefix,Sturdy,+8–15% increased Armour,8,15,Armour Base Armour,armour,9,1,Local
+Armour,Prefix,Reinforced,+16–25% increased Armour,16,25,Armour Base Armour,armour,8,10,Local
+Armour,Prefix,Hardened,+26–36% increased Armour,26,36,Armour Base Armour,armour,7,20,Local
+Armour,Prefix,Fortified,+37–48% increased Armour,37,48,Armour Base Armour,armour,6,30,Local
+Armour,Prefix,Reinforced Steel,+49–61% increased Armour,49,61,Armour Base Armour,armour,5,40,Local
+Armour,Prefix,Plated,+62–75% increased Armour,62,75,Armour Base Armour,armour,4,50,Local
+Armour,Prefix,Adamantine,+76–90% increased Armour,76,90,Armour Base Armour,armour,3,60,Local
+Armour,Prefix,Fortress,+91–107% increased Armour,91,107,Armour Base Armour,armour,2,70,Local
+Armour,Prefix,Impenetrable,+108–138% increased Armour,108,138,Armour Base Armour,armour,1,80,Local
+Evasion,Prefix,Swift,+8–15% increased Evasion,8,15,Evasion Base Armour,evasion,9,1,Local
+Evasion,Prefix,Nimble,+16–25% increased Evasion,16,25,Evasion Base Armour,evasion,8,10,Local
+Evasion,Prefix,Graceful,+26–36% increased Evasion,26,36,Evasion Base Armour,evasion,7,20,Local
+Evasion,Prefix,Agile,+37–48% increased Evasion,37,48,Evasion Base Armour,evasion,6,30,Local
+Evasion,Prefix,Fluid Motion,+49–61% increased Evasion,49,61,Evasion Base Armour,evasion,5,40,Local
+Evasion,Prefix,Fleet,+62–75% increased Evasion,62,75,Evasion Base Armour,evasion,4,50,Local
+Evasion,Prefix,Ethereal,+76–90% increased Evasion,76,90,Evasion Base Armour,evasion,3,60,Local
+Evasion,Prefix,Phantom,+91–107% increased Evasion,91,107,Evasion Base Armour,evasion,2,70,Local
+Evasion,Prefix,Untouchable,+108–138% increased Evasion,108,138,Evasion Base Armour,evasion,1,80,Local
+Block Chance,Suffix,of Blocking,+2–4% Chance to Block,2,4,Shield,blockChance,9,1,Local
+Block Chance,Suffix,of Deflection,+5–7% Chance to Block,5,7,Shield,blockChance,8,10,Local
+Block Chance,Suffix,of Parrying,+8–10% Chance to Block,8,10,Shield,blockChance,7,20,Local
+Block Chance,Suffix,of Warding,+11–13% Chance to Block,11,13,Shield,blockChance,6,30,Local
+Block Chance,Suffix,of Protection,+14–16% Chance to Block,14,16,Shield,blockChance,5,40,Local
+Block Chance,Suffix,of Shielding,+17–19% Chance to Block,17,19,Shield,blockChance,4,50,Local
+Block Chance,Suffix,of Fortress Defense,+20–21% Chance to Block,20,21,Shield,blockChance,3,60,Local
+Block Chance,Suffix,of Aegis,+22–23% Chance to Block,22,23,Shield,blockChance,2,70,Local
+Block Chance,Suffix,of Impenetrable Guard,+24–24% Chance to Block,24,24,Shield,blockChance,1,80,Local
+Dodge Chance,Suffix,of Sidestep,+1–2% Chance to Dodge,1,2,Armour,dodgeChance,9,1,Global
+Dodge Chance,Suffix,of Evasion,+3–4% Chance to Dodge,3,4,Armour,dodgeChance,8,10,Global
+Dodge Chance,Suffix,of Avoidance,+5–6% Chance to Dodge,5,6,Armour,dodgeChance,7,20,Global
+Dodge Chance,Suffix,of Nimbleness,+7–8% Chance to Dodge,7,8,Armour,dodgeChance,6,30,Global
+Dodge Chance,Suffix,of Phantom Step,+9–10% Chance to Dodge,9,10,Armour,dodgeChance,5,40,Global
+
+# AILMENTS - CHANCE TO INFLICT
+Ignite Chance,Suffix,of Embers,+3–6% chance to Ignite on Hit,3,6,Weapon,chanceToIgnite,9,1,Global
+Ignite Chance,Suffix,of Sparks,+7–10% chance to Ignite on Hit,7,10,Weapon,chanceToIgnite,8,10,Global
+Ignite Chance,Suffix,of Burning,+11–15% chance to Ignite on Hit,11,15,Weapon,chanceToIgnite,7,20,Global
+Ignite Chance,Suffix,of Scorching,+16–20% chance to Ignite on Hit,16,20,Weapon,chanceToIgnite,6,30,Global
+Ignite Chance,Suffix,of Combustion,+21–26% chance to Ignite on Hit,21,26,Weapon,chanceToIgnite,5,40,Global
+Ignite Chance,Suffix,of Incineration,+27–32% chance to Ignite on Hit,27,32,Weapon,chanceToIgnite,4,50,Global
+Ignite Chance,Suffix,of Immolation,+33–38% chance to Ignite on Hit,33,38,Weapon,chanceToIgnite,3,60,Global
+Ignite Chance,Suffix,of Conflagration,+39–44% chance to Ignite on Hit,39,44,Weapon,chanceToIgnite,2,70,Global
+Ignite Chance,Suffix,of Inferno,+45–50% chance to Ignite on Hit,45,50,Weapon,chanceToIgnite,1,80,Global
+Shock Chance,Suffix,of Static,+3–6% chance to Shock on Hit,3,6,Weapon,chanceToShock,9,1,Global
+Shock Chance,Suffix,of Sparking,+7–10% chance to Shock on Hit,7,10,Weapon,chanceToShock,8,10,Global
+Shock Chance,Suffix,of Shocking,+11–15% chance to Shock on Hit,11,15,Weapon,chanceToShock,7,20,Global
+Shock Chance,Suffix,of Crackling,+16–20% chance to Shock on Hit,16,20,Weapon,chanceToShock,6,30,Global
+Shock Chance,Suffix,of Electrocution,+21–26% chance to Shock on Hit,21,26,Weapon,chanceToShock,5,40,Global
+Shock Chance,Suffix,of Lightning,+27–32% chance to Shock on Hit,27,32,Weapon,chanceToShock,4,50,Global
+Shock Chance,Suffix,of Thunderstorms,+33–38% chance to Shock on Hit,33,38,Weapon,chanceToShock,3,60,Global
+Shock Chance,Suffix,of Tempests,+39–44% chance to Shock on Hit,39,44,Weapon,chanceToShock,2,70,Global
+Shock Chance,Suffix,of Maelstrom,+45–50% chance to Shock on Hit,45,50,Weapon,chanceToShock,1,80,Global
+Chill Chance,Suffix,of Coolness,+3–6% chance to Chill on Hit,3,6,Weapon,chanceToChill,9,1,Global
+Chill Chance,Suffix,of Frost,+7–10% chance to Chill on Hit,7,10,Weapon,chanceToChill,8,10,Global
+Chill Chance,Suffix,of Chilling,+11–15% chance to Chill on Hit,11,15,Weapon,chanceToChill,7,20,Global
+Chill Chance,Suffix,of Frigidity,+16–20% chance to Chill on Hit,16,20,Weapon,chanceToChill,6,30,Global
+Chill Chance,Suffix,of Freezing,+21–26% chance to Chill on Hit,21,26,Weapon,chanceToChill,5,40,Global
+Chill Chance,Suffix,of Ice,+27–32% chance to Chill on Hit,27,32,Weapon,chanceToChill,4,50,Global
+Chill Chance,Suffix,of Glaciers,+33–38% chance to Chill on Hit,33,38,Weapon,chanceToChill,3,60,Global
+Chill Chance,Suffix,of Permafrost,+39–44% chance to Chill on Hit,39,44,Weapon,chanceToChill,2,70,Global
+Chill Chance,Suffix,of Absolute Zero,+45–50% chance to Chill on Hit,45,50,Weapon,chanceToChill,1,80,Global
+Freeze Chance,Suffix,of Stiffness,+2–4% chance to Freeze on Hit,2,4,Weapon,chanceToFreeze,9,1,Global
+Freeze Chance,Suffix,of Numbing,+5–7% chance to Freeze on Hit,5,7,Weapon,chanceToFreeze,8,10,Global
+Freeze Chance,Suffix,of Stasis,+8–11% chance to Freeze on Hit,8,11,Weapon,chanceToFreeze,7,20,Global
+Freeze Chance,Suffix,of Immobilization,+12–15% chance to Freeze on Hit,12,15,Weapon,chanceToFreeze,6,30,Global
+Freeze Chance,Suffix,of Paralysis,+16–20% chance to Freeze on Hit,16,20,Weapon,chanceToFreeze,5,40,Global
+Freeze Chance,Suffix,of Crystallization,+21–25% chance to Freeze on Hit,21,25,Weapon,chanceToFreeze,4,50,Global
+Freeze Chance,Suffix,of Suspended Animation,+26–30% chance to Freeze on Hit,26,30,Weapon,chanceToFreeze,3,60,Global
+Freeze Chance,Suffix,of Time Stop,+31–35% chance to Freeze on Hit,31,35,Weapon,chanceToFreeze,2,70,Global
+Freeze Chance,Suffix,of Eternity,+36–40% chance to Freeze on Hit,36,40,Weapon,chanceToFreeze,1,80,Global
+Bleed Chance,Suffix,of Scratching,+3–6% chance to cause Bleeding on Hit,3,6,Weapon,chanceToBleed,9,1,Global
+Bleed Chance,Suffix,of Cutting,+7–10% chance to cause Bleeding on Hit,7,10,Weapon,chanceToBleed,8,10,Global
+Bleed Chance,Suffix,of Laceration,+11–15% chance to cause Bleeding on Hit,11,15,Weapon,chanceToBleed,7,20,Global
+Bleed Chance,Suffix,of Wounding,+16–20% chance to cause Bleeding on Hit,16,20,Weapon,chanceToBleed,6,30,Global
+Bleed Chance,Suffix,of Hemorrhage,+21–26% chance to cause Bleeding on Hit,21,26,Weapon,chanceToBleed,5,40,Global
+Bleed Chance,Suffix,of Severing,+27–32% chance to cause Bleeding on Hit,27,32,Weapon,chanceToBleed,4,50,Global
+Bleed Chance,Suffix,of Exsanguination,+33–38% chance to cause Bleeding on Hit,33,38,Weapon,chanceToBleed,3,60,Global
+Bleed Chance,Suffix,of Arterial Rupture,+39–44% chance to cause Bleeding on Hit,39,44,Weapon,chanceToBleed,2,70,Global
+Bleed Chance,Suffix,of Crimson Tide,+45–50% chance to cause Bleeding on Hit,45,50,Weapon,chanceToBleed,1,80,Global
+Poison Chance,Suffix,of Irritation,+3–6% chance to Poison on Hit,3,6,Weapon,chanceToPoison,9,1,Global
+Poison Chance,Suffix,of Contamination,+7–10% chance to Poison on Hit,7,10,Weapon,chanceToPoison,8,10,Global
+Poison Chance,Suffix,of Venom,+11–15% chance to Poison on Hit,11,15,Weapon,chanceToPoison,7,20,Global
+Poison Chance,Suffix,of Toxins,+16–20% chance to Poison on Hit,16,20,Weapon,chanceToPoison,6,30,Global
+Poison Chance,Suffix,of Toxicity,+21–26% chance to Poison on Hit,21,26,Weapon,chanceToPoison,5,40,Global
+Poison Chance,Suffix,of Virulence,+27–32% chance to Poison on Hit,27,32,Weapon,chanceToPoison,4,50,Global
+Poison Chance,Suffix,of Pestilence,+33–38% chance to Poison on Hit,33,38,Weapon,chanceToPoison,3,60,Global
+Poison Chance,Suffix,of Plague,+39–44% chance to Poison on Hit,39,44,Weapon,chanceToPoison,2,70,Global
+Poison Chance,Suffix,of Contagion,+45–50% chance to Poison on Hit,45,50,Weapon,chanceToPoison,1,80,Global
+Vulnerability Chance,Suffix,of Exposure,+3–6% chance to apply Vulnerability on Hit,3,6,Weapon,chanceToVulnerability,9,1,Global
+Vulnerability Chance,Suffix,of Weakness,+7–10% chance to apply Vulnerability on Hit,7,10,Weapon,chanceToVulnerability,8,10,Global
+Vulnerability Chance,Suffix,of Exploitation,+11–15% chance to apply Vulnerability on Hit,11,15,Weapon,chanceToVulnerability,7,20,Global
+Vulnerability Chance,Suffix,of Targeting,+16–20% chance to apply Vulnerability on Hit,16,20,Weapon,chanceToVulnerability,6,30,Global
+Vulnerability Chance,Suffix,of Compromising,+21–26% chance to apply Vulnerability on Hit,21,26,Weapon,chanceToVulnerability,5,40,Global
+Vulnerability Chance,Suffix,of Debilitation,+27–32% chance to apply Vulnerability on Hit,27,32,Weapon,chanceToVulnerability,4,50,Global
+Vulnerability Chance,Suffix,of Decimation,+33–38% chance to apply Vulnerability on Hit,33,38,Weapon,chanceToVulnerability,3,60,Global
+Vulnerability Chance,Suffix,of Annihilation,+39–44% chance to apply Vulnerability on Hit,39,44,Weapon,chanceToVulnerability,2,70,Global
+Vulnerability Chance,Suffix,of Total Exposure,+45–50% chance to apply Vulnerability on Hit,45,50,Weapon,chanceToVulnerability,1,80,Global
+Crumble Chance,Suffix,of Weakening,+3–6% chance to apply Crumble on Hit,3,6,Weapon,chanceToCrumble,9,1,Global
+Crumble Chance,Suffix,of Deterioration,+7–10% chance to apply Crumble on Hit,7,10,Weapon,chanceToCrumble,8,10,Global
+Crumble Chance,Suffix,of Erosion,+11–15% chance to apply Crumble on Hit,11,15,Weapon,chanceToCrumble,7,20,Global
+Crumble Chance,Suffix,of Decay,+16–20% chance to apply Crumble on Hit,16,20,Weapon,chanceToCrumble,6,30,Global
+Crumble Chance,Suffix,of Crumbling,+21–26% chance to apply Crumble on Hit,21,26,Weapon,chanceToCrumble,5,40,Global
+Crumble Chance,Suffix,of Shattering,+27–32% chance to apply Crumble on Hit,27,32,Weapon,chanceToCrumble,4,50,Global
+Crumble Chance,Suffix,of Disintegration,+33–38% chance to apply Crumble on Hit,33,38,Weapon,chanceToCrumble,3,60,Global
+Crumble Chance,Suffix,of Collapse,+39–44% chance to apply Crumble on Hit,39,44,Weapon,chanceToCrumble,2,70,Global
+Crumble Chance,Suffix,of Obliteration,+45–50% chance to apply Crumble on Hit,45,50,Weapon,chanceToCrumble,1,80,Global
+
+# AILMENT MAGNITUDE
+Ignite Magnitude,Suffix,of Smoldering,+8–14% increased Ignite Magnitude,8,14,Weapon Jewelry,increasedIgniteMagnitude,9,1,Global
+Ignite Magnitude,Suffix,of Heat,+15–24% increased Ignite Magnitude,15,24,Weapon Jewelry,increasedIgniteMagnitude,8,10,Global
+Ignite Magnitude,Suffix,of Burning Intensity,+25–34% increased Ignite Magnitude,25,34,Weapon Jewelry,increasedIgniteMagnitude,7,20,Global
+Ignite Magnitude,Suffix,of Conflagration,+35–44% increased Ignite Magnitude,35,44,Weapon Jewelry,increasedIgniteMagnitude,6,30,Global
+Ignite Magnitude,Suffix,of Blazing Fury,+45–54% increased Ignite Magnitude,45,54,Weapon Jewelry,increasedIgniteMagnitude,5,40,Global
+Ignite Magnitude,Suffix,of Incineration,+55–64% increased Ignite Magnitude,55,64,Weapon Jewelry,increasedIgniteMagnitude,4,50,Global
+Ignite Magnitude,Suffix,of Immolating Wrath,+65–74% increased Ignite Magnitude,65,74,Weapon ,increasedIgniteMagnitude,3,60,Global
+Ignite Magnitude,Suffix,of Infernal Power,+75–84% increased Ignite Magnitude,75,84,Weapon ,increasedIgniteMagnitude,2,70,Global
+Ignite Magnitude,Suffix,of Solar Flare,+85–99% increased Ignite Magnitude,85,99,Weapon ,increasedIgniteMagnitude,1,80,Global
+Shock Magnitude,Suffix,of Static Buildup,+8–14% increased Shock Magnitude,8,14,Weapon Jewelry,increasedShockMagnitude,9,1,Global
+Shock Magnitude,Suffix,of Electrical Surge,+15–24% increased Shock Magnitude,15,24,Weapon Jewelry,increasedShockMagnitude,8,10,Global
+Shock Magnitude,Suffix,of Lightning Rod,+25–34% increased Shock Magnitude,25,34,Weapon Jewelry,increasedShockMagnitude,7,20,Global
+Shock Magnitude,Suffix,of Amplification,+35–44% increased Shock Magnitude,35,44,Weapon Jewelry,increasedShockMagnitude,6,30,Global
+Shock Magnitude,Suffix,of Voltaic Overload,+45–54% increased Shock Magnitude,45,54,Weapon Jewelry,increasedShockMagnitude,5,40,Global
+Shock Magnitude,Suffix,of Conductivity,+55–64% increased Shock Magnitude,55,64,Weapon Jewelry,increasedShockMagnitude,4,50,Global
+Shock Magnitude,Suffix,of Electric Storm,+65–74% increased Shock Magnitude,65,74,Weapon,increasedShockMagnitude,3,60,Global
+Shock Magnitude,Suffix,of Thunder Lord,+75–84% increased Shock Magnitude,75,84,Weapon,increasedShockMagnitude,2,70,Global
+Shock Magnitude,Suffix,of Divine Lightning,+85–99% increased Shock Magnitude,85,99,Weapon,increasedShockMagnitude,1,80,Global
+Chill Magnitude,Suffix,of Cold Touch,+8–14% increased Chill Magnitude,8,14,Weapon Jewelry,increasedChillMagnitude,9,1,Global
+Chill Magnitude,Suffix,of Frost Bite,+15–24% increased Chill Magnitude,15,24,Weapon Jewelry,increasedChillMagnitude,8,10,Global
+Chill Magnitude,Suffix,of Freezing Wind,+25–34% increased Chill Magnitude,25,34,Weapon Jewelry,increasedChillMagnitude,7,20,Global
+Chill Magnitude,Suffix,of Hypothermia,+35–44% increased Chill Magnitude,35,44,Weapon Jewelry,increasedChillMagnitude,6,30,Global
+Chill Magnitude,Suffix,of Glacial Embrace,+45–54% increased Chill Magnitude,45,54,Weapon Jewelry,increasedChillMagnitude,5,40,Global
+Chill Magnitude,Suffix,of Frostbite,+55–64% increased Chill Magnitude,55,64,Weapon Jewelry,increasedChillMagnitude,4,50,Global
+Chill Magnitude,Suffix,of Arctic Winds,+65–74% increased Chill Magnitude,65,74,Weapon,increasedChillMagnitude,3,60,Global
+Chill Magnitude,Suffix,of Eternal Winter,+75–84% increased Chill Magnitude,75,84,Weapon,increasedChillMagnitude,2,70,Global
+Chill Magnitude,Suffix,of Absolute Zero,+85–99% increased Chill Magnitude,85,99,Weapon,increasedChillMagnitude,1,80,Global
+Bleed Magnitude,Suffix,of Shallow Cuts,+8–14% increased Bleed Magnitude,8,14,Weapon Jewelry,increasedBleedMagnitude,9,1,Global
+Bleed Magnitude,Suffix,of Deep Wounds,+15–24% increased Bleed Magnitude,15,24,Weapon Jewelry,increasedBleedMagnitude,8,10,Global
+Bleed Magnitude,Suffix,of Severing Edge,+25–34% increased Bleed Magnitude,25,34,Weapon Jewelry,increasedBleedMagnitude,7,20,Global
+Bleed Magnitude,Suffix,of Arterial,+35–44% increased Bleed Magnitude,35,44,Weapon Jewelry,increasedBleedMagnitude,6,30,Global
+Bleed Magnitude,Suffix,of Gushing Wounds,+45–54% increased Bleed Magnitude,45,54,Weapon Jewelry,increasedBleedMagnitude,5,40,Global
+Bleed Magnitude,Suffix,of Hemophilia,+55–64% increased Bleed Magnitude,55,64,Weapon Jewelry,increasedBleedMagnitude,4,50,Global
+Bleed Magnitude,Suffix,of Mortal Wounds,+65–74% increased Bleed Magnitude,65,74,Weapon,increasedBleedMagnitude,3,60,Global
+Bleed Magnitude,Suffix,of Exsanguination,+75–84% increased Bleed Magnitude,75,84,Weapon,increasedBleedMagnitude,2,70,Global
+Bleed Magnitude,Suffix,of Crimson Torrent,+85–99% increased Bleed Magnitude,85,99,Weapon,increasedBleedMagnitude,1,80,Global
+Poison Magnitude,Suffix,of Mild Toxin,+8–14% increased Poison Magnitude,8,14,Weapon Jewelry,increasedPoisonMagnitude,9,1,Global
+Poison Magnitude,Suffix,of Venom Sac,+15–24% increased Poison Magnitude,15,24,Weapon Jewelry,increasedPoisonMagnitude,8,10,Global
+Poison Magnitude,Suffix,of Toxic Coating,+25–34% increased Poison Magnitude,25,34,Weapon Jewelry,increasedPoisonMagnitude,7,20,Global
+Poison Magnitude,Suffix,of Virulence,+35–44% increased Poison Magnitude,35,44,Weapon Jewelry,increasedPoisonMagnitude,6,30,Global
+Poison Magnitude,Suffix,of Concentrated Toxin,+45–54% increased Poison Magnitude,45,54,Weapon Jewelry,increasedPoisonMagnitude,5,40,Global
+Poison Magnitude,Suffix,of Sepsis,+55–64% increased Poison Magnitude,55,64,Weapon Jewelry,increasedPoisonMagnitude,4,50,Global
+Poison Magnitude,Suffix,of Plague Bearer,+65–74% increased Poison Magnitude,65,74,Weapon,increasedPoisonMagnitude,3,60,Global
+Poison Magnitude,Suffix,of Lethal Dose,+75–84% increased Poison Magnitude,75,84,Weapon,increasedPoisonMagnitude,2,70,Global
+Poison Magnitude,Suffix,of Absolute Toxicity,+85–99% increased Poison Magnitude,85,99,Weapon,increasedPoisonMagnitude,1,80,Global
+Vulnerability Magnitude,Suffix,of Soft Spots,+8–14% increased Vulnerability Magnitude,8,14,Weapon Jewelry,increasedVulnerabilityMagnitude,9,1,Global
+Vulnerability Magnitude,Suffix,of Weak Points,+15–24% increased Vulnerability Magnitude,15,24,Weapon Jewelry,increasedVulnerabilityMagnitude,8,10,Global
+Vulnerability Magnitude,Suffix,of Exposed Defenses,+25–34% increased Vulnerability Magnitude,25,34,Weapon Jewelry,increasedVulnerabilityMagnitude,7,20,Global
+Vulnerability Magnitude,Suffix,of Critical Weakness,+35–44% increased Vulnerability Magnitude,35,44,Weapon Jewelry,increasedVulnerabilityMagnitude,6,30,Global
+Vulnerability Magnitude,Suffix,of Exploitable Flaws,+45–54% increased Vulnerability Magnitude,45,54,Weapon Jewelry,increasedVulnerabilityMagnitude,5,40,Global
+Vulnerability Magnitude,Suffix,of Fatal Weakness,+55–64% increased Vulnerability Magnitude,55,64,Weapon Jewelry,increasedVulnerabilityMagnitude,4,50,Global
+Vulnerability Magnitude,Suffix,of Total Exposure,+65–74% increased Vulnerability Magnitude,65,74,Weapon,increasedVulnerabilityMagnitude,3,60,Global
+Vulnerability Magnitude,Suffix,of Absolute Weakness,+75–84% increased Vulnerability Magnitude,75,84,Weapon,increasedVulnerabilityMagnitude,2,70,Global
+Vulnerability Magnitude,Suffix,of Complete Defenselessness,+85–99% increased Vulnerability Magnitude,85,99,Weapon,increasedVulnerabilityMagnitude,1,80,Global
+Crumble Magnitude,Suffix,of Minor Fractures,+8–14% increased Crumble Magnitude,8,14,Weapon Jewelry,increasedCrumbleMagnitude,9,1,Global
+Crumble Magnitude,Suffix,of Structural Stress,+15–24% increased Crumble Magnitude,15,24,Weapon Jewelry,increasedCrumbleMagnitude,8,10,Global
+Crumble Magnitude,Suffix,of Fault Lines,+25–34% increased Crumble Magnitude,25,34,Weapon Jewelry,increasedCrumbleMagnitude,7,20,Global
+Crumble Magnitude,Suffix,of Deep Cracks,+35–44% increased Crumble Magnitude,35,44,Weapon Jewelry,increasedCrumbleMagnitude,6,30,Global
+Crumble Magnitude,Suffix,of Brittle Foundation,+45–54% increased Crumble Magnitude,45,54,Weapon Jewelry,increasedCrumbleMagnitude,5,40,Global
+Crumble Magnitude,Suffix,of Structural Collapse,+55–64% increased Crumble Magnitude,55,64,Weapon,increasedCrumbleMagnitude,4,50,Global
+Crumble Magnitude,Suffix,of Catastrophic Failure,+65–74% increased Crumble Magnitude,65,74,Weapon,increasedCrumbleMagnitude,3,60,Global
+Crumble Magnitude,Suffix,of Total Disintegration,+75–84% increased Crumble Magnitude,75,84,Weapon,increasedCrumbleMagnitude,2,70,Global
+Crumble Magnitude,Suffix,of Molecular Dissolution,+85–99% increased Crumble Magnitude,85,99,Weapon,increasedCrumbleMagnitude,1,80,Global
+
+# RECOVERY & LEECH
+Life Regeneration,Suffix,of Regeneration,+1–3 Life Regenerated per Turn,1,3,Helmet Body Armour Gloves Boots Shield Jewelry,lifeRegeneration,8,10,Global
+Life Regeneration,Suffix,of Vitality,+4–6 Life Regenerated per Turn,4,6,Helmet Body Armour Gloves Boots Shield Jewelry,lifeRegeneration,6,30,Global
+Life Regeneration,Suffix,of Recovery,+7–10 Life Regenerated per Turn,7,10,Helmet Body Armour Gloves Boots Shield Jewelry,lifeRegeneration,4,50,Global
+Mana Regeneration,Suffix,of Meditation,+1–2 Mana Regenerated per Turn,1,2,Jewelry,manaRegeneration,8,10,Global
+Mana Regeneration,Suffix,of Clarity,+3–4 Mana Regenerated per Turn,3,4,Jewelry,manaRegeneration,5,40,Global
+Energy Shield Regeneration,Suffix,of Recharge,+2–4 Energy Shield Regenerated per Turn,2,4,ES Base Armour,energyShieldRegeneration,7,20,Global
+Energy Shield Regeneration,Suffix,of Restoration,+5–8 Energy Shield Regenerated per Turn,5,8,ES Base Armour,energyShieldRegeneration,5,40,Global
+Life Leech,Suffix,of Vampirism,+0.2–0.4% of Damage Leeched as Life,0.2,0.4,Weapon,lifeLeech,6,30,Global
+Life Leech,Suffix,of the Vampire,+0.5–0.8% of Damage Leeched as Life,0.5,0.8,Weapon,lifeLeech,3,60,Global
+
+
+# Preparation & MECHANICS
+Preparation Charge Speed,Suffix,of Readiness,+5–8% increased Preparation Charge Speed,5,8,Boots,preparationChargeSpeed,9,1,Global
+Preparation Charge Speed,Suffix,of Preparation,+9–13% increased Preparation Charge Speed,9,13,Boots,preparationChargeSpeed,8,10,Global
+Preparation Charge Speed,Suffix,of Swiftness,+14–18% increased Preparation Charge Speed,14,18,Boots,preparationChargeSpeed,7,20,Global
+Preparation Charge Speed,Suffix,of Travel,+19–24% increased Preparation Charge Speed,19,24,Boots,preparationChargeSpeed,6,30,Global
+Preparation Charge Speed,Suffix,of Celerity,+25–30% increased Preparation Charge Speed,25,30,Boots,preparationChargeSpeed,5,40,Global
+Preparation Charge Speed,Suffix,of Mobility,+31–36% increased Preparation Charge Speed,31,36,Boots,preparationChargeSpeed,4,50,Global
+Preparation Charge Speed,Suffix,of Acceleration,+37–42% increased Preparation Charge Speed,37,42,Boots,preparationChargeSpeed,3,60,Global
+Preparation Charge Speed,Suffix,of Expedition,+43–47% increased Preparation Charge Speed,43,47,Boots,preparationChargeSpeed,2,70,Global
+Preparation Charge Speed,Suffix,of Lightning Preparation,+48–50% increased Preparation Charge Speed,48,50,Boots,preparationChargeSpeed,1,80,Global
+Accuracy,Suffix,of Aim,+30–50 to Accuracy Rating,30,50,Helmet Body Armour Gloves Boots Shield Jewelry,accuracy,9,1,Global
+Accuracy,Suffix,of Precision,+51–75 to Accuracy Rating,51,75,Helmet Body Armour Gloves Boots Shield Jewelry,accuracy,8,10,Global
+Accuracy,Suffix,of Focus,+76–105 to Accuracy Rating,76,105,Weapon Gloves,accuracy,7,20,Global
+Accuracy,Suffix,of Marksmanship,+106–140 to Accuracy Rating,106,140,Weapon Gloves,accuracy,6,30,Global
+Accuracy,Suffix,of the Sharpshooter,+141–180 to Accuracy Rating,141,180,Weapon Gloves,accuracy,5,40,Global
+Accuracy,Suffix,of the Archer,+181–225 to Accuracy Rating,181,225,Weapon Gloves,accuracy,4,50,Global
+Accuracy,Suffix,of Perfect Sight,+226–275 to Accuracy Rating,226,275,Weapon Gloves,accuracy,3,60,Global
+Accuracy,Suffix,of Unerring Strike,+276–330 to Accuracy Rating,276,330,Weapon,accuracy,2,70,Global
+Accuracy,Suffix,of Divine Precision,+331–550 to Accuracy Rating,331,550,Weapon,accuracy,1,80,Global
+Area of Effect,Suffix,of Amplification,+8–12% increased Area of Effect Damage,8,12,Weapon,increasedAreaOfEffectDamage,7,20,Global
+Area of Effect,Suffix,of Expansion,+13–18% increased Area of Effect Damage,13,18,Weapon,increasedAreaOfEffectDamage,6,30,Global
+Area of Effect,Suffix,of Devastation,+19–24% increased Area of Effect Damage,19,24,Weapon,increasedAreaOfEffectDamage,5,40,Global
+Area of Effect,Suffix,of Obliteration,+25–30% increased Area of Effect Damage,25,30,Weapon,increasedAreaOfEffectDamage,4,50,Global
+Projectile Speed,Suffix,of Piercing,+15–24% increased Projectile Speed,15,24,Ranged Weapon,projectileSpeed,7,20,Global
+Projectile Speed,Suffix,of Velocity,+25–34% increased Projectile Speed,25,34,Ranged Weapon,projectileSpeed,5,40,Global
+
+# CARD SYSTEM STATS
+Card Draw,Suffix,of Insight,+1 Card Drawn per Turn,1,1,Gloves Jewelry,cardsDrawnPerTurn,4,50,Global
+Card Draw,Suffix,of Knowledge,+1 Card Drawn per Wave,1,1,Gloves Jewelry,cardsDrawnPerWave,6,30,Global
+Hand Size,Suffix,of Capacity,+1–2 to Maximum Hand Size,1,2,Gloves Jewelry,maxHandSize,7,20,Global
+Hand Size,Suffix,of Retention,+3–4 to Maximum Hand Size,3,4,Gloves Jewelry,maxHandSize,3,60,Global
+Card Retention,Suffix,of Persistence,+5–8% Card Retention Chance,5,8,Jewelry,cardRetentionChance,6,30,Global
+Card Retention,Suffix,of Memory,+9–12% Card Retention Chance,9,12,Jewelry,cardRetentionChance,4,50,Global
+Card Upgrade,Suffix,of Enhancement,+3–5% Card Upgrade Chance,3,5,Jewelry,cardUpgradeChance,6,30,Global
+Card Upgrade,Suffix,of Mastery,+6–8% Card Upgrade Chance,6,8,Jewelry,cardUpgradeChance,4,50,Global
+Discard Power,Suffix,of Sacrifice,+0.4–0.5 Discard Power,0.4,0.6,Jewelry,discardPower,7,20,Global
+Discard Power,Suffix,of Obliteration,+1–2 Discard Power,1,2,Jewelry,discardPower,4,50,Global
+
+# HYBRID MODIFIERS
+Damage & Speed,Prefix,Keen,+12–18% increased Attack Damage and +8–10% increased Attack Speed,20,28,Weapon,increasedAttackDamage|attackSpeed,6,30,Local
+Damage & Crit,Prefix,Ruthless,+15–22% increased Physical Damage and +5–8% increased Critical Strike Chance,20,30,Weapon,increasedPhysicalDamage|criticalChance,5,40,Local
+Life & Mana,Prefix,Balanced,+15–24 to Maximum Life and +8–12 to Maximum Mana,23,36,Jewelry,maxHealth|maxMana,6,30,Global
+Defense & Speed,Prefix,Tactical,+12–18% increased Armour and +5–8% increased Preparation Speed,17,26,Armour Base Boots,armour|PreparationSpeed,5,40,Global
+Spell & Cast,Prefix,Focused,+12–18% increased Spell Damage and +8–10% increased Cast Speed,20,28,Caster Weapon,increasedSpellDamage|castSpeed,6,30,Local
+
+# UNIQUE MODIFIERS (HIGHER TIER)
+Legendary Physical,Prefix,Godslayer,+25–40% increased Physical Damage and Adds 15–25 Physical Damage,40,65,Weapon,increasedPhysicalDamage|addedPhysicalDamage,2,70,Local
+Legendary Elemental,Prefix,Stormcaller,+30–45% increased Lightning Damage and +15–25% chance to Shock,45,70,Weapon,increasedLightningDamage|chanceToShock,1,80,Global
+Legendary Defense,Prefix,Immortal,+40–59% increased Armour and +3–5% Life Regeneration per Turn,43,64,Armour Base Armour,armour|lifeRegeneration,1,80,Global
+Legendary Caster,Prefix,Arcane Master,+35–50% increased Spell Damage and +2–3 to Maximum Mana,37,53,Caster Weapon,increasedSpellDamage|maxMana,2,70,Local

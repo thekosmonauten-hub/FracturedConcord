@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -40,6 +41,16 @@ public class CombatDeckManager : MonoBehaviour
     [SerializeField] private Transform discardPileTransform;
     [Tooltip("Visual position where discard pile sits - cards animate to here when played")]
     
+    [Header("Speed Meter Settings")]
+    [SerializeField] private float aggressionChargeThreshold = 100f;
+    [SerializeField] private float aggressionBaseGainPercent = 100f / 30f;
+    [SerializeField] private float focusChargeThreshold = 100f;
+    [SerializeField] private float focusBaseGainPercent = 100f / 20f;
+    [SerializeField] private bool showSpeedMeterDebug = false;
+    private const float DefaultAggressionHitsBaseline = 30f;
+    private const float DefaultFocusHitsBaseline = 20f;
+    private const float LegacyBaseGainPercent = 25f;
+    
     [Header("Debug Info (Read-Only)")]
     [SerializeField] private int debugDrawPileCount = 0;
     [SerializeField] private int debugHandCount = 0;
@@ -56,6 +67,24 @@ public class CombatDeckManager : MonoBehaviour
     public System.Action<CardDataExtended> OnCardPlayed;
     public System.Action<CardDataExtended> OnCardDiscarded;
     public System.Action OnDeckShuffled;
+    public System.Action<Character, ChannelingTracker.ChannelingState> OnChannelingStateChanged;
+    public System.Action<SpeedMeterState> OnSpeedMeterChanged;
+    private ChannelingTracker.ChannelingState lastChannelingState = default;
+    public ChannelingTracker.ChannelingState CurrentChannelingState => lastChannelingState;
+    public SpeedMeterState CurrentSpeedMeterState => new SpeedMeterState
+    {
+        aggressionProgress = aggressionMeterValue / Mathf.Max(1f, aggressionChargeThreshold),
+        aggressionCharges = aggressionCharges,
+        focusProgress = focusMeterValue / Mathf.Max(1f, focusChargeThreshold),
+        focusCharges = focusCharges
+    };
+    private static readonly Color ChannelingStartColor = new Color(0.25f, 0.85f, 1f);
+    private static readonly Color ChannelingEndColor = new Color(1f, 0.5f, 0.3f);
+    private PlayerCombatDisplay cachedPlayerDisplay;
+    private float aggressionMeterValue = 0f;
+    private int aggressionCharges = 0;
+    private float focusMeterValue = 0f;
+    private int focusCharges = 0;
     
     // Combat Manager Integration
     private CombatDisplayManager combatDisplayManager;
@@ -111,6 +140,9 @@ public class CombatDeckManager : MonoBehaviour
             GameObject comboSystemObj = new GameObject("ComboSystem");
             comboSystem = comboSystemObj.AddComponent<ComboSystem>();
         }
+
+        EnsureSpeedMeterDefaults();
+        RaiseSpeedMeterChanged();
     }
     
     private void Start()
@@ -122,6 +154,8 @@ public class CombatDeckManager : MonoBehaviour
             LoadDeckForClass("Marauder");
             ShuffleDeck();
             DrawInitialHand();
+            ResetChannelingState();
+            ResetSpeedMeters();
             return; // Skip normal loading
         }
         
@@ -136,7 +170,14 @@ public class CombatDeckManager : MonoBehaviour
             }
             
             DrawInitialHand();
+            ResetChannelingState();
+            ResetSpeedMeters();
         }
+    }
+
+    private void OnValidate()
+    {
+        EnsureSpeedMeterDefaults();
     }
     
     private void Update()
@@ -602,7 +643,17 @@ public class CombatDeckManager : MonoBehaviour
                     if (cardObj != null)
                     {
                         SetCardInteractable(cardObj, true);
-                        Debug.Log($"  Re-enabled interaction for {cardObj.name}");
+                        int siblingIndex = cardObj.transform.GetSiblingIndex();
+                        UnityEngine.UI.Button button = cardObj.GetComponent<UnityEngine.UI.Button>();
+                        bool buttonInteractable = button != null ? button.interactable : false;
+                        Debug.Log($"  Re-enabled interaction for {cardObj.name} [Sibling: {siblingIndex}, Button: {buttonInteractable}]");
+                        
+                        // Double-check: Force button interactable if it's still false
+                        if (button != null && !button.interactable)
+                        {
+                            Debug.LogWarning($"  ⚠️ Button still disabled for {cardObj.name}! Force-enabling...");
+                            button.interactable = true;
+                        }
                     }
                 }
                 
@@ -698,7 +749,12 @@ public class CombatDeckManager : MonoBehaviour
         // CRITICAL: Cancel ALL LeanTween animations on this card!
         // There may be stale hover/draw/reposition animations still running
         LeanTween.cancel(cardObj);
+        LeanTween.cancel(cardObj, false); // Cancel all tweens including delayed ones
         Debug.Log($"  ✓ Cancelled all LeanTween animations on {cardObj.name}");
+        
+        // Reset any transform changes that might be stuck
+        cardObj.transform.localScale = Vector3.one;
+        cardObj.transform.localRotation = Quaternion.identity;
         
         // ALSO disable CardHoverEffect and ALL interaction to prevent interference
         CardHoverEffect hoverEffect = cardObj.GetComponent<CardHoverEffect>();
@@ -744,6 +800,9 @@ public class CombatDeckManager : MonoBehaviour
             
             Debug.Log($"  Animation manager found. Flying card to enemy...");
             
+            // Add safety timeout for stuck animations
+            StartCoroutine(SafetyTimeoutForCardAnimation(cardObj, card, 3.0f));
+            
             // Step 1: Animate to target position (play effect)
             // Use animationManager directly (not cardRuntimeManager.AnimateCardPlay which returns to pool!)
             animationManager.AnimateCardPlay(cardObj, targetPosition, () => {
@@ -759,6 +818,28 @@ public class CombatDeckManager : MonoBehaviour
                 Debug.Log($"  Player Character: {(playerCharacter != null ? playerCharacter.characterName : "NULL")}");
                 Debug.Log($"  Is AoE Card: {card.isAoE}");
                 
+                var channelingState = UpdateChannelingState(playerCharacter, card);
+                bool channelingBonusApplied = false;
+                if (playerCharacter != null)
+                {
+                    if (channelingState.startedThisCast)
+                    {
+                        Debug.Log($"<color=cyan>[Channeling]</color> {playerCharacter.characterName} began channeling {channelingState.activeGroupKey} ({channelingState.consecutiveCasts} casts).");
+                        ShowChannelingPopup("Channeling!", ChannelingStartColor);
+                    }
+                    else if (channelingState.isChanneling)
+                    {
+                        Debug.Log($"<color=cyan>[Channeling]</color> Channeling continues ({channelingState.consecutiveCasts} casts).");
+                    }
+                    else if (channelingState.stoppedThisCast && !channelingState.startedThisCast)
+                    {
+                        Debug.Log($"<color=cyan>[Channeling]</color> Channeling ended before playing {card.cardName}.");
+                        ShowChannelingPopup("Channeling Broken", ChannelingEndColor);
+                    }
+                }
+
+                ProcessSpeedMeters(card, playerCharacter);
+                
                 if (cardEffectProcessor != null)
                 {
                     // TEMPORARY: Convert CardDataExtended to Card for CardEffectProcessor
@@ -766,6 +847,32 @@ public class CombatDeckManager : MonoBehaviour
                     #pragma warning disable CS0618 // Type or member is obsolete
                     Card cardForProcessor = card.ToCard();
                     #pragma warning restore CS0618
+                    int requiredStacks = Mathf.Max(1, card.channelingMinStacks);
+                    if (card.channelingBonusEnabled && channelingState.consecutiveCasts >= requiredStacks)
+                    {
+                        if (!Mathf.Approximately(card.channelingAdditionalGuard, 0f))
+                        {
+                            cardForProcessor.baseGuard += card.channelingAdditionalGuard;
+                        }
+                        if (!Mathf.Approximately(card.channelingDamageIncreasedPercent, 0f))
+                        {
+                            cardForProcessor.baseDamage = Mathf.Max(0f, cardForProcessor.baseDamage * (1f + card.channelingDamageIncreasedPercent / 100f));
+                        }
+                        if (!Mathf.Approximately(card.channelingDamageMorePercent, 0f))
+                        {
+                            cardForProcessor.baseDamage = Mathf.Max(0f, cardForProcessor.baseDamage * (1f + card.channelingDamageMorePercent / 100f));
+                        }
+                        if (!Mathf.Approximately(card.channelingGuardIncreasedPercent, 0f) || !Mathf.Approximately(card.channelingGuardMorePercent, 0f))
+                        {
+                            float guardValue = cardForProcessor.baseGuard;
+                            guardValue *= (1f + card.channelingGuardIncreasedPercent / 100f);
+                            guardValue *= (1f + card.channelingGuardMorePercent / 100f);
+                            cardForProcessor.baseGuard = guardValue;
+                        }
+                        channelingBonusApplied = true;
+                        Debug.Log($"<color=cyan>[Channeling]</color> Bonus applied → Damage +{card.channelingDamageIncreasedPercent}% inc, +{card.channelingDamageMorePercent}% more, Guard +{card.channelingGuardIncreasedPercent}% inc / +{card.channelingGuardMorePercent}% more, +{card.channelingAdditionalGuard} flat");
+                    }
+                    ApplyChannelingMetadata(cardForProcessor, channelingState, card, channelingBonusApplied);
                     
                     // Apply combo logic modifications to the runtime Card passed to processor
                     if (comboApp != null)
@@ -840,12 +947,14 @@ public class CombatDeckManager : MonoBehaviour
                     {
                         Debug.LogWarning($"  → CombatEffectManager is NULL!");
                     }
+                    
+                    CardAbilityRouter.ApplyCardPlay(card, cardForProcessor, playerCharacter, targetEnemy, targetPosition);
                 }
                 else
                 {
                     Debug.LogWarning($"Cannot apply {card.cardName}: No effect processor!");
                 }
-                
+				
                 // Trigger event for other systems
                 OnCardPlayed?.Invoke(card);
                 Debug.Log($"  → Card effect triggered: {card.cardName}");
@@ -943,11 +1052,13 @@ public class CombatDeckManager : MonoBehaviour
                     #pragma warning disable CS0618
                     Card cardForCombo = card.ToCard();
                     #pragma warning restore CS0618
+                    ApplyChannelingMetadata(cardForCombo, channelingState, card, channelingBonusApplied);
                     comboSystem.OnCardPlayed(cardForCombo);
                 }
                 if (ComboSystem.Instance != null)
                 {
-                    ComboSystem.Instance.RegisterLastPlayed(card.GetCardTypeEnum(), card.cardName);
+					string groupKey = string.IsNullOrEmpty(card.groupKey) ? card.cardName : card.groupKey;
+					ComboSystem.Instance.RegisterLastPlayed(card.GetCardTypeEnum(), card.cardName, groupKey);
                     // Refresh highlights after registering last played
                     UpdateComboHighlights();
                 }
@@ -1007,6 +1118,33 @@ public class CombatDeckManager : MonoBehaviour
         else
         {
             // No animation - immediate play
+            var channelingState = UpdateChannelingState(player, card);
+            bool channelingBonusAppliedInstant = false;
+            int requiredStacksInstant = Mathf.Max(1, card.channelingMinStacks);
+            if (card.channelingBonusEnabled && channelingState.consecutiveCasts >= requiredStacksInstant)
+            {
+                channelingBonusAppliedInstant = true;
+                Debug.Log($"<color=cyan>[Channeling]</color> Bonus applied → Damage +{card.channelingDamageIncreasedPercent}% inc, +{card.channelingDamageMorePercent}% more, Guard +{card.channelingGuardIncreasedPercent}% inc / +{card.channelingGuardMorePercent}% more, +{card.channelingAdditionalGuard} flat");
+            }
+            if (player != null)
+            {
+                if (channelingState.startedThisCast)
+                {
+                    Debug.Log($"<color=cyan>[Channeling]</color> {player.characterName} began channeling {channelingState.activeGroupKey} ({channelingState.consecutiveCasts} casts).");
+                    ShowChannelingPopup("Channeling!", ChannelingStartColor);
+                }
+                else if (channelingState.isChanneling)
+                {
+                    Debug.Log($"<color=cyan>[Channeling]</color> Channeling continues ({channelingState.consecutiveCasts} casts).");
+                }
+                else if (channelingState.stoppedThisCast && !channelingState.startedThisCast)
+                {
+                    Debug.Log($"<color=cyan>[Channeling]</color> Channeling ended before playing {card.cardName}.");
+                    ShowChannelingPopup("Channeling Broken", ChannelingEndColor);
+                }
+            }
+
+            ProcessSpeedMeters(card, player);
             discardPile.Add(card);
             OnCardPlayed?.Invoke(card);
             OnCardDiscarded?.Invoke(card);
@@ -1024,6 +1162,7 @@ public class CombatDeckManager : MonoBehaviour
                 #pragma warning disable CS0618 // Type or member is obsolete
                 Card cardForCombo = card.ToCard();
                 #pragma warning restore CS0618
+                ApplyChannelingMetadata(cardForCombo, channelingState, card, channelingBonusAppliedInstant);
                 comboSystem.OnCardPlayed(cardForCombo);
             }
             
@@ -1103,6 +1242,175 @@ public class CombatDeckManager : MonoBehaviour
     }
     
     #endregion
+
+    #region Channeling
+
+    private ChannelingTracker.ChannelingState UpdateChannelingState(Character owner, CardDataExtended cardData)
+    {
+        if (owner == null || cardData == null)
+            return lastChannelingState;
+
+        var state = owner.Channeling.RegisterCast(cardData.GetGroupKey());
+        lastChannelingState = state;
+        OnChannelingStateChanged?.Invoke(owner, state);
+        return state;
+    }
+
+    private void ApplyChannelingMetadata(Card runtimeCard, ChannelingTracker.ChannelingState state, CardDataExtended sourceCard, bool bonusApplied)
+    {
+        if (runtimeCard == null)
+            return;
+
+        runtimeCard.channelingActive = state.isChanneling;
+        runtimeCard.channelingStacks = state.consecutiveCasts;
+        runtimeCard.channelingStartedThisCast = state.startedThisCast;
+        runtimeCard.channelingStoppedThisCast = state.stoppedThisCast;
+        runtimeCard.channelingGroupKey = sourceCard != null ? sourceCard.GetGroupKey() : string.Empty;
+        runtimeCard.channelingBonusEnabled = sourceCard != null && sourceCard.channelingBonusEnabled;
+        runtimeCard.channelingMinStacks = sourceCard != null ? Mathf.Max(1, sourceCard.channelingMinStacks) : runtimeCard.channelingMinStacks;
+        runtimeCard.channelingAdditionalGuard = sourceCard != null ? sourceCard.channelingAdditionalGuard : runtimeCard.channelingAdditionalGuard;
+        runtimeCard.channelingDamageIncreasedPercent = sourceCard != null ? sourceCard.channelingDamageIncreasedPercent : runtimeCard.channelingDamageIncreasedPercent;
+        runtimeCard.channelingDamageMorePercent = sourceCard != null ? sourceCard.channelingDamageMorePercent : runtimeCard.channelingDamageMorePercent;
+        runtimeCard.channelingGuardIncreasedPercent = sourceCard != null ? sourceCard.channelingGuardIncreasedPercent : runtimeCard.channelingGuardIncreasedPercent;
+        runtimeCard.channelingGuardMorePercent = sourceCard != null ? sourceCard.channelingGuardMorePercent : runtimeCard.channelingGuardMorePercent;
+        runtimeCard.channelingBonusApplied = bonusApplied;
+    }
+
+    public void ResetChannelingState(Character owner = null)
+    {
+        if (owner == null)
+        {
+            owner = characterManager != null && characterManager.HasCharacter()
+                ? characterManager.GetCurrentCharacter()
+                : null;
+        }
+
+        if (owner == null)
+            return;
+
+        lastChannelingState = owner.Channeling.BreakChannel();
+        OnChannelingStateChanged?.Invoke(owner, lastChannelingState);
+    }
+
+    public void ResetSpeedMeters()
+    {
+        aggressionMeterValue = 0f;
+        aggressionCharges = 0;
+        focusMeterValue = 0f;
+        focusCharges = 0;
+        RaiseSpeedMeterChanged();
+    }
+
+    private void EnsureSpeedMeterDefaults()
+    {
+        if (aggressionChargeThreshold <= 0f)
+            aggressionChargeThreshold = 100f;
+        if (focusChargeThreshold <= 0f)
+            focusChargeThreshold = 100f;
+
+        if (aggressionBaseGainPercent <= 0f || Mathf.Approximately(aggressionBaseGainPercent, LegacyBaseGainPercent))
+        {
+            aggressionBaseGainPercent = aggressionChargeThreshold / DefaultAggressionHitsBaseline;
+        }
+
+        if (focusBaseGainPercent <= 0f || Mathf.Approximately(focusBaseGainPercent, LegacyBaseGainPercent))
+        {
+            focusBaseGainPercent = focusChargeThreshold / DefaultFocusHitsBaseline;
+        }
+    }
+
+    private void ProcessSpeedMeters(CardDataExtended card, Character player)
+    {
+        if (card == null || player == null) return;
+
+        CardType type = card.GetCardTypeEnum();
+        switch (type)
+        {
+            case CardType.Attack:
+                AddAggressionProgress(player.GetAttackSpeedMultiplier());
+                break;
+            case CardType.Skill:
+            case CardType.Power:
+                AddFocusProgress(player.GetCastSpeedMultiplier());
+                break;
+        }
+    }
+
+    private void AddAggressionProgress(float speedMultiplier)
+    {
+        float gain = aggressionBaseGainPercent * Mathf.Max(0f, speedMultiplier);
+        aggressionMeterValue += gain;
+        while (aggressionMeterValue >= aggressionChargeThreshold)
+        {
+            aggressionMeterValue -= aggressionChargeThreshold;
+            aggressionCharges++;
+        }
+        aggressionMeterValue = Mathf.Clamp(aggressionMeterValue, 0f, aggressionChargeThreshold);
+        if (showSpeedMeterDebug)
+        {
+            Debug.Log($"[SpeedMeter] Aggression progress -> value {aggressionMeterValue:F1}/{aggressionChargeThreshold}, charges {aggressionCharges}");
+        }
+        RaiseSpeedMeterChanged();
+    }
+
+    private void AddFocusProgress(float speedMultiplier)
+    {
+        float gain = focusBaseGainPercent * Mathf.Max(0f, speedMultiplier);
+        focusMeterValue += gain;
+        while (focusMeterValue >= focusChargeThreshold)
+        {
+            focusMeterValue -= focusChargeThreshold;
+            focusCharges++;
+        }
+        focusMeterValue = Mathf.Clamp(focusMeterValue, 0f, focusChargeThreshold);
+        if (showSpeedMeterDebug)
+        {
+            Debug.Log($"[SpeedMeter] Focus progress -> value {focusMeterValue:F1}/{focusChargeThreshold}, charges {focusCharges}");
+        }
+        RaiseSpeedMeterChanged();
+    }
+
+    private void RaiseSpeedMeterChanged()
+    {
+        OnSpeedMeterChanged?.Invoke(CurrentSpeedMeterState);
+    }
+
+    private void ShowChannelingPopup(string message, Color color)
+    {
+        CombatAnimationManager anim = CombatAnimationManager.Instance;
+        if (anim == null) return;
+
+        Vector3 position = GetPlayerPopupPosition();
+        anim.ShowFloatingText(message, position, color, 38);
+    }
+
+    private Vector3 GetPlayerPopupPosition()
+    {
+        if (cachedPlayerDisplay == null)
+        {
+            cachedPlayerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        }
+
+        if (cachedPlayerDisplay != null)
+        {
+            RectTransform rect = cachedPlayerDisplay.GetComponent<RectTransform>();
+            Vector3 basePosition = rect != null ? rect.position : cachedPlayerDisplay.transform.position;
+            float offsetY = 0f;
+            if (rect != null)
+            {
+                offsetY = rect.rect.height * cachedPlayerDisplay.transform.lossyScale.y * 0.5f + 80f;
+            }
+            else
+            {
+                offsetY = 120f;
+            }
+            return basePosition + new Vector3(0f, offsetY, 0f);
+        }
+
+        return new Vector3(Screen.width * 0.25f, Screen.height * 0.5f, 0f);
+    }
+
+    #endregion
     
     #region Card Interaction
     
@@ -1121,6 +1429,17 @@ public class CombatDeckManager : MonoBehaviour
         {
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => OnCardClicked(cardObj));
+            
+            // Debug logging for high index cards
+            int siblingIndex = cardObj.transform.GetSiblingIndex();
+            if (siblingIndex >= 12)
+            {
+                Debug.Log($"<color=orange>[Setup Card {siblingIndex}] {cardObj.name} - Button interactable: {button.interactable}, enabled: {button.enabled}</color>");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"<color=red>{cardObj.name} has NO Button component!</color>");
         }
     }
     
@@ -1232,6 +1551,55 @@ public class CombatDeckManager : MonoBehaviour
     }
     
     #endregion
+    
+    /// <summary>
+    /// Safety timeout for stuck card animations
+    /// </summary>
+    private IEnumerator SafetyTimeoutForCardAnimation(GameObject cardObj, CardDataExtended card, float timeout)
+    {
+        yield return new WaitForSeconds(timeout);
+        
+        // Check if card is still active (animation might be stuck)
+        if (cardObj != null && cardObj.activeInHierarchy)
+        {
+            Debug.LogWarning($"[Safety Timeout] Card animation stuck for {card.cardName}! Force completing...");
+            
+            // Cancel all animations
+            LeanTween.cancel(cardObj);
+            
+            // Force apply card effects
+            Enemy targetEnemy = GetTargetEnemy();
+            Character playerCharacter = characterManager != null && characterManager.HasCharacter() ? 
+                characterManager.GetCurrentCharacter() : null;
+            
+            if (cardEffectProcessor != null && targetEnemy != null && playerCharacter != null)
+            {
+                Debug.Log($"[Safety Timeout] Force applying effects for {card.cardName}");
+                // Convert CardDataExtended to Card for the processor
+                Card legacyCard = new Card
+                {
+                    cardName = card.cardName,
+                    baseDamage = card.GetBaseDamage(), // Use method instead of property
+                    manaCost = card.playCost, // Use playCost instead of manaCost
+                    isAoE = card.isAoE,
+                    aoeTargets = card.aoeTargets,
+                    scalesWithMeleeWeapon = card.scalesWithMeleeWeapon,
+                    primaryDamageType = card.primaryDamageType // Use primaryDamageType instead of damageType
+                };
+                cardEffectProcessor.ApplyCardToEnemy(legacyCard, targetEnemy, playerCharacter, Vector3.zero);
+            }
+            
+            // Return to pool
+            if (cardRuntimeManager != null)
+            {
+                cardRuntimeManager.ReturnCardToPool(cardObj);
+            }
+            else
+            {
+                Destroy(cardObj);
+            }
+        }
+    }
     
     #region Helper Methods
     
@@ -1562,9 +1930,13 @@ public class CombatDeckManager : MonoBehaviour
         // Update each card visual's usability
         for (int i = 0; i < handVisuals.Count; i++)
         {
-            if (i < hand.Count && handVisuals[i] != null)
+            if (handVisuals[i] == null) continue;
+            
+            GameObject cardObj = handVisuals[i];
+            
+            // Check if we have card data for this visual
+            if (i < hand.Count && hand[i] != null)
             {
-                GameObject cardObj = handVisuals[i];
                 CardDataExtended card = hand[i]; // NOW USING CardDataExtended!
                 
                 // Update card visual components - use new CardDataExtended methods
@@ -1583,6 +1955,34 @@ public class CombatDeckManager : MonoBehaviour
                         deckBuilderCard.Initialize(card, null, player);
                         Debug.Log($"Updated DeckBuilderCardUI for {card.cardName}");
                     }
+                }
+                
+                // CRITICAL: Ensure button interactability is set based on mana affordability
+                // This prevents buttons from being disabled incorrectly
+                UnityEngine.UI.Button button = cardObj.GetComponent<UnityEngine.UI.Button>();
+                if (button != null)
+                {
+                    bool canAfford = player.mana >= card.playCost;
+                    button.interactable = canAfford;
+                    
+                    // Debug logging for high-index cards
+                    int siblingIndex = cardObj.transform.GetSiblingIndex();
+                    if (siblingIndex >= 12)
+                    {
+                        Debug.Log($"<color=orange>[UpdateCardUsability {siblingIndex}] {cardObj.name} - Mana: {player.mana}/{card.playCost}, CanAfford: {canAfford}, Button.interactable: {button.interactable}</color>");
+                    }
+                }
+            }
+            else
+            {
+                // Card visual exists but no card data - ensure it's still interactable
+                // This handles cases where handVisuals.Count > hand.Count
+                UnityEngine.UI.Button button = cardObj.GetComponent<UnityEngine.UI.Button>();
+                if (button != null && !button.interactable)
+                {
+                    int siblingIndex = cardObj.transform.GetSiblingIndex();
+                    Debug.LogWarning($"<color=red>[UpdateCardUsability] Card at index {i} (sibling {siblingIndex}) has no card data but button is disabled! Force-enabling...</color>");
+                    button.interactable = true;
                 }
             }
         }
@@ -2034,5 +2434,17 @@ public class CombatDeckManager : MonoBehaviour
     }
     
     #endregion
+
+    [System.Serializable]
+    public struct SpeedMeterState
+    {
+        public float aggressionProgress;
+        public int aggressionCharges;
+        public float focusProgress;
+        public int focusCharges;
+
+        public bool IsAggressionReady => aggressionCharges > 0;
+        public bool IsFocusReady => focusCharges > 0;
+    }
 }
 

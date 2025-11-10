@@ -244,3 +244,73 @@
     border-color: rgba(255, 255, 255, 0.8);
     background-color: rgb(255, 255, 255);
 }
+
+/* Deck Preview Styles */
+.deck-preview-scroll {
+    width: 750px;
+    height: 220px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.3);
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.deck-card-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 5px;
+}
+
+.deck-preview-row {
+    width: 180px;
+    height: 45px;
+    background-color: rgba(20, 20, 20, 0.7);
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.2);
+    margin: 4px;
+    padding: 8px 10px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    transition-duration: 0.15s;
+}
+
+.deck-preview-row:hover {
+    background-color: rgba(60, 60, 60, 0.9);
+    border-color: rgba(255, 255, 255, 0.6);
+    scale: 1.05;
+    transition-duration: 0.1s;
+}
+
+.deck-card-count {
+    font-size: 16px;
+    color: rgb(200, 200, 200);
+    -unity-font-style: bold;
+    min-width: 30px;
+}
+
+.deck-card-name {
+    font-size: 14px;
+    color: rgb(255, 255, 255);
+    flex-grow: 1;
+    -unity-text-align: middle-left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Card Hover Tooltip Container */
+.card-hover-container {
+    position: absolute;
+    display: none;
+    pointer-events: none;
+}
+
+.card-hover-container.visible {
+    display: flex;
+}

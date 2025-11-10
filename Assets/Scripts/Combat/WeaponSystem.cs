@@ -31,6 +31,7 @@ public class Weapon
     [Header("Basic Information")]
     public string weaponName;
     public WeaponType weaponType;
+    public float attackSpeed = 1f;
     
     [Header("Implicit Base Damage")]
     public float baseDamageMin = 0f;
@@ -252,6 +253,7 @@ public class CharacterWeapons
         {
             weaponName = "Steel Axe",
             weaponType = WeaponType.Melee,
+            attackSpeed = 1.05f,
             baseDamageMin = 5f,
             baseDamageMax = 9f,
             baseDamageType = DamageType.Physical
@@ -278,12 +280,13 @@ public class CharacterWeapons
     }
     
     // Helper method to create a basic weapon without affixes
-    public static Weapon CreateBasicWeapon(string name, WeaponType type, float minDamage, float maxDamage, DamageType damageType)
+    public static Weapon CreateBasicWeapon(string name, WeaponType type, float minDamage, float maxDamage, DamageType damageType, float baseAttackSpeed = 1f)
     {
         Weapon weapon = new Weapon
         {
             weaponName = name,
             weaponType = type,
+            attackSpeed = Mathf.Max(0.1f, baseAttackSpeed),
             baseDamageMin = minDamage,
             baseDamageMax = maxDamage,
             baseDamageType = damageType

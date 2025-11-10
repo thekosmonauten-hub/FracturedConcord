@@ -1,0 +1,74 @@
+Name,Defence,Defence 2,Requirements,Implicit 1,Implicit 2,Item Type
+Iron Greaves,Armour: 6–9,,Requires 8 Str,,,Boots
+Steel Greaves,Armour: 32–42,,Requires Level 9, 21 Str,,,Boots
+Plated Greaves,Armour: 77–96,,Requires Level 23, 44 Str,,,Boots
+Reinforced Greaves,Armour: 109–120,,Requires Level 33, 61 Str,,,Boots
+Antique Greaves,Armour: 122–144,,Requires Level 37, 67 Str,,,Boots
+Ancient Greaves,Armour: 151–174,,Requires Level 46, 82 Str,,,Boots
+Goliath Greaves,Armour: 177–209,,Requires Level 54, 95 Str,,,Boots
+Vaal Greaves,Armour: 220–253,,Requires Level 62, 117 Str,,,Boots
+Titan Greaves,Armour: 241–278,,Requires Level 68, 120 Str,,,Boots
+Precursor Greaves,Armour: 307–353,,Requires Level 78, 153 Str,,,Boots
+Leviathan Greaves,Armour: 359–413,,Requires Level 84, 177 Str,,,Boots
+Basemetal Treads,Armour: 68–78,,Requires Level 20, 39 Str,30% increased Stagger and Block Recovery,20% reduced Stagger Threshold,Boots
+Darksteel Treads,Armour: 164–189,,Requires Level 50, 89 Str,40% increased Stagger and Block Recovery,20% reduced Stagger Threshold,Boots
+Brimstone Treads,Armour: 236–271,,Requires Level 80, 124 Str,50% increased Stagger and Block Recovery,20% reduced Stagger Threshold,Boots
+Rawhide Boots,Evasion Rating: 13–18,,Requires Level 3, 11 Dex,,,Boots
+Goathide Boots,Evasion Rating: 42–54,,Requires Level 12, 26 Dex,,,Boots
+Deerskin Boots,Evasion Rating: 74–92,,Requires Level 22, 42 Dex,,,Boots
+Nubuck Boots,Evasion Rating: 113–126,,Requires Level 34, 62 Dex,,,Boots
+Eelskin Boots,Evasion Rating: 129–148,,Requires Level 39, 70 Dex,,,Boots
+Sharkskin Boots,Evasion Rating: 145–171,,Requires Level 44, 79 Dex,,,Boots
+Shagreen Boots,Evasion Rating: 180–216,,Requires Level 55, 97 Dex,,,Boots
+Stealth Boots,Evasion Rating: 220–253,,Requires Level 62, 117 Dex,,,Boots
+Slink Boots,Evasion Rating: 246–283,,Requires Level 69, 120 Dex,,,Boots
+Harpyskin Boots,Evasion Rating: 307–353,,Requires Level 78, 153 Dex,,,Boots
+Velour Boots,Evasion Rating: 359–413,,Requires Level 84, 177 Dex,,,Boots
+Cloudwhisper Boots,Evasion Rating: 68–78,,Requires Level 20, 39 Dex,1 to (5–6) Added Attack Lightning Damage per 200 Accuracy Rating,25% less Accuracy Rating,Boots
+Windbreak Boots,Evasion Rating: 164–189,,Requires Level 50, 89 Dex,1 to (5–6) Added Attack Lightning Damage per 200 Accuracy Rating,25% less Accuracy Rating,Boots
+Stormrider Boots,Evasion Rating: 236–271,,Requires Level 80, 124 Dex,1 to (5–6) Added Attack Lightning Damage per 200 Accuracy Rating,25% less Accuracy Rating,Boots
+Wool Shoes,Energy Shield: 5–7,,Requires Level 3, 11 Int,,,Boots
+Velvet Slippers,Energy Shield: 8–11,,Requires Level 9, 21 Int,,,Boots
+Silk Slippers,Energy Shield: 17–21,,Requires Level 22, 42 Int,,,Boots
+Scholar Boots,Energy Shield: 23–25,,Requires Level 32, 59 Int,,,Boots
+Satin Slippers,Energy Shield: 26–30,,Requires Level 38, 69 Int,,,Boots
+Samite Slippers,Energy Shield: 30–35,,Requires Level 44, 79 Int,,,Boots
+Conjurer Boots,Energy Shield: 36–42,,Requires Level 53, 94 Int,,,Boots
+Arcanist Slippers,Energy Shield: 47–55,,Requires Level 61, 119 Int,,,Boots
+Sorcerer Boots,Energy Shield: 51–59,,Requires Level 67, 123 Int,,,Boots
+Sage Slippers,Energy Shield: 62–71,,Requires Level 78, 153 Int,,,Boots
+Warlock Boots,Energy Shield: 72–83,,Requires Level 84, 177 Int,,,Boots
+Duskwalk Slippers,Energy Shield: 15–18,,Requires Level 20, 39 Int,-1 Card draw,Select 1 additional Card to Discard,Boots
+Nightwind Slippers,Energy Shield: 34–39,,Requires Level 50, 89 Int,-1 Card draw,Select 1 additional Card to Discard,Boots
+Dreamquest Slippers,Energy Shield: 50–57,,Requires Level 80, 124 Int,-1 Card draw,Select (1-2) additional Card to Discard,Boots
+Leatherscale Boots,Armour: 12–17,Evasion Rating: 12–17,Requires Level 6, 9 Str, 9 Dex,,,Boots
+Ironscale Boots,Armour: 34–44,Evasion Rating: 34–44,Requires Level 18, 19 Str, 19 Dex,,,Boots
+Bronzescale Boots,Armour: 55–63,Evasion Rating: 55–63,Requires Level 30, 30 Str, 30 Dex,,,Boots
+Steelscale Boots,Armour: 65–75,Evasion Rating: 65–75,Requires Level 36, 35 Str, 35 Dex,,,Boots
+Serpentscale Boots,Armour: 76–90,Evasion Rating: 76–90,Requires Level 42, 40 Str, 40 Dex,,,Boots
+Wyrmscale Boots,Armour: 92–103,Evasion Rating: 92–103,Requires Level 51, 48 Str, 48 Dex,,,Boots
+Hydrascale Boots,Armour: 106–122,Evasion Rating: 106–122,Requires Level 59, 56 Str, 56 Dex,,,Boots
+Dragonscale Boots,Armour: 121–139,Evasion Rating: 121–139,Requires Level 65, 62 Str, 62 Dex,,,Boots
+Chimerascale Boots,Armour: 176–203,Evasion Rating: 176–203,Requires Level 78, 85 Str, 85 Dex,,,Boots
+Wyvernscale Boots,Armour: 205–236,Evasion Rating: 205–236,Requires Level 84, 98 Str, 98 Dex,,,Boots
+Chain Boots,Armour: 11–15,Energy Shield: 3–5,Requires Level 5, 8 Str, 8 Int,,,Boots
+Ringmail Boots,Armour: 25–32,Energy Shield: 6–8,Requires Level 13, 15 Str, 15 Int,,,Boots
+Mesh Boots,Armour: 51–64,Energy Shield: 11–14,Requires Level 28, 28 Str, 28 Int,,,Boots
+Riveted Boots,Armour: 65–71,Energy Shield: 14–15,Requires Level 36, 35 Str, 35 Int,,,Boots
+Zealot Boots,Armour: 73–87,Energy Shield: 15–18,Requires Level 40, 39 Str, 39 Int,,,Boots
+Soldier Boots,Armour: 88–99,Energy Shield: 18–20,Requires Level 49, 47 Str, 47 Int,,,Boots
+Legion Boots,Armour: 104–120,Energy Shield: 21–25,Requires Level 58, 54 Str, 54 Int,,,Boots
+Crusader Boots,Armour: 121–139,Energy Shield: 25–28,Requires Level 64, 62 Str, 62 Int,,,Boots
+Martyr Boots,Armour: 176–203,Energy Shield: 35–41,Requires Level 78, 85 Str, 85 Int,,,Boots
+Paladin Boots,Armour: 205–236,Energy Shield: 41–47,Requires Level 84, 98 Str, 98 Int,,,Boots
+Wrapped Boots,Evasion Rating: 12–17,Energy Shield: 4–5,Requires Level 6, 9 Dex, 9 Int,,,Boots
+Strapped Boots,Evasion Rating: 30–39,Energy Shield: 7–9,Requires Level 16, 18 Dex, 18 Int,,,Boots
+Clasped Boots,Evasion Rating: 50–57,Energy Shield: 11–12,Requires Level 27, 27 Dex, 27 Int,,,Boots
+Shackled Boots,Evasion Rating: 62–71,Energy Shield: 13–15,Requires Level 34, 34 Dex, 34 Int,,,Boots
+Trapper Boots,Evasion Rating: 74–85,Energy Shield: 16–18,Requires Level 41, 40 Dex, 40 Int,,,Boots
+Ambush Boots,Evasion Rating: 85–95,Energy Shield: 18–20,Requires Level 47, 45 Dex, 45 Int,,,Boots
+Carnal Boots,Evasion Rating: 99–117,Energy Shield: 20–24,Requires Level 55, 52 Dex, 52 Int,,,Boots
+Assassin's Boots,Evasion Rating: 121–139,Energy Shield: 25–28,Requires Level 63, 62 Dex, 62 Int,,,Boots
+Murder Boots,Evasion Rating: 185–213,Energy Shield: 18–21,Requires Level 69, 82 Dex, 42 Int,,,Boots
+Infiltrator Boots,Evasion Rating: 176–203,Energy Shield: 35–41,Requires Level 78, 85 Dex, 85 Int,,,Boots
+Phantom Boots,Evasion Rating: 205–236,Energy Shield: 41–47,Requires Level 84, 98 Dex, 98 Int,,,Boots

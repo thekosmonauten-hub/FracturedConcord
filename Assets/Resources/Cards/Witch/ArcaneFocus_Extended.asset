@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: ArcaneFocus_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Arcane Focus
+  groupKey: Arcane_Focus
   cardType: Skill
   playCost: 1
-  description: 'Gain 3 temporary Intelligence. Draw 1 card. Combo (Arcane Focus +
-    any Spell): Gain 2 Guard.'
-  rarity: 0
+  description: Gain 3 temporary Intelligence. Draw 1 card.
+  rarity: 1
   element: 0
   category: 1
-  cardImage: {fileID: 0}
+  cardImage: {fileID: -5798945050278704905, guid: 2e9191b9163b8d1468bfd96a3b9e9eba, type: 3}
+  cardThumbnail: {fileID: -2076331410366956648, guid: 8821991b0f7450b48a929705ccd9f362, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -30,6 +32,9 @@ MonoBehaviour:
   isDualWield: 0
   ifDiscardedEffect: 
   dualWieldEffect: 
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 0
@@ -37,6 +42,7 @@ MonoBehaviour:
   scalesWithSpellWeapon: 0
   isAoE: 0
   aoeTargets: 1
+  aoeRowScope: 0
   damageScaling:
     strengthScaling: 0
     dexterityScaling: 0
@@ -52,10 +58,43 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
+  enableCombo: 1
   comboWith: 
-  comboDescription: 
+  comboDescription: 'Combo: Draw 2 cards instead'
+  comboWithCardType: 2
+  comboAttackIncrease: 0
+  comboGuardIncrease: 0
+  comboIsAoE: 0
+  comboManaRefund: 0
+  comboApplyAilment: 
+  comboBuffs: []
+  comboConsumeAilment: 0
+  comboConsumeAilmentId: 0
+  comboDrawCards: 2
+  comboAilment: 0
+  comboAilmentPortion: 0
+  comboAilmentDuration: 0
+  consumeAilment: 0
+  consumeAilmentId: 0
+  comboScaling: 0
+  comboScalingDivisor: 1
+  comboLogic: 1
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Skill
   - Basic
+  - Spell
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

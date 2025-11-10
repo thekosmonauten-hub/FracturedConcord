@@ -44,7 +44,10 @@ public partial class EncounterManager : MonoBehaviour
                 {
                     areaLevel = asset.areaLevel,
                     totalWaves = Mathf.Max(1, asset.totalWaves),
-                    uniqueEnemy = asset.uniqueEnemy
+                    maxEnemiesPerWave = Mathf.Max(1, asset.maxEnemiesPerWave),
+                    randomizeEnemyCount = asset.randomizeEnemyCount,
+                    uniqueEnemy = asset.uniqueEnemy,
+                    lootTable = asset.lootTable
                 };
                 target.Add(data);
             }

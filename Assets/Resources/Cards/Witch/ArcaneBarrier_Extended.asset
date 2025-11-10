@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: ArcaneBarrier_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Arcane Barrier
+  groupKey: Arcane_Barrier
   cardType: Guard
   playCost: 1
-  description: 'Gain 8 Guard (+Int/3). Gain 2 temporary Intelligence. Combo (Arcane
-    Bolt + Arcane Barrier): Gain 50% more Guard.'
+  description: Gain {guardintDivisor} Guard. Gain 2 temporary Intelligence.
   rarity: 0
   element: 0
   category: 3
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 7630229031120573750, guid: 6bc873b536f0f244cb1ff8acc5e291fa, type: 3}
+  cardThumbnail: {fileID: -4983299916385957381, guid: 79a07192efc90d64f861c5721d7d72f6, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -30,6 +32,9 @@ MonoBehaviour:
   isDualWield: 0
   ifDiscardedEffect: 
   dualWieldEffect: 
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 0
@@ -37,14 +42,21 @@ MonoBehaviour:
   scalesWithSpellWeapon: 0
   isAoE: 0
   aoeTargets: 1
+  aoeRowScope: 0
   damageScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
   guardScaling:
-    strengthScaling: 0.5
+    strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 3
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -52,10 +64,43 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
+  enableCombo: 1
   comboWith: 
-  comboDescription: 
+  comboDescription: 'Light Channelling: 50% increased guard'
+  comboWithCardType: 0
+  comboAttackIncrease: 0
+  comboGuardIncrease: 0
+  comboIsAoE: 0
+  comboManaRefund: 0
+  comboApplyAilment: 
+  comboBuffs: []
+  comboConsumeAilment: 0
+  comboConsumeAilmentId: 0
+  comboDrawCards: 0
+  comboAilment: 0
+  comboAilmentPortion: 0
+  comboAilmentDuration: 0
+  consumeAilment: 0
+  consumeAilmentId: 0
+  comboScaling: 0
+  comboScalingDivisor: 1
+  comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 1
+  channelingMinStacks: 1
+  channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 100
+  channelingGuardMorePercent: 0
   tags:
   - Guard
   - Basic
+  - Spell
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

@@ -918,6 +918,33 @@ MonoBehaviour:
   statsController: {fileID: 292766952526383812}
   toggleButton: {fileID: 0}
   isPanelVisible: 1
+  useSlideAnimation: 1
+  slideDuration: 0.25
+  slideEase:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  offscreenPadding: 40
   toggleCooldown: 0.1
 --- !u!114 &292766952526383812
 MonoBehaviour:
@@ -963,6 +990,8 @@ MonoBehaviour:
   ChaosMoreValue: {fileID: 0}
   ArmourText: {fileID: 1940845352204196074}
   EvasionText: {fileID: 8595999399288893463}
+  AccuracyText: {fileID: 0}
+  EvasionIncText: {fileID: 0}
   EnergyShieldText: {fileID: 296815262303562534}
   PhysicalResistanceText: {fileID: 4413503240915347976}
   FireResistanceText: {fileID: 3029500917278973049}
@@ -2345,7 +2374,7 @@ PrefabInstance:
     - target: {fileID: 6578133150151563032, guid: fd8cf3c622839dd4e9b7ea162743742a, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 694956534537270983, guid: 6bec7128db9d5524a80e0678c97bf774, type: 3}
+      objectReference: {fileID: -8127373737784357209, guid: 3a8ff78033783234497d533bb61ae407, type: 3}
     - target: {fileID: 6578133150151563032, guid: fd8cf3c622839dd4e9b7ea162743742a, type: 3}
       propertyPath: m_Color.a
       value: 1

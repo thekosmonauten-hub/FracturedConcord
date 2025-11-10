@@ -193,6 +193,83 @@ public abstract class BaseItem : ScriptableObject
         return totalValue;
     }
     
+    /// <summary>
+    /// Gets dual-range modifier values for damage calculations.
+    /// Returns (min, max) where min is added to weapon's minDamage and max to maxDamage.
+    /// For dual-range affixes, uses rolledFirstValue and rolledSecondValue.
+    /// For normal affixes, returns the same value for both.
+    /// </summary>
+    public virtual (float min, float max) GetDualModifierValue(string statName)
+    {
+        float totalMin = 0f;
+        float totalMax = 0f;
+        
+        // Check implicit modifiers
+        foreach (var affix in implicitModifiers)
+        {
+            foreach (var modifier in affix.modifiers)
+            {
+                if (modifier.statName == statName)
+                {
+                    if (modifier.isDualRange)
+                    {
+                        totalMin += modifier.rolledFirstValue;
+                        totalMax += modifier.rolledSecondValue;
+                    }
+                    else
+                    {
+                        totalMin += modifier.minValue;
+                        totalMax += modifier.minValue; // Same for both
+                    }
+                }
+            }
+        }
+        
+        // Check prefixes
+        foreach (var affix in prefixes)
+        {
+            foreach (var modifier in affix.modifiers)
+            {
+                if (modifier.statName == statName)
+                {
+                    if (modifier.isDualRange)
+                    {
+                        totalMin += modifier.rolledFirstValue;
+                        totalMax += modifier.rolledSecondValue;
+                    }
+                    else
+                    {
+                        totalMin += modifier.minValue;
+                        totalMax += modifier.minValue; // Same for both
+                    }
+                }
+            }
+        }
+        
+        // Check suffixes
+        foreach (var affix in suffixes)
+        {
+            foreach (var modifier in affix.modifiers)
+            {
+                if (modifier.statName == statName)
+                {
+                    if (modifier.isDualRange)
+                    {
+                        totalMin += modifier.rolledFirstValue;
+                        totalMax += modifier.rolledSecondValue;
+                    }
+                    else
+                    {
+                        totalMin += modifier.minValue;
+                        totalMax += modifier.minValue; // Same for both
+                    }
+                }
+            }
+        }
+        
+        return (totalMin, totalMax);
+    }
+    
     // Virtual method for character compatibility
     public virtual bool CanBeEquippedBy(Character character)
     {

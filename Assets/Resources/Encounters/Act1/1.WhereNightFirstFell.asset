@@ -17,4 +17,7 @@ MonoBehaviour:
   sceneName: CombatScene
   areaLevel: 1
   totalWaves: 5
+  maxEnemiesPerWave: 3
+  randomizeEnemyCount: 1
   uniqueEnemy: {fileID: 11400000, guid: 77767db2eaea7644f821c7442d9eb9f0, type: 2}
+  lootTable: {fileID: 11400000, guid: c8f663c631e134944a9c3fc28c42c8df, type: 2}

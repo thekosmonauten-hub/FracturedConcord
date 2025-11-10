@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
@@ -119,120 +120,118 @@ public class CardEffectProcessor : MonoBehaviour
     {
         Debug.Log($"<color=orange>🎯 Applying AoE card: {card.cardName}</color>");
         
-        // Get all active enemies
-        List<Enemy> allEnemies = GetAllActiveEnemies();
-        
-        if (allEnemies.Count == 0)
+        // Get all active enemies and their display indices BEFORE applying damage
+        // This prevents index mismatches when enemies are killed during AoE
+        var combatDisplayManager = FindFirstObjectByType<CombatDisplayManager>();
+        if (combatDisplayManager == null)
         {
-            Debug.LogWarning("No enemies found for AoE card!");
+            Debug.LogWarning("CombatDisplayManager not found for AoE card!");
             return;
         }
         
-        // Choose targets respecting AoE row scope
-        List<Enemy> orderedTargets = new List<Enemy>();
-        EnemyTargetingManager targeting = EnemyTargetingManager.Instance;
-        Enemy targeted = targeting != null ? targeting.GetTargetedEnemy() : null;
-        if (targeted != null && targeted.currentHealth > 0)
+        // Get current active enemy displays and their indices
+        var activeDisplays = combatDisplayManager.GetActiveEnemyDisplays();
+        List<(Enemy enemy, int displayIndex)> validTargets = new List<(Enemy, int)>();
+        
+        Debug.Log($"<color=cyan>🔍 AoE Debug: Found {activeDisplays.Count} active displays</color>");
+        
+        for (int i = 0; i < activeDisplays.Count; i++)
         {
-            orderedTargets.Add(targeted);
-        }
-        // Determine row scope
-        bool limitToSelectedRow = (card.aoeRowScope == AoERowScope.SelectedRow);
-        var cdm = combatManager != null ? combatManager : FindFirstObjectByType<CombatDisplayManager>();
-        System.Func<Enemy, bool> rowFilter = (e) => true;
-        if (limitToSelectedRow && targeted != null && cdm != null)
-        {
-            int total = GetActiveEnemyCount(cdm);
-            int selIdx = FindActiveEnemyIndex(targeted);
-            var selectedRow = GetRowForActiveIndex(selIdx, total);
-            rowFilter = (e) => {
-                int idx = FindActiveEnemyIndex(e);
-                if (idx < 0) return true; // if we cannot resolve index, do not exclude it
-                return GetRowForActiveIndex(idx, total) == selectedRow || selectedRow == CombatManager.EnemyRow.Both;
-            };
-        }
-
-        // Build adjacency-ordered targets based on active enemy indices
-        var activeList = TryGetActiveEnemiesList();
-        List<int> candidateIndices = new List<int>();
-        int selectedIdx = FindActiveEnemyIndex(targeted);
-        if (activeList != null)
-        {
-            for (int i = 0; i < activeList.Count; i++)
+            var display = activeDisplays[i];
+            if (display != null)
             {
-                var e = activeList[i];
-                if (e != null && e.currentHealth > 0 && (targeted == null || e != targeted) && (!limitToSelectedRow || rowFilter(e)))
+                Debug.Log($"<color=cyan>  Display {i}: Active={display.gameObject.activeInHierarchy}</color>");
+                if (display.gameObject.activeInHierarchy)
                 {
-                    candidateIndices.Add(i);
+                    var enemy = display.GetEnemy();
+                    if (enemy != null)
+                    {
+                        Debug.Log($"<color=cyan>    Enemy: {enemy.enemyName}, HP: {enemy.currentHealth}/{enemy.maxHealth}</color>");
+                        if (enemy.currentHealth > 0)
+                        {
+                            validTargets.Add((enemy, i));
+                            Debug.Log($"<color=green>    ✓ Added to valid targets list</color>");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"<color=red>    ✗ Display has no enemy!</color>");
+                    }
                 }
             }
-        }
-
-        List<int> finalIndices = new List<int>();
-        if (selectedIdx >= 0)
-        {
-            finalIndices.Add(selectedIdx);
-            // adjacency expansion: left, right, left2, right2, ... within candidate set
-            for (int d = 1; finalIndices.Count < (card.aoeTargets > 0 ? card.aoeTargets : int.MaxValue); d++)
+            else
             {
-                bool any = false;
-                int left = selectedIdx - d;
-                if (candidateIndices.Contains(left) && !finalIndices.Contains(left)) { finalIndices.Add(left); any = true; }
-                int right = selectedIdx + d;
-                if (candidateIndices.Contains(right) && !finalIndices.Contains(right)) { finalIndices.Add(right); any = true; }
-                if (!any && (left < 0 && (activeList == null || right >= activeList.Count))) break;
-            }
-            // fill remaining from candidates if still short
-            for (int i = 0; (card.aoeTargets <= 0 || finalIndices.Count < card.aoeTargets) && i < candidateIndices.Count; i++)
-            {
-                int idx = candidateIndices[i];
-                if (!finalIndices.Contains(idx)) finalIndices.Add(idx);
+                Debug.LogWarning($"<color=red>  Display {i} is NULL!</color>");
             }
         }
-        else
+        
+        if (validTargets.Count == 0)
         {
-            // No selected index; fall back to all candidates (row-filtered) in list order
-            finalIndices.AddRange(candidateIndices);
+            Debug.LogWarning("No valid enemies found for AoE card!");
+            return;
         }
-
-        int maxTargets = card.aoeTargets > 0 ? Mathf.Min(card.aoeTargets, finalIndices.Count) : finalIndices.Count;
-        Debug.Log($"<color=orange>🎯 AoE will hit {maxTargets} enemies</color>");
-
+        
+        Debug.Log($"<color=orange>🎯 AoE will target {validTargets.Count} valid enemies from {activeDisplays.Count} displays</color>");
+        
+        // Apply damage to each valid target using their stable display indices
+        // If aoeTargets <= 0, hit ALL enemies. Otherwise, hit up to aoeTargets
+        int maxTargets = (card.aoeTargets <= 0) ? validTargets.Count : Mathf.Min(card.aoeTargets, validTargets.Count);
+        Debug.Log($"<color=orange>🎯 AoE targeting {maxTargets} enemies (card.aoeTargets: {card.aoeTargets}, hit all: {card.aoeTargets <= 0})</color>");
+        
+        // BATCH PROCESSING: Apply all AoE damage in one batch to prevent cascading defeat handlers
+        // This prevents multiple simultaneous CheckWaveCompletion calls that can cause freezes
+        
+        // Mark AoE attack as in progress to defer wave completion checks
+        combatDisplayManager.StartAoEAttack();
+        
+        // Calculate damage once for all targets
+        float totalDamage = (card.cardType == CardType.Attack || (card.cardType == CardType.Skill && card.baseDamage > 0))
+            ? DamageCalculator.CalculateCardDamage(card, player)
+            : 0f;
+        
+        Debug.Log($"<color=green>🎯 AoE will hit all {validTargets.Count} enemies (aoeTargets: {card.aoeTargets}, damage: {totalDamage})</color>");
+        
+        // Apply all damage in batch
         for (int n = 0; n < maxTargets; n++)
         {
-            int ai = finalIndices[n];
-            Enemy enemy = (activeList != null && ai >= 0 && ai < activeList.Count) ? activeList[ai] : null;
-            Debug.Log($"<color=orange>🎯 Applying to enemy {n + 1}/{maxTargets}: {enemy?.enemyName}</color>");
-
-            // Prefer routing through CombatDisplayManager to ensure UI + VFX update per target
-            int enemyIndex = ai;
-            if (enemyIndex >= 0 && combatManager != null)
+            var (enemy, displayIndex) = validTargets[n];
+            
+            // Double-check enemy is still alive before applying
+            if (enemy == null || enemy.currentHealth <= 0)
             {
-                float totalDamage = (card.cardType == CardType.Attack || (card.cardType == CardType.Skill && card.baseDamage > 0))
-                    ? CalculateDamage(card, player)
-                    : 0f;
-
-                if (totalDamage > 0f)
-                {
-                    combatManager.PlayerAttackEnemy(enemyIndex, totalDamage);
-                    continue;
-                }
+                Debug.Log($"<color=orange>⚠️ Enemy at index {displayIndex} already dead, skipping</color>");
+                continue;
             }
+            
+            Debug.Log($"<color=yellow>💥 Dealing {totalDamage} damage to {enemy.enemyName} at display index {displayIndex} ({n+1}/{maxTargets})</color>");
+            
+            // Apply damage
+            combatDisplayManager.PlayerAttackEnemy(displayIndex, totalDamage);
+            
+            Debug.Log($"<color=yellow>  After damage: {enemy.enemyName} HP is now {enemy.currentHealth}/{enemy.maxHealth}</color>");
+        }
+        
+        // After all damage is applied, check for defeated enemies once
+        // This prevents multiple CheckWaveCompletion calls from causing issues
+        Debug.Log($"<color=green>✅ AoE batch complete. Deferring wave completion check...</color>");
+        StartCoroutine(DelayedWaveCompletionCheck(combatDisplayManager));
+        
+        Debug.Log($"<color=green>✅ AoE card {card.cardName} completed targeting {maxTargets} enemies</color>");
+    }
 
-            // Fallback: direct application if index not found or non-damage type
-            Vector3 enemyPosition = GetEnemyScreenPosition(enemy);
-            switch (card.cardType)
-            {
-                case CardType.Attack:
-                    ApplyAttackCard(card, enemy, player, enemyPosition);
-                    break;
-                case CardType.Skill:
-                    ApplySkillCard(card, enemy, player, enemyPosition);
-                    break;
-                default:
-                    Debug.LogWarning($"AoE card type {card.cardType} not supported yet");
-                    break;
-            }
+    /// <summary>
+    /// Delayed wave completion check to avoid race conditions during AoE
+    /// </summary>
+    private IEnumerator DelayedWaveCompletionCheck(CombatDisplayManager displayManager)
+    {
+        // Wait for all defeat handlers to complete
+        yield return null;
+        yield return null;
+        
+        // Now check wave completion
+        if (displayManager != null)
+        {
+            displayManager.EndAoEAttack();
         }
     }
 
@@ -284,11 +283,11 @@ public class CardEffectProcessor : MonoBehaviour
         }
 
         // Fallback: enemyDisplays order
-        if (combatManager != null && combatManager.enemyDisplays != null)
+        if (combatManager != null && combatManager.GetActiveEnemyDisplays() != null)
         {
-            for (int i = 0; i < combatManager.enemyDisplays.Count; i++)
+            for (int i = 0; i < combatManager.GetActiveEnemyDisplays().Count; i++)
             {
-                var d = combatManager.enemyDisplays[i];
+                var d = combatManager.GetActiveEnemyDisplays()[i];
                 if (d != null && d.GetCurrentEnemy() == enemy) return i;
             }
         }
@@ -367,6 +366,25 @@ public class CardEffectProcessor : MonoBehaviour
         // Fallback: use the original target position
         return Vector3.zero;
     }
+
+    private void ApplyStatusEffectToEnemy(Enemy targetEnemy, StatusEffect effect)
+    {
+        if (targetEnemy == null || effect == null) return;
+
+        var displays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+        foreach (var display in displays)
+        {
+            if (display != null && display.GetCurrentEnemy() == targetEnemy)
+            {
+                var statusManager = display.GetComponent<StatusEffectManager>();
+                if (statusManager != null)
+                {
+                    statusManager.AddStatusEffect(effect);
+                }
+                break;
+            }
+        }
+    }
     
     /// <summary>
     /// Apply an attack card - deal damage to enemy.
@@ -376,7 +394,7 @@ public class CardEffectProcessor : MonoBehaviour
         Debug.Log($"<color=yellow>→ Attack card detected!</color>");
         
         // Calculate total damage
-        float totalDamage = CalculateDamage(card, player);
+        float totalDamage = DamageCalculator.CalculateCardDamage(card, player);
 
         // Prefer CombatDisplayManager routing if we can resolve the enemy index
         int idx = FindActiveEnemyIndex(targetEnemy);
@@ -446,6 +464,22 @@ public class CardEffectProcessor : MonoBehaviour
         // Update enemy display to show new HP
         UpdateEnemyDisplay(targetEnemy);
         
+        // Apply guard if this attack grants any
+        if (player != null && card.baseGuard > 0f)
+        {
+            float guardAmount = CalculateGuard(card, player);
+            if (guardAmount > 0f)
+            {
+                player.AddGuard(guardAmount);
+                Debug.Log($"  🛡️ Player gained {guardAmount:F0} guard from {card.cardName} (Total: {player.currentGuard}/{player.maxHealth})");
+                PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+                if (playerDisplay != null)
+                {
+                    playerDisplay.UpdateGuardDisplay();
+                }
+            }
+        }
+        
         // Process generic on-play effects (e.g., Draw)
         ApplyOnPlayEffects(card);
         
@@ -474,6 +508,16 @@ public class CardEffectProcessor : MonoBehaviour
                                 break;
                             }
                         }
+                    }
+                    break;
+                case AilmentId.Chill:
+                    if (targetEnemy != null)
+                    {
+                        int chillDuration = card.comboAilmentDuration > 0 ? card.comboAilmentDuration : 2;
+                        float chillMagnitude = Mathf.Approximately(card.comboAilmentPortion, 0f) ? 20f : card.comboAilmentPortion;
+                        var chillEffect = new StatusEffect(StatusEffectType.Chill, "Chilled", chillMagnitude, chillDuration, true);
+                        ApplyStatusEffectToEnemy(targetEnemy, chillEffect);
+                        Debug.Log($"[Chill] Applied Chill (mag {chillMagnitude}, dur {chillDuration}) to {targetEnemy.enemyName}");
                     }
                     break;
             }
@@ -601,11 +645,11 @@ public class CardEffectProcessor : MonoBehaviour
         if (enemy == null) return -1;
 
         // Try direct match against enemyDisplays
-        if (combatManager != null && combatManager.enemyDisplays != null)
+        if (combatManager != null && combatManager.GetActiveEnemyDisplays() != null)
         {
-            for (int i = 0; i < combatManager.enemyDisplays.Count; i++)
+            for (int i = 0; i < combatManager.GetActiveEnemyDisplays().Count; i++)
             {
-                var d = combatManager.enemyDisplays[i];
+                var d = combatManager.GetActiveEnemyDisplays()[i];
                 if (d != null && d.GetCurrentEnemy() == enemy)
                 {
                     return i;
@@ -735,10 +779,10 @@ public class CardEffectProcessor : MonoBehaviour
     /// </summary>
     private void UpdateEnemyDisplay(Enemy enemy)
     {
-        if (combatManager == null || combatManager.enemyDisplays == null) return;
+        if (combatManager == null || combatManager.GetActiveEnemyDisplays() == null) return;
         
         // Find the display for this enemy
-        foreach (var enemyDisplay in combatManager.enemyDisplays)
+        foreach (var enemyDisplay in combatManager.GetActiveEnemyDisplays())
         {
             if (enemyDisplay.GetCurrentEnemy() == enemy)
             {
@@ -817,6 +861,7 @@ public class CardEffectProcessor : MonoBehaviour
                             if (statusManager != null)
                             {
                                 if (consumeId == AilmentId.Crumble) statusManager.ConsumeCrumble();
+                                else if (consumeId == AilmentId.Chill) statusManager.RemoveStatusEffect(StatusEffectType.Chill);
                                 // Additional ailments can be added here with specific consume logic
                             }
                             break;
@@ -835,6 +880,7 @@ public class CardEffectProcessor : MonoBehaviour
                         if (statusManager != null)
                         {
                             if (consumeId == AilmentId.Crumble) statusManager.ConsumeCrumble();
+                            else if (consumeId == AilmentId.Chill) statusManager.RemoveStatusEffect(StatusEffectType.Chill);
                             // Additional ailments can be added here with specific consume logic
                         }
                         break;
@@ -883,39 +929,9 @@ public class CardEffectProcessor : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// Calculate total damage from a card + player stats.
-    /// </summary>
-    private float CalculateDamage(Card card, Character player)
-    {
-        float baseDamage = card.baseDamage;
-        
-        if (player == null)
-        {
-            return baseDamage;
-        }
-        
-        // Add weapon damage if card scales with weapons
-        // TODO: Implement weapon system
-        // For now, weapon scaling is skipped
-        
-        // Add attribute scaling
-        if (card.damageScaling != null)
-        {
-            float strBonus = player.strength * card.damageScaling.strengthScaling;
-            float dexBonus = player.dexterity * card.damageScaling.dexterityScaling;
-            float intBonus = player.intelligence * card.damageScaling.intelligenceScaling;
-            
-            baseDamage += strBonus + dexBonus + intBonus;
-            
-            if (showDetailedLogs && (strBonus + dexBonus + intBonus > 0))
-            {
-                Debug.Log($"    • Attribute scaling: +{strBonus + dexBonus + intBonus:F1}");
-            }
-        }
-        
-        return baseDamage;
-    }
+    // REMOVED: Old CalculateDamage() method
+    // Now using DamageCalculator.CalculateCardDamage() for consistent damage calculation
+    // with proper character modifiers, embossing effects, and debug logging
     
     /// <summary>
     /// Calculate total guard from a card + player stats.
@@ -947,14 +963,14 @@ public class CardEffectProcessor : MonoBehaviour
     /// </summary>
     public Vector3 GetEnemyScreenPosition(Enemy enemy)
     {
-        if (combatManager == null || combatManager.enemyDisplays == null)
+        if (combatManager == null || combatManager.GetActiveEnemyDisplays() == null)
         {
             // Fallback position
             return new Vector3(Screen.width * 0.7f, Screen.height * 0.6f, 0);
         }
         
         // Find the display for this enemy
-        foreach (var enemyDisplay in combatManager.enemyDisplays)
+        foreach (var enemyDisplay in combatManager.GetActiveEnemyDisplays())
         {
             if (enemyDisplay.GetCurrentEnemy() == enemy)
             {

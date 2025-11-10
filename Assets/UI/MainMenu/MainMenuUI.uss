@@ -338,6 +338,8 @@
 .character-scroll-view {
     flex-grow: 1;
     padding: 10px;
+    background-image: url("project://database/Assets/Art/UI/CharacterSelectionPillar.png?fileID=4595682573565234838&guid=3218abc43386733499e9b360c20de0b6&type=3#CharacterSelectionPillar_0");
+    -unity-background-scale-mode: stretch-to-fill;
 }
 
 .character-list {
@@ -346,7 +348,11 @@
 }
 
 .character-card {
-    background-color: rgba(255, 255, 255, 0.1);
+    min-height: 100px;
+    width: 100%;
+    background-image: url("project://database/Assets/Art/UI/CharacterSelectionBackground.aseprite?fileID=18eb7ad935a7e184dac6b699eb44da46&guid=f6c7927fecf71494f9d8d4b4bacaf498&type=3#CharacterSelectionBackground");
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
     border-radius: 8px;
     border-width: 1px;
     border-color: rgba(255, 255, 255, 0.2);
@@ -356,15 +362,14 @@
 }
 
 .character-card:hover {
-    background-color: rgba(255, 255, 255, 0.15);
     border-color: rgba(255, 255, 255, 0.4);
+    border-width: 2px;
     scale: 1.02;
 }
 
 .character-card.selected {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.6);
-    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.8);
+    border-width: 3px;
 }
 
 .character-info {

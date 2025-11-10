@@ -39,19 +39,19 @@ public class Enemy
             case EnemyRarity.Magic:
                 // Slightly tougher: ~60% more life, ~20% more damage
                 maxHealth = Mathf.CeilToInt(maxHealth * 1.6f);
-                currentHealth = Mathf.Min(currentHealth, maxHealth);
+                currentHealth = maxHealth; // Ensure Magic enemies start at full health after scaling
                 baseDamage = Mathf.CeilToInt(baseDamage * 1.2f);
                 break;
             case EnemyRarity.Rare:
                 // Much tougher: ~150% more life, ~50% more damage
                 maxHealth = Mathf.CeilToInt(maxHealth * 2.5f);
-                currentHealth = Mathf.Min(currentHealth, maxHealth);
+                currentHealth = maxHealth; // Ensure Rare enemies start at full health after scaling
                 baseDamage = Mathf.CeilToInt(baseDamage * 1.5f);
                 break;
             case EnemyRarity.Unique:
                 // Boss-like: ~400% more life, 2x damage
                 maxHealth = Mathf.CeilToInt(maxHealth * 5.0f);
-                currentHealth = Mathf.Min(currentHealth, maxHealth);
+                currentHealth = maxHealth; // Ensure Unique enemies start at full health after scaling
                 baseDamage = Mathf.CeilToInt(baseDamage * 2.0f);
                 break;
             case EnemyRarity.Normal:

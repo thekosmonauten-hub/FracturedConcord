@@ -27,6 +27,8 @@ MonoBehaviour:
   criticalChance: 0.05
   criticalMultiplier: 1.5
   dodgeChance: 0
+  accuracyRating: 100
+  evasionRating: 0
   physicalResistance: 0
   fireResistance: 0
   coldResistance: 0
@@ -44,9 +46,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 904f1d3be7b9e7b45961cf8216dade81, type: 2}
   summonPool:
   - {fileID: 11400000, guid: 661b1d27eedc889468f5776f2da27f30, type: 2}
+  spiritTags: 05000000
+  guaranteedSpiritDrop: 1
   minGoldDrop: 51
   maxGoldDrop: 121
   experienceReward: 60
   cardDropChance: 1
+  excludeFromRandom: 1
   healthBarColor: {r: 1, g: 0, b: 0, a: 1}
-  animatorController: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: 7da4009e781459748a52f39dbdd88d57, type: 2}

@@ -142,6 +142,40 @@ public class CombatAnimationManager : MonoBehaviour
         // Animate
         AnimateDamageNumber(damageObj, rectTransform, type);
     }
+
+    /// <summary>
+    /// Show custom floating combat text (non-numeric)
+    /// </summary>
+    public void ShowFloatingText(string message, Vector3 worldPosition, Color color, int fontSize = 36, DamageNumberType animationType = DamageNumberType.Normal)
+    {
+        Vector3 screenPos = mainCamera.WorldToScreenPoint(worldPosition);
+
+        GameObject textObj = GetDamageNumber();
+        Text textComponent = textObj.GetComponent<Text>();
+        if (textComponent == null)
+        {
+            textComponent = textObj.AddComponent<Text>();
+            textComponent.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            textComponent.alignment = TextAnchor.MiddleCenter;
+        }
+
+        textComponent.text = message;
+        textComponent.fontSize = fontSize;
+        textComponent.color = color;
+
+        Outline outline = textObj.GetComponent<Outline>();
+        if (outline == null)
+        {
+            outline = textObj.AddComponent<Outline>();
+        }
+        outline.effectColor = Color.black;
+        outline.effectDistance = new Vector2(2, 2);
+
+        RectTransform rectTransform = textObj.GetComponent<RectTransform>();
+        rectTransform.position = screenPos;
+
+        AnimateDamageNumber(textObj, rectTransform, animationType);
+    }
     
     private void ConfigureDamageNumber(Text damageText, float damage, DamageNumberType type)
     {

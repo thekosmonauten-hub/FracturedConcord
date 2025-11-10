@@ -137,6 +137,14 @@ public class DeckManager : MonoBehaviour
         return activeDeck != null && activeDeck.GetTotalCardCount() > 0;
     }
     
+    public void NotifyDeckUpdatedExternally()
+    {
+        if (activeDeck != null)
+        {
+            OnDeckChanged?.Invoke(activeDeck);
+        }
+    }
+    
     /// <summary>
     /// Get all cards from active deck as Card objects for combat.
     /// Converts CardData to legacy Card format.
@@ -158,6 +166,7 @@ public class DeckManager : MonoBehaviour
                 Card card = ConvertCardDataToCard(entry.cardData);
                 if (card != null)
                 {
+                    ApplyDeckEntryMetadata(card, entry);
                     cards.Add(card);
                 }
             }
@@ -414,6 +423,29 @@ public class DeckManager : MonoBehaviour
     /// Convert CardData ScriptableObject to legacy Card class for combat.
     /// This bridges the two card systems in the project.
     /// </summary>
+    private void ApplyDeckEntryMetadata(Card card, DeckCardEntry entry)
+    {
+        if (card == null || entry == null || entry.cardData == null)
+            return;
+
+        card.embossingSlots = entry.cardData.embossingSlots;
+        card.appliedEmbossings = DeckCardEntry.CopyEmbossings(entry.embossings);
+        card.groupKey = ResolveGroupKey(entry.cardData);
+
+        if (entry.cardData is CardDataExtended extended)
+        {
+            card.sourceCardData = extended;
+        }
+    }
+
+    private static string ResolveGroupKey(CardData cardData)
+    {
+        if (cardData is CardDataExtended extended && !string.IsNullOrEmpty(extended.groupKey))
+            return extended.groupKey;
+
+        return cardData != null ? cardData.cardName : string.Empty;
+    }
+
     private Card ConvertCardDataToCard(CardData cardData)
     {
         if (cardData == null) return null;
@@ -421,10 +453,14 @@ public class DeckManager : MonoBehaviour
         Card card = new Card
         {
             cardName = cardData.cardName,
-            description = cardData.GetFullDescription(),
+            description = string.IsNullOrWhiteSpace(cardData.description) ? cardData.GetFullDescription() : cardData.description,
             manaCost = cardData.playCost,
             baseDamage = cardData.damage,
-            baseGuard = cardData.block
+            baseGuard = cardData.block,
+            
+            // ✅ FIX: Copy visual assets from CardData
+            cardArt = cardData.cardImage,
+            cardArtName = cardData.cardImage != null ? cardData.cardImage.name : ""
         };
         
         // Map category to CardType

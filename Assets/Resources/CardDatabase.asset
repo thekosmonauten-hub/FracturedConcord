@@ -51,6 +51,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c9dead36e3dcd4e43a099045bee4fb64, type: 2}
   - {fileID: 11400000, guid: d82c5757171a19a48b1115044e38755f, type: 2}
   - {fileID: 11400000, guid: 0f5fc16c0ca3dcc4aa72bf698a0acc7a, type: 2}
+  - {fileID: 11400000, guid: 142a50cdec982504ba7b715dbf5c4373, type: 2}
   attackCards:
   - {fileID: 11400000, guid: eea5927e0572a224c909c9b1f6555630, type: 2}
   - {fileID: 11400000, guid: 3eca2e20cbeaee4448036c4a89a1955f, type: 2}
@@ -82,6 +83,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 69853309f46c81847b1b612c99fd3e67, type: 2}
   - {fileID: 11400000, guid: 3b12aa8baea1552408fda61e8e34a732, type: 2}
   - {fileID: 11400000, guid: 67623740bde4feb47a84af8fc321054e, type: 2}
+  - {fileID: 11400000, guid: 142a50cdec982504ba7b715dbf5c4373, type: 2}
   powerCards:
   - {fileID: 11400000, guid: 2310fba30863560458f59c5ef62a6720, type: 2}
   - {fileID: 11400000, guid: 0843fa1df8dd5384aa3c770dfa23bb3c, type: 2}
@@ -112,6 +114,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 630babfa0b32a4a4fb2a9f6794613b21, type: 2}
   - {fileID: 11400000, guid: 747f2aa3c5d587d49804ef8e91c679c6, type: 2}
   - {fileID: 11400000, guid: 67623740bde4feb47a84af8fc321054e, type: 2}
+  - {fileID: 11400000, guid: 142a50cdec982504ba7b715dbf5c4373, type: 2}
   fireCards:
   - {fileID: 11400000, guid: d82c5757171a19a48b1115044e38755f, type: 2}
   coldCards:
@@ -155,7 +158,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9906af518ea033940acd5fce4098f622, type: 2}
   - {fileID: 11400000, guid: 1d8722901964fd7499cb2ceeaa4ecac5, type: 2}
   - {fileID: 11400000, guid: c60e127a5afd6614d8579b759e71f195, type: 2}
-  - {fileID: 11400000, guid: 236b1135eda2a75468941235e378fef7, type: 2}
   - {fileID: 11400000, guid: a5a7231e6ebc9b248afa4a89353f53df, type: 2}
   - {fileID: 11400000, guid: d1b335900cb1a6a478f67e7b42c15495, type: 2}
   - {fileID: 11400000, guid: 35bd450cb13dbec4a8e2ba46fa357ba9, type: 2}
@@ -176,6 +178,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c9dead36e3dcd4e43a099045bee4fb64, type: 2}
   - {fileID: 11400000, guid: d82c5757171a19a48b1115044e38755f, type: 2}
   - {fileID: 11400000, guid: 0f5fc16c0ca3dcc4aa72bf698a0acc7a, type: 2}
-  magicCards: []
+  - {fileID: 11400000, guid: 142a50cdec982504ba7b715dbf5c4373, type: 2}
+  magicCards:
+  - {fileID: 11400000, guid: 236b1135eda2a75468941235e378fef7, type: 2}
   rareCards: []
   uniqueCards: []

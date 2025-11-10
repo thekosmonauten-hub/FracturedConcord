@@ -208,6 +208,7 @@ public class CharacterData
     public int maxMana;
     public int manaRecoveryPerTurn;
     public int cardsDrawnPerTurn;
+    public int cardsDrawnPerWave;
     public int reliance;
     public int maxReliance;
     

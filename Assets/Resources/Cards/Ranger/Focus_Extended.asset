@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Focus_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Focus
+  groupKey: Focus
   cardType: Skill
   playCost: 0
-  description: Recover 1 mana or overcharge if at full mana. Gain 20% increased evasion
-    for 2 turns.
+  description: Recover 1 mana, or gain +1 temporary max mana for 1 turn if already
+    full. Gain 20% increased evasion for 2 turns.
   rarity: 0
   element: 0
   category: 1
@@ -52,8 +53,9 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
-  comboWith: 
-  comboDescription: 
+  enableCombo: 1
+  comboWith: Dodge,PoisonArrow,MultiShot,Quickstep
+  comboDescription: Combos with Dodge, Poison Arrow, Multi-Shot, Quickstep.
   comboEffect: 
   comboHighlightType: type
   tags:

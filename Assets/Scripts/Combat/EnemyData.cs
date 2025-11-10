@@ -64,6 +64,13 @@ public class EnemyData : ScriptableObject
     [Tooltip("Preferred minions this enemy can summon. Used by Summon abilities and for final-wave co-spawns.")]
     public List<EnemyData> summonPool = new List<EnemyData>();
     
+    [Header("Enemy Tags")]
+    [Tooltip("Tags that determine spirit drops. Enemies with 'Fire' tag have 3% chance to drop Fire Spirit, etc.")]
+    public List<EnemySpiritTag> spiritTags = new List<EnemySpiritTag>();
+    
+    [Tooltip("If true, this enemy guarantees a spirit drop matching its tags (e.g., Fire Pixie always drops Fire Spirit)")]
+    public bool guaranteedSpiritDrop = false;
+    
     [Header("Loot")]
     public int minGoldDrop = 5;
     public int maxGoldDrop = 15;
@@ -154,5 +161,21 @@ public enum EnemyAIPattern
     Balanced,    // Mix of attack and defend
     Tactical,    // Uses abilities strategically
     Reactive     // Responds to player actions
+}
+
+/// <summary>
+/// Enemy spirit tags that determine spirit currency drops
+/// </summary>
+[System.Serializable]
+public enum EnemySpiritTag
+{
+    Fire,        // Drops Fire Spirit (3% or guaranteed)
+    Cold,        // Drops Cold Spirit (3% or guaranteed)
+    Lightning,   // Drops Lightning Spirit (3% or guaranteed)
+    Chaos,       // Drops Chaos Spirit (3% or guaranteed)
+    Physical,    // Drops Physical Spirit (3% or guaranteed)
+    Life,        // Drops Life Spirit (3% or guaranteed)
+    Defense,     // Drops Defense Spirit (3% or guaranteed)
+    Crit         // Drops Crit Spirit (3% or guaranteed)
 }
 
