@@ -13,18 +13,22 @@ public class PlayerCombatDisplay : MonoBehaviour
     public VerticalHealthBar manaBar; // Using VerticalHealthBar with BarType.Mana
     public VerticalEnergyShieldBar energyShieldBar;
     public VerticalGuardBar guardBar;
+    public VerticalGuardBar staggerBar; // Stagger bar (can use VerticalHealthBar with custom color)
     
     [Header("Bar GameObject References")]
     [Tooltip("The entire EnergyShield bar GameObject to enable/disable")]
     public GameObject energyShieldBarGameObject;
     [Tooltip("The entire Guard bar GameObject to enable/disable")]
     public GameObject guardBarGameObject;
+    [Tooltip("The entire Stagger bar GameObject to enable/disable")]
+    public GameObject staggerBarGameObject;
     
     [Header("Bar Text Displays")]
     public TextMeshProUGUI healthText;
     public TextMeshProUGUI manaText;
     public TextMeshProUGUI energyShieldText;
     public TextMeshProUGUI guardText;
+    public TextMeshProUGUI staggerText;
     [Header("Attribute Readouts (optional)")]
     public TextMeshProUGUI accuracyText;
     public TextMeshProUGUI evasionText;
@@ -211,6 +215,9 @@ public class PlayerCombatDisplay : MonoBehaviour
         
         // Update guard
         UpdateGuardDisplay();
+        
+        // Update stagger
+        UpdateStaggerDisplay();
 
         // Update attribute readouts if present
         if (accuracyText != null) accuracyText.text = $"Acc: {currentCharacter.accuracyRating:F0}";
@@ -316,6 +323,49 @@ public class PlayerCombatDisplay : MonoBehaviour
             }
         }
     }
+    
+    /// <summary>
+    /// Update the stagger bar display for the player
+    /// </summary>
+    public void UpdateStaggerDisplay()
+    {
+        if (currentCharacter == null) return;
+        
+        // Show/hide stagger bar based on whether player can be staggered
+        bool canStagger = currentCharacter.staggerThreshold > 0f;
+        bool hasStagger = currentCharacter.currentStagger > 0f;
+        
+        // Show bar if stagger threshold exists (even if current stagger is 0)
+        if (staggerBarGameObject != null)
+        {
+            staggerBarGameObject.SetActive(canStagger);
+        }
+        
+        if (staggerBar != null && canStagger)
+        {
+            // Calculate stagger percentage (0-1)
+            float staggerPercentage = currentCharacter.GetStaggerPercentage();
+            staggerBar.SetFillAmount(staggerPercentage);
+        }
+        
+        // Update stagger text
+        if (staggerText != null)
+        {
+            if (canStagger && hasStagger)
+            {
+                float staggerPercent = currentCharacter.GetStaggerPercentage() * 100f;
+                staggerText.text = $"Stagger: {staggerPercent:F0}%";
+            }
+            else if (canStagger)
+            {
+                staggerText.text = "Stagger: 0%";
+            }
+            else
+            {
+                staggerText.text = "";
+            }
+        }
+    }
 
     private void HookSpeedMeterRing()
     {
@@ -375,6 +425,14 @@ public class PlayerCombatDisplay : MonoBehaviour
         if (statusEffectManager != null)
         {
             statusEffectManager.AddStatusEffect(effect);
+        }
+    }
+
+    public void ApplyStackAdjustment(StackAdjustmentDefinition adjustment)
+    {
+        if (statusEffectManager != null && adjustment != null)
+        {
+            statusEffectManager.ApplyStackAdjustment(adjustment, true);
         }
     }
     

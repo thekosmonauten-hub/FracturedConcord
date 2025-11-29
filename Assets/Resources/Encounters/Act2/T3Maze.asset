@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9be3bb50a3980b47ab1e7fc8419be94, type: 3}
+  m_Name: T3Maze
+  m_EditorClassIdentifier: Assembly-CSharp::EncounterDataAsset
+  encounterID: 102
+  encounterName: Grand Contradiction
+  sceneName: MazeScene
+  actNumber: 3
+  encounterSprite: {fileID: 5882865685282940617, guid: 611a62f6ebefdd849ae9f6c9a0fa7915, type: 3}
+  prerequisiteEncounters:
+  - {fileID: 11400000, guid: 6ce801866df9a7c459f88ba68495b997, type: 2}
+  areaLevel: 68
+  totalWaves: 1
+  maxEnemiesPerWave: 3
+  randomizeEnemyCount: 1
+  uniqueEnemy: {fileID: 0}
+  lootTable: {fileID: 0}
+  areaLootTable: {fileID: 0}

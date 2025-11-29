@@ -13,15 +13,17 @@ MonoBehaviour:
   m_Name: PoisonedBlade_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Poisoned Blade
+  groupKey: Poisoned_Blade
   cardType: Attack
   playCost: 1
-  description: 'Deal 4 physical damage (+Dex/3). Apply 2 Poison. If you have prepared
-    cards, apply +1 Poison per prepared card. Dual: Apply 3 Poison and gain 1 temporary
-    Dexterity.'
+  description: Deal 4 physical damage (+Dex/3). Apply 2 Poison.\nIf you have prepared
+    cards, apply +1 Poison per prepared card.
   rarity: 0
   element: 4
   category: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: -8508735770409401664, guid: 9345f2df954302843bfe0f150316707c, type: 3}
+  cardThumbnail: {fileID: -8486791491610492994, guid: 79786e9896e4c0847b6bfc206da2c98e, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -30,7 +32,10 @@ MonoBehaviour:
   isDiscardCard: 0
   isDualWield: 0
   ifDiscardedEffect: 
-  dualWieldEffect: 
+  dualWieldEffect: Apply 3 Poison and gain 1 temporary Dexterity.
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 1
@@ -38,14 +43,32 @@ MonoBehaviour:
   scalesWithSpellWeapon: 0
   isAoE: 0
   aoeTargets: 1
+  aoeRowScope: 0
+  isMultiHit: 0
+  hitCount: 2
   damageScaling:
     strengthScaling: 1
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -53,10 +76,45 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
+  enableCombo: 0
   comboWith: 
-  comboDescription: 
+  comboDescription: Apply 3 Poison and gain 1 temporary Dexterity.
+  momentumEffectDescription: 
+  comboWithCardType: 0
+  comboAttackIncrease: 0
+  comboGuardIncrease: 0
+  comboIsAoE: 0
+  comboManaRefund: 0
+  comboApplyAilment: 
+  comboBuffs: []
+  comboConsumeAilment: 0
+  comboConsumeAilmentId: 0
+  comboDrawCards: 0
+  comboAilment: 0
+  comboAilmentPortion: 0
+  comboAilmentDuration: 0
+  consumeAilment: 0
+  consumeAilmentId: 0
+  comboScaling: 0
+  comboScalingDivisor: 1
+  comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Attack
   - Physical
+  delayTurns: 0
+  isDelayed: 0
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

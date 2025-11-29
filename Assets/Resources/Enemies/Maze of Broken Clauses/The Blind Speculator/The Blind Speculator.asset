@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: The Blind Speculator
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: The Blind Speculator
+  description: "Eyes burned out by glimpsing the Entropic Beyond\u2014perhaps the
+    Seer's dark mirror. Turns its head toward the player despite having no sense
+    of sight."
+  enemySprite: {fileID: 3927248049887781257, guid: 15ce737079594c445b43a95bd7fc777e, type: 3}
+  tier: 3
+  rarity: 0
+  category: 2
+  minHealth: 80
+  maxHealth: 100
+  baseDamage: 10
+  baseArmor: 0
+  criticalChance: 0.05
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 100
+  evasionRating: 0
+  physicalResistance: 0
+  fireResistance: 0
+  coldResistance: 0
+  lightningResistance: 0
+  chaosResistance: 0
+  displayScale: 1
+  basePanelHeight: 280
+  enableEnergy: 0
+  baseMaxEnergy: 100
+  energyRegenPerTurn: 10
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  aiPattern: 0
+  attackPreference: 0.75
+  specialAbilities: []
+  abilities:
+  - {fileID: 11400000, guid: 277ed5b4ea5c3284a92246328fcc9dcc, type: 2}
+  - {fileID: 11400000, guid: 3f8d032e04f365745b7de57e9afaf9b0, type: 2}
+  - {fileID: 11400000, guid: 27145001e9c76434bac7b0455b03fe2d, type: 2}
+  summonPool: []
+  spiritTags: 
+  guaranteedSpiritDrop: 0
+  minGoldDrop: 20
+  maxGoldDrop: 30
+  experienceReward: 10
+  cardDropChance: 0.25
+  initialAgitateStacks: 0
+  initialToleranceStacks: 0
+  initialPotentialStacks: 0
+  excludeFromRandom: 1
+  healthBarColor: {r: 1, g: 0, b: 0, a: 1}
+  animatorController: {fileID: 0}

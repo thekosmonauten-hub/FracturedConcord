@@ -133,6 +133,27 @@ public class FloatingDamageManager : MonoBehaviour
         damageText.ShowHeal(healAmount, spawnPosition, () => ReturnToPool(damageText));
     }
     
+    public void ShowAbilityName(string abilityName, Transform target, Color textColor)
+    {
+        if (target == null) return;
+        
+        Vector3 spawnPosition = target.position + new Vector3(0, spawnOffset, 0);
+        
+        FloatingDamageText damageText = GetDamageText();
+        
+        if (damageText == null)
+        {
+            Debug.LogWarning("[FloatingDamageManager] Failed to get damage text from pool!");
+            return;
+        }
+        
+        damageText.gameObject.SetActive(true);
+        activeDamageTexts.Add(damageText);
+        
+        string display = string.IsNullOrWhiteSpace(abilityName) ? "Ability" : abilityName;
+        damageText.ShowAbilityText(display, textColor, spawnPosition, () => ReturnToPool(damageText));
+    }
+    
     /// <summary>
     /// Get damage text from pool or create new
     /// </summary>

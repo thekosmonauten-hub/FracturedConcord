@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
@@ -25,6 +26,8 @@ public class EffigyGrid
     private HashSet<VisualElement> highlightedCells = new HashSet<VisualElement>();
     private HashSet<VisualElement> occupiedCellHighlights = new HashSet<VisualElement>();
     private bool isDraggingFromStorage = false;
+    
+    public event Action<IReadOnlyCollection<Effigy>> EffigiesChanged;
     
     public EffigyGrid(VisualElement parent)
     {
@@ -162,6 +165,8 @@ public class EffigyGrid
             }
         }
         Debug.Log($"[EffigyGrid] Grid state: {effigy.effigyName} occupies {placedCount} cells in grid data");
+
+        NotifyEffigiesChanged();
         
         return true;
     }
@@ -231,6 +236,8 @@ public class EffigyGrid
             }
             effigyVisuals.Remove(effigy);
         }
+
+        NotifyEffigiesChanged();
     }
     
     /// <summary>
@@ -326,6 +333,34 @@ public class EffigyGrid
         {
             Debug.LogWarning($"Failed to create visuals for {effigy.effigyName} at ({gridX}, {gridY}) - no valid cells!");
         }
+    }
+
+    public IReadOnlyCollection<Effigy> GetPlacedEffigies()
+    {
+        return CollectPlacedEffigies();
+    }
+
+    private HashSet<Effigy> CollectPlacedEffigies()
+    {
+        HashSet<Effigy> result = new HashSet<Effigy>();
+        for (int y = 0; y < GRID_HEIGHT; y++)
+        {
+            for (int x = 0; x < GRID_WIDTH; x++)
+            {
+                Effigy effigy = placedEffigies[y, x];
+                if (effigy != null)
+                {
+                    result.Add(effigy);
+                }
+            }
+        }
+        return result;
+    }
+
+    private void NotifyEffigiesChanged()
+    {
+        var snapshot = CollectPlacedEffigies();
+        EffigiesChanged?.Invoke(snapshot);
     }
     
     /// <summary>
@@ -686,27 +721,6 @@ public class EffigyGrid
     public VisualElement GetVisualElement()
     {
         return gridContainer;
-    }
-    
-    /// <summary>
-    /// Get all placed effigies
-    /// </summary>
-    public List<Effigy> GetPlacedEffigies()
-    {
-        HashSet<Effigy> uniqueEffigies = new HashSet<Effigy>();
-        
-        for (int y = 0; y < GRID_HEIGHT; y++)
-        {
-            for (int x = 0; x < GRID_WIDTH; x++)
-            {
-                if (placedEffigies[y, x] != null)
-                {
-                    uniqueEffigies.Add(placedEffigies[y, x]);
-                }
-            }
-        }
-        
-        return uniqueEffigies.ToList();
     }
 }
 

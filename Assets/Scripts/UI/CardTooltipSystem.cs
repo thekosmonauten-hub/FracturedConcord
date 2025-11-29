@@ -280,6 +280,39 @@ public class CardTooltipSystem : MonoBehaviour
         }
         tooltipCombo.text = comboInfo;
         
+        // Momentum effects (if available from CardDataExtended)
+        string momentumInfo = "";
+        if (currentTooltipCard.sourceCardData is CardDataExtended ext)
+        {
+            string momentumDesc = "";
+            if (currentCharacter != null)
+            {
+                momentumDesc = ext.GetDynamicMomentumDescription(currentCharacter);
+            }
+            if (string.IsNullOrWhiteSpace(momentumDesc))
+            {
+                momentumDesc = ext.momentumEffectDescription;
+            }
+            if (!string.IsNullOrWhiteSpace(momentumDesc))
+            {
+                momentumInfo = $"Momentum: {momentumDesc}";
+            }
+        }
+        // If no momentum info, hide the label or show empty
+        // Note: You might want to add a separate momentum label UI element
+        // For now, we'll append to combo info if combo is empty
+        if (!string.IsNullOrWhiteSpace(momentumInfo))
+        {
+            if (string.IsNullOrWhiteSpace(comboInfo))
+            {
+                tooltipCombo.text = momentumInfo;
+            }
+            else
+            {
+                tooltipCombo.text = comboInfo + "\n" + momentumInfo;
+            }
+        }
+        
         // Requirements
         string requirements = "";
         if (currentCharacter != null)

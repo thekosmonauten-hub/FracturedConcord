@@ -25,10 +25,26 @@ public class StatusEffect
     public bool isDebuff = true; // true for debuffs, false for buffs
     public DamageType damageType = DamageType.Physical; // For ticking damage/heal types
     
+    [Header("Source Damage (for ailment calculation)")]
+    [Tooltip("Source damage values used to calculate ailment magnitude")]
+    public float sourcePhysicalDamage = 0f;
+    public float sourceFireDamage = 0f;
+    public float sourceColdDamage = 0f;
+    public float sourceLightningDamage = 0f;
+    public float sourceChaosDamage = 0f;
+
+    [Header("Stack Adjustments")]
+    public StackAdjustmentDefinition stackAdjustment;
+    
     // Runtime properties
     public float timeRemaining;
     public float nextTickTime;
     public bool isActive = true;
+    
+    // Special properties for specific effects
+    public bool vulnerabilityConsumed = false; // For Vulnerability (consumed after one damage instance)
+    public float energyGainReduction = 0f; // For Chilled (0-30% based on cold damage)
+    public float damageMultiplier = 1f; // For Shocked (up to 1.5x based on lightning damage)
     
     public StatusEffect()
     {
@@ -84,6 +100,7 @@ public class StatusEffect
                 effectColor = new Color(0.6f, 0.9f, 1f);
                 iconName = "Chilled";
                 tickInterval = 0f;
+                energyGainReduction = 0f; // Will be calculated based on cold damage (up to 30%)
                 break;
             case StatusEffectType.Freeze:
                 effectColor = Color.cyan;
@@ -91,6 +108,7 @@ public class StatusEffect
                 tickInterval = 0f; // No ticking
                 break;
             case StatusEffectType.Stun:
+            case StatusEffectType.Stagger:
                 effectColor = Color.yellow;
                 iconName = "Stunned"; // Matches Stunned.aseprite
                 tickInterval = 0f; // No ticking
@@ -99,6 +117,13 @@ public class StatusEffect
                 effectColor = Color.magenta;
                 iconName = "Vulnerability"; // Matches Vulnerability.aseprite
                 tickInterval = 0f; // No ticking
+                vulnerabilityConsumed = false;
+                break;
+            case StatusEffectType.Shocked:
+                effectColor = new Color(1f, 0.8f, 0.2f); // Yellow-orange
+                iconName = "Shocked";
+                tickInterval = 0f; // No ticking
+                damageMultiplier = 1f; // Will be calculated based on lightning damage
                 break;
             case StatusEffectType.Strength:
                 effectColor = Color.red;
@@ -145,6 +170,12 @@ public class StatusEffect
             case StatusEffectType.TempEvasion:
                 effectColor = new Color(0.3f, 0.85f, 0.6f);
                 iconName = "TempEvasion";
+                isDebuff = false;
+                tickInterval = 0f;
+                break;
+            case StatusEffectType.SpellPower:
+                effectColor = new Color(0.8f, 0.4f, 1f); // Purple-ish
+                iconName = "SpellPower";
                 isDebuff = false;
                 tickInterval = 0f;
                 break;
@@ -228,7 +259,43 @@ public class StatusEffect
         clone.iconName = iconName;
         clone.sourceName = sourceName;
         clone.tickInterval = tickInterval;
+        clone.sourcePhysicalDamage = sourcePhysicalDamage;
+        clone.sourceFireDamage = sourceFireDamage;
+        clone.sourceColdDamage = sourceColdDamage;
+        clone.sourceLightningDamage = sourceLightningDamage;
+        clone.sourceChaosDamage = sourceChaosDamage;
+        clone.vulnerabilityConsumed = vulnerabilityConsumed;
+        clone.energyGainReduction = energyGainReduction;
+        clone.damageMultiplier = damageMultiplier;
+        if (stackAdjustment != null)
+        {
+            clone.stackAdjustment = stackAdjustment.Clone();
+        }
         return clone;
+    }
+    
+    /// <summary>
+    /// Create a status effect with source damage information for ailment calculation
+    /// </summary>
+    public static StatusEffect CreateWithSourceDamage(
+        StatusEffectType type, 
+        string name, 
+        float mag, 
+        int dur, 
+        bool debuff,
+        float physicalDmg = 0f,
+        float fireDmg = 0f,
+        float coldDmg = 0f,
+        float lightningDmg = 0f,
+        float chaosDmg = 0f)
+    {
+        StatusEffect effect = new StatusEffect(type, name, mag, dur, debuff);
+        effect.sourcePhysicalDamage = physicalDmg;
+        effect.sourceFireDamage = fireDmg;
+        effect.sourceColdDamage = coldDmg;
+        effect.sourceLightningDamage = lightningDmg;
+        effect.sourceChaosDamage = chaosDmg;
+        return effect;
     }
 }
 
@@ -265,6 +332,7 @@ public enum StatusEffectType
     Energy,         // Extra energy/mana
     TempMaxMana,    // Temporary maximum mana increase
     TempEvasion,    // Temporary increased evasion
+    SpellPower,     // Increased spell damage multiplier
     
     // Special
     Invisible,      // Cannot be targeted
@@ -272,4 +340,6 @@ public enum StatusEffectType
     Confused,       // Random actions
     Charmed,        // Temporary ally
     Curse,          // Various negative effects
+    Shocked,        // Increased damage taken (up to 50% based on lightning damage)
+    Stagger,        // Cannot act (base 1 turn)
 }

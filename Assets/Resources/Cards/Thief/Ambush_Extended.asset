@@ -13,15 +13,17 @@ MonoBehaviour:
   m_Name: Ambush_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Ambush
+  groupKey: Ambush
   cardType: Attack
   playCost: 1
-  description: 'Deal 6 physical damage (+Dex/3). If you have prepared cards, deal
-    +1 (+Dex/2) damage per prepared card. Dual: Deal +2 damage per prepared card
-    instead.'
+  description: Deal 6 physical damage (+Dex/3).\nIf you have prepared cards, deal
+    additional +1 (+Dex/3) damage per prepared card.
   rarity: 0
   element: 4
   category: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 2950149734907640760, guid: aa9202188773e8c40b60ae0d3a4bed4c, type: 3}
+  cardThumbnail: {fileID: -8178391175822262191, guid: 0c3236bc32825544e8ad97bd33997b48, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -30,7 +32,10 @@ MonoBehaviour:
   isDiscardCard: 0
   isDualWield: 0
   ifDiscardedEffect: 
-  dualWieldEffect: 
+  dualWieldEffect: Deal +2 (+Dex/3) damage per prepared card instead.
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 1
@@ -39,14 +44,31 @@ MonoBehaviour:
   isAoE: 0
   aoeTargets: 1
   aoeRowScope: 0
+  isMultiHit: 0
+  hitCount: 2
   damageScaling:
     strengthScaling: 1
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -54,9 +76,10 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
-  enableCombo: 1
+  enableCombo: 0
   comboWith: 
-  comboDescription: 
+  comboDescription: Deal +2 (+Dex/3) damage per prepared card instead.
+  momentumEffectDescription: 
   comboWithCardType: 0
   comboAttackIncrease: 0
   comboGuardIncrease: 0
@@ -77,6 +100,21 @@ MonoBehaviour:
   comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Attack
   - Physical
+  delayTurns: 0
+  isDelayed: 0
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

@@ -1,13 +1,85 @@
 # Master Checklist
 
 ## Combat Systems & Player Mechanics
-- [ ] Integrate Agitate/Tolerance/Potential mechanic to Enemy
-- [ ] Hook Aggression charges into attack mana cost discounts
-- [ ] Allow Focus charges to satisfy combo requirements / spell bonuses
-- [ ] Surface enemy energy UI and wire Chill/Slow drains
-- [ ] Add encounter preview showing wave compression from movement speed
-- [ ] Extend combat speed meter documentation after consumption rules implemented
-- [ ] Fix Experience gain from killing enemies.
+- [x] Integrate Agitate/Tolerance/Potential mechanic to Enemy
+- [x] Integrate Buff mechanics to enemies (Bolster, temp stats etc).
+- [x] Hook Aggression charges into attack mana cost discounts
+- [x] Allow Focus charges to satisfy combo requirements / spell bonuses
+- [x] Surface enemy energy UI and wire Chill/Slow drains
+- [x] Add encounter preview showing wave compression from movement speed
+- [x] Make sure that enemies can have ailments applied to them their effects are working and that it's displayed in the StatusEffectsContainer
+- [x] Extend combat speed meter documentation after consumption rules implemented
+- [x] Fix Experience gain from killing enemies.
+- [x] Implement Stagger system (meter, threshold, stun on fill, guard protection, energy costs for enemy actions)
+- [ ] Test and verify stagger system: confirm stagger values display correctly, guard reduces stagger by 50%, enemies/player skip turns when staggered, stagger bars update properly
+
+## Combat Effects
+- [ ] Implement Curses
+- [ ] 
+- [ ]
+- [ ]
+- [ ]
+- [ ]
+- [ ]
+- [ ]
+- [ ]
+- [ ]
+
+## Passive Tree - Warrant System
+- [x] Setup WarrantTree.scene
+- [x] Create canvas + scroll view container for tree layout
+- [x] Finalize board geometry (socket/effect node counts, adjacency rules)
+- [x] Implement multi-page board data model & save slots
+- [x] Build warrant socket/effect node prefabs with drag-drop interaction
+- [x] Follow prefab plan (see `Assets/Documentation/WarrantPrefabSetup.md`)
+- [x] Follow prefab plan (Socket prefab visuals + WarrantSocketView drag-drop)
+- [x] Wire Warrant Locker inventory + free swapping flow
+- [x] Create a WarrantAffixDatabase (Please make sure that all offensive and defensive CharacterStats have % Increased modifiers that we can add to the WarrantAffixDatabse) (`Asset/Documentation/WarrantDatabase.md`)
+- [x] Create WarrantNotableDatabase (separate database for Notable effects with nested modifiers)
+- [X] Adjust WarrantPrefab to Contain "Notable" data (Only the specific Warrant Socket has this buff, doesn't apply to Effect Range, See JSON at bottom of `Asset/Documentation/WarrantDatabase.md`)
+- [X] Allow A "Master Blueprint" warrant to be copied and rolled with affixes on Drop/Quest reward.
+- [ ] Implement Peacekeeper 3→1 fusion UI & modifier locking
+- [ ] Author Unique/Keystone warrant behaviors documentation
+- [ ] Implement "Upgrading Socketed warrants" - Required to kill X amount of Y enemies to upgrade from Common -> Magic - Once upgrade is ready, Peacekeepers faction will help you "Improve it" (Selection of 3 random affixes.)
+- [ ] **Implement Notable Conditional Triggers** - The following Notable effects require special trigger/event systems to be implemented:
+  - [ ] Focus charge system: "Gain double Focus charges when you Shock an enemy (once per turn)"
+  - [ ] Turn-based spell cost reduction: "first spell each turn costs 10% less mana"
+  - [ ] Conditional card draw triggers: "+1 card draw next turn after you play a skill", "Draw 1 card when Marked enemy dies"
+  - [ ] Card play event triggers: "3% chance for played cards to refund their mana", "2% chance to play an extra random card"
+  - [ ] Ailment duration extension: "Chill inflicted lasts additional 2 turns"
+  - [ ] Echo/repeat system: "first card each turn repeats at 25% power", "echoed cards have 25% increased effect", "cards that echo, echo +1 time with 25% effect"
+  - [ ] Guard trigger + temporary buff: "on guard, gain +1% life per turn for 2 turns"
+  - [ ] Combat start triggers: "first spell each combat gains +10% damage", "first spell each combat grants 5% of damage done as guard"
+  - [ ] Combat trigger + damage avoidance: "10% chance to immaterialize once per combat (avoid one hit)"
+  - [ ] Life cost trigger + temporary buff: "when you spend life to cast a card, gain +10% damage for 1 turn"
+  - [ ] Kill trigger + card return: "on kill, 10% chance to return the card to your hand with 20% effectiveness"
+  - [ ] Projectile trigger + debuff: "projectile attacks reduce enemy damage by 6% for 2 turns"
+  - [ ] Health threshold trigger: "when below 40% life, +25% damage"
+  - [ ] Card play counter trigger: "every 5th card played this combat gains +10% effect", "+1 draw when this triggers"
+  - [ ] Skill card trigger + cost reduction: "when you use a skill card, reduce next card cost by 50% (once)"
+  - [ ] Multi-target spell trigger: "spells that hit multiple targets gain +12% damage"
+  - [ ] Discard cost reduction: "Reduce discard cost by 1 for one card per turn"
+  - [ ] Consecutive attack trigger: "after 4 consecutive attacks, next attack deals +60% increased damage"
+  - [ ] Damage conversion trigger: "your damage randomly converts to another element for +10% extra damage"
+  - [ ] Generic damage (needs context): "+8% damage"
+  - [ ] Spell casting trigger: "when you cast a spell, 6% chance to store a free delayed cast"
+  - [ ] Area damage trigger: "area attacks deal +12% increased damage"
+
+
+
+## TownScene
+- [x] Setup TownScene
+- [ ] Implement "Seer" panel
+- [ ] Implement "Questgiver" panel
+- [ ] Implement "Forge" panel
+- [ ] Implement "PeacekeepersFaction" Panel
+- [ ] Implement Card Generation from "The Seer"
+- [ ] Implement Card Vendor from "The Seer"
+- [ ] Implement Quests from "Questgiver"
+- [ ] Implement Salvage from "Forge"
+- [ ] Implement "Warrants" for the "PeacekeepersFaction"
+- [ ] 
+- [ ] 
 
 
 ## Ascendancy Pipeline
@@ -58,6 +130,7 @@
 - [ ] Update remaining systems to consume CardDataExtended directly
 - [ ] Review Compilation/Migration documentation future items
 - [ ] Verify outstanding notes for future development logs
+- [x] Adopt `StatAggregator.BuildTotals()` + `DamageCalculator` for all card damage computations (see `Assets/Documentation/StatsAndDamageGuidelines.md`)
 
 
 

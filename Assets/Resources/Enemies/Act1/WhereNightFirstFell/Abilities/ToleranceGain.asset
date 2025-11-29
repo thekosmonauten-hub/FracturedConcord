@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca6aa4a13af395743aaffafd471f25f4, type: 3}
+  m_Name: ToleranceGain
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectEffect
+  statusType: 7
+  magnitude: 1
+  durationTurns: 3
+  overrideEffectName: 
+  isDebuff: 0
+  stackAdjustment: {fileID: 11400000, guid: 5fca1fd1bfebf5649a2ce4deb7a122f4, type: 2}
+  applyStatusEffect: 0
+  useInlineStackSettings: 1
+  inlineAgitateStacks: 0
+  inlineToleranceStacks: 1
+  inlinePotentialStacks: 0
+  inlineAgitateIncreasedPercent: 0
+  inlineToleranceIncreasedPercent: 0
+  inlinePotentialIncreasedPercent: 0
+  inlineAgitateMoreMultiplier: 0
+  inlineToleranceMoreMultiplier: 0
+  inlinePotentialMoreMultiplier: 0

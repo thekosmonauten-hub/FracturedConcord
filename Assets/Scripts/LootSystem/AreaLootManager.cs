@@ -14,6 +14,14 @@ public class AreaLootManager : MonoBehaviour
     [Header("Area-Specific Loot Tables")]
     [Tooltip("Loot tables configured for specific area level ranges")]
     public List<AreaLootTableRange> areaLootTableRanges = new List<AreaLootTableRange>();
+
+    [Tooltip("Convenience bindings for story acts. Leave lootTable empty to skip an act.")]
+    public List<ActLootTableConfig> actLootTables = new List<ActLootTableConfig>
+    {
+        new ActLootTableConfig { actName = "Act 1", minAreaLevel = 1,  maxAreaLevel = 20 },
+        new ActLootTableConfig { actName = "Act 2", minAreaLevel = 21, maxAreaLevel = 40 },
+        new ActLootTableConfig { actName = "Act 3", minAreaLevel = 41, maxAreaLevel = 60 }
+    };
     
     [Header("Debug")]
     [Tooltip("Enable debug logging")]
@@ -86,6 +94,23 @@ public class AreaLootManager : MonoBehaviour
             if (enableDebugLogs)
             {
                 Debug.Log($"[AreaLootManager] Cached loot table '{range.lootTable.name}' for area levels {range.minAreaLevel}-{range.maxAreaLevel}");
+            }
+        }
+
+        // Register act bindings (evaluated after manual ranges so they can fill gaps)
+        foreach (var actConfig in actLootTables)
+        {
+            if (actConfig == null || actConfig.lootTable == null)
+                continue;
+
+            for (int level = actConfig.minAreaLevel; level <= actConfig.maxAreaLevel; level++)
+            {
+                lootTableCache[level] = actConfig.lootTable;
+            }
+
+            if (enableDebugLogs)
+            {
+                Debug.Log($"[AreaLootManager] Cached act loot table '{actConfig.actName}' ({actConfig.lootTable.name}) for area levels {actConfig.minAreaLevel}-{actConfig.maxAreaLevel}");
             }
         }
     }
@@ -205,7 +230,7 @@ public class AreaLootManager : MonoBehaviour
         }
         
         // Use the loot table's comprehensive generation method
-        List<LootReward> allRewards = lootTable.GenerateAllLoot(maxItems);
+        List<LootReward> allRewards = lootTable.GenerateAllLoot(areaLevel, maxItems);
         
         if (enableDebugLogs && allRewards.Count > 0)
         {
@@ -616,4 +641,16 @@ public class AreaLootTableRange
     {
         return areaLevel >= minAreaLevel && areaLevel <= maxAreaLevel;
     }
+}
+
+/// <summary>
+/// Convenience binding for story acts to quickly assign loot tables per act.
+/// </summary>
+[System.Serializable]
+public class ActLootTableConfig
+{
+    public string actName = "Act 1";
+    public int minAreaLevel = 1;
+    public int maxAreaLevel = 20;
+    public AreaLootTable lootTable;
 }

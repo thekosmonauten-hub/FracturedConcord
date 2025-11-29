@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: SacredStrike_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Sacred Strike
+  groupKey: sacred_strike
   cardType: Attack
   playCost: 1
-  description: 'Deal {damage} physical damage to targetted Pack. If discarded: Deal
-    {discardPower} chaos damage to a random pack.'
+  description: 'Deal {damage} physical damage to targetted Row. '
   rarity: 0
   element: 4
   category: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: 4436e83a3f515554f83536e83f29412d, type: 3}
+  cardThumbnail: {fileID: 6025238246453098850, guid: cf0ffa4362f6e3f4fb838a26611fe17f, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -28,23 +30,44 @@ MonoBehaviour:
   block: 0
   isDiscardCard: 0
   isDualWield: 0
-  ifDiscardedEffect: 
+  ifDiscardedEffect: 'If discarded: Deal {discardPower} chaos damage to all enemies.'
   dualWieldEffect: 
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 1
   scalesWithProjectileWeapon: 0
   scalesWithSpellWeapon: 0
-  isAoE: 0
-  aoeTargets: 1
+  isAoE: 1
+  aoeTargets: 3
+  aoeRowScope: 1
+  isMultiHit: 0
+  hitCount: 2
   damageScaling:
-    strengthScaling: 1
+    strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 4
+    dexterityDivisor: 0
+    intelligenceDivisor: 4
   guardScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -52,10 +75,45 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
+  enableCombo: 1
   comboWith: 
   comboDescription: 
+  momentumEffectDescription: 
+  comboWithCardType: 0
+  comboAttackIncrease: 0
+  comboGuardIncrease: 0
+  comboIsAoE: 0
+  comboManaRefund: 0
+  comboApplyAilment: 
+  comboBuffs: []
+  comboConsumeAilment: 0
+  comboConsumeAilmentId: 0
+  comboDrawCards: 0
+  comboAilment: 0
+  comboAilmentPortion: 0
+  comboAilmentDuration: 0
+  consumeAilment: 0
+  consumeAilmentId: 0
+  comboScaling: 0
+  comboScalingDivisor: 1
+  comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Attack
   - Physical
+  delayTurns: 0
+  isDelayed: 0
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

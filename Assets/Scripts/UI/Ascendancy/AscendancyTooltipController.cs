@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using TMPro;
 
 /// <summary>
@@ -34,6 +35,47 @@ public class AscendancyTooltipController : MonoBehaviour
     {
         // Find parent canvas for screen space calculations
         parentCanvas = GetComponentInParent<Canvas>();
+    }
+    
+    /// <summary>
+    /// Show tooltip for a sub-node (choice node option)
+    /// </summary>
+    public void ShowSubNodeTooltip(AscendancySubNode subNode, string choiceNodeName, Vector2 nodePosition)
+    {
+        if (subNode == null || tooltipPrefab == null)
+        {
+            if (showDebugLogs)
+                Debug.LogWarning("[AscendancyTooltip] Cannot show sub-node tooltip - missing data or prefab");
+            return;
+        }
+        
+        // Hide previous tooltip
+        HideTooltip();
+        
+        // Spawn tooltip
+        Transform parent = tooltipContainer != null ? tooltipContainer : transform;
+        currentTooltip = Instantiate(tooltipPrefab, parent);
+        currentTooltip.name = $"Tooltip_SubNode_{subNode.name}";
+        
+        tooltipRect = currentTooltip.GetComponent<RectTransform>();
+        
+        // Populate tooltip with sub-node data
+        PopulateSubNodeTooltip(subNode, choiceNodeName);
+        
+        // Position tooltip
+        if (tooltipRect != null)
+        {
+            Vector2 targetPosition = nodePosition + tooltipOffset;
+            tooltipRect.anchoredPosition = targetPosition;
+            
+            // Clamp to screen bounds
+            ClampTooltipToScreen();
+        }
+        
+        currentTooltip.SetActive(true);
+        
+        if (showDebugLogs)
+            Debug.Log($"[AscendancyTooltip] Showing sub-node tooltip for: {subNode.name}");
     }
     
     /// <summary>
@@ -90,6 +132,49 @@ public class AscendancyTooltipController : MonoBehaviour
             
             if (showDebugLogs)
                 Debug.Log("[AscendancyTooltip] Hid tooltip");
+        }
+    }
+    
+    /// <summary>
+    /// Populate tooltip with sub-node data
+    /// </summary>
+    void PopulateSubNodeTooltip(AscendancySubNode subNode, string choiceNodeName)
+    {
+        if (currentTooltip == null) return;
+        
+        // Find text components by name
+        TextMeshProUGUI[] allTexts = currentTooltip.GetComponentsInChildren<TextMeshProUGUI>(true);
+        
+        foreach (var text in allTexts)
+        {
+            string objName = text.gameObject.name;
+            
+            if (objName == "AscendancyName" || objName == "NodeName" || objName == "Name")
+            {
+                text.text = subNode.name;
+                if (showDebugLogs)
+                    Debug.Log($"[AscendancyTooltip] Set sub-node name: {subNode.name}");
+            }
+            else if (objName == "AscendancyNodeDescription" || objName == "Description" || objName == "DescriptionText")
+            {
+                // Combine choice node name and sub-node description
+                string description = !string.IsNullOrEmpty(subNode.description) 
+                    ? subNode.description 
+                    : $"Option for {choiceNodeName}";
+                text.text = description;
+                if (showDebugLogs)
+                    Debug.Log($"[AscendancyTooltip] Set sub-node description: {description}");
+            }
+        }
+        
+        // Add node type indicator
+        TextMeshProUGUI[] allTypeTexts = currentTooltip.GetComponentsInChildren<TextMeshProUGUI>(true);
+        foreach (var text in allTypeTexts)
+        {
+            if (text.gameObject.name == "NodeType" || text.gameObject.name == "Type")
+            {
+                text.text = "SUB-NODE OPTION";
+            }
         }
     }
     
@@ -203,11 +288,23 @@ public class AscendancyTooltipController : MonoBehaviour
     {
         if (followMouse && currentTooltip != null && tooltipRect != null)
         {
-            // Follow mouse cursor
+            // Follow mouse cursor using new Input System
+            Vector2 screenMousePos;
+            if (Mouse.current != null)
+            {
+                screenMousePos = Mouse.current.position.ReadValue();
+            }
+            else
+            {
+                // Fallback to screen center if mouse is not available
+                screenMousePos = new Vector2(Screen.width / 2f, Screen.height / 2f);
+            }
+            
+            // Convert screen position to local canvas position
             Vector2 mousePos;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 parentCanvas.GetComponent<RectTransform>(),
-                Input.mousePosition,
+                screenMousePos,
                 parentCanvas.worldCamera,
                 out mousePos
             );

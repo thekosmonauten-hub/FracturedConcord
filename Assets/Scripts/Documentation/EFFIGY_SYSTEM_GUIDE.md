@@ -109,7 +109,28 @@ equipmentScreen.TryPlaceEffigyFromInventory(myEffigy, 0, 0);
 ### Drag and Drop
 - **Click and drag**: Moves existing effigy
 - **Release**: Validates and places (or returns to original position)
-- **Visual feedback**: TODO - add placement preview
+- **Visual feedback**: Placement preview highlights occupied cells; the drag ghost reuses the full effigy sprite with an outline for rarity feedback.
+
+### Visual Rendering (UGUI)
+- Each occupied cell gets its own `Image` child. By default the effigy icon is reused for every cell, but you can slice a sprite sheet and register per-cell sprites via `EffigySpriteSetInitializer` (supports multiple entries per component) to paint unique art (e.g., the Z-piece cat).
+- Cell visuals disable raycasts so `EffigyGridCellUI` keeps handling pointer events for drag/unequip operations.
+- Rarity color is communicated through an `Outline`; if no sprite is assigned we fall back to a solid element tint.
+- Drag ghost visuals and storage previews use the same sprite set so everything stays consistent.
+
+### Affix Generation & Scaling
+- Effigy assets act as blueprints. `EffigyFactory.CreateInstance` clones the ScriptableObject, deep-copies implicit modifiers, and calls `EffigyAffixGenerator.RollAffixes` so every drop is a fresh roll.
+- Use the `displayAlias` field on the blueprint to control the player-facing item name (e.g., `Shape_Fire`); when left empty the system falls back to `effigyName`.
+- Affix pools reuse the entire equipment/weapon/jewellery catalog—there are no exclusions—but every modifier is forced to `ModifierScope.Global`.
+- Rolled values are scaled to 10% of their item counterparts (including dual-range stats). Descriptions are rebuilt to reflect the scaled numeric values.
+- Up to four explicit affixes can appear per effigy with any prefix/suffix mix. Total affix count drives rarity: `0 → Normal`, `1-2 → Magic`, `3-4 → Rare`. Unique effigies skip the generator and rely on their predefined modifiers.
+- All runtime effigies retain the same `effigyName` / visuals as their blueprint but store their own affix lists so they persist correctly across scenes/inventory.
+
+### Loot Table Integration
+- `RewardType` now includes `Effigy`. When you add a loot row, set `rewardType = Effigy` and assign the blueprint in the `effigyBlueprint` field. The generator clones and rolls it with `EffigyFactory`.
+- Loot rewards flagged as effigies are stored on the active character (`Character.ownedEffigies`) so equipment/storage screens can rebuild their UI directly from the save state.
+- Existing boss/encounter tables only need their drop entries updated—no extra scripts required. Configure the drop chance like any other `LootEntry`; rarities are decided at roll time.
+- For area-driven drops, `AreaLootManager` now exposes a ready-made Act binding list (Act 1/2/3) and an effigy drop array inside each `AreaLootTable`. Fill the act loot tables and set per-act effigy chances—area levels automatically lerp between the min/max drop rates you provide.
+- Encounters can now include an `actNumber` inside `EncounterDataAsset`, making it easy to categorize drops/UI by story progression or to feed act-specific loot tables.
 
 ## Current Limitations & TODOs
 

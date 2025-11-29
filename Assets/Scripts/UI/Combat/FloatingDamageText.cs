@@ -27,6 +27,7 @@ public class FloatingDamageText : MonoBehaviour
     private Vector3 startPosition;
     private bool isAnimating = false;
     private Action onComplete;
+    private float baseFontSize;
     
     private void Awake()
     {
@@ -37,6 +38,9 @@ public class FloatingDamageText : MonoBehaviour
             canvasGroup = GetComponent<CanvasGroup>();
         
         rectTransform = GetComponent<RectTransform>();
+        
+        if (damageText != null)
+            baseFontSize = damageText.fontSize;
     }
     
     /// <summary>
@@ -53,13 +57,14 @@ public class FloatingDamageText : MonoBehaviour
         
         // Set damage text
         int displayDamage = Mathf.RoundToInt(damage);
+        damageText.fontSize = baseFontSize;
         damageText.text = displayDamage.ToString();
         
         // Set color and size based on critical
         if (isCritical)
         {
             damageText.color = criticalDamageColor;
-            damageText.fontSize = damageText.fontSize * criticalSizeMultiplier;
+            damageText.fontSize = baseFontSize * criticalSizeMultiplier;
             damageText.text = $"<b>{displayDamage}!</b>"; // Bold with exclamation
         }
         else
@@ -115,6 +120,7 @@ public class FloatingDamageText : MonoBehaviour
         
         // Set heal text
         int displayHeal = Mathf.RoundToInt(healAmount);
+        damageText.fontSize = baseFontSize;
         damageText.text = $"+{displayHeal}";
         damageText.color = healColor;
         
@@ -142,6 +148,44 @@ public class FloatingDamageText : MonoBehaviour
                 }
             })
             .setOnComplete(() => 
+            {
+                isAnimating = false;
+                onComplete?.Invoke();
+                gameObject.SetActive(false);
+            });
+    }
+    
+    public void ShowAbilityText(string abilityName, Color textColor, Vector3 worldPosition, Action onCompleteCallback = null)
+    {
+        LeanTween.cancel(gameObject);
+        
+        onComplete = onCompleteCallback;
+        isAnimating = true;
+        
+        damageText.fontSize = baseFontSize;
+        damageText.text = abilityName;
+        damageText.color = textColor;
+        
+        rectTransform.position = worldPosition;
+        startPosition = rectTransform.anchoredPosition;
+        canvasGroup.alpha = 1f;
+        
+        Vector3 endPosition = startPosition + new Vector3(0, floatDistance, 0);
+        
+        LeanTween.value(gameObject, 0f, 1f, floatDuration)
+            .setEase(LeanTweenType.easeOutQuad)
+            .setOnUpdate((float t) =>
+            {
+                if (rectTransform != null)
+                {
+                    rectTransform.anchoredPosition = Vector3.Lerp(startPosition, endPosition, floatCurve.Evaluate(t));
+                    if (canvasGroup != null)
+                    {
+                        canvasGroup.alpha = fadeCurve.Evaluate(t);
+                    }
+                }
+            })
+            .setOnComplete(() =>
             {
                 isAnimating = false;
                 onComplete?.Invoke();

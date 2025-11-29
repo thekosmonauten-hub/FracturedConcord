@@ -57,7 +57,18 @@ MonoBehaviour:
     requiredIntelligence: 0
     requiredWeaponTypes: 
     requiredLevel: 1
-  effects: []
+  effects:
+  - effectType: 3
+    effectName: 
+    description: 
+    value: 1
+    duration: 0
+    damageType: 0
+    targetsSelf: 1
+    targetsEnemy: 0
+    targetsAllEnemies: 0
+    targetsAll: 0
+    condition: 
   enableCombo: 1
   comboWith: 
   comboDescription: 'Combo: Draw 2 cards instead'

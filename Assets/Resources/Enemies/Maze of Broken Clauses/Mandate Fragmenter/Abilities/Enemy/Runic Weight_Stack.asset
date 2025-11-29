@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f421ff3a4807c584a8cb34b5c6520a3a, type: 3}
+  m_Name: Runic Weight_Stack
+  m_EditorClassIdentifier: Assembly-CSharp::StackAdjustmentEffect
+  adjustment: {fileID: 11400000, guid: 39bff540b9b35374c9b5615cd64c77c2, type: 2}
+  forceApplyToSelf: 0
+  applyToSelfAndPlayer: 0

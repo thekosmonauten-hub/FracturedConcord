@@ -1,0 +1,389 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff574ec1f450374d9b49a019c8f812d, type: 3}
+  m_Name: SeerDialogue
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  dialogueId: 2
+  dialogueName: The Seer
+  npcId: seer
+  defaultSpeakerPortrait: {fileID: 0}
+  startNodeId: start
+  nodes:
+  - nodeId: start
+    speakerName: The Seer
+    paragraphs:
+    - "Ah\u2026 a new presence in the weave.\nYour steps disturb the drifting fragments
+      \u2014 the Law notices you."
+    - 'You carry some Forms, but the world will try to offer you more.
+
+      With
+      the right structure, I can help them settle.'
+    - (she glances at the glowing orb beside her)
+    - "If you find an Orb of Generation, bring it to me.\nWith it, I can coax a fragment
+      into\u2026 a usable card."
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Continue
+      targetNodeId: midpoint
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions:
+    - actionType: 7
+      actionValue: start
+      intValue: 0
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 6
+      conditionValue: warrant_tutorial
+      intValue: 0
+  - nodeId: start_no_tutorial
+    speakerName: The Seer
+    paragraphs:
+    - "The Law hasn't taken notice yet\u2026"
+    - 'You carry some Forms, but the world will try to offer you more.
+
+      With
+      the right structure, I can help them settle.'
+    - (she glances at the glowing orb beside her)
+    - "If you find an Orb of Generation, bring it to me.\nWith it, I can coax a fragment
+      into\u2026 a usable card."
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Continue
+      targetNodeId: midpoint
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions:
+    - actionType: 7
+      actionValue: start_no_tutorial
+      intValue: 0
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: midpoint
+    speakerName: The Seer
+    paragraphs:
+    - Speak...
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Who are you?
+      targetNodeId: who_are_you
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: What happened to you?
+      targetNodeId: what_happened
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: Orbs of Generation?
+      targetNodeId: orbs_of_generation
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: How does card creation work?
+      targetNodeId: card_creation_tutorial
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: Could I see some of your cards?
+      targetNodeId: vendor
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions:
+    - actionType: 7
+      actionValue: midpoint
+      intValue: 0
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: who_are_you
+    speakerName: The Seer
+    paragraphs:
+    - "I am called the Seer because I no longer see as others do.\nThe Shattering
+      took my sight\u2026 and replaced it with something else."
+    - 'I see threads.
+
+      Fractures.
+
+      Echoes of the Law trying to rebuild
+      itself.'
+    - "I was once an Observer, one of the last students of the Vassaran sealwrights.\nMy
+      task was never to carve meaning \u2014 only to watch where meaning wavered."
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Continue
+      targetNodeId: midpoint
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions:
+    - actionType: 7
+      actionValue: who_are_you
+      intValue: 1
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: what_happened
+    speakerName: The Seer
+    paragraphs:
+    - "When the Concord broke, the world screamed.\nMost heard nothing. A few felt
+      the tremor.\nBut I\u2026 I saw the Law split."
+    - "It burned through my eyes, tore them open to everything beneath the surface.\nSince
+      then, light means nothing to me.\nOnly structure\u2026 and the places where
+      structure fails."
+    - "But in that failure, fragments drift.\nAnd fragments can be shaped \u2014
+      with the right tools."
+    - (She gestures to her crystal sphere.)
+    - Which is why I remain here.
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Continue
+      targetNodeId: midpoint
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions:
+    - actionType: 7
+      actionValue: what_happened
+      intValue: 1
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: orbs_of_generation
+    speakerName: The Seer
+    paragraphs:
+    - 'They''re not truly orbs in the old sense.
+
+      They''re cores of order.'
+    - 'Condensed stability.
+
+      Lattices strong enough to hold a fragment of the
+      Law still long enough for me to shape it.'
+    - "Without them, the fragments slip away again\u2026 forgotten."
+    - "If you bring me one, I can stabilize whatever the Law is trying to rebuild.\nA
+      card, a Form \u2014 a memory of how things once functioned."
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Continue
+      targetNodeId: midpoint
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions:
+    - actionType: 7
+      actionValue: orbs_of_generation
+      intValue: 1
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: card_creation_tutorial
+    speakerName: The Seer
+    paragraphs:
+    - Come closer. Watch the mist inside the sphere.
+    - "The Law sends out fragments \u2014 half-memory, half-intention.\nMost drift
+      endlessly. But I can guide them."
+    - 'I use the Orb to coax a fragment into clarity.
+
+      The Orb of Generation
+      provides the structure.
+
+      Together, they form something stable: a card.'
+    - 'You will not control what emerges.
+
+      The Law remembers what it chooses.'
+    - "But every card is a piece of the world's forgotten order\u2026\nand a weapon
+      against its unmaking."
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Continue
+      targetNodeId: midpoint
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions:
+    - actionType: 9
+      actionValue: card_creation_tutorial
+      intValue: 0
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: vendor
+    speakerName: The Seer
+    paragraphs:
+    - "Of course.\nStabilized Forms linger after creation \u2014 until someone claims
+      them."
+    - "Look through them.\nChoose carefully.\nSome fragments still carry echoes of
+      their old purpose\u2026 and their old dangers."
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Continue
+      targetNodeId: midpoint
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions:
+    - actionType: 5
+      actionValue: SeerShop
+      intValue: 0
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0

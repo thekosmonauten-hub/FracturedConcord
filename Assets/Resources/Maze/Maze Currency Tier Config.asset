@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Maze Currency Tier Config
+  m_EditorClassIdentifier: Assembly-CSharp:Dexiled.MazeSystem:MazeCurrencyTierConfig
+  tier1:
+    tierNumber: 1
+    tierName: Broken Mandate
+    primaryCurrency: 28
+    primaryCurrencyBaseDrop: 5
+    lowerTierMultiplier: 0.5
+    tierColor: {r: 1, g: 1, b: 1, a: 1}
+    tierIcon: {fileID: 0}
+  tier2:
+    tierNumber: 2
+    tierName: Shattered Law
+    primaryCurrency: 29
+    primaryCurrencyBaseDrop: 5
+    lowerTierMultiplier: 0.5
+    tierColor: {r: 1, g: 1, b: 1, a: 1}
+    tierIcon: {fileID: 0}
+  tier3:
+    tierNumber: 3
+    tierName: Grand Contradiction
+    primaryCurrency: 30
+    primaryCurrencyBaseDrop: 5
+    lowerTierMultiplier: 0.5
+    tierColor: {r: 1, g: 1, b: 1, a: 1}
+    tierIcon: {fileID: 0}
+  tier4:
+    tierNumber: 4
+    tierName: Absolute Collapse
+    primaryCurrency: 31
+    primaryCurrencyBaseDrop: 5
+    lowerTierMultiplier: 0.5
+    tierColor: {r: 1, g: 1, b: 1, a: 1}
+    tierIcon: {fileID: 0}

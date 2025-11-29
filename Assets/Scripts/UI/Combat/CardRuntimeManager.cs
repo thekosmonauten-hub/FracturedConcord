@@ -148,8 +148,9 @@ public class CardRuntimeManager : MonoBehaviour
         if (hover == null)
         {
             hover = cardObj.AddComponent<CardHoverEffect>();
-            hover.animationManager = animManager;
         }
+        hover.animationManager = animManager;
+        hover.enabled = true;
         // Ensure tooltip component exists (can be disabled per prefab)
         if (cardObj.GetComponent<CardHoverTooltip>() == null)
         {
@@ -207,8 +208,9 @@ public class CardRuntimeManager : MonoBehaviour
         if (hover == null)
         {
             hover = cardObj.AddComponent<CardHoverEffect>();
-            hover.animationManager = animManager;
         }
+        hover.animationManager = animManager;
+        hover.enabled = true;
         // Ensure tooltip component exists (can be disabled per prefab)
         if (cardObj.GetComponent<CardHoverTooltip>() == null)
         {
@@ -275,8 +277,9 @@ public class CardRuntimeManager : MonoBehaviour
         if (hover == null)
         {
             hover = cardObj.AddComponent<CardHoverEffect>();
-            hover.animationManager = animManager;
         }
+        hover.animationManager = animManager;
+        hover.enabled = true;
         // Ensure tooltip component exists (can be disabled per prefab)
         if (cardObj.GetComponent<CardHoverTooltip>() == null)
         {
@@ -312,15 +315,12 @@ public class CardRuntimeManager : MonoBehaviour
             {
                 cardObjects.Add(cardObj);
                 activeCards.Add(cardObj);
-                
-                // Position in hand
-                cardObj.transform.SetParent(cardHandParent);
+                EnsureCardParent(cardObj);
                 PositionCardInHand(cardObj, i, cards.Count);
                 
-                // Animate draw if animation manager available
                 if (animManager != null && deckPosition != null)
                 {
-                    float delay = i * 0.1f; // Stagger card draws
+                    float delay = i * 0.1f;
                     AnimateCardDraw(cardObj, delay);
                 }
             }
@@ -338,21 +338,34 @@ public class CardRuntimeManager : MonoBehaviour
     /// </summary>
     public void PositionCardInHand(GameObject cardObj, int index, int totalCards)
     {
-        if (cardHandParent == null) return;
-        
-        // Calculate position
-        Vector3 position = CalculateCardPosition(index, totalCards);
-        cardObj.transform.position = position;
-        
-        // IMPORTANT: Store the original position after positioning
-        // This prevents hover drift bug where cards float upward each hover
+        if (cardHandParent == null || cardObj == null) return;
+
+        EnsureCardParent(cardObj);
+
+        Vector3 localPosition = CalculateCardPosition(index, totalCards);
+
+        var rect = cardObj.GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            rect.anchoredPosition3D = localPosition;
+            rect.localRotation = Quaternion.identity;
+        }
+        else
+        {
+            cardObj.transform.localPosition = localPosition;
+            cardObj.transform.localRotation = Quaternion.identity;
+        }
+
+        cardObj.transform.localScale = cardScale;
+        SetSiblingIndex(cardObj.transform, index);
+
         CardHoverEffect hoverEffect = cardObj.GetComponent<CardHoverEffect>();
         if (hoverEffect != null)
         {
             hoverEffect.StoreOriginalPosition();
         }
     }
-    
+
     /// <summary>
     /// Calculate position for a card in hand (public so other systems can use same logic)
     /// </summary>
@@ -360,18 +373,14 @@ public class CardRuntimeManager : MonoBehaviour
     {
         if (totalCards <= 1)
         {
-            // Single card - center position (with offset)
-            return cardHandParent.position + new Vector3(handXOffset, cardYOffset, 0);
+            return new Vector3(handXOffset, cardYOffset, 0f);
         }
-        
-        // Multiple cards - spread across hand
+
         float totalWidth = (totalCards - 1) * cardSpacing;
         float startX = -totalWidth * 0.5f;
-        float xPos = startX + (index * cardSpacing);
-        
-        Vector3 basePosition = cardHandParent.position;
-        // Apply both X offset (shift whole hand) and calculated position
-        return new Vector3(basePosition.x + xPos + handXOffset, basePosition.y + cardYOffset, basePosition.z);
+        float xPos = startX + (index * cardSpacing) + handXOffset;
+
+        return new Vector3(xPos, cardYOffset, 0f);
     }
     
     /// <summary>
@@ -447,29 +456,37 @@ public class CardRuntimeManager : MonoBehaviour
     /// </summary>
     private void PositionCardInHandAnimated(GameObject cardObj, int index, int totalCards, float duration)
     {
-        if (cardHandParent == null) return;
-        
-        // Calculate new position
-        Vector3 targetPosition = CalculateCardPosition(index, totalCards);
-        
-        Debug.Log($"    Animating {cardObj.name} to position {targetPosition}");
-        
-        // Cancel ONLY position/move tweens (not all tweens - don't interfere with play/discard!)
+        if (cardHandParent == null || cardObj == null) return;
+
+        EnsureCardParent(cardObj);
+        Vector3 targetLocalPos = CalculateCardPosition(index, totalCards);
+        SetSiblingIndex(cardObj.transform, index);
+
         LeanTween.cancel(cardObj, false);
-        
-        // Smoothly animate to new position
-        LeanTween.move(cardObj, targetPosition, duration)
-            .setEase(LeanTweenType.easeOutQuad)
-            .setOnComplete(() => {
-                Debug.Log($"    {cardObj.name} reached final position: {cardObj.transform.position}");
-                
-                // Store the new position after animation completes
-                CardHoverEffect hoverEffect = cardObj.GetComponent<CardHoverEffect>();
-                if (hoverEffect != null)
+
+        var rect = cardObj.GetComponent<RectTransform>();
+        if (rect != null)
+        {
+            LeanTween.move(rect, targetLocalPos, duration)
+                .setEase(LeanTweenType.easeOutQuad)
+                .setOnComplete(() =>
                 {
-                    hoverEffect.StoreOriginalPosition();
-                }
-            });
+                    rect.anchoredPosition3D = targetLocalPos;
+                    rect.localRotation = Quaternion.identity;
+                    FinalizeCardPlacement(cardObj);
+                });
+        }
+        else
+        {
+            LeanTween.moveLocal(cardObj, targetLocalPos, duration)
+                .setEase(LeanTweenType.easeOutQuad)
+                .setOnComplete(() =>
+                {
+                    cardObj.transform.localPosition = targetLocalPos;
+                    cardObj.transform.localRotation = Quaternion.identity;
+                    FinalizeCardPlacement(cardObj);
+                });
+        }
     }
     
     #endregion
@@ -482,15 +499,16 @@ public class CardRuntimeManager : MonoBehaviour
     private void AnimateCardDraw(GameObject cardObj, float delay = 0f)
     {
         if (animManager == null || deckPosition == null) return;
-        
+
         Vector3 startPos = deckPosition.position;
         Vector3 endPos = cardObj.transform.position;
-        
+
         cardObj.transform.position = startPos;
-        
+
         if (delay > 0f)
         {
-            LeanTween.delayedCall(delay, () => {
+            LeanTween.delayedCall(delay, () =>
+            {
                 animManager.AnimateCardDraw(cardObj, startPos, endPos);
             });
         }
@@ -748,5 +766,30 @@ public class CardRuntimeManager : MonoBehaviour
     }
     
     #endregion
+
+    private void EnsureCardParent(GameObject cardObj)
+    {
+        if (cardHandParent != null && cardObj.transform.parent != cardHandParent)
+        {
+            cardObj.transform.SetParent(cardHandParent, false);
+        }
+    }
+
+    private void FinalizeCardPlacement(GameObject cardObj)
+    {
+        CardHoverEffect hoverEffect = cardObj.GetComponent<CardHoverEffect>();
+        if (hoverEffect != null)
+        {
+            hoverEffect.StoreOriginalPosition();
+        }
+    }
+
+    private void SetSiblingIndex(Transform cardTransform, int index)
+    {
+        if (cardTransform == null || cardTransform.parent == null) return;
+        int maxIndex = cardTransform.parent.childCount - 1;
+        int target = Mathf.Clamp(index, 0, maxIndex);
+        cardTransform.SetSiblingIndex(target);
+    }
 }
 

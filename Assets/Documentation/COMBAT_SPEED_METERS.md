@@ -3,15 +3,17 @@
 ### Overview
 - **Aggression Meter** – fills whenever the player plays an `Attack` card. Progress scales with the character’s attack speed multiplier. When the meter reaches 100%, the player earns an Aggression charge that can power future attack-based bonuses (e.g., half-cost attacks). Excess progress rolls over into the next charge.
 - **Focus Meter** – fills whenever the player plays a `Skill` or `Power` card. Progress scales with the character’s cast speed multiplier. Focus charges unlock spell-centric benefits (e.g., guaranteed combos).
-- **Enemy Energy** – enemy units track a hidden energy budget that Chill/Slow effects can drain. Once fully implemented, energy denial will block high-cost enemy moves.
-- **Movement Speed** – compresses encounter wave counts (capped so the boss wave always appears). Implementation is staged after player meters.
+- **Enemy Energy** – enemy units now surface a teal energy bar beneath their health. Chill/Slow drains reduce this bar in real time; emptying it prevents scripted high-cost abilities.
+- **Movement Speed** – compresses encounter wave counts (capped so the boss wave always appears). Encounter buttons preview the compressed total based on your current movement speed multiplier.
   - Baseline values: unarmed attack speed = 1.0 attacks/sec, baseline cast speed = 1.5 casts/sec. Increases from items/passives modify these via the new Character speed helpers.
 
-### Current Implementation (2025-11-07)
+### Current Implementation (2025-11-14)
 - `CombatDeckManager` tracks both meters, emits `OnSpeedMeterChanged` events with normalized progress and stored charges.
 - Ring UI wiring lives in `SpeedMeterRing` (referenced by `PlayerCombatDisplay`). Aggression/Focus progress shows as paired arc fills; stored charges are displayed numerically.
-- Mechanics that consume charges (e.g., half-cost Attacks, forced combos) are not yet hooked; meters are purely informational while we validate pacing.
-- Movement-speed-derived wave compression and enemy energy denial are planned but not active yet.
+- Spell-tagged cards now route directly into Focus progress even if their card type is `Attack`, preventing mixed signals when designers reuse attack templates for spells.
+- Charge selection happens via `ChargeSelectorButton`. When both resources are ready the shared panel exposes independent Aggression/Focus buttons; whichever effects are selected will be consumed on the very next card via `CombatDeckManager.ConsumeChargeModifiers()`.
+- Enemy energy is rendered beneath each enemy via `EnemyCombatDisplay`. `StatusEffectManager` drains that bar whenever Chill/Slow is applied, so crowd-control cards visibly delay problem abilities.
+- Encounter buttons preview wave compression: we divide the encounter’s configured wave count by the player’s movement-speed multiplier (never dropping below one wave) and show the before/after totals.
 
 ### Tuning Notes
 - Default gain per card is ~3.33% for Aggression (≈30 attacks per charge) and 5% for Focus (≈20 spells per charge) at baseline speed; adjust in `CombatDeckManager` as needed.
@@ -53,10 +55,15 @@
    - Play Attack cards to see the orange fill advance and charges increment.
    - Play Skill/Power cards to confirm the teal fill responds. Ready indicators should light up once at least one charge is stored.
 
+### Recent Updates (2025-11-14)
+- **Focus/Aggression Consumption Rules** – documented above; Spell-tag routing + combined charge buttons ensure both resources can be spent together without special-case UI.
+- **Enemy Energy UI** – `EnemyData` enables energy per enemy, `Enemy` tracks the pool, and `StatusEffectManager` drains it when Chill/Slow lands. The teal bar hides automatically when an enemy doesn’t use the system.
+- **Wave Compression Preview** – `EncounterButton` now creates a lightweight `WavePreview` label that reports `baseWaves → compressedWaves (Δ% via Move Speed)`, making it obvious how much run speed shaves off filler waves.
+
 ### TODO / Follow-Up
 1. Hook Aggression charges into the mana cost calculation for attack cards (half-cost for the next charge spent).
 2. Allow Focus charges to auto-satisfy combo requirements or offer a small menu of spell bonuses.
-3. Surface enemy energy orbs beneath health bars and integrate Chill to drain them.
-4. Add encounter preview logic that displays wave compression from movement speed.
-5. Expand documentation once consumption rules are implemented.
+3. ~~Surface enemy energy orbs beneath health bars and integrate Chill to drain them.~~ ✅ Completed 2025-11-14 (`EnemyCombatDisplay` energy bar + Chill/Slow drains).
+4. ~~Add encounter preview logic that displays wave compression from movement speed.~~ ✅ Completed 2025-11-14 (`EncounterButton.UpdateWavePreview`).
+5. Continue expanding documentation alongside upcoming consumer systems (e.g., aggression mana discounts, focus combo menus).
 

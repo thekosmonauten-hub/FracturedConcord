@@ -77,6 +77,10 @@ public class Card
     public int aoeTargets = 3; // Number of enemies hit (default to all 3)
     public AoERowScope aoeRowScope = AoERowScope.BothRows; // Row scope for AoE
     
+    [Header("Multi-Hit")]
+    public bool isMultiHit = false; // If true, hits the same target multiple times
+    public int hitCount = 2; // Number of times to hit (only used if isMultiHit is true)
+    
     [Header("Requirements")]
     public CardRequirements requirements = new CardRequirements();
     
@@ -257,7 +261,6 @@ public class Card
         
         // Fallback calculation if database not available
         int embossingCount = appliedEmbossings.Count;
-        float totalMultiplier = 0f;
         
         // Note: This fallback won't have access to embossing definitions
         // In production, EmbossingDatabase should always be available

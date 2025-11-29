@@ -1,0 +1,721 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 214b71b02cd1d32468eadc7385c7c700, type: 3}
+  m_Name: WarrantAffixDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::WarrantAffixDatabase
+  entries:
+  - affixId: increasedDamage_generic_elemental
+    displayName: Increased Elemental Damage
+    statKey: increasedElementalDamage
+    isFlat: 0
+    minPercent: 4
+    maxPercent: 8
+    tags:
+    - elemental
+    - damage
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedDamage_generic_physical
+    displayName: Increased Physical Damage
+    statKey: increasedPhysicalDamage
+    isFlat: 0
+    minPercent: 4
+    maxPercent: 8
+    tags:
+    - physical
+    - damage
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedDamage_generic_attack
+    displayName: Increased Attack Damage
+    statKey: increasedAttackDamage
+    isFlat: 0
+    minPercent: 5
+    maxPercent: 10
+    tags:
+    - attack
+    - damage
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedDamage_generic_spell
+    displayName: Increased Spell Damage
+    statKey: increasedSpellDamage
+    isFlat: 0
+    minPercent: 6
+    maxPercent: 12
+    tags:
+    - spell
+    - damage
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedDamage_generic_projectile
+    displayName: Increased Projectile Damage
+    statKey: increasedProjectileDamage
+    isFlat: 0
+    minPercent: 6
+    maxPercent: 12
+    tags:
+    - projectile
+    - damage
+    rarity: 1
+    weight: 90
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedDamage_generic_area
+    displayName: Increased Area Damage
+    statKey: increasedAreaDamage
+    isFlat: 0
+    minPercent: 10
+    maxPercent: 14
+    tags:
+    - area
+    - damage
+    rarity: 1
+    weight: 90
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedEvasion_percent
+    displayName: Increased Evasion
+    statKey: evasionIncreased
+    isFlat: 0
+    minPercent: 8
+    maxPercent: 12
+    tags:
+    - defense
+    - evasion
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedFireDamage_common
+    displayName: Increased Fire Damage
+    statKey: increasedFireDamage
+    isFlat: 0
+    minPercent: 8
+    maxPercent: 12
+    tags:
+    - elemental
+    - fire
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedColdDamage_common
+    displayName: Increased Cold Damage
+    statKey: increasedColdDamage
+    isFlat: 0
+    minPercent: 8
+    maxPercent: 12
+    tags:
+    - elemental
+    - cold
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedLightningDamage_common
+    displayName: Increased Lightning Damage
+    statKey: increasedLightningDamage
+    isFlat: 0
+    minPercent: 8
+    maxPercent: 12
+    tags:
+    - elemental
+    - lightning
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedChaosDamage_common
+    displayName: Increased Chaos Damage
+    statKey: increasedChaosDamage
+    isFlat: 0
+    minPercent: 8
+    maxPercent: 12
+    tags:
+    - chaos
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedIgniteMagnitude
+    displayName: Increased Ignite Magnitude
+    statKey: increasedIgniteMagnitude
+    isFlat: 0
+    minPercent: 10
+    maxPercent: 16
+    tags:
+    - ailment
+    - ignite
+    rarity: 1
+    weight: 80
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedShockMagnitude
+    displayName: Increased Shock Magnitude
+    statKey: increasedShockMagnitude
+    isFlat: 0
+    minPercent: 10
+    maxPercent: 16
+    tags:
+    - ailment
+    - shock
+    rarity: 1
+    weight: 80
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedChillMagnitude
+    displayName: Increased Chill Magnitude
+    statKey: increasedChillMagnitude
+    isFlat: 0
+    minPercent: 10
+    maxPercent: 16
+    tags:
+    - ailment
+    - chill
+    rarity: 1
+    weight: 80
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedFreezeMagnitude
+    displayName: Increased Freeze Magnitude
+    statKey: increasedFreezeMagnitude
+    isFlat: 0
+    minPercent: 10
+    maxPercent: 16
+    tags:
+    - ailment
+    - freeze
+    rarity: 1
+    weight: 80
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedBleedMagnitude
+    displayName: Increased Bleed Magnitude
+    statKey: increasedBleedMagnitude
+    isFlat: 0
+    minPercent: 10
+    maxPercent: 16
+    tags:
+    - ailment
+    - bleed
+    rarity: 1
+    weight: 80
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedPoisonMagnitude
+    displayName: Increased Poison Magnitude
+    statKey: increasedPoisonMagnitude
+    isFlat: 0
+    minPercent: 10
+    maxPercent: 16
+    tags:
+    - ailment
+    - poison
+    rarity: 1
+    weight: 80
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedMeleeDamage_magic
+    displayName: Increased Melee Damage
+    statKey: increasedMeleeDamage
+    isFlat: 0
+    minPercent: 6
+    maxPercent: 12
+    tags:
+    - melee
+    - damage
+    rarity: 1
+    weight: 90
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedRangedDamage_magic
+    displayName: Increased Ranged Damage
+    statKey: increasedRangedDamage
+    isFlat: 0
+    minPercent: 6
+    maxPercent: 12
+    tags:
+    - ranged
+    - damage
+    rarity: 1
+    weight: 90
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedMaxLife_percent
+    displayName: Increased Maximum Life
+    statKey: maxHealthIncreased
+    isFlat: 0
+    minPercent: 3
+    maxPercent: 5
+    tags:
+    - defense
+    - life
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedMaxMana_percent
+    displayName: Increased Maximum Mana
+    statKey: maxManaIncreased
+    isFlat: 0
+    minPercent: 3
+    maxPercent: 5
+    tags:
+    - defense
+    - mana
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedEnergyShield_percent
+    displayName: Increased Energy Shield
+    statKey: energyShieldIncreased
+    isFlat: 0
+    minPercent: 4
+    maxPercent: 8
+    tags:
+    - defense
+    - energyshield
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedArmour_percent
+    displayName: Increased Armour
+    statKey: armourIncreased
+    isFlat: 0
+    minPercent: 4
+    maxPercent: 8
+    tags:
+    - defense
+    - armour
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedAxeDamage_common
+    displayName: Increased Damage with Axes
+    statKey: increasedAxeDamage
+    isFlat: 0
+    minPercent: 6
+    maxPercent: 10
+    tags:
+    - weapon
+    - axe
+    - attack
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: increasedBowDamage_common
+    displayName: Increased Damage with Bows
+    statKey: increasedBowDamage
+    isFlat: 0
+    minPercent: 6
+    maxPercent: 10
+    tags:
+    - weapon
+    - bow
+    - attack
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: increasedBowDamage
+  - affixId: increasedMaceDamage_common
+    displayName: Increased Damage with Maces
+    statKey: increasedMaceDamage
+    isFlat: 0
+    minPercent: 6
+    maxPercent: 10
+    tags:
+    - weapon
+    - mace
+    - attack
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: increasedMaceDamage
+  - affixId: increasedSwordDamage_common
+    displayName: Increased Damage with Swords
+    statKey: increasedSwordDamage
+    isFlat: 0
+    minPercent: 6
+    maxPercent: 10
+    tags:
+    - weapon
+    - sword
+    - attack
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: increasedSwordDamage
+  - affixId: increasedWandDamage_common
+    displayName: Increased Damage with Wands
+    statKey: increasedWandDamage
+    isFlat: 0
+    minPercent: 6
+    maxPercent: 10
+    tags:
+    - weapon
+    - wand
+    - attack
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: increasedWandDamage
+  - affixId: increasedOneHandedDamage_common
+    displayName: Increased One-Handed Damage
+    statKey: increasedOneHandedDamage
+    isFlat: 0
+    minPercent: 6
+    maxPercent: 10
+    tags:
+    - weapon
+    - onehanded
+    - attack
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: increasedOneHandedDamage
+  - affixId: increasedTwoHandedDamage_common
+    displayName: Increased Two-Handed Damage
+    statKey: increasedTwoHandedDamage
+    isFlat: 0
+    minPercent: 6
+    maxPercent: 10
+    tags:
+    - weapon
+    - twohanded
+    - attack
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: increasedTwoHandedDamage
+  - affixId: attackSpeed_increased_common
+    displayName: Increased Attack Speed
+    statKey: attackSpeed
+    isFlat: 0
+    minPercent: 4
+    maxPercent: 8
+    tags:
+    - speed
+    - attack
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: attackSpeed
+  - affixId: castSpeed_increased_common
+    displayName: Increased Cast Speed
+    statKey: castSpeed
+    isFlat: 0
+    minPercent: 4
+    maxPercent: 8
+    tags:
+    - speed
+    - cast
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: castSpeed
+  - affixId: ailmentDuration_increased_magic
+    displayName: Increased Ailment Duration
+    statKey: statusEffectDuration
+    isFlat: 0
+    minPercent: 10
+    maxPercent: 20
+    tags:
+    - ailment
+    - duration
+    rarity: 1
+    weight: 85
+    kind: 0
+    socketOnly: 0
+    groupId: statusEffectDuration
+  - affixId: damageOverTime_increased_magic
+    displayName: Increased Damage over Time
+    statKey: increasedDamageOverTime
+    isFlat: 0
+    minPercent: 5
+    maxPercent: 10
+    tags:
+    - dot
+    - damage
+    rarity: 1
+    weight: 85
+    kind: 0
+    socketOnly: 0
+    groupId: increasedDamageOverTime
+  - affixId: poisonDamage_increased_magic
+    displayName: Increased Poison Damage
+    statKey: increasedPoisonDamage
+    isFlat: 0
+    minPercent: 10
+    maxPercent: 14
+    tags:
+    - poison
+    - dot
+    rarity: 1
+    weight: 80
+    kind: 0
+    socketOnly: 0
+    groupId: increasedPoisonDamage
+  - affixId: poisonDuration_increased_magic
+    displayName: Increased Poison Duration
+    statKey: increasedPoisonDuration
+    isFlat: 0
+    minPercent: 15
+    maxPercent: 20
+    tags:
+    - poison
+    - duration
+    rarity: 1
+    weight: 80
+    kind: 0
+    socketOnly: 0
+    groupId: increasedPoisonDuration
+  - affixId: damageVsChilled_magic
+    displayName: Increased Damage against Chilled Enemies
+    statKey: increasedDamageVsChilled
+    isFlat: 0
+    minPercent: 15
+    maxPercent: 15
+    tags:
+    - ailment
+    - cold
+    - chill
+    - damage
+    rarity: 1
+    weight: 80
+    kind: 0
+    socketOnly: 0
+    groupId: increasedDamageVsChilled
+  - affixId: damageVsShocked_magic
+    displayName: Increased Damage against Shocked Enemies
+    statKey: increasedDamageVsShocked
+    isFlat: 0
+    minPercent: 15
+    maxPercent: 15
+    tags:
+    - ailment
+    - lightning
+    - shock
+    - damage
+    rarity: 1
+    weight: 80
+    kind: 0
+    socketOnly: 0
+    groupId: increasedDamageVsShocked
+  - affixId: damageVsIgnited_magic
+    displayName: Increased Damage against Ignited Enemies
+    statKey: increasedDamageVsIgnited
+    isFlat: 0
+    minPercent: 15
+    maxPercent: 15
+    tags:
+    - ailment
+    - fire
+    - ignite
+    - damage
+    rarity: 1
+    weight: 80
+    kind: 0
+    socketOnly: 0
+    groupId: increasedDamageVsIgnited
+  - affixId: aggressionGain_increased_common
+    displayName: Increased Aggression Gain
+    statKey: aggressionGainIncreased
+    isFlat: 0
+    minPercent: 10
+    maxPercent: 10
+    tags:
+    - aggression
+    - charge
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: aggressionGainIncreased
+  - affixId: focusGain_increased_common
+    displayName: Increased Focus Gain
+    statKey: focusGainIncreased
+    isFlat: 0
+    minPercent: 10
+    maxPercent: 10
+    tags:
+    - focus
+    - charge
+    rarity: 0
+    weight: 100
+    kind: 0
+    socketOnly: 0
+    groupId: focusGainIncreased
+  - affixId: guardEffectiveness_increased_magic
+    displayName: Increased Guard Effectiveness
+    statKey: guardEffectivenessIncreased
+    isFlat: 0
+    minPercent: 15
+    maxPercent: 15
+    tags:
+    - guard
+    - defense
+    rarity: 1
+    weight: 80
+    kind: 0
+    socketOnly: 0
+    groupId: guardEffectivenessIncreased
+  - affixId: lessDamageFromElites_magic
+    displayName: Less Damage from Elites
+    statKey: lessDamageFromElites
+    isFlat: 0
+    minPercent: 4
+    maxPercent: 6
+    tags:
+    - defense
+    - elite
+    rarity: 1
+    weight: 75
+    kind: 0
+    socketOnly: 0
+    groupId: lessDamageFromElites
+  - affixId: statusAvoidance_magic
+    displayName: Increased Status Avoidance
+    statKey: statusAvoidance
+    isFlat: 0
+    minPercent: 4
+    maxPercent: 6
+    tags:
+    - defense
+    - status
+    rarity: 1
+    weight: 75
+    kind: 0
+    socketOnly: 0
+    groupId: statusAvoidance
+  - affixId: MaxMana_rare
+    displayName: Flat Max mana
+    statKey: maxmana
+    isFlat: 1
+    minPercent: 2
+    maxPercent: 4
+    tags:
+    - Mana
+    rarity: 2
+    weight: 50
+    kind: 0
+    socketOnly: 0
+    groupId: MaxMana
+  - affixId: FlatStrength
+    displayName: Strength
+    statKey: strength
+    isFlat: 1
+    minPercent: 10
+    maxPercent: 15
+    tags:
+    - Strength
+    rarity: 0
+    weight: 125
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: FlatDexterity
+    displayName: Dexterity
+    statKey: dexterity
+    isFlat: 1
+    minPercent: 10
+    maxPercent: 15
+    tags:
+    - Dexterity
+    rarity: 0
+    weight: 125
+    kind: 0
+    socketOnly: 0
+    groupId: 
+  - affixId: FlatIntelligence
+    displayName: Intelligence
+    statKey: intelligence
+    isFlat: 1
+    minPercent: 10
+    maxPercent: 15
+    tags:
+    - Intelligence
+    rarity: 0
+    weight: 125
+    kind: 0
+    socketOnly: 0
+    groupId: FlatIntelligence
+  - affixId: 'increasedDamageToStaggered '
+    displayName: increased Damage to Staggered Enemies
+    statKey: 'increasedDamageToStaggered '
+    isFlat: 0
+    minPercent: 10
+    maxPercent: 15
+    tags:
+    - Stagger
+    rarity: 0
+    weight: 125
+    kind: 0
+    socketOnly: 0
+    groupId: 'increasedDamageToStaggered '
+  - affixId: reducedEnemyStaggerThreshold
+    displayName: reduced Enemy Stagger Threshold
+    statKey: reducedEnemyStaggerThreshold
+    isFlat: 0
+    minPercent: 10
+    maxPercent: 15
+    tags:
+    - Stagger
+    rarity: 0
+    weight: 75
+    kind: 0
+    socketOnly: 0
+    groupId: reducedEnemyStaggerThreshold

@@ -1,0 +1,2094 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71b0ba79c92ac6a46a320e603f02dc50, type: 3}
+  m_Name: WarrantNotableDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::WarrantNotableDatabase
+  notables:
+  - notableId: courage
+    displayName: Courage
+    description: 24% increased Evasion\n24% Armour\8% increased Maximum Life
+    tags:
+    - defense
+    - life
+    - evasion
+    weight: 100
+    modifiers:
+    - statKey: evasionIncreased
+      displayName: 24% increased Evasion
+      value: 24
+      socketOnly: 1
+    - statKey: armourIncreased
+      displayName: 24% Armour
+      value: 24
+      socketOnly: 1
+    - statKey: maxHealthIncreased
+      displayName: 8% increased Maximum Life
+      value: 8
+      socketOnly: 1
+  - notableId: call_to_arms
+    displayName: Call to Arms
+    description: 
+    tags:
+    - melee
+    - life
+    - strength
+    weight: 95
+    modifiers:
+    - statKey: increasedPhysicalDamage
+      displayName: 10% increased Melee Physical Damage
+      value: 10
+      socketOnly: 1
+    - statKey: strength
+      displayName: +20 Strength
+      value: 20
+      socketOnly: 1
+    - statKey: lifeRegeneration
+      displayName: Regenerate 0.5% Life per turn
+      value: 0.5
+      socketOnly: 1
+  - notableId: cruel_tactics
+    displayName: Cruel Tactics
+    description: 
+    tags:
+    - bleed
+    - dot
+    weight: 90
+    modifiers:
+    - statKey: increasedBleedMagnitude
+      displayName: 30% increased Damage with Bleeds
+      value: 30
+      socketOnly: 1
+    - statKey: increasedBleedDuration
+      displayName: 20% increased Bleeding Duration
+      value: 20
+      socketOnly: 1
+  - notableId: cloud_seeding
+    displayName: Cloud Seeding
+    description: 
+    tags:
+    - elemental
+    - cold
+    - lightning
+    weight: 85
+    modifiers:
+    - statKey: increasedColdDamage
+      displayName: 25% increased Cold Damage
+      value: 25
+      socketOnly: 1
+    - statKey: increasedLightningDamage
+      displayName: 25% increased Lightning Damage
+      value: 25
+      socketOnly: 1
+    - statKey: increasedElementalDamage
+      displayName: Enemies affected by Shock or Freeze take 5% increased elemental
+        damage
+      value: 5
+      socketOnly: 1
+  - notableId: from_the_dark
+    displayName: From the Dark
+    description: 
+    tags:
+    - crit
+    - dagger
+    weight: 70
+    modifiers:
+    - statKey: increasedCriticalChanceWithDaggers
+      displayName: 30% increased Critical Strike Chance with Daggers
+      value: 30
+      socketOnly: 1
+    - statKey: increasedCriticalMultiplierWithDaggers
+      displayName: +30% Critical Strike Multiplier with Daggers
+      value: 30
+      socketOnly: 1
+    - statKey: increasedCriticalChanceVsFullLife
+      displayName: 100% increased Critical Strike Chance against enemies on full
+        life
+      value: 100
+      socketOnly: 1
+  - notableId: rite_of_passage
+    displayName: Rite of Passage
+    description: 
+    tags:
+    - physical
+    - fire
+    - penetration
+    weight: 80
+    modifiers:
+    - statKey: increasedPhysicalDamage
+      displayName: Gain 5% of Physical Damage as Extra Fire Damage
+      value: 5
+      socketOnly: 1
+    - statKey: fireResistancePenetration
+      displayName: Damage penetrates 5% Fire resistance
+      value: 5
+      socketOnly: 1
+  - notableId: battle_instinct
+    displayName: Battle Instinct
+    description: 
+    tags:
+    - melee
+    - attack_speed
+    - strength
+    weight: 105
+    modifiers:
+    - statKey: increasedMeleeDamage
+      displayName: 14% increased Melee Damage
+      value: 14
+      socketOnly: 1
+    - statKey: attackSpeed
+      displayName: 6% increased Attack Speed
+      value: 6
+      socketOnly: 1
+    - statKey: strength
+      displayName: +10 Strength
+      value: 10
+      socketOnly: 1
+  - notableId: sharpened_edge
+    displayName: Sharpened Edge
+    description: 
+    tags:
+    - physical
+    - bleed
+    weight: 100
+    modifiers:
+    - statKey: increasedPhysicalDamage
+      displayName: 20% increased Physical Damage with Attacks
+      value: 20
+      socketOnly: 1
+    - statKey: increasedBleedMagnitude
+      displayName: Attacks have 10% chance to cause Bleeding
+      value: 10
+      socketOnly: 1
+  - notableId: butchers_training
+    displayName: Butcher's Training
+    description: 
+    tags:
+    - bleed
+    - dot
+    weight: 95
+    modifiers:
+    - statKey: increasedBleedMagnitude
+      displayName: +25% Damage against Bleeding enemies
+      value: 25
+      socketOnly: 1
+    - statKey: increasedBleedDuration
+      displayName: 10% increased Bleed Duration
+      value: 10
+      socketOnly: 1
+  - notableId: deep_cuts
+    displayName: Deep Cuts
+    description: 
+    tags:
+    - bleed
+    - chance
+    weight: 90
+    modifiers:
+    - statKey: increasedBleedMagnitude
+      displayName: 30% increased Damage with Bleeds
+      value: 30
+      socketOnly: 1
+    - statKey: increasedBleedMagnitude
+      displayName: +5% chance to inflict Bleed
+      value: 5
+      socketOnly: 1
+  - notableId: warriors_resolve
+    displayName: Warrior's Resolve
+    description: 
+    tags:
+    - melee
+    - life
+    weight: 100
+    modifiers:
+    - statKey: increasedAttackDamage
+      displayName: 12% increased Attack Damage
+      value: 12
+      socketOnly: 1
+    - statKey: lifeRegeneration
+      displayName: Regenerate 0.3% Life each turn
+      value: 0.3
+      socketOnly: 1
+  - notableId: winters_reach
+    displayName: Winter's Reach
+    description: 
+    tags:
+    - cold
+    - chill
+    - elemental
+    weight: 90
+    modifiers:
+    - statKey: increasedColdDamage
+      displayName: +25% Cold Damage
+      value: 25
+      socketOnly: 1
+    - statKey: increasedChillMagnitude
+      displayName: Enemies Chilled by you take 3% increased Damage
+      value: 3
+      socketOnly: 1
+  - notableId: frigid_precision
+    displayName: Frigid Precision
+    description: 
+    tags:
+    - cold
+    - crit
+    - spell
+    weight: 85
+    modifiers:
+    - statKey: increasedColdDamage
+      displayName: +14% Cold Damage
+      value: 14
+      socketOnly: 1
+    - statKey: increasedCriticalChanceWithColdSkills
+      displayName: +15% Critical Strike Chance with Cold Skills
+      value: 15
+      socketOnly: 1
+  - notableId: chillweaver
+    displayName: Chillweaver
+    description: 
+    tags:
+    - cold
+    - chill
+    weight: 80
+    modifiers:
+    - statKey: increasedChillMagnitude
+      displayName: 10% Increased Chill effectiveness
+      value: 10
+      socketOnly: 1
+    - statKey: increasedChillDuration
+      displayName: 20% increased Chill duration
+      value: 20
+      socketOnly: 1
+  - notableId: cold_blooded_strategy
+    displayName: Cold-Blooded Strategy
+    description: 
+    tags:
+    - cold
+    - mana
+    weight: 75
+    modifiers:
+    - statKey: increasedColdDamage
+      displayName: 20% increased Cold Damage
+      value: 20
+      socketOnly: 1
+    - statKey: manaRegenerationIncreased
+      displayName: 12% increased Mana Regeneration
+      value: 12
+      socketOnly: 1
+  - notableId: storm_conduit
+    displayName: Storm Conduit
+    description: 
+    tags:
+    - lightning
+    - shock
+    weight: 90
+    modifiers:
+    - statKey: increasedLightningDamage
+      displayName: +25% Lightning Damage
+      value: 25
+      socketOnly: 1
+    - statKey: increasedShockMagnitude
+      displayName: +10% Shock effectiveness
+      value: 10
+      socketOnly: 1
+  - notableId: galvanic_touch
+    displayName: Galvanic Touch
+    description: 
+    tags:
+    - lightning
+    - crit
+    weight: 80
+    modifiers:
+    - statKey: increasedCriticalChanceWithLightningCards
+      displayName: 30% increased Critical Chance with Lightning cards
+      value: 30
+      socketOnly: 1
+    - statKey: increasedShockMagnitude
+      displayName: Shocks you inflict last 15% longer
+      value: 15
+      socketOnly: 1
+  - notableId: charged_instinct
+    displayName: Charged Instinct
+    description: 
+    tags:
+    - focus
+    - shock
+    weight: 70
+    modifiers:
+    - statKey: increasedShockMagnitude
+      displayName: Gain double Focus charges when you Shock an enemy (once per turn)
+      value: 0
+      socketOnly: 1
+    - statKey: increasedShockDuration
+      displayName: 20% increased Shock duration
+      value: 20
+      socketOnly: 1
+  - notableId: burnt_offering
+    displayName: Burnt Offering
+    description: 
+    tags:
+    - fire
+    - ignite
+    weight: 90
+    modifiers:
+    - statKey: increasedFireDamage
+      displayName: +25% Fire Damage
+      value: 25
+      socketOnly: 1
+    - statKey: increasedIgniteDuration
+      displayName: +8% Ignite Duration
+      value: 8
+      socketOnly: 1
+  - notableId: inner_combustion
+    displayName: Inner Combustion
+    description: 
+    tags:
+    - fire
+    - ignite
+    - strength
+    weight: 80
+    modifiers:
+    - statKey: increasedIgniteMagnitude
+      displayName: Ignites you inflict deal 15% increased Damage
+      value: 15
+      socketOnly: 1
+    - statKey: strength
+      displayName: +10 Strength
+      value: 10
+      socketOnly: 1
+  - notableId: searing_hand
+    displayName: Searing Hand
+    description: 
+    tags:
+    - fire
+    - spell
+    - chance
+    weight: 85
+    modifiers:
+    - statKey: increasedSpellDamage
+      displayName: 20% increased Fire Spell Damage
+      value: 20
+      socketOnly: 1
+    - statKey: increasedIgniteMagnitude
+      displayName: 15% chance to Ignite
+      value: 15
+      socketOnly: 1
+  - notableId: toxic_insight
+    displayName: Toxic Insight
+    description: 
+    tags:
+    - chaos
+    - dot
+    weight: 85
+    modifiers:
+    - statKey: increasedChaosDamage
+      displayName: +20% Chaos Damage
+      value: 20
+      socketOnly: 1
+    - statKey: increasedDamageOverTime
+      displayName: +10% Damage over Time
+      value: 10
+      socketOnly: 1
+  - notableId: rot_and_ruin
+    displayName: Rot and Ruin
+    description: 
+    tags:
+    - chaos
+    - wither
+    weight: 75
+    modifiers:
+    - statKey: increasedDamageVsCursed
+      displayName: 30% increased Damage with Cursed enemies
+      value: 30
+      socketOnly: 1
+    - statKey: curseDurationIncreased
+      displayName: Curse effects decay 10% slower
+      value: 10
+      socketOnly: 1
+  - notableId: plaguebearers_gift
+    displayName: Plaguebearer's Gift
+    description: 
+    tags:
+    - chaos
+    - poison
+    weight: 80
+    modifiers:
+    - statKey: increasedChaosDamage
+      displayName: 20% increased Chaos Damage
+      value: 20
+      socketOnly: 1
+    - statKey: increasedPoisonDamage
+      displayName: +5% Poison chance
+      value: 5
+      socketOnly: 1
+  - notableId: calculated_cruelty
+    displayName: Calculated Cruelty
+    description: 
+    tags:
+    - crit
+    weight: 95
+    modifiers:
+    - statKey: increasedCriticalStrikeChance
+      displayName: 20% increased Critical Strike Chance
+      value: 20
+      socketOnly: 1
+    - statKey: increasedCriticalStrikeMultiplier
+      displayName: +15% Critical Strike Multiplier
+      value: 15
+      socketOnly: 1
+  - notableId: soft_spot
+    displayName: Soft Spot
+    description: 
+    tags:
+    - crit
+    - projectile
+    weight: 70
+    modifiers:
+    - statKey: increasedCriticalChanceVsFullLife
+      displayName: +75% Crit Chance against enemies on Full Life
+      value: 75
+      socketOnly: 1
+    - statKey: increasedProjectileDamage
+      displayName: 10% increased Projectile Damage
+      value: 10
+      socketOnly: 1
+  - notableId: perfect_aim
+    displayName: Perfect Aim
+    description: 
+    tags:
+    - projectile
+    - speed
+    weight: 80
+    modifiers:
+    - statKey: attackSpeed
+      displayName: +12% Attack Speed
+      value: 12
+      socketOnly: 1
+    - statKey: increasedProjectileDamage
+      displayName: 16% increased Projectile Damage
+      value: 16
+      socketOnly: 1
+  - notableId: hardened_spirit
+    displayName: Hardened Spirit
+    description: 
+    tags:
+    - life
+    - armor
+    weight: 100
+    modifiers:
+    - statKey: maxHealthIncreased
+      displayName: +6% Maximum Life
+      value: 6
+      socketOnly: 1
+    - statKey: armourIncreased
+      displayName: +10% Armor
+      value: 10
+      socketOnly: 1
+  - notableId: resilient_heart
+    displayName: Resilient Heart
+    description: 
+    tags:
+    - life
+    - dot
+    weight: 95
+    modifiers:
+    - statKey: increasedDamageOverTime
+      displayName: 4% Less Damage over Time taken
+      value: 4
+      socketOnly: 1
+    - statKey: maxHealthIncreased
+      displayName: +20 Maximum Life
+      value: 20
+      socketOnly: 1
+  - notableId: defiance
+    displayName: Defiance
+    description: 
+    tags:
+    - defense
+    - armor
+    - evasion
+    weight: 90
+    modifiers:
+    - statKey: armourIncreased
+      displayName: 20% increased Armor
+      value: 20
+      socketOnly: 1
+    - statKey: evasionIncreased
+      displayName: 20% Evasion
+      value: 20
+      socketOnly: 1
+    - statKey: lifeRecoveryRateIncreased
+      displayName: 8% increased Life Recovery Rate
+      value: 8
+      socketOnly: 1
+  - notableId: safe_retreat
+    displayName: Safe Retreat
+    description: 
+    tags:
+    - guard
+    - mobility
+    weight: 70
+    modifiers:
+    - statKey: guardEffectivenessIncreased
+      displayName: Guard has 10% increased guard effectiveness
+      value: 10
+      socketOnly: 1
+    - statKey: guardRetentionIncreased
+      displayName: Retain 15% more guard next turn
+      value: 15
+      socketOnly: 1
+  - notableId: shieldbearers_resolve
+    displayName: Shieldbearer's Resolve
+    description: 
+    tags:
+    - block
+    - guard
+    weight: 75
+    modifiers:
+    - statKey: blockChanceIncreased
+      displayName: 10% increased Block Chance
+      value: 10
+      socketOnly: 1
+    - statKey: guardEffectivenessIncreased
+      displayName: 5% increased guard effectiveness
+      value: 5
+      socketOnly: 1
+  - notableId: hold_the_line
+    displayName: Hold the Line
+    description: 
+    tags:
+    - guard
+    - defense
+    weight: 80
+    modifiers:
+    - statKey: guardEffectivenessIncreased
+      displayName: +20% Guard effectiveness
+      value: 20
+      socketOnly: 1
+    - statKey: physicalResistanceIncreased
+      displayName: +5% increased physical resistance
+      value: 5
+      socketOnly: 1
+  - notableId: mystic_adept
+    displayName: Mystic Adept
+    description: 
+    tags:
+    - spell
+    - cast_speed
+    weight: 95
+    modifiers:
+    - statKey: increasedSpellDamage
+      displayName: +20% Spell Damage
+      value: 20
+      socketOnly: 1
+    - statKey: castSpeed
+      displayName: +6% Cast Speed
+      value: 6
+      socketOnly: 1
+  - notableId: arcanists_flow
+    displayName: Arcanist's Flow
+    description: 
+    tags:
+    - mana
+    - spell
+    weight: 85
+    modifiers:
+    - statKey: manaRegenerationIncreased
+      displayName: 12% increased Mana Regeneration
+      value: 12
+      socketOnly: 1
+    - statKey: unknown_stat
+      displayName: First Spell each turn costs 10% less mana
+      value: 10
+      socketOnly: 1
+  - notableId: elemental_accretion
+    displayName: Elemental Accretion
+    description: 
+    tags:
+    - elemental
+    - ailment
+    weight: 80
+    modifiers:
+    - statKey: increasedElementalDamage
+      displayName: +12% Elemental Damage
+      value: 12
+      socketOnly: 1
+    - statKey: ailmentDurationIncreased
+      displayName: +10% Ailment Duration
+      value: 10
+      socketOnly: 1
+  - notableId: quick_thinking
+    displayName: Quick Thinking
+    description: 
+    tags:
+    - card
+    - utility
+    weight: 85
+    modifiers:
+    - statKey: unknown_stat
+      displayName: +1 Card Draw next turn after you play a Skill
+      value: 1
+      socketOnly: 1
+    - statKey: manaCostEfficiencyIncreased
+      displayName: 8% increased Mana Cost Efficiency
+      value: 8
+      socketOnly: 1
+  - notableId: adaptive_strategy
+    displayName: Adaptive Strategy
+    description: 
+    tags:
+    - prepared
+    - hand
+    weight: 80
+    modifiers:
+    - statKey: preparedCardEffectivenessIncreased
+      displayName: +4% Effect of Prepared Cards
+      value: 4
+      socketOnly: 1
+    - statKey: handSizeIncreased
+      displayName: +1 Hand Size
+      value: 1
+      socketOnly: 1
+  - notableId: gamblers_touch
+    displayName: Gambler's Touch
+    description: 
+    tags:
+    - card
+    - refund
+    weight: 75
+    modifiers:
+    - statKey: unknown_stat
+      displayName: 3% chance for played cards to Refund their Mana
+      value: 3
+      socketOnly: 1
+    - statKey: cardCycleSpeedIncreased
+      displayName: 4% increased Card Cycle Speed
+      value: 4
+      socketOnly: 1
+  - notableId: knife_mastery
+    displayName: Knife Mastery
+    description: 
+    tags:
+    - weapon
+    - dagger
+    - crit
+    weight: 70
+    modifiers:
+    - statKey: increasedDaggerDamage
+      displayName: 20% increased Dagger Damage
+      value: 20
+      socketOnly: 1
+    - statKey: increasedCriticalChanceWithDaggers
+      displayName: +20% Dagger Crit Chance
+      value: 20
+      socketOnly: 1
+  - notableId: bow_poise
+    displayName: Bow Poise
+    description: 
+    tags:
+    - weapon
+    - bow
+    - dexterity
+    weight: 70
+    modifiers:
+    - statKey: increasedBowDamage
+      displayName: 15% increased Bow Damage
+      value: 15
+      socketOnly: 1
+    - statKey: dexterity
+      displayName: +10 Dexterity
+      value: 10
+      socketOnly: 1
+  - notableId: hammer_discipline
+    displayName: Hammer Discipline
+    description: 
+    tags:
+    - weapon
+    - stun
+    weight: 70
+    modifiers:
+    - statKey: increasedMaceDamage
+      displayName: 14% increased Mace Damage
+      value: 14
+      socketOnly: 1
+    - statKey: stunDurationIncreased
+      displayName: 10% Stun Duration on enemies
+      value: 10
+      socketOnly: 1
+  - notableId: fleet_step
+    displayName: Fleet Step
+    description: 
+    tags:
+    - dexterity
+    - mobility
+    weight: 80
+    modifiers:
+    - statKey: dexterity
+      displayName: +10 Dexterity
+      value: 10
+      socketOnly: 1
+    - statKey: movementSpeedIncreased
+      displayName: 8% increased Movement Speed
+      value: 8
+      socketOnly: 1
+  - notableId: silent_approach
+    displayName: Silent Approach
+    description: 
+    tags:
+    - dodge
+    - debuff
+    weight: 75
+    modifiers:
+    - statKey: dodgeChanceIncreased
+      displayName: 15% increased Dodge Chance
+      value: 15
+      socketOnly: 1
+    - statKey: debuffExpirationRateIncreased
+      displayName: Debuffs on you Expire 10% faster
+      value: 10
+      socketOnly: 1
+  - notableId: keen_scholar
+    displayName: Keen Scholar
+    description: 
+    tags:
+    - intelligence
+    - crit
+    weight: 80
+    modifiers:
+    - statKey: intelligence
+      displayName: +10 Intelligence
+      value: 10
+      socketOnly: 1
+    - statKey: increasedSpellCriticalChance
+      displayName: +6% Spell Critical Chance
+      value: 6
+      socketOnly: 1
+  - notableId: aether_manipulator
+    displayName: Aether Manipulator
+    description: 
+    tags:
+    - spell
+    - mana
+    weight: 75
+    modifiers:
+    - statKey: increasedLightningDamage
+      displayName: 20% increased Lightning Damage
+      value: 20
+      socketOnly: 1
+    - statKey: manaCostEfficiencyIncreased
+      displayName: 6% reduced Spell Mana Cost
+      value: 6
+      socketOnly: 1
+  - notableId: crackling_frost
+    displayName: Crackling Frost
+    description: 
+    tags:
+    - cold
+    - lightning
+    - elemental
+    weight: 85
+    modifiers:
+    - statKey: increasedColdDamage
+      displayName: +15% Cold Damage
+      value: 15
+      socketOnly: 1
+    - statKey: increasedLightningDamage
+      displayName: +15% Lightning Damage
+      value: 15
+      socketOnly: 1
+    - statKey: increasedElementalDamage
+      displayName: Shocked or Frozen enemies take 5% increased Elemental Damage
+      value: 5
+      socketOnly: 1
+  - notableId: scorched_will
+    displayName: Scorched Will
+    description: 
+    tags:
+    - fire
+    - penetration
+    weight: 80
+    modifiers:
+    - statKey: increasedFireDamage
+      displayName: +20% Fire Damage
+      value: 20
+      socketOnly: 1
+    - statKey: fireResistancePenetration
+      displayName: Damage penetrates 2% of enemy Fire resistance
+      value: 2
+      socketOnly: 1
+  - notableId: bone_binding
+    displayName: Bone Binding
+    description: 
+    tags:
+    - chaos
+    - cold
+    - chill
+    weight: 75
+    modifiers:
+    - statKey: increasedChaosDamage
+      displayName: +10% Chaos Damage
+      value: 10
+      socketOnly: 1
+    - statKey: increasedColdDamage
+      displayName: +10% Cold Damage
+      value: 10
+      socketOnly: 1
+    - statKey: increasedChillMagnitude
+      displayName: Chill inflicted lasts additional 2 turns
+      value: 0
+      socketOnly: 1
+  - notableId: vigorous_recovery
+    displayName: Vigorous Recovery
+    description: 
+    tags:
+    - life
+    - recovery
+    weight: 95
+    modifiers:
+    - statKey: lifeRecoveryRateIncreased
+      displayName: +8% Life Recovery per turn
+      value: 8
+      socketOnly: 1
+    - statKey: maxHealthIncreased
+      displayName: +4% increased Maximum Life
+      value: 4
+      socketOnly: 1
+  - notableId: stalwart_frame
+    displayName: Stalwart Frame
+    description: 
+    tags:
+    - armor
+    - reduction
+    weight: 90
+    modifiers:
+    - statKey: armourIncreased
+      displayName: +25 Armor
+      value: 25
+      socketOnly: 1
+    - statKey: increasedPhysicalDamage
+      displayName: +8% Physical Damage Reduction
+      value: 8
+      socketOnly: 1
+  - notableId: iron_skin
+    displayName: Iron Skin
+    description: 
+    tags:
+    - block
+    - life
+    weight: 85
+    modifiers:
+    - statKey: blockEffectivenessIncreased
+      displayName: +15% Block Effect
+      value: 15
+      socketOnly: 1
+    - statKey: maxHealthIncreased
+      displayName: +6% increased Maximum Life
+      value: 6
+      socketOnly: 1
+  - notableId: unblinking_eye
+    displayName: Unblinking Eye
+    description: 
+    tags:
+    - avoidance
+    - resist
+    weight: 75
+    modifiers:
+    - statKey: criticalStrikeAvoidance
+      displayName: +10% Critical Strike Avoidance
+      value: 10
+      socketOnly: 1
+    - statKey: allElementalResistancesIncreased
+      displayName: +6% All Elemental Resistances
+      value: 6
+      socketOnly: 1
+  - notableId: hunters_mark
+    displayName: Hunter's Mark
+    description: 
+    tags:
+    - mark
+    - card
+    weight: 70
+    modifiers:
+    - statKey: increasedDamageVsMarked
+      displayName: +18% Damage to Marked enemies
+      value: 18
+      socketOnly: 1
+    - statKey: unknown_stat
+      displayName: Draw 1 card when Marked enemy dies.
+      value: 0
+      socketOnly: 1
+  - notableId: leaden_blow
+    displayName: Leaden Blow
+    description: 
+    tags:
+    - heavy
+    - attack_speed
+    weight: 65
+    modifiers:
+    - statKey: increasedMaceDamage
+      displayName: +20% increased Damage with Mace
+      value: 20
+      socketOnly: 1
+    - statKey: attackSpeed
+      displayName: -4% Attack Speed
+      value: -4
+      socketOnly: 1
+  - notableId: dance_of_blades
+    displayName: Dance of Blades
+    description: 
+    tags:
+    - combo
+    - attack_speed
+    weight: 85
+    modifiers:
+    - statKey: increasedDamageWithConsecutiveAttacks
+      displayName: +10% Damage for each Attack played consecutively (max 30%)
+      value: 10
+      socketOnly: 1
+    - statKey: attackSpeed
+      displayName: +4% Attack Speed
+      value: 4
+      socketOnly: 1
+  - notableId: echoing_strike
+    displayName: Echoing Strike
+    description: 
+    tags:
+    - attack
+    - repeat
+    weight: 80
+    modifiers:
+    - statKey: unknown_stat
+      displayName: First card each turn repeats at 25% power
+      value: 25
+      socketOnly: 1
+    - statKey: increasedMeleeDamage
+      displayName: +6% increased Melee Damage
+      value: 6
+      socketOnly: 1
+  - notableId: guardians_pact
+    displayName: Guardian's Pact
+    description: 
+    tags:
+    - guard
+    - life
+    weight: 75
+    modifiers:
+    - statKey: unknown_stat
+      displayName: On Guard, gain +1% Life per turn for 2 turns
+      value: 1
+      socketOnly: 1
+    - statKey: guardEffectivenessIncreased
+      displayName: +10% Guard effectiveness
+      value: 10
+      socketOnly: 1
+  - notableId: rangers_focus
+    displayName: Ranger's Focus
+    description: 
+    tags:
+    - projectile
+    - crit
+    weight: 80
+    modifiers:
+    - statKey: increasedProjectileDamage
+      displayName: +12% Projectile card Damage
+      value: 12
+      socketOnly: 1
+    - statKey: increasedCriticalChanceWithProjectileCards
+      displayName: +8% increased Critical Chance with Projectile cards
+      value: 8
+      socketOnly: 1
+  - notableId: windrunner
+    displayName: Windrunner
+    description: 
+    tags:
+    - movementspeed
+    - evasion
+    weight: 70
+    modifiers:
+    - statKey: movementSpeedIncreased
+      displayName: +8% Movement Speed
+      value: 8
+      socketOnly: 1
+    - statKey: evasionIncreased
+      displayName: +10% increased Evasion
+      value: 10
+      socketOnly: 1
+  - notableId: tactical_retreat
+    displayName: Tactical Retreat
+    description: 
+    tags:
+    - life
+    - reduction
+    weight: 65
+    modifiers:
+    - statKey: damageReductionIncreased
+      displayName: When below 30% Life, gain +20% Damage Reduction for 1 turn
+      value: 30
+      socketOnly: 1
+    - statKey: movementSpeedIncreased
+      displayName: +10% Movement Speed
+      value: 10
+      socketOnly: 1
+  - notableId: arcane_reservoir
+    displayName: Arcane Reservoir
+    description: 
+    tags:
+    - spell
+    - mana
+    weight: 85
+    modifiers:
+    - statKey: increasedSpellDamage
+      displayName: +10% Spell Damage
+      value: 10
+      socketOnly: 1
+    - statKey: manaRegenerationIncreased
+      displayName: +6% increased Mana Regeneration
+      value: 6
+      socketOnly: 1
+  - notableId: siphoning_touch
+    displayName: Siphoning Touch
+    description: 
+    tags:
+    - mana
+    - leech
+    weight: 70
+    modifiers:
+    - statKey: maxManaIncreased
+      displayName: Hits restore 0.5% Max Mana
+      value: 0.5
+      socketOnly: 1
+    - statKey: manaLeechChance
+      displayName: +10% chance to leech Mana on Hit
+      value: 10
+      socketOnly: 1
+  - notableId: twisting_fate
+    displayName: Twisting Fate
+    description: 
+    tags:
+    - card
+    - discard
+    weight: 60
+    modifiers:
+    - statKey: increasedDamageAfterDiscard
+      displayName: When you Discard a card, gain +3% Damage for 1 turn
+      value: 3
+      socketOnly: 1
+    - statKey: manaRefundChance
+      displayName: +1% Chance to Refund Mana
+      value: 1
+      socketOnly: 1
+  - notableId: precise_timing
+    displayName: Precise Timing
+    description: 
+    tags:
+    - spell
+    - timing
+    weight: 65
+    modifiers:
+    - statKey: unknown_stat
+      displayName: First Spell each combat gains +10% Damage
+      value: 10
+      socketOnly: 1
+    - statKey: ailmentApplicationChanceIncreased
+      displayName: +10% chance to apply Ailments
+      value: 10
+      socketOnly: 1
+  - notableId: echoed_resonance
+    displayName: Echoed Resonance
+    description: 
+    tags:
+    - echo
+    - card
+    weight: 60
+    modifiers:
+    - statKey: unknown_stat
+      displayName: Echoed cards have 25% increased effect
+      value: 25
+      socketOnly: 1
+    - statKey: unknown_stat
+      displayName: Cards that Echo, Echo +1 time with 25% effect
+      value: 25
+      socketOnly: 1
+  - notableId: ashen_strike
+    displayName: Ashen Strike
+    description: 
+    tags:
+    - fire
+    - dot
+    weight: 60
+    modifiers:
+    - statKey: increasedFireDamage
+      displayName: Attacks inflict 2% of target Current Life as Fire Damage over
+        3 turns
+      value: 2
+      socketOnly: 1
+    - statKey: increasedFireDamage
+      displayName: +15% Fire Damage
+      value: 15
+      socketOnly: 1
+  - notableId: stoneform
+    displayName: Stoneform
+    description: 
+    tags:
+    - armor
+    - reduction
+    weight: 80
+    modifiers:
+    - statKey: armourIncreased
+      displayName: +12% Armor
+      value: 12
+      socketOnly: 1
+    - statKey: physicalReductionIncreased
+      displayName: +6% Increased Physical Reduction
+      value: 6
+      socketOnly: 1
+  - notableId: fleeting_thought
+    displayName: Fleeting Thought
+    description: 
+    tags:
+    - delay
+    - mana
+    weight: 55
+    modifiers:
+    - statKey: maxManaIncreased
+      displayName: When you play a Delayed card, gain +10% increased Maximum Mana
+        next turn
+      value: 10
+      socketOnly: 1
+    - statKey: delayedCardEffectivenessIncreased
+      displayName: +8% Delayed card Effectiveness
+      value: 8
+      socketOnly: 1
+  - notableId: razors_edge
+    displayName: Razor's Edge
+    description: 
+    tags:
+    - crit
+    weight: 85
+    modifiers:
+    - statKey: increasedCriticalDamageMultiplier
+      displayName: +18% Damage on Critical Strikes
+      value: 18
+      socketOnly: 1
+    - statKey: increasedCriticalDamageMultiplier
+      displayName: +10% Critical Damage Multiplier
+      value: 10
+      socketOnly: 1
+  - notableId: shatterproof
+    displayName: Shatterproof
+    description: 
+    tags:
+    - avoidance
+    - evasion
+    weight: 40
+    modifiers:
+    - statKey: unknown_stat
+      displayName: 10% chance to immaterialize once per combat (avoid one hit)
+      value: 10
+      socketOnly: 1
+    - statKey: evasionIncreased
+      displayName: +6% Evasion
+      value: 6
+      socketOnly: 1
+  - notableId: sanguine_pact
+    displayName: Sanguine Pact
+    description: 
+    tags:
+    - life_cost
+    - damage
+    weight: 50
+    modifiers:
+    - statKey: unknown_stat
+      displayName: When you spend Life to Cast a card, gain +10% Damage for 1 turn
+      value: 10
+      socketOnly: 1
+    - statKey: lifeCostEfficiencyIncreased
+      displayName: +4% increased Life cost efficiency
+      value: 4
+      socketOnly: 1
+  - notableId: merciless_blows
+    displayName: Merciless Blows
+    description: 
+    tags:
+    - slow
+    - damage
+    weight: 65
+    modifiers:
+    - statKey: increasedDamageVsSlowed
+      displayName: +14% Damage vs Slowed enemies
+      value: 14
+      socketOnly: 1
+    - statKey: slowChance
+      displayName: +10% chance to Slow on hit
+      value: 10
+      socketOnly: 1
+  - notableId: frozen_heart
+    displayName: Frozen Heart
+    description: 
+    tags:
+    - cold
+    - freeze
+    weight: 60
+    modifiers:
+    - statKey: increasedColdDamage
+      displayName: +12% Cold Damage
+      value: 12
+      socketOnly: 1
+    - statKey: increasedChillMagnitude
+      displayName: +6% Chance to Freeze on hit
+      value: 6
+      socketOnly: 1
+  - notableId: thunderclap
+    displayName: Thunderclap
+    description: 
+    tags:
+    - lightning
+    - chance
+    weight: 60
+    modifiers:
+    - statKey: increasedShockMagnitude
+      displayName: Attacks have 6% chance to Shock enemies
+      value: 6
+      socketOnly: 1
+    - statKey: increasedLightningDamage
+      displayName: +10% Lightning Damage
+      value: 10
+      socketOnly: 1
+  - notableId: soul_echo
+    displayName: Soul Echo
+    description: 
+    tags:
+    - kill
+    - card
+    weight: 45
+    modifiers:
+    - statKey: unknown_stat
+      displayName: On Kill, 10% chance to return the card to your hand with 20% effectiveness
+      value: 10
+      socketOnly: 1
+    - statKey: lifeOnKill
+      displayName: +6% Life on Kill
+      value: 6
+      socketOnly: 1
+  - notableId: crippling_shot
+    displayName: Crippling Shot
+    description: 
+    tags:
+    - projectile
+    - debuff
+    weight: 55
+    modifiers:
+    - statKey: unknown_stat
+      displayName: Projectile Attacks reduce Enemy Damage by 6% for 2 turns
+      value: 6
+      socketOnly: 1
+    - statKey: increasedProjectileDamage
+      displayName: +14% Projectile Damage
+      value: 14
+      socketOnly: 1
+  - notableId: ravenous_hunger
+    displayName: Ravenous Hunger
+    description: 
+    tags:
+    - kill
+    - life
+    weight: 65
+    modifiers:
+    - statKey: maxHealthIncreased
+      displayName: On Kill, heal 1.5% Max Life
+      value: 1.5
+      socketOnly: 1
+    - statKey: increasedBleedMagnitude
+      displayName: +8% Damage vs Bleeding enemies
+      value: 8
+      socketOnly: 1
+  - notableId: flensing_ground
+    displayName: Flensing Ground
+    description: 
+    tags:
+    - area
+    - bleed
+    weight: 60
+    modifiers:
+    - statKey: increasedPhysicalDamage
+      displayName: Enemies in area take 8% increased Physical Damage
+      value: 8
+      socketOnly: 1
+    - statKey: increasedBleedMagnitude
+      displayName: +10% chance to apply Bleed
+      value: 10
+      socketOnly: 1
+  - notableId: witchs_grasp
+    displayName: Witch's Grasp
+    description: 
+    tags:
+    - spell
+    - ailment
+    weight: 70
+    modifiers:
+    - statKey: ailmentApplicationChanceIncreased
+      displayName: Spells have 10% chance to apply a random Ailment
+      value: 10
+      socketOnly: 1
+    - statKey: spellEffectVsAilmentIncreased
+      displayName: +8% increased Spell effect vs any Ailment
+      value: 8
+      socketOnly: 1
+  - notableId: dervish_spin
+    displayName: Dervish Spin
+    description: 
+    tags:
+    - attack
+    - movement
+    weight: 50
+    modifiers:
+    - statKey: increasedDamageOnEveryNthAttack
+      displayName: Every 3rd Attack deals 35% increased Damage
+      value: 35
+      socketOnly: 1
+    - statKey: movementSpeedIncreased
+      displayName: +5% Movement Speed
+      value: 5
+      socketOnly: 1
+  - notableId: ironclad
+    displayName: Ironclad
+    description: 
+    tags:
+    - life
+    - guard
+    weight: 80
+    modifiers:
+    - statKey: maxHealthIncreased
+      displayName: +12% Maximum Life
+      value: 12
+      socketOnly: 1
+    - statKey: guardEffectivenessIncreased
+      displayName: +8% Guard effectiveness
+      value: 8
+      socketOnly: 1
+  - notableId: doom_tongue
+    displayName: Doom Tongue
+    description: 
+    tags:
+    - chaos
+    - wither
+    weight: 60
+    modifiers:
+    - statKey: spellPowerIncreased
+      displayName: Chaos cards have +12% increased Effectiveness
+      value: 12
+      socketOnly: 1
+    - statKey: curseApplicationChance
+      displayName: +6% chance to apply random curse on hit
+      value: 6
+      socketOnly: 1
+  - notableId: sparked_mind
+    displayName: Sparked Mind
+    description: 
+    tags:
+    - spell
+    - crit
+    weight: 55
+    modifiers:
+    - statKey: increasedSpellCriticalChance
+      displayName: Spells that Crit have +20% Mana Refund chance
+      value: 20
+      socketOnly: 1
+    - statKey: increasedSpellCriticalMultiplier
+      displayName: +10% Spell Crit Multiplier
+      value: 10
+      socketOnly: 1
+  - notableId: serrated_edge
+    displayName: Serrated Edge
+    description: 
+    tags:
+    - bleed
+    - melee
+    weight: 60
+    modifiers:
+    - statKey: increasedBleedMagnitude
+      displayName: Attacks add an extra 2% Bleed per hit (stacking)
+      value: 2
+      socketOnly: 1
+    - statKey: increasedMeleeDamage
+      displayName: +6% Melee Damage
+      value: 6
+      socketOnly: 1
+  - notableId: night_stalker
+    displayName: Night Stalker
+    description: 
+    tags:
+    - shadow
+    - evasion
+    weight: 55
+    modifiers:
+    - statKey: increasedDamageWhileInShadow
+      displayName: +15% Damage while in Shadow
+      value: 15
+      socketOnly: 1
+    - statKey: evasionIncreased
+      displayName: +12% Evasion while in Shadow
+      value: 12
+      socketOnly: 1
+  - notableId: aegis_of_dawn
+    displayName: Aegis of Dawn
+    description: 
+    tags:
+    - guard
+    - spell
+    weight: 50
+    modifiers:
+    - statKey: unknown_stat
+      displayName: First Spell each combat grants 5% of damage done as Guard
+      value: 5
+      socketOnly: 1
+    - statKey: increasedSpellDamage
+      displayName: +8% Spell Damage
+      value: 8
+      socketOnly: 1
+  - notableId: survivals_edge
+    displayName: Survival's Edge
+    description: 
+    tags:
+    - life
+    - damage
+    weight: 45
+    modifiers:
+    - statKey: unknown_stat
+      displayName: When below 40% Life, +25% Damage
+      value: 40
+      socketOnly: 1
+    - statKey: damageReductionIncreased
+      displayName: +10% Damage Reduction
+      value: 10
+      socketOnly: 1
+  - notableId: battered_but_unbroken
+    displayName: Battered But Unbroken
+    description: 
+    tags:
+    - life
+    - recovery
+    weight: 40
+    modifiers:
+    - statKey: maxHealthIncreased
+      displayName: Recover +15% maximum Life when at half or lower health, once per
+        combat
+      value: 15
+      socketOnly: 1
+    - statKey: lifeRecoveryRateIncreased
+      displayName: +6% Recovery
+      value: 6
+      socketOnly: 1
+  - notableId: lingering_suffering
+    displayName: Lingering Suffering
+    description: 
+    tags:
+    - dot
+    weight: 55
+    modifiers:
+    - statKey: increasedDamageOverTime
+      displayName: Damage over Time effects deal 10% more Damage
+      value: 10
+      socketOnly: 1
+    - statKey: increasedDamageOverTime
+      displayName: +6% increased DoT duration
+      value: 6
+      socketOnly: 1
+  - notableId: echo_of_the_ancients
+    displayName: Echo of the Ancients
+    description: 
+    tags:
+    - card
+    - echo
+    weight: 40
+    modifiers:
+    - statKey: unknown_stat
+      displayName: Every 5th card played this combat gains +10% effect
+      value: 10
+      socketOnly: 1
+    - statKey: unknown_stat
+      displayName: +1 Draw when this triggers
+      value: 1
+      socketOnly: 1
+  - notableId: bloodied_advance
+    displayName: Bloodied Advance
+    description: 
+    tags:
+    - bleed
+    - leech
+    weight: 50
+    modifiers:
+    - statKey: increasedMeleeDamage
+      displayName: When you Bleed, gain +12% Melee Damage
+      value: 12
+      socketOnly: 1
+    - statKey: lifeSteal
+      displayName: +6% Life Leech on Hit
+      value: 6
+      socketOnly: 1
+  - notableId: hollowed_grace
+    displayName: Hollowed Grace
+    description: 
+    tags:
+    - evasion
+    - spell
+    weight: 45
+    modifiers:
+    - statKey: evasionIncreased
+      displayName: +8% increased Evasion
+      value: 8
+      socketOnly: 1
+    - statKey: increasedSpellDamage
+      displayName: +15% increased Spell Damage after evading an attack
+      value: 15
+      socketOnly: 1
+  - notableId: null_field
+    displayName: Null Field
+    description: 
+    tags:
+    - resist
+    - spell
+    weight: 55
+    modifiers:
+    - statKey: unknown_stat
+      displayName: 5% reduced Damage taken from Spells
+      value: 5
+      socketOnly: 1
+    - statKey: allElementalResistancesIncreased
+      displayName: +6% to all elemental resistances
+      value: 6
+      socketOnly: 1
+  - notableId: vorpal_strike
+    displayName: Vorpal Strike
+    description: 
+    tags:
+    - crit
+    - bonus
+    weight: 30
+    modifiers:
+    - statKey: increasedCriticalDamageMultiplier
+      displayName: Critical Strikes deal +5% of target current Life as Bonus Damage
+      value: 5
+      socketOnly: 1
+    - statKey: increasedCriticalStrikeChance
+      displayName: +12% Crit Chance
+      value: 12
+      socketOnly: 1
+  - notableId: torrential_flow
+    displayName: Torrential Flow
+    description: 
+    tags:
+    - skill
+    - cost
+    weight: 60
+    modifiers:
+    - statKey: unknown_stat
+      displayName: When you use a Skill card, reduce next card cost by 50% (once)
+      value: 50
+      socketOnly: 1
+    - statKey: skillCardEffectivenessIncreased
+      displayName: +6% Skill effect
+      value: 6
+      socketOnly: 1
+  - notableId: galeheart
+    displayName: Galeheart
+    description: 
+    tags:
+    - attack_speed
+    - projectile
+    weight: 70
+    modifiers:
+    - statKey: attackSpeed
+      displayName: +10% Attack Speed
+      value: 10
+      socketOnly: 1
+    - statKey: increasedProjectileDamage
+      displayName: +8% Projectile Damage
+      value: 8
+      socketOnly: 1
+  - notableId: maelstrom
+    displayName: Maelstrom
+    description: 
+    tags:
+    - spell
+    - area
+    weight: 60
+    modifiers:
+    - statKey: unknown_stat
+      displayName: Spells that hit multiple targets gain +12% Damage
+      value: 12
+      socketOnly: 1
+    - statKey: increasedAreaDamage
+      displayName: +8% Area Damage
+      value: 8
+      socketOnly: 1
+  - notableId: stonewall
+    displayName: Stonewall
+    description: 
+    tags:
+    - guard
+    - reduction
+    weight: 65
+    modifiers:
+    - statKey: damageReductionWhileGuarding
+      displayName: +10% Damage Reduction while Guarding
+      value: 10
+      socketOnly: 1
+    - statKey: guardRetentionIncreased
+      displayName: +4% increased Guard Recovery
+      value: 4
+      socketOnly: 1
+  - notableId: iron_boot
+    displayName: Iron Boot
+    description: 
+    tags:
+    - melee
+    - range
+    weight: 40
+    modifiers:
+    - statKey: increasedAreaDamage
+      displayName: +12% increased Area damage
+      value: 12
+      socketOnly: 1
+    - statKey: increasedMeleeDamage
+      displayName: +8% Melee Damage
+      value: 8
+      socketOnly: 1
+  - notableId: distant_thunder
+    displayName: Distant Thunder
+    description: 
+    tags:
+    - chain
+    - lightning
+    weight: 35
+    modifiers:
+    - statKey: increasedLightningDamage
+      displayName: When you Chain a spell, gain +6% Lightning Damage for 1 turn
+      value: 6
+      socketOnly: 1
+    - statKey: chainChance
+      displayName: +8% Chain chance
+      value: 8
+      socketOnly: 1
+  - notableId: grit
+    displayName: Grit
+    description: 
+    tags:
+    - cc_resist
+    - life
+    weight: 55
+    modifiers:
+    - statKey: statusAvoidance
+      displayName: +6% chance to resist being debuffed
+      value: 6
+      socketOnly: 1
+    - statKey: lifeRecoveryRateIncreased
+      displayName: +4% Life Recovery
+      value: 4
+      socketOnly: 1
+  - notableId: cauterize
+    displayName: Cauterize
+    description: 
+    tags:
+    - ignite
+    - life
+    weight: 50
+    modifiers:
+    - statKey: maxHealthIncreased
+      displayName: When you Ignite, heal 1% Max Life per Ignite stack
+      value: 1
+      socketOnly: 1
+    - statKey: increasedFireDamage
+      displayName: +8% Fire Damage
+      value: 8
+      socketOnly: 1
+  - notableId: razorwall
+    displayName: Razorwall
+    description: 
+    tags:
+    - guard_break
+    - damage
+    weight: 40
+    modifiers:
+    - statKey: increasedDamageVsBlocked
+      displayName: +12% Damage vs Blocked enemies
+      value: 12
+      socketOnly: 1
+    - statKey: guardBreakChance
+      displayName: +8% chance to break Guard
+      value: 8
+      socketOnly: 1
+  - notableId: veil_of_mist
+    displayName: Veil of Mist
+    description: 
+    tags:
+    - evasion
+    - dot
+    weight: 45
+    modifiers:
+    - statKey: evasionIncreased
+      displayName: Gain 25% Evasion if you have not attacked this turn
+      value: 25
+      socketOnly: 1
+    - statKey: lifeRecoveryRateIncreased
+      displayName: +8% increased DoT recovery
+      value: 8
+      socketOnly: 1
+  - notableId: meticulous_aim
+    displayName: Meticulous Aim
+    description: 
+    tags:
+    - prepare
+    - crit
+    weight: 40
+    modifiers:
+    - statKey: increasedProjectileDamage
+      displayName: +10% Damage with prepared Projectile cards
+      value: 10
+      socketOnly: 1
+    - statKey: increasedCriticalChanceWithPreparedCards
+      displayName: +8% Crit on prepared cards
+      value: 8
+      socketOnly: 1
+  - notableId: quick_hands
+    displayName: Quick Hands
+    description: 
+    tags:
+    - discard
+    - utility
+    weight: 45
+    modifiers:
+    - statKey: discardCostReduction
+      displayName: Reduce discard cost by 1 for one card per turn
+      value: 0
+      socketOnly: 1
+    - statKey: discardPowerIncreased
+      displayName: +6% Discard Power
+      value: 6
+      socketOnly: 1
+  - notableId: stoic
+    displayName: Stoic
+    description: 
+    tags:
+    - stun
+    - reduction
+    weight: 30
+    modifiers:
+    - statKey: damageReductionWhenStunned
+      displayName: When stunned, gain +15% Damage Reduction for 1 turn
+      value: 15
+      socketOnly: 1
+    - statKey: lifeRecoveryRateIncreased
+      displayName: +5% Life Recovery
+      value: 5
+      socketOnly: 1
+  - notableId: hungry_blade
+    displayName: Hungry Blade
+    description: 
+    tags:
+    - stack
+    - leech
+    weight: 40
+    modifiers:
+    - statKey: increasedAttackDamage
+      displayName: Every 5 hits grant +3% Attack Damage for 2 turns
+      value: 3
+      socketOnly: 1
+    - statKey: lifeSteal
+      displayName: +4% Life Leech
+      value: 4
+      socketOnly: 1
+  - notableId: soulfire
+    displayName: Soulfire
+    description: 
+    tags:
+    - chaos
+    - dot
+    weight: 30
+    modifiers:
+    - statKey: unknown_stat
+      displayName: When you cast a Chaos card, deal 4% of target current Life as
+        damage over 3 turns
+      value: 4
+      socketOnly: 1
+    - statKey: increasedChaosDamage
+      displayName: +8% Chaos Damage
+      value: 8
+      socketOnly: 1
+  - notableId: ritual_flame
+    displayName: Ritual Flame
+    description: 
+    tags:
+    - ignite
+    - fire
+    weight: 25
+    modifiers:
+    - statKey: increasedFireDamage
+      displayName: When you ignite an enemy, gain +25% Fire Damage for 1 turns
+      value: 25
+      socketOnly: 1
+    - statKey: increasedIgniteDuration
+      displayName: +10% Ignite Duration
+      value: 10
+      socketOnly: 1
+  - notableId: thorned_bark
+    displayName: Thorned Bark
+    description: 
+    tags:
+    - reflect
+    - armor
+    weight: 30
+    modifiers:
+    - statKey: increasedPhysicalDamage
+      displayName: Deal 6% of Physical Damage back to attackers
+      value: 6
+      socketOnly: 1
+    - statKey: armourIncreased
+      displayName: +8% Armor
+      value: 8
+      socketOnly: 1
+  - notableId: eye_of_the_storm
+    displayName: Eye of the Storm
+    description: 
+    tags:
+    - shock
+    - spell
+    weight: 25
+    modifiers:
+    - statKey: increasedSpellDamage
+      displayName: When you are Shocked, gain +20% Spell Damage for 1 turn
+      value: 20
+      socketOnly: 1
+    - statKey: increasedLightningDamage
+      displayName: +8% Lightning Damage
+      value: 8
+      socketOnly: 1
+  - notableId: deaths_whisper
+    displayName: Death's Whisper
+    description: 
+    tags:
+    - discard
+    - damage
+    weight: 35
+    modifiers:
+    - statKey: increasedDamageAfterDiscard
+      displayName: Gain +12% Damage for 1 turn after you discard a card
+      value: 12
+      socketOnly: 1
+    - statKey: discardPowerIncreased
+      displayName: +6% Discard Power
+      value: 6
+      socketOnly: 1
+  - notableId: screaming_echo
+    displayName: Screaming Echo
+    description: 
+    tags:
+    - echo
+    - card
+    weight: 20
+    modifiers:
+    - statKey: echoCardEffectivenessIncreased
+      displayName: Echoed card effectiveness increased by 10%
+      value: 10
+      socketOnly: 1
+  - notableId: rubble_breaker
+    displayName: Rubble Breaker
+    description: 
+    tags:
+    - area
+    - stun
+    weight: 30
+    modifiers:
+    - statKey: unknown_stat
+      displayName: Area Attacks deal +12% increased Damage
+      value: 12
+      socketOnly: 1
+    - statKey: staggerEffectivenessIncreased
+      displayName: +12% increased Stagger effectiveness
+      value: 12
+      socketOnly: 1
+  - notableId: sleight_of_hand
+    displayName: Sleight of Hand
+    description: 
+    tags:
+    - card
+    - random
+    weight: 20
+    modifiers:
+    - statKey: unknown_stat
+      displayName: 2% Chance to play an extra random card
+      value: 2
+      socketOnly: 1
+  - notableId: fatal_flurry
+    displayName: Fatal Flurry
+    description: 
+    tags:
+    - combo
+    - attack
+    weight: 20
+    modifiers:
+    - statKey: unknown_stat
+      displayName: After 4 consecutive Attacks, next Attack deals +60% increased
+        Damage
+      value: 60
+      socketOnly: 1
+    - statKey: attackSpeed
+      displayName: +5% Attack Speed
+      value: 5
+      socketOnly: 1
+  - notableId: septic_wounds
+    displayName: Septic Wounds
+    description: 
+    tags:
+    - poison
+    - bleed
+    weight: 22
+    modifiers:
+    - statKey: increasedBleedMagnitude
+      displayName: Poison deals +20% damage against Bleeding targets
+      value: 20
+      socketOnly: 1
+    - statKey: increasedPoisonDuration
+      displayName: +8% Poison Duration
+      value: 8
+      socketOnly: 1
+  - notableId: prismatic_edge
+    displayName: Prismatic Edge
+    description: 
+    tags:
+    - conversion
+    - elemental
+    weight: 18
+    modifiers:
+    - statKey: unknown_stat
+      displayName: Your Damage randomly converts to another element for +10% extra
+        damage
+      value: 10
+      socketOnly: 1
+    - statKey: increasedIgniteMagnitude
+      displayName: +12% increased chance to Ignite/Freeze/Shock
+      value: 12
+      socketOnly: 1
+  - notableId: quickening
+    displayName: Quickening
+    description: 
+    tags:
+    - attack_speed
+    - attack
+    weight: 15
+    modifiers:
+    - statKey: attackSpeed
+      displayName: Your first Attack each turn has +20% Attack Speed
+      value: 20
+      socketOnly: 1
+    - statKey: unknown_stat
+      displayName: +8% Damage
+      value: 8
+      socketOnly: 1
+  - notableId: feral_instinct
+    displayName: Feral Instinct
+    description: 
+    tags:
+    - life
+    - lifesteal
+    weight: 18
+    modifiers:
+    - statKey: increasedAttackDamage
+      displayName: While under 50% Life, gain +20% increased Attack Damage
+      value: 50
+      socketOnly: 1
+    - statKey: lifeSteal
+      displayName: +6% Lifesteal
+      value: 6
+      socketOnly: 1
+  - notableId: hags_curse
+    displayName: Hag's Curse
+    description: 
+    tags:
+    - curse
+    - duration
+    weight: 16
+    modifiers:
+    - statKey: curseApplicationChance
+      displayName: Curses you apply last 25% longer
+      value: 25
+      socketOnly: 1
+    - statKey: curseEffectivenessIncreased
+      displayName: +6% Curse effectiveness
+      value: 6
+      socketOnly: 1
+  - notableId: ironlaw
+    displayName: Ironlaw
+    description: 
+    tags:
+    - relative_damage
+    - guard
+    weight: 14
+    modifiers:
+    - statKey: increasedDamageVsRareAndUnique
+      displayName: You deal 15% more Damage to rare
+      value: 15
+      socketOnly: 1
+    - statKey: unknown_stat
+      displayName: Unique enemies
+      value: 0
+      socketOnly: 1
+    - statKey: strength
+      displayName: +5% Guard Strength
+      value: 5
+      socketOnly: 1
+  - notableId: mercyless
+    displayName: Mercyless
+    description: 
+    tags:
+    - crit
+    - curse
+    weight: 16
+    modifiers:
+    - statKey: increasedCriticalDamageMultiplier
+      displayName: When you Crit, enemies take +6% more damage for 1 turn
+      value: 6
+      socketOnly: 1
+    - statKey: increasedCriticalChanceVsCursed
+      displayName: +12% Crit chance vs Cursed enemies
+      value: 12
+      socketOnly: 1
+  - notableId: occult_echo
+    displayName: Occult Echo
+    description: 
+    tags:
+    - spell
+    - delay
+    weight: 12
+    modifiers:
+    - statKey: unknown_stat
+      displayName: When you cast a Spell, 6% chance to store a free delayed cast
+      value: 6
+      socketOnly: 1
+    - statKey: spellPowerIncreased
+      displayName: +18% Spell power
+      value: 18
+      socketOnly: 1
+  - notableId: bonds_of_stone
+    displayName: Bonds of Stone
+    description: 
+    tags:
+    - resist
+    - life
+    weight: 22
+    modifiers:
+    - statKey: allElementalResistancesIncreased
+      displayName: +10% to all Elemental resistances
+      value: 10
+      socketOnly: 1
+    - statKey: maxHealthIncreased
+      displayName: +5% maximum Life
+      value: 5
+      socketOnly: 1

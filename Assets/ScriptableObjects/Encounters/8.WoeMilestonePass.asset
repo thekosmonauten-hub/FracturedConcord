@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9be3bb50a3980b47ab1e7fc8419be94, type: 3}
+  m_Name: 8.WoeMilestonePass
+  m_EditorClassIdentifier: Assembly-CSharp::EncounterDataAsset
+  encounterID: 8
+  encounterName: Woe-Milestone Pass
+  sceneName: CombatScene
+  actNumber: 1
+  encounterSprite: {fileID: 8288426215254106694, guid: bfc2f1b76a14e43419ebfbbf874ddb49, type: 3}
+  prerequisiteEncounters:
+  - {fileID: 11400000, guid: b222630a16c59af49bacc4a08bbcb988, type: 2}
+  areaLevel: 11
+  totalWaves: 5
+  maxEnemiesPerWave: 3
+  randomizeEnemyCount: 1
+  uniqueEnemy: {fileID: 0}
+  lootTable: {fileID: 0}
+  areaLootTable: {fileID: 11400000, guid: 71fa0aa49a604424d80f723da5fd4de3, type: 2}

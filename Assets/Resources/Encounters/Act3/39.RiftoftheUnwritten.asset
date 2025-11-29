@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9be3bb50a3980b47ab1e7fc8419be94, type: 3}
+  m_Name: 39.RiftoftheUnwritten
+  m_EditorClassIdentifier: Assembly-CSharp::EncounterDataAsset
+  encounterID: 39
+  encounterName: Rift of the Unwritten
+  sceneName: CombatScene
+  actNumber: 3
+  encounterSprite: {fileID: 0}
+  prerequisiteEncounters:
+  - {fileID: 11400000, guid: 82a3e78fae8ab1e47ae8fdef4261ae42, type: 2}
+  areaLevel: 56
+  totalWaves: 10
+  maxEnemiesPerWave: 5
+  randomizeEnemyCount: 1
+  uniqueEnemy: {fileID: 0}
+  lootTable: {fileID: 0}
+  areaLootTable: {fileID: 11400000, guid: 316c9efda77c8e84aa415f49f1026b73, type: 2}

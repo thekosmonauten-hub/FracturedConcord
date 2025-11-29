@@ -51,6 +51,26 @@ public class EnemyData : ScriptableObject
     [Range(0.25f, 3f)] public float displayScale = 1f;
     [Tooltip("Base panel height before scaling; used with LayoutElement.preferredHeight")] public float basePanelHeight = 280f;
     
+    [Header("Energy System")]
+    [Tooltip("If true, enemy uses energy for actions (Attack: 5 energy, Defend: 15 energy)")]
+    public bool enableEnergy = true; // Default to true so enemies use energy
+    [Min(0f)] public float baseMaxEnergy = 100f;
+    [Min(0f)] public float energyRegenPerTurn = 10f;
+    [Tooltip("Energy drained per point of Chill magnitude")]
+    [Min(0f)] public float chillDrainPerMagnitude = 2f;
+    [Tooltip("Energy drained per point of Slow magnitude")]
+    [Min(0f)] public float slowDrainPerMagnitude = 3f;
+    
+    [Header("Stagger System")]
+    [Tooltip("Amount of stagger needed to trigger stun (0 = cannot be staggered)")]
+    [Min(0f)] public float staggerThreshold = 100f;
+    [Tooltip("How much stagger decays per turn (0 = no decay)")]
+    [Min(0f)] public float staggerDecayPerTurn = 0f;
+    
+    [Header("Guard System")]
+    [Tooltip("Percentage of max health gained as guard when defending (0.1 = 10%, 0.2 = 20%, etc.)")]
+    [Range(0f, 1f)] public float defendGuardPercent = 0.1f; // Default 10% of max health
+    
     [Header("AI Behavior")]
     public EnemyAIPattern aiPattern = EnemyAIPattern.Aggressive;
     [Range(0f, 1f)]
@@ -77,6 +97,11 @@ public class EnemyData : ScriptableObject
     public int experienceReward = 10; // legacy, superseded by XP formula
     [Range(0f, 1f)]
     public float cardDropChance = 0.1f; // 10% chance to drop a card
+
+    [Header("Initial Stacks")]
+    [Min(0)] public int initialAgitateStacks;
+    [Min(0)] public int initialToleranceStacks;
+    [Min(0)] public int initialPotentialStacks;
     
     [Header("Database Flags")]
     [Tooltip("If true, this enemy will not appear in random encounters. Useful for summon-only or scripted enemies.")]
@@ -89,17 +114,51 @@ public class EnemyData : ScriptableObject
     /// <summary>
     /// Create an Enemy instance from this data.
     /// </summary>
-    public Enemy CreateEnemy()
+    /// <param name="areaLevel">Area level for scaling (1 = no scaling, higher = stronger enemies)</param>
+    public Enemy CreateEnemy(int areaLevel = 1)
     {
         int health = Random.Range(minHealth, maxHealth + 1);
         Enemy enemy = new Enemy(enemyName, health, baseDamage);
+        enemy.ResetStacks();
+        enemy.ConfigureEnergy(enableEnergy ? baseMaxEnergy : 0f,
+                              enableEnergy ? energyRegenPerTurn : 0f,
+                              chillDrainPerMagnitude,
+                              slowDrainPerMagnitude);
+        
+        // Apply stagger system
+        enemy.staggerThreshold = staggerThreshold;
+        enemy.currentStagger = 0f;
+        enemy.staggerDecayPerTurn = staggerDecayPerTurn;
+        
+        // Initialize guard system
+        enemy.maxGuard = enemy.maxHealth;
+        enemy.currentGuard = 0f;
+        enemy.guardPersistenceFraction = 0.25f; // Same as player default
+        enemy.defendGuardPercent = defendGuardPercent; // Configurable guard amount per enemy
         
         // Apply additional stats
         enemy.criticalChance = criticalChance;
         enemy.criticalMultiplier = criticalMultiplier;
         enemy.accuracyRating = accuracyRating;
         enemy.evasionRating = evasionRating;
+        
+        // Apply area level scaling (similar to rarity scaling)
+        // Area level 1 = base stats, each level adds ~15% more health and ~10% more damage
+        if (areaLevel > 1)
+        {
+            float healthMultiplier = 1f + 0.15f * (areaLevel - 1);
+            float damageMultiplier = 1f + 0.10f * (areaLevel - 1);
+            
+            enemy.maxHealth = Mathf.CeilToInt(enemy.maxHealth * healthMultiplier);
+            enemy.currentHealth = enemy.maxHealth;
+            enemy.baseDamage = Mathf.CeilToInt(enemy.baseDamage * damageMultiplier);
+        }
+        
         // Store tier/rarity on name for UI if needed
+        
+        if (initialAgitateStacks > 0) enemy.AddStacks(StackType.Agitate, initialAgitateStacks);
+        if (initialToleranceStacks > 0) enemy.AddStacks(StackType.Tolerance, initialToleranceStacks);
+        if (initialPotentialStacks > 0) enemy.AddStacks(StackType.Potential, initialPotentialStacks);
         
         // TODO: Apply resistances, abilities, etc.
         
@@ -109,9 +168,11 @@ public class EnemyData : ScriptableObject
     /// <summary>
     /// Create an Enemy instance and apply a rarity scaling (PoE-like).
     /// </summary>
-    public Enemy CreateEnemyWithRarity(EnemyRarity rolledRarity)
+    /// <param name="rolledRarity">Enemy rarity for scaling</param>
+    /// <param name="areaLevel">Area level for additional scaling (1 = no scaling)</param>
+    public Enemy CreateEnemyWithRarity(EnemyRarity rolledRarity, int areaLevel = 1)
     {
-        Enemy e = CreateEnemy();
+        Enemy e = CreateEnemy(areaLevel);
         e.ApplyRarityScaling(rolledRarity);
         return e;
     }

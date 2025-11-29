@@ -13,15 +13,16 @@ MonoBehaviour:
   m_Name: AdrenalineRush_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Adrenaline Rush
+  groupKey: Adrenaline_Rush
   cardType: Skill
   playCost: 0
-  description: 'Gain 2 Momentum. If you have 8+ Momentum: Draw 2 cards and gain 1
-    temporary Strength. If you have 10 Momentum: Trigger Adrenaline Burst (deal 3
-    damage to all enemies).'
+  description: Gain 2 Momentum.
   rarity: 0
   element: 0
   category: 1
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: 0012ecda434c8494daf3729f80d6587d, type: 3}
+  cardThumbnail: {fileID: 2613870922294478888, guid: 498c170ededcbca479141ae3dc2190ab, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -31,6 +32,9 @@ MonoBehaviour:
   isDualWield: 0
   ifDiscardedEffect: 
   dualWieldEffect: 
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 0
@@ -38,25 +42,90 @@ MonoBehaviour:
   scalesWithSpellWeapon: 0
   isAoE: 0
   aoeTargets: 1
+  aoeRowScope: 0
+  isMultiHit: 0
+  hitCount: 2
   damageScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
     requiredIntelligence: 0
     requiredWeaponTypes: 
     requiredLevel: 1
-  effects: []
+  effects:
+  - effectType: 9
+    effectName: Gain Momentum
+    description: Gain 2 Momentum
+    value: 2
+    duration: 0
+    damageType: 0
+    targetsSelf: 0
+    targetsEnemy: 0
+    targetsAllEnemies: 0
+    targetsAll: 0
+    condition: 
+  enableCombo: 0
   comboWith: 
-  comboDescription: 
+  comboDescription: Momentum Effects
+  momentumEffectDescription: '\n8+ Momentum: Draw 2 cards and gain 1 temporary Strength.\n10
+    Momentum: Trigger Adrenaline Burst (deal 3 (+dex/6) damage to all enemies).'
+  comboWithCardType: 0
+  comboAttackIncrease: 0
+  comboGuardIncrease: 0
+  comboIsAoE: 0
+  comboManaRefund: 0
+  comboApplyAilment: 
+  comboBuffs: []
+  comboConsumeAilment: 0
+  comboConsumeAilmentId: 0
+  comboDrawCards: 0
+  comboAilment: 0
+  comboAilmentPortion: 0
+  comboAilmentDuration: 0
+  consumeAilment: 0
+  consumeAilmentId: 0
+  comboScaling: 0
+  comboScalingDivisor: 1
+  comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Skill
   - Basic
+  delayTurns: 0
+  isDelayed: 0
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

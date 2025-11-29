@@ -231,29 +231,47 @@ public class EnemyTargetingManager : MonoBehaviour
     public void SelectNextAvailableEnemy()
     {
         if (combatManager == null) return;
-        
-        int startIndex = selectedEnemyIndex;
-        int checkIndex = (startIndex + 1) % combatManager.GetActiveEnemyDisplays().Count;
-        
-        // Search for next alive enemy
-        while (checkIndex != startIndex)
+
+        var displays = combatManager.GetActiveEnemyDisplays();
+        int displayCount = displays != null ? displays.Count : 0;
+
+        if (displayCount == 0)
         {
-            Enemy enemy = combatManager.GetActiveEnemyDisplays()[checkIndex].GetCurrentEnemy();
+            // No enemies remain – clear selection safely
+            Debug.Log("No enemy displays available to target. Clearing selection.");
+            ClearTargetHighlight();
+            selectedEnemyIndex = -1;
+            selectedEnemy = null;
+            selectedDisplay = null;
+            OnTargetChanged?.Invoke(null);
+            return;
+        }
+
+        // Ensure starting index is within range
+        int startIndex = Mathf.Clamp(selectedEnemyIndex, 0, displayCount - 1);
+        int checkIndex = (startIndex + 1) % displayCount;
+
+        // Scan through all displays once to find a living enemy
+        for (int i = 0; i < displayCount; i++)
+        {
+            int currentIndex = (checkIndex + i) % displayCount;
+            var display = displays[currentIndex];
+            Enemy enemy = display != null ? display.GetCurrentEnemy() : null;
+
             if (enemy != null && enemy.currentHealth > 0)
             {
-                SelectEnemy(checkIndex);
+                SelectEnemy(currentIndex);
                 return;
             }
-            
-            checkIndex = (checkIndex + 1) % combatManager.GetActiveEnemyDisplays().Count;
         }
-        
-        // Check starting index as last resort
-        Enemy startEnemy = combatManager.GetActiveEnemyDisplays()[startIndex].GetCurrentEnemy();
-        if (startEnemy != null && startEnemy.currentHealth > 0)
-        {
-            SelectEnemy(startIndex);
-        }
+
+        // No living enemies were found; clear current selection
+        Debug.Log("EnemyTargetingManager: No alive enemies found when cycling targets. Clearing selection.");
+        ClearTargetHighlight();
+        selectedEnemyIndex = -1;
+        selectedEnemy = null;
+        selectedDisplay = null;
+        OnTargetChanged?.Invoke(null);
     }
     
     /// <summary>
@@ -303,13 +321,51 @@ public class EnemyTargetingManager : MonoBehaviour
     {
         if (selectedDisplay == null) return;
 
-        // Reset only the enemy NAME text color
+        // Get the enemy to restore its rarity color
+        Enemy enemy = selectedDisplay.GetCurrentEnemy();
+        EnemyData enemyData = selectedDisplay.GetEnemyData();
+        Color rarityColor = normalColor; // Default fallback
+        
+        if (enemy != null && enemyData != null)
+        {
+            // Get the proper rarity color from EnemyCombatDisplay
+            rarityColor = selectedDisplay.GetEnemyNameColor(enemy.rarity, enemyData.tier);
+        }
+        else if (enemy != null)
+        {
+            // Fallback: calculate rarity color manually
+            EnemyTier tier = enemyData != null ? enemyData.tier : EnemyTier.Normal;
+            if (tier == EnemyTier.Boss || tier == EnemyTier.Miniboss)
+            {
+                rarityColor = new Color(1f, 0.65f, 0f); // Orange
+            }
+            else
+            {
+                switch (enemy.rarity)
+                {
+                    case EnemyRarity.Normal:
+                        rarityColor = Color.white;
+                        break;
+                    case EnemyRarity.Magic:
+                        rarityColor = new Color(0.3f, 0.6f, 1f); // Blue
+                        break;
+                    case EnemyRarity.Rare:
+                        rarityColor = new Color(1f, 0.9f, 0.2f); // Yellow
+                        break;
+                    case EnemyRarity.Unique:
+                        rarityColor = new Color(1f, 0.65f, 0f); // Orange
+                        break;
+                }
+            }
+        }
+
+        // Reset only the enemy NAME text color to rarity color
         Text[] uiTexts = selectedDisplay.GetComponentsInChildren<Text>(true);
         foreach (var t in uiTexts)
         {
             if (t != null && t.name.IndexOf("Name", System.StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                t.color = normalColor;
+                t.color = rarityColor;
             }
         }
 
@@ -318,7 +374,7 @@ public class EnemyTargetingManager : MonoBehaviour
         {
             if (tt != null && tt.name.IndexOf("Name", System.StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                tt.color = normalColor;
+                tt.color = rarityColor;
             }
         }
     }

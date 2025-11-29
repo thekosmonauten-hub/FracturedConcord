@@ -87,7 +87,13 @@ public class PlayerSpriteAnimator : MonoBehaviour
     /// </summary>
     public void PlayAttackNudge()
     {
-        if (isAnimating || playerSpriteTransform == null) return;
+        if (playerSpriteTransform == null) return;
+        
+        // Cancel any existing nudge animation to allow multiple hits
+        LeanTween.cancel(playerSpriteTransform);
+        
+        // Reset position to original in case previous animation was interrupted
+        playerSpriteTransform.anchoredPosition = originalPosition;
         
         isAnimating = true;
         

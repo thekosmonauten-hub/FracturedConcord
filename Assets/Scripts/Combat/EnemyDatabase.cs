@@ -168,6 +168,26 @@ public class EnemyDatabase : MonoBehaviour
         return allEnemies.FirstOrDefault(e => e.enemyName == name);
     }
     
+    /// <summary>
+    /// Get all enemies filtered by excludeFromRandom flag (for combining with encounter-specific pools)
+    /// </summary>
+    public List<EnemyData> GetFilteredEnemies(EnemyTier maxTier = EnemyTier.Normal)
+    {
+        List<EnemyData> filtered = new List<EnemyData>();
+        
+        foreach (EnemyData enemy in allEnemies)
+        {
+            if (enemy == null) continue;
+            if (enemy.excludeFromRandom) continue; // Exclude summon-only or special enemies
+            if ((int)enemy.tier <= (int)maxTier)
+            {
+                filtered.Add(enemy);
+            }
+        }
+        
+        return filtered;
+    }
+
     #endregion
     
     #region Encounter Generation
@@ -180,9 +200,11 @@ public class EnemyDatabase : MonoBehaviour
         List<EnemyData> encounter = new List<EnemyData>();
         List<EnemyData> availableEnemies = new List<EnemyData>();
         
-        // Filter by max tier
+        // Filter by max tier and exclude enemies marked as excludeFromRandom
         foreach (EnemyData enemy in allEnemies)
         {
+            if (enemy == null) continue;
+            if (enemy.excludeFromRandom) continue; // Exclude summon-only or special enemies
             if ((int)enemy.tier <= (int)maxTier)
             {
                 availableEnemies.Add(enemy);

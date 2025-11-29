@@ -124,7 +124,7 @@ public class LootTable : ScriptableObject
         {
             if (entry.RollDrop() && entry.rewardType == RewardType.Item && entry.itemData != null)
             {
-                result.AddItem(entry.itemData);
+                result.AddItem(entry.itemData, entry.itemData != null ? entry.itemData.sourceItem : null);
             }
         }
         

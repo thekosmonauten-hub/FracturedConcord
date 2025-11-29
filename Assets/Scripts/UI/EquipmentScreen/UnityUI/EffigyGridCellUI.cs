@@ -8,7 +8,7 @@ using System;
 /// Handles individual cell interactions for drag & drop
 /// </summary>
 public class EffigyGridCellUI : MonoBehaviour, 
-    IPointerDownHandler, IPointerEnterHandler, IPointerUpHandler,
+    IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler, IPointerUpHandler,
     IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [Header("References")]
@@ -24,6 +24,7 @@ public class EffigyGridCellUI : MonoBehaviour,
     
     public event Action<int, int, PointerEventData> OnCellMouseDown;
     public event Action<int, int> OnCellMouseEnter;
+    public event Action<int, int> OnCellMouseExit;
     public event Action<int, int, PointerEventData> OnCellMouseUp;
     
     private Outline outline;
@@ -54,6 +55,11 @@ public class EffigyGridCellUI : MonoBehaviour,
     public void OnPointerEnter(PointerEventData eventData)
     {
         OnCellMouseEnter?.Invoke(cellX, cellY);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        OnCellMouseExit?.Invoke(cellX, cellY);
     }
     
     public void OnPointerUp(PointerEventData eventData)

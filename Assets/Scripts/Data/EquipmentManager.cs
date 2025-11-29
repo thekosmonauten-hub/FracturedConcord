@@ -12,6 +12,7 @@ public class EquipmentManager : MonoBehaviour
     
     [Header("Equipment Stats")]
     public Dictionary<string, float> totalEquipmentStats = new Dictionary<string, float>();
+    private Dictionary<string, float> effigyStats = new Dictionary<string, float>();
     
     // Singleton pattern
     private static EquipmentManager _instance;
@@ -237,9 +238,25 @@ public class EquipmentManager : MonoBehaviour
         
         // Apply equipment modifiers
         DamageModifiers equipmentModifiers = new DamageModifiers();
+
+        Dictionary<string, float> combinedStats = new Dictionary<string, float>(totalEquipmentStats);
+        if (effigyStats != null)
+        {
+            foreach (var kvp in effigyStats)
+            {
+                if (combinedStats.ContainsKey(kvp.Key))
+                {
+                    combinedStats[kvp.Key] += kvp.Value;
+                }
+                else
+                {
+                    combinedStats[kvp.Key] = kvp.Value;
+                }
+            }
+        }
         
         // Process all equipment stats
-        foreach (var stat in totalEquipmentStats)
+        foreach (var stat in combinedStats)
         {
             ApplyStatToCharacter(stat.Key, stat.Value, equipmentModifiers);
         }
@@ -247,7 +264,13 @@ public class EquipmentManager : MonoBehaviour
         // Apply damage modifiers to character
         currentCharacter.ApplyEquipmentModifiers(equipmentModifiers);
         
-        Debug.Log($"Applied equipment stats to character: {totalEquipmentStats.Count} stats");
+        Debug.Log($"Applied equipment stats to character: {combinedStats.Count} stats");
+    }
+
+    public void SetEffigyStats(Dictionary<string, float> stats)
+    {
+        effigyStats = stats ?? new Dictionary<string, float>();
+        ApplyEquipmentStats();
     }
     
     // Apply a single stat to the character
@@ -310,6 +333,33 @@ public class EquipmentManager : MonoBehaviour
                 break;
             case "Intelligence":
                 currentCharacter.intelligence += (int)value;
+                break;
+            case "IncreasedMaxLifePercent":
+                currentCharacter.maxHealth = Mathf.RoundToInt(currentCharacter.maxHealth * (1f + value / 100f));
+                currentCharacter.currentHealth = Mathf.Min(currentCharacter.currentHealth, currentCharacter.maxHealth);
+                currentCharacter.UpdateMaxGuard();
+                break;
+            case "IncreasedDamagePercent":
+                currentCharacter.increasedDamage += value / 100f;
+                break;
+            case "IncreasedEvasionPercent":
+                currentCharacter.increasedEvasion += value / 100f;
+                break;
+            case "DodgeChancePercent":
+                currentCharacter.dodgeChance += value;
+                break;
+            case "GuardEffectivenessPercent":
+                currentCharacter.guardEffectivenessPercent += value;
+                break;
+            case "BuffDurationPercent":
+                currentCharacter.buffDurationIncreasedPercent += value;
+                break;
+            case "RandomAilmentChancePercent":
+                currentCharacter.randomAilmentChancePercent += value;
+                break;
+            case "DamageAfterGuardPercent":
+                currentCharacter.increasedDamageAfterGuardPercent += value;
+                currentCharacter.increasedDamage += value / 100f;
                 break;
                 
             // Critical stats

@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: The Penitent Rewriter
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: The Penitent Rewriter
+  description: "A scholar who tried to 'fix' the Law after the Shattering and scarred
+    himself with glyphs. Mutters 'still wrong\u2026 still wrong\u2026' during every
+    action."
+  enemySprite: {fileID: 7386243384922687980, guid: ad14c2b96c21b644c8a7c299ac563f98, type: 3}
+  tier: 1
+  rarity: 0
+  category: 2
+  minHealth: 55
+  maxHealth: 75
+  baseDamage: 11
+  baseArmor: 0
+  criticalChance: 0.05
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 100
+  evasionRating: 0
+  physicalResistance: 0
+  fireResistance: 0
+  coldResistance: 0
+  lightningResistance: 0
+  chaosResistance: 0
+  displayScale: 1
+  basePanelHeight: 280
+  enableEnergy: 0
+  baseMaxEnergy: 100
+  energyRegenPerTurn: 10
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  aiPattern: 0
+  attackPreference: 0.85
+  specialAbilities: []
+  abilities:
+  - {fileID: 11400000, guid: 6eceae39285f2794083e3f2d73d35887, type: 2}
+  - {fileID: 11400000, guid: d77d33439f415364e988a9f562b3805a, type: 2}
+  - {fileID: 11400000, guid: 18ecdee5e9e1a204da91bdc0360532fa, type: 2}
+  summonPool: []
+  spiritTags: 
+  guaranteedSpiritDrop: 0
+  minGoldDrop: 16
+  maxGoldDrop: 24
+  experienceReward: 10
+  cardDropChance: 0.22
+  initialAgitateStacks: 0
+  initialToleranceStacks: 0
+  initialPotentialStacks: 0
+  excludeFromRandom: 1
+  healthBarColor: {r: 1, g: 0, b: 0, a: 1}
+  animatorController: {fileID: 0}

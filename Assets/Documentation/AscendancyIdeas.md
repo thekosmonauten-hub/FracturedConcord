@@ -194,41 +194,49 @@ Upon reaching 20 stacks, automatically trigger "Profane Ritual": Consume all Cor
 
 🧠 Core Mechanic: Temporal Threads
 
-Whenever you play a card, it leaves behind a Temporal Thread — a shadow copy that can “unravel” in the future for additional effects.
-You can manipulate these threads using “Echo,” “Rewind,” or “Collapse” actions.
+15% chance on draw to make your card "Temporal".
+A "Temporal" card Echos it's effect at the start of the next turn.
 
-Echo: Replay a previously played card with reduced power (70–80%)
-
-Rewind: Undo a state change from last turn (restore lost HP, energy, or card count)
-
-Collapse: Consume all Temporal Threads for a burst of delayed effects or combo payoff
-
-This gives the player agency over when value manifests, not just how much.
 
 Unique Card Unlock ideas:
-1. Rewind (Skill)
-Undo the last card played. Refund its cost. Draw 1 card.
-If it was a Spell, gain +1 Energy next turn.
+1. Temporal Loop (Power)
+1x Track played cards this round and echo them for 60% power next round.
 
 2. Fracture Time (Power)
-Your next 3 cards gain Delay (trigger next turn with +50% effect).
-After 3 turns, take 5 True Damage.
+All cards on your hand become "Temporal" 
 
 3. Collapse (Ultimate Skill)
 Consume all Delayed or Threaded cards.
 Trigger their effects instantly with -25% power but apply Slow (1) to all enemies.
 
+Small nodes:
+Temporal Draw & Energy Shield_
++1% chance to Draw a Temporal Card, 5% Increased Energy shield.
+
+
+Echo Effectiveness & Cast speed_
++5% increased effectiveness of Echoed cards, 2% increased cast speed.
+
+
+
 🌀 Passive Node Concepts
 Passive	Effect	Notes
 Future Echo	The first card you play each turn automatically repeats itself after 2 turns with 75% power.	Signature node.
+
 Temporal Distortion	Applying Slow also grants you Haste for the same duration.	Duality design.
+
 Hourglass Paradox	Skip your turn → next turn gain +2 Draw, +2 Energy, and your first card costs 0.	“Do nothing” becomes tactical.
-Borrowed Power	Delayed cards gain +20% effect but cost +1 more.	Encourages planning around high impact cards.
-Fractured Reality	Once per combat, duplicate your entire hand with “Delayed” status.	Massive payoff potential.
-Echoing Will	Replayed (Echoed) cards gain +10% base power per card echoed this combat.	Rewards time recursion.
-Chrono Collapse	When an enemy dies, all their debuffs spread to a random enemy.	“Temporal instability” effect.
+
+Borrowed Power	Delayed cards gain +25% effect but cost +1 more.	Encourages planning around high impact cards.
+--
+Echoing Will	Temporal cards gain +10% base power per card echoed this combat. (80% Cap)	Rewards time recursion.
+
 Suspended Moment	Damage over time effects tick twice as fast for 2 turns after you use a Delayed card.	A speed-based Do
 
+Chrono Collapse	When an enemy dies, all their debuffs spread to a random enemy.	“Temporal instability” effect.
+
+
+--
 
 👉 Playstyle: Predictive casting, foresight management, and delayed power surges.
 3️⃣ Architect of Entropy
@@ -271,7 +279,7 @@ Fantasy Hook: “The arrow’s already left the bow — the kill is just catchin
 Mechanics:
 
 Chain Mechanic:
-Your projectiles can chain to 1 additional target per 333 Dexterity.
+Your projectiles can chain to 1 additional target per 250 Dexterity.
 Each chain hit deals 25% less damage but increases Evasion by 5% for 1 turn.
 
 Specific card unlock:
@@ -284,7 +292,7 @@ Killing Intent – 150% increased Critical strike chance for the first card each
 Executioner’s Flow – Crits reduce next card’s cost by 25%.
 Fade to Black – On Crit, gain 20% Evasion for 1 turn.
 Vantage Point – Deal +25% more damage if player HP > 50%.
-Chaining blows - Your projectiles chain to 1 additional enemy, +1 chain per 333 Dexterity.
+Chaining blows - Your projectiles chain to 1 additional enemy, +1 chain per 250 Dexterity.
 Knife’s Edge – Below 30% HP, all attacks Crit but deal 25% less base damage.
 Lethal Sequence – Projectile Multishot (Projectile attack and Spells attack/Cast twice)
 Last Breath – When you would die, instead go Invisible for 1 turn (Unable to take damage/Cheat death mechanic)

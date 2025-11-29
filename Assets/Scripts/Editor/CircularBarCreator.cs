@@ -95,7 +95,7 @@ public class CircularBarCreator : EditorWindow
     private void CreateCircularBar()
     {
         // Get or find canvas
-        Canvas canvas = FindObjectOfType<Canvas>();
+        Canvas canvas = FindFirstObjectByType<Canvas>();
         if (canvas == null)
         {
             EditorUtility.DisplayDialog("Error", "No Canvas found in scene! Create a Canvas first.", "OK");

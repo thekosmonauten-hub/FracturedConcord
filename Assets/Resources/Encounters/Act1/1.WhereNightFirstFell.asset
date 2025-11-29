@@ -15,9 +15,13 @@ MonoBehaviour:
   encounterID: 1
   encounterName: Where Night First Fell
   sceneName: CombatScene
+  actNumber: 1
+  encounterSprite: {fileID: -855298285791758126, guid: e9c672bdb83d78b488b4cf25b8e4aea6, type: 3}
+  prerequisiteEncounters: []
   areaLevel: 1
   totalWaves: 5
   maxEnemiesPerWave: 3
   randomizeEnemyCount: 1
   uniqueEnemy: {fileID: 11400000, guid: 77767db2eaea7644f821c7442d9eb9f0, type: 2}
   lootTable: {fileID: 11400000, guid: c8f663c631e134944a9c3fc28c42c8df, type: 2}
+  areaLootTable: {fileID: 11400000, guid: fefaa3f8b4dc14f4187e1335dc47773f, type: 2}

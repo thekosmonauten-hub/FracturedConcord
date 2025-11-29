@@ -1,0 +1,142 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e192023a20c44c84e8436dcbcdce9133, type: 3}
+  m_Name: warrant_fusion_tutorial
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialData
+  tutorialId: warrant_fusion_tutorial
+  tutorialName: Warrant Fusion Tutorial
+  steps:
+  - stepId: warrant_fusion_1
+    tutorialText: "Lay out three Warrants\u2014yes, right there, in the frames. I
+      need to see all of them clearly. Each one carries its own little tangle of
+      Law, and if you don\u2019t line them up properly, you\u2019ll blow a hole in
+      my shack."
+    targetObjectPath: 
+    targetObjectPaths:
+    - Slot1
+    - Slot2
+    - Slot3
+    highlightColor: {r: 0.9056604, g: 0.759386, b: 0.089711644, a: 0}
+    usePulseAnimation: 1
+    completionType: 0
+    clickTargetPath: Slot1,Slot2,Slot3
+    waitTime: 0
+    conditionName: 
+    onStartAction:
+      actionType: 1
+      actionValue: WarrantFusionPanel
+      floatValue: 1
+    onCompleteAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+  - stepId: warrant_fusion_2
+    tutorialText: "Good. Now choose which Laws and contracts you want to preserve.
+      Don\u2019t overthink it\u2014just decide what matters to you."
+    targetObjectPath: NotableSection
+    targetObjectPaths: []
+    highlightColor: {r: 0.9056604, g: 0.759386, b: 0.089711644, a: 0}
+    usePulseAnimation: 1
+    completionType: 0
+    clickTargetPath: NotableSection
+    waitTime: 5
+    conditionName: 
+    onStartAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+    onCompleteAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+  - stepId: warrant_fusion_3
+    tutorialText: "Once you lock those in, the others get folded, trimmed, or\u2026
+      politely erased."
+    targetObjectPath: FuseButton
+    targetObjectPaths: []
+    highlightColor: {r: 0.9056604, g: 0.759386, b: 0.089711644, a: 0}
+    usePulseAnimation: 1
+    completionType: 0
+    clickTargetPath: FuseButton
+    waitTime: 20
+    conditionName: 
+    onStartAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+    onCompleteAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+  - stepId: warrant_fusion_4
+    tutorialText: "Now\u2026 hold still. This part requires focus."
+    targetObjectPath: 
+    targetObjectPaths: []
+    highlightColor: {r: 0.9056604, g: 0.759386, b: 0.089711644, a: 0}
+    usePulseAnimation: 0
+    completionType: 1
+    clickTargetPath: 
+    waitTime: 2
+    conditionName: 
+    onStartAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+    onCompleteAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+  - stepId: warrant_fusion_5
+    tutorialText: There. Fused. One Warrant stitched together from three. Stronger,
+      cleaner, less likely to misfire when you swing at something with too many teeth.
+    targetObjectPath: OutputSlot
+    targetObjectPaths: []
+    highlightColor: {r: 0.9056604, g: 0.759386, b: 0.089711644, a: 0}
+    usePulseAnimation: 0
+    completionType: 3
+    clickTargetPath: 
+    waitTime: 0
+    conditionName: 
+    onStartAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+    onCompleteAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+  - stepId: warrant_fusion_6
+    tutorialText: Take it. Add it to your collection. And try not to lose any fingers
+      testing it out.
+    targetObjectPath: 
+    targetObjectPaths: []
+    highlightColor: {r: 0.9056604, g: 0.759386, b: 0.089711644, a: 0}
+    usePulseAnimation: 0
+    completionType: 3
+    clickTargetPath: 
+    waitTime: 0
+    conditionName: 
+    onStartAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+    onCompleteAction:
+      actionType: 0
+      actionValue: WarrantFusionPanel
+      floatValue: 0
+  canSkip: 1
+  autoStart: 1
+  targetScene: 
+  onTutorialComplete:
+    actionType: 2
+    actionValue: WarrantFusionPanel
+    floatValue: 0

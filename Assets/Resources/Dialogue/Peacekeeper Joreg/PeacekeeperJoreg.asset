@@ -1,0 +1,500 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff574ec1f450374d9b49a019c8f812d, type: 3}
+  m_Name: PeacekeeperJoreg
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  dialogueId: 1
+  dialogueName: The Peacekeeper
+  npcId: peacekeeper_joreg
+  defaultSpeakerPortrait: {fileID: 0}
+  startNodeId: start
+  nodes:
+  - nodeId: start
+    speakerName: The Shack-Hermit
+    paragraphs:
+    - ...
+    - ...Close the door, would you? Last thing I need is another malformed beast
+      sniffing its way in here.
+    - Hnh. You don't look corrupted yet. That's already better than most travelers
+      these days.
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Who are you?
+      targetNodeId: who_are_you
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 7
+        actionValue: start
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions:
+    - actionType: 7
+      actionValue: start
+      intValue: 0
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: main
+    speakerName: Joreg, The Sealwright
+    paragraphs: []
+    dialogueText: Well? Ask your questions before something outside grows the teeth
+      to chew through my door.
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: The Peacekeepers?
+      targetNodeId: peacekeepers
+      condition:
+        conditionType: 5
+        conditionValue: who_are_you
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: Warrants?
+      targetNodeId: warrants
+      condition:
+        conditionType: 5
+        conditionValue: what_do_you_do
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: Anything else you can do for me?
+      targetNodeId: post_tutorial_failsafe
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 8
+      actionValue: WarrantTree
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 5
+      conditionValue: start
+      intValue: 0
+  - nodeId: who_are_you
+    speakerName: Joreg, The Sealwright
+    paragraphs:
+    - I suppose you wouldn't know...
+    - "Name's Joreg. Joreg the Sealwright. Used to be atleast...  I worked in a proper
+      Peacekeeper Hall \u2014 marble floors, golden seals, the whole parade. Now
+      I'm in a shack held together by stubbornness and whatever the Law hasn't forgotten
+      yet.."
+    - "I'm what's left of the Sealwrights \u2014 we made the Warrants, forged them,
+      recorded them, maintained them. These days? I mostly just try not to die. Or
+      explode. Or collapse into entropy. Depends on the weather.."
+    - "Anyway. That's me. Congratulations \u2014 you've found the last sane Peacekeeper
+      within fifty leagues."
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: What are you doing here?
+      targetNodeId: what_do_you_do
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions:
+    - actionType: 7
+      actionValue: who_are_you
+      intValue: 1
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: what_do_you_do
+    speakerName: Joreg, The Sealwright
+    paragraphs:
+    - "What do I do? Well, let's see\u2026"
+    - "I sweep out corrupted dust, patch reality leaks, argue with a teapot that
+      keeps trying to phase out of existence\u2026"
+    - And occasionally, when I'm feeling optimistic, I help wandering fools like
+      you not get immediately devoured..
+    - But really... *Joreg Sighs*
+    - I watch the world fall apart one loose thread at a time and try not to take
+      it personally.
+    - "My real job \u2014 what's left of it \u2014 is working the Warrants. They're
+      the only thing keeping us from slipping completely into the Unraveler's jaws.
+      And like it or not, kid\u2026 I think you're about to need one."
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Continue
+      targetNodeId: main
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 7
+        actionValue: what_do_you_do
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: peacekeepers
+    speakerName: Joreg, The Sealwright
+    paragraphs:
+    - "Ah. The Peacekeepers, neither guard nor police. Once upon a time, we enforced
+      the Concordial Law \u2014 the rules that kept the world tidy. Beasts stayed
+      beasts. Dead stayed dead. Realms stayed separate"
+    - We had ranks, halls, authority. Justicars keeping order, Arbiters of Law, Sealwrights
+      forging artifacts that could bend a storm or seal a demon gate with a whisper.
+    - 'Now? ** He gestures around the decrepit shack.** '
+    - "Well\u2026 now the Peacekeepers are mostly mold, ruins, or snacks for the
+      malformed."
+    - "Our spells don't work right anymore. Reality doesn't listen when we speak.
+      But it'll still listen to someone like you \u2014 someone the Law hasn't learned
+      to ignore yet."
+    - 'So we Peacekeepers do what we can: hide, hold the line, and hand out Warrants
+      to anyone still breathing. Not glorious work, but it beats being dead. Barely.'
+    dialogueText: "Ah. The Peacekeepers, neither guard nor police.\r\nOnce upon a
+      time, we enforced the Concordial Law \u2014 the rules that kept the world tidy.
+      Beasts stayed beasts. Dead stayed dead. Realms stayed separate.\\n\\n\r\n\r\nWe
+      had ranks, halls, authority. Justicars keeping order, Arbiters of Law, Sealwrights
+      forging artifacts that could bend a storm or seal a demon gate with a whisper.\\n\\n\r\n\r\nNow?
+      ** He gestures around the decrepit shack.** \\n\\n\r\n\"Well\u2026 now the
+      Peacekeepers are mostly mold, ruins, or snacks for the malformed.\\n\\n\"\r\n\r\nOur
+      spells don't work right anymore. Reality doesn't listen when we speak. But
+      it'll still listen to someone like you \u2014 someone the Law hasn't learned
+      to ignore yet.\\n\\n\r\n\r\nSo we Peacekeepers do what we can: hide, hold the
+      line, and hand out Warrants to anyone still breathing.\r\nNot glorious work,
+      but it beats being dead. Barely."
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Continue
+      targetNodeId: main
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 7
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: warrants
+    speakerName: Joreg, The Sealwright
+    paragraphs:
+    - "Warrants, yes. Half spell, half legal contract \u2014 the old kind, forged
+      before the Shattering of Law scrambled everything. The Law still recognizes
+      them."
+    - See, I can't cast a stabilizing spell anymore. Try it and I'd tear a hole clean
+      through the floorboards. Or through myself. Or both.
+    - But a Warrant? That channels the Law through you, not me. Safer. Slightly.
+    - "They strengthen you, attune you to the old order, keep the chaos from chewing
+      on your bones. And they grow with use \u2014 the more potential you show, the
+      more they unlock."
+    - Here. You're going to need these.
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Continue
+      targetNodeId: warrant_tutorial
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 3
+        actionValue: warrant_starter_pack
+        intValue: 1
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: warrant_tutorial
+    speakerName: Joreg, The Sealwright
+    paragraphs:
+    - "Don't get excited. These are baseline Seals \u2014 they won't show their true
+      strength until you prove you've got the potential to handle them. Think of
+      them like\u2026 keys to doors you haven't reached yet"
+    dialogueText: "\"Don't get excited. These are baseline Warrants \u2014 they won't
+      show their true strength until you prove you've got the potential to handle
+      them. Think of them like\u2026 keys to doors you haven't reached yet.\""
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Show me how to use them.
+      targetNodeId: 
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 8
+        actionValue: WarrantTree
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 8
+      actionValue: WarrantTree
+      intValue: 0
+    onExitActions:
+    - actionType: 9
+      actionValue: warrant_tutorial
+      intValue: 0
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: post_tutorial
+    speakerName: Joreg, The Sealwright
+    paragraphs:
+    - You smell like sealed ink. Good. Means the Warrants are taking.
+    - I've got some good news for you, Since we're in this still-point I might be
+      able to help you a bit further.
+    - Bring me three Warrants and I might be able to convince them to become something
+      less pathetic. What do you say?
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: 'That sounds... '
+      targetNodeId: warrant_fusion_1
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: I don't need you help.
+      targetNodeId: warrant_fusion_2
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 9
+        actionValue: warrant_fusion_tutorial
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 8
+      actionValue: WarrantTree
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 6
+      conditionValue: warrant_tutorial
+      intValue: 0
+  - nodeId: warrant_fusion_1
+    speakerName: Joreg, The Sealwright
+    paragraphs:
+    - Great! Lay them out for me and lets see how we can shape this to benefit you.
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Alright.
+      targetNodeId: 
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 6
+        actionValue: WarrantFusionPanel
+        intValue: 1
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions:
+    - actionType: 6
+      actionValue: WarrantFusionPanel
+      intValue: 1
+    onExitAction:
+      actionType: 8
+      actionValue: WarrantTree
+      intValue: 0
+    onExitActions:
+    - actionType: 9
+      actionValue: warrant_fusion_tutorial
+      intValue: 0
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: warrant_fusion_2
+    speakerName: Joreg, The Sealwright
+    paragraphs:
+    - Fine.. Don't go breaking the law any further. Don't tell me I didn't warn you.
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Can't promise anything.
+      targetNodeId: 
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 6
+        actionValue: WarrantFusionPanel
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 8
+      actionValue: WarrantTree
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: post_fusion_skip
+    speakerName: Joreg, The Sealwright
+    paragraphs:
+    - Rookies working the law, the world really must be ending.
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: I'd like to fuse some Warrants.
+      targetNodeId: 
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 5
+        actionValue: WarrantFusionPanel
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 8
+      actionValue: WarrantTree
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 5
+      conditionValue: warrant_fusion_tutorial_skip
+      intValue: 0
+  - nodeId: post_fusion_tutorial
+    speakerName: Joreg, The Sealwright
+    paragraphs:
+    - Bring me more warrants, and I'll help you unlock your true potential
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: I'd like to fuse some Warrants.
+      targetNodeId: 
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 5
+        actionValue: WarrantFusionPanel
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 8
+      actionValue: WarrantTree
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 6
+      conditionValue: warrant_fusion_tutorial
+      intValue: 0

@@ -40,7 +40,13 @@ namespace Dexiled.Data.Items
         // Fragments (placeholder for future)
         Fragment1,
         Fragment2,
-        Fragment3
+        Fragment3,
+        
+        // Maze-Specific Currencies (Campaign Maze)
+        MandateFragment,        // Tier 1: Broken Mandate
+        ShatteredSigil,         // Tier 2: Shattered Law
+        ContradictionCore,      // Tier 3: Grand Contradiction
+        CollapseMotif           // Tier 4: Absolute Collapse
     }
 
     [System.Serializable]

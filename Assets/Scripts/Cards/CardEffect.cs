@@ -11,6 +11,7 @@ public enum EffectType
     RemoveStatus,
     GainMana,
     GainReliance,
+    GainMomentum,
     TemporaryStatBoost,
     PermanentStatBoost
 }
@@ -86,6 +87,18 @@ public class CardEffect
                 if (target != null)
                 {
                     target.AddReliance((int)value);
+                }
+                break;
+                
+            case EffectType.GainMomentum:
+                if (target != null)
+                {
+                    // Grant momentum stacks via StackSystem
+                    var stackSystem = StackSystem.Instance;
+                    if (stackSystem != null)
+                    {
+                        stackSystem.AddStacks(StackType.Momentum, Mathf.RoundToInt(value));
+                    }
                 }
                 break;
                 

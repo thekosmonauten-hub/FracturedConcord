@@ -40,6 +40,12 @@ public class PreparationManager : MonoBehaviour
     [Header("State Tracking")]
     [SerializeField] private List<PreparedCard> preparedCards = new List<PreparedCard>();
     private int unleashedThisTurn = 0;
+    private bool isUnleashing = false; // Flag to prevent recursive consumption
+    
+    /// <summary>
+    /// Check if a card is currently being unleashed (prevents recursive consumption)
+    /// </summary>
+    public bool IsUnleashing => isUnleashing;
     
     [Header("References")]
     public PreparedCardsUI preparedCardsUI;
@@ -77,12 +83,8 @@ public class PreparationManager : MonoBehaviour
             return false;
         }
         
-        // Check if card can be prepared
-        if (!card.canPrepare)
-        {
-            Debug.LogWarning($"[PreparationManager] Card {card.cardName} does not have Prepare capability!");
-            return false;
-        }
+        // Allow all cards to be prepared (canPrepare check removed for universal preparation)
+        // The canPrepare flag is now optional - all cards can be prepared via right-click/shift-click
         
         // Create prepared card
         PreparedCard prepared = new PreparedCard(card, player);
@@ -128,14 +130,29 @@ public class PreparationManager : MonoBehaviour
             return false;
         }
         
-        // Pay energy cost
-        if (!player.UseMana(energyCost))
+        // Pay energy cost - use CharacterManager to trigger events
+        bool manaSpent = false;
+        CharacterManager charManager = CharacterManager.Instance;
+        if (charManager != null)
+        {
+            manaSpent = charManager.UseMana(energyCost);
+        }
+        else
+        {
+            // Fallback to direct character UseMana if CharacterManager not available
+            manaSpent = player.UseMana(energyCost);
+        }
+        
+        if (!manaSpent)
         {
             Debug.LogWarning($"[PreparationManager] Failed to spend {energyCost} mana for unleash!");
             return false;
         }
         
         Debug.Log($"<color=yellow>[PreparationManager] Manual unleash: {prepared.sourceCard.cardName} (Cost: {energyCost} energy)</color>");
+        
+        // Update UI after mana consumption (ensures all UI systems are updated)
+        UpdateManaUI();
         
         // Execute unleash
         return ExecuteUnleash(prepared, player, false);
@@ -165,14 +182,27 @@ public class PreparationManager : MonoBehaviour
         // Calculate final damage
         float unleashDamage = prepared.CalculateUnleashDamage();
         
-        // Apply the card's effect with stored/modified values
-        ApplyUnleashEffect(prepared, player, unleashDamage);
+        // Remove from prepared list BEFORE applying effect to prevent recursive consumption
+        // (e.g., if Perfect Strike is prepared and gets unleashed, it shouldn't consume itself)
+        preparedCards.Remove(prepared);
+        
+        // Set flag to prevent recursive consumption during unleash
+        bool wasUnleashing = isUnleashing;
+        isUnleashing = true;
+        
+        try
+        {
+            // Apply the card's effect with stored/modified values
+            ApplyUnleashEffect(prepared, player, unleashDamage);
+        }
+        finally
+        {
+            // Restore flag
+            isUnleashing = wasUnleashing;
+        }
         
         // Track unleash count
         unleashedThisTurn++;
-        
-        // Remove from prepared list
-        preparedCards.Remove(prepared);
         
         // Notify events
         if (isDecay)
@@ -192,7 +222,49 @@ public class PreparationManager : MonoBehaviour
         
         Debug.Log($"<color=green>[PreparationManager] ✓ Unleashed: {prepared.sourceCard.cardName} (Damage: {unleashDamage:F1})</color>");
         
+        // Add unleashed card to discard pile
+        var combatDeckManager = FindFirstObjectByType<CombatDeckManager>();
+        if (combatDeckManager != null)
+        {
+            combatDeckManager.AddCardToDiscardPile(prepared.sourceCard);
+            Debug.Log($"<color=cyan>[PreparationManager] Added {prepared.sourceCard.cardName} to discard pile</color>");
+        }
+        else
+        {
+            Debug.LogWarning("[PreparationManager] CombatDeckManager not found - cannot add unleashed card to discard pile");
+        }
+        
         return true;
+    }
+    
+    /// <summary>
+    /// Updates the mana UI display after mana consumption
+    /// </summary>
+    private void UpdateManaUI()
+    {
+        // Update PlayerCombatDisplay if it exists
+        PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        if (playerDisplay != null)
+        {
+            playerDisplay.UpdateManaDisplay();
+            Debug.Log("[PreparationManager] Updated PlayerCombatDisplay mana UI");
+        }
+        
+        // Update AnimatedCombatUI if it exists
+        AnimatedCombatUI animatedUI = FindFirstObjectByType<AnimatedCombatUI>();
+        if (animatedUI != null)
+        {
+            animatedUI.AnimatePlayerMana();
+            Debug.Log("[PreparationManager] Updated AnimatedCombatUI mana UI");
+        }
+        
+        // Update CombatUI (UIElements-based) if it exists
+        CombatUI combatUI = FindFirstObjectByType<CombatUI>();
+        if (combatUI != null)
+        {
+            combatUI.UpdateCombatUI();
+            Debug.Log("[PreparationManager] Updated CombatUI");
+        }
     }
     
     /// <summary>
@@ -232,64 +304,87 @@ public class PreparationManager : MonoBehaviour
     
     /// <summary>
     /// Deal damage from unleashed card
+    /// Uses CardEffectProcessor to ensure momentum effects (AoE, multi-hit, random targets, etc.) are preserved
     /// </summary>
     private void DealUnleashDamage(PreparedCard prepared, Character player, float damage)
     {
-        // For now, deal to all enemies
-        // TODO: Integrate with actual targeting system
-        var combatManager = FindFirstObjectByType<CombatManager>();
-        var combatDisplay = FindFirstObjectByType<CombatDisplayManager>();
+        if (prepared == null || prepared.sourceCard == null || player == null)
+        {
+            Debug.LogError("[PreparationManager] Cannot deal unleash damage: Invalid prepared card or player!");
+            return;
+        }
         
-        if (combatDisplay != null)
+        // Get CardEffectProcessor to use the full card processing pipeline
+        var cardEffectProcessor = FindFirstObjectByType<CardEffectProcessor>();
+        if (cardEffectProcessor == null)
         {
-            // Use CombatDisplayManager if available
-            var activeEnemies = combatDisplay.GetActiveEnemies();
-            if (activeEnemies != null)
+            Debug.LogError("[PreparationManager] CardEffectProcessor not found! Cannot process momentum effects.");
+            return;
+        }
+        
+        // Convert CardDataExtended to Card for processing
+        Card card = prepared.sourceCard.ToCard();
+        
+        // For momentum-based cards ("per Momentum spent"), apply preparation multiplier to baseDamage
+        // CardEffectProcessor will handle momentum spending and damage calculation
+        // For other cards, use the calculated unleash damage
+        bool isMomentumBased = MomentumEffectParser.HasPerMomentumSpent(prepared.sourceCard.description);
+        if (!isMomentumBased)
+        {
+            // Update card's damage to the calculated unleash damage
+            // This preserves the preparation multiplier while allowing momentum effects to modify targeting
+            card.baseDamage = damage;
+        }
+        else
+        {
+            // For momentum-based cards, apply preparation multiplier to baseDamage per momentum
+            // This way, when CalculatePerMomentumDamage uses card.baseDamage, it will use the multiplied value
+            float originalBaseDamage = card.baseDamage;
+            float preparationMultiplier = 1f + prepared.currentMultiplier;
+            card.baseDamage = originalBaseDamage * preparationMultiplier;
+            Debug.Log($"<color=cyan>[Preparation] Momentum-based card {prepared.sourceCard.cardName} - applying multiplier: {originalBaseDamage} * {preparationMultiplier:F2} = {card.baseDamage:F1} per momentum</color>");
+        }
+        
+        // Get target enemy (first enemy for single-target, null for AoE)
+        Enemy targetEnemy = null;
+        Vector3 targetScreenPosition = Vector3.zero;
+        
+        var combatDisplay = FindFirstObjectByType<CombatDisplayManager>();
+        if (combatDisplay != null && combatDisplay.enemySpawner != null)
+        {
+            var activeDisplays = combatDisplay.enemySpawner.GetActiveEnemies();
+            if (activeDisplays != null && activeDisplays.Count > 0)
             {
-                foreach (var enemyDisplay in activeEnemies)
+                // For single-target cards, get the first enemy
+                if (!card.isAoE)
                 {
-                    if (enemyDisplay != null && enemyDisplay.currentHealth > 0)
+                    var firstEnemyDisplay = activeDisplays[0];
+                    if (firstEnemyDisplay != null)
                     {
-                        // Apply damage type modifiers
-                        float finalDamage = damage;
-                        
-                        // Add elemental/physical modifiers based on card tags
-                        if (prepared.sourceCard.tags.Contains("Fire"))
+                        targetEnemy = firstEnemyDisplay.GetEnemy();
+                        if (targetEnemy != null && firstEnemyDisplay.transform != null)
                         {
-                            float spellPower = player.intelligence * 0.1f;
-                            finalDamage *= (1f + spellPower / 100f);
+                            targetScreenPosition = firstEnemyDisplay.transform.position;
                         }
-                        
-                        enemyDisplay.TakeDamage(Mathf.RoundToInt(finalDamage));
-                        
-                        Debug.Log($"<color=orange>[Preparation] {prepared.sourceCard.cardName} dealt {finalDamage:F1} damage to {enemyDisplay.enemyName}</color>");
                     }
                 }
-            }
-        }
-        else if (combatManager != null && combatManager.enemies != null)
-        {
-            // Fallback to CombatManager enemies list
-            foreach (var enemy in combatManager.enemies)
-            {
-                if (enemy != null && enemy.IsAlive())
+                else
                 {
-                    // Apply damage type modifiers
-                    float finalDamage = damage;
-                    
-                    // Add elemental/physical modifiers based on card tags
-                    if (prepared.sourceCard.tags.Contains("Fire"))
+                    // For AoE, use first enemy's position as reference
+                    var firstEnemyDisplay = activeDisplays[0];
+                    if (firstEnemyDisplay != null && firstEnemyDisplay.transform != null)
                     {
-                        float spellPower = player.intelligence * 0.1f;
-                        finalDamage *= (1f + spellPower / 100f);
+                        targetScreenPosition = firstEnemyDisplay.transform.position;
                     }
-                    
-                    enemy.TakeDamage(finalDamage);
-                    
-                    Debug.Log($"<color=orange>[Preparation] {prepared.sourceCard.cardName} dealt {finalDamage:F1} damage to {enemy.enemyName}</color>");
                 }
             }
         }
+        
+        Debug.Log($"<color=orange>[Preparation] Unleashing {prepared.sourceCard.cardName} with {damage:F1} damage (will process momentum effects)</color>");
+        
+        // Use CardEffectProcessor to apply the card - this will process momentum threshold effects
+        // (AoE conversion, multi-hit, random targets, etc.)
+        cardEffectProcessor.ApplyCardToEnemy(card, targetEnemy, player, targetScreenPosition, false);
     }
     
     /// <summary>
@@ -297,9 +392,62 @@ public class PreparationManager : MonoBehaviour
     /// </summary>
     private void ApplyUnleashBuffs(PreparedCard prepared, Character player)
     {
-        // Apply stored buffs based on card definition
-        // TODO: Implement based on your buff system
-        Debug.Log($"<color=cyan>[Preparation] Applied buffs from {prepared.sourceCard.cardName}</color>");
+        if (prepared == null || prepared.sourceCard == null || player == null) return;
+        
+        CardDataExtended card = prepared.sourceCard;
+        
+        // Check for preparation bonuses (e.g., Shadow Step: "+2 (+Dex/2) Guard and 1 temporary Dexterity")
+        if (PreparationBonusParser.HasPreparationBonus(card.description))
+        {
+            // Parse preparation guard bonus
+            var (prepGuard, prepGuardDexDivisor) = PreparationBonusParser.ParsePreparationGuard(card.description);
+            if (prepGuard > 0f)
+            {
+                float guardAmount = prepGuard;
+                
+                // Add dexterity scaling if specified
+                if (prepGuardDexDivisor > 0f)
+                {
+                    float dexBonus = player.dexterity / prepGuardDexDivisor;
+                    guardAmount += dexBonus;
+                }
+                
+                // Apply guard with preparation multiplier
+                float multipliedGuard = guardAmount * (1f + prepared.currentMultiplier);
+                player.AddGuard(multipliedGuard);
+                
+                Debug.Log($"<color=cyan>[Preparation Bonus] {card.cardName} gained {multipliedGuard:F1} guard from preparation bonus (base: {prepGuard} + Dex/{prepGuardDexDivisor}, multiplier: {1f + prepared.currentMultiplier:F2})</color>");
+                
+                // Update guard display
+                PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+                if (playerDisplay != null)
+                {
+                    playerDisplay.UpdateGuardDisplay();
+                }
+            }
+            
+            // Parse preparation temporary Dexterity bonus
+            int tempDex = PreparationBonusParser.ParsePreparationTempDexterity(card.description);
+            if (tempDex > 0)
+            {
+                // Get StatusEffectManager from PlayerCombatDisplay
+                var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+                if (playerDisplay != null)
+                {
+                    var statusMgr = playerDisplay.GetStatusEffectManager();
+                    if (statusMgr != null)
+                    {
+                        // Use Dexterity status effect type for temporary dexterity boosts
+                        var dexEffect = new StatusEffect(StatusEffectType.Dexterity, "TempDexterity", tempDex, 3, false);
+                        statusMgr.AddStatusEffect(dexEffect);
+                        Debug.Log($"<color=cyan>[Preparation Bonus] {card.cardName} gained {tempDex} temporary Dexterity from preparation bonus</color>");
+                    }
+                }
+            }
+        }
+        
+        // Apply any other stored buffs based on card definition
+        Debug.Log($"<color=cyan>[Preparation] Applied buffs from {card.cardName}</color>");
     }
     
     /// <summary>
@@ -426,7 +574,8 @@ public class PreparationManager : MonoBehaviour
     /// </summary>
     public bool CanPrepareCard(CardDataExtended card)
     {
-        return card.canPrepare && preparedCards.Count < maxPreparedSlots;
+        // Allow all cards to be prepared (canPrepare check removed for universal preparation)
+        return preparedCards.Count < maxPreparedSlots;
     }
 }
 

@@ -29,8 +29,118 @@ public class Character
     public int maxReliance = 200;
     public float currentGuard = 0f; // Current guard amount
     public float maxGuard = 0f; // Maximum guard (based on max health)
+    public float guardPersistenceFraction = 0.25f; // Fraction of guard retained between turns
     public int maxEnergyShield = 0; // Maximum energy shield
     public int currentEnergyShield = 0; // Current energy shield
+    
+    [Header("Stagger System")]
+    public float staggerThreshold = 100f; // Amount of stagger needed to trigger stun
+    public float currentStagger = 0f; // Current stagger meter value
+    public float staggerDecayPerTurn = 0f; // How much stagger decays per turn (0 = no decay)
+    
+    [Header("Combat-Wide Modifiers")]
+    [Tooltip("Bonus momentum gained from all sources (e.g., Berserker's Fury: +1 per momentum gain)")]
+    public int momentumGainBonus = 0;
+    
+    [Header("Momentum System")]
+    [System.NonSerialized]
+    private MomentumManager momentumManager = new MomentumManager();
+    
+    /// <summary>
+    /// Legacy MomentumManager property - now uses StackSystem under the hood for consistency
+    /// </summary>
+    [System.Obsolete("Use StackSystem.Instance.GetStacks(StackType.Momentum) instead. This wrapper is maintained for backward compatibility.")]
+    public MomentumManager Momentum
+    {
+        get
+        {
+            if (momentumManager == null)
+            {
+                momentumManager = new MomentumManager();
+            }
+            // Sync with StackSystem
+            if (StackSystem.Instance != null)
+            {
+                momentumManager.currentMomentum = StackSystem.Instance.GetStacks(StackType.Momentum);
+            }
+            return momentumManager;
+        }
+    }
+    
+    /// <summary>
+    /// Get current momentum from StackSystem
+    /// </summary>
+    public int GetMomentum()
+    {
+        if (StackSystem.Instance != null)
+        {
+            return StackSystem.Instance.GetStacks(StackType.Momentum);
+        }
+        return 0;
+    }
+    
+    /// <summary>
+    /// Gain momentum stacks (uses StackSystem)
+    /// </summary>
+    public int GainMomentum(int amount)
+    {
+        if (StackSystem.Instance != null && amount > 0)
+        {
+            int before = StackSystem.Instance.GetStacks(StackType.Momentum);
+            StackSystem.Instance.AddStacks(StackType.Momentum, amount);
+            int after = StackSystem.Instance.GetStacks(StackType.Momentum);
+            return after - before;
+        }
+        return 0;
+    }
+    
+    /// <summary>
+    /// Spend momentum stacks (uses StackSystem)
+    /// </summary>
+    public int SpendMomentum(int amount)
+    {
+        if (StackSystem.Instance != null && amount > 0)
+        {
+            int before = StackSystem.Instance.GetStacks(StackType.Momentum);
+            int toSpend = Mathf.Min(amount, before);
+            StackSystem.Instance.RemoveStacks(StackType.Momentum, toSpend);
+            return toSpend;
+        }
+        return 0;
+    }
+    
+    /// <summary>
+    /// Spend all momentum stacks (uses StackSystem)
+    /// </summary>
+    public int SpendAllMomentum()
+    {
+        if (StackSystem.Instance != null)
+        {
+            int current = StackSystem.Instance.GetStacks(StackType.Momentum);
+            if (current > 0)
+            {
+                StackSystem.Instance.ClearStacks(StackType.Momentum);
+                return current;
+            }
+        }
+        return 0;
+    }
+    
+    /// <summary>
+    /// Check if momentum is at or above a threshold (uses StackSystem)
+    /// </summary>
+    public bool HasMomentum(int threshold)
+    {
+        if (StackSystem.Instance != null)
+        {
+            return StackSystem.Instance.GetStacks(StackType.Momentum) >= threshold;
+        }
+        return false;
+    }
+    
+    [Header("Delayed Actions")]
+    [Tooltip("Cards queued for future turns (for Temporal Savant, etc.)")]
+    public List<DelayedAction> delayedActions = new List<DelayedAction>();
     
     [Header("Derived Stats")]
     public int maxHealth;
@@ -45,6 +155,13 @@ public class Character
     public float accuracyRating = 0f;
     public float increasedEvasion = 0f; // Additive increased (e.g., 0.10 = +10%)
     public float baseEvasionRating = 0f; // baseline before increased modifiers
+    
+    [Header("Utility & Effigy Stats")]
+    public float dodgeChance = 0f;
+    public float guardEffectivenessPercent = 0f;
+    public float buffDurationIncreasedPercent = 0f;
+    public float randomAilmentChancePercent = 0f;
+    public float increasedDamageAfterGuardPercent = 0f;
     
     [Header("Speed Modifiers")]
     [Tooltip("Total % increased attack speed from items/passives (additive).")]
@@ -71,10 +188,20 @@ public class Character
     [Header("Inventory & Equipment")]
     public List<string> inventory = new List<string>();
     public Dictionary<string, string> equippedItems = new Dictionary<string, string>();
+    public List<Effigy> ownedEffigies = new List<Effigy>();
+    
+    [Header("Warrants")]
+    [Tooltip("List of warrant instances owned by this character. Persisted across scenes.")]
+    public List<WarrantInstanceData> ownedWarrants = new List<WarrantInstanceData>();
     
     [Header("Progression")]
     public List<string> unlockedAbilities = new List<string>();
     public Dictionary<string, int> skillLevels = new Dictionary<string, int>();
+    public List<int> completedEncounterIDs = new List<int>();
+    public List<int> unlockedEncounterIDs = new List<int>();
+    public List<int> enteredEncounterIDs = new List<int>(); // Tracks encounters that have been entered (not necessarily completed)
+    public List<string> completedQuestIDs = new List<string>();
+    public List<string> completedTutorialIDs = new List<string>(); // Tracks completed tutorials (e.g., "warrant_tutorial")
     
     [Header("Weapons")]
     public CharacterWeapons weapons = new CharacterWeapons();
@@ -156,18 +283,38 @@ public class Character
         cardsDrawnPerWave = 1; // Base cards drawn per wave
         reliance = 200;
         maxReliance = 200;
-        
+
+        guardPersistenceFraction = 0.25f;
+
         CalculateDerivedStats();
     }
 
     public void ResetRuntimeState()
     {
         Channeling.Reset();
+        // Reset momentum using StackSystem
+        if (StackSystem.Instance != null)
+        {
+            StackSystem.Instance.ClearStacks(StackType.Momentum);
+        }
+        // Also reset legacy MomentumManager for backward compatibility
+        if (momentumManager != null)
+        {
+            momentumManager.Reset();
+        }
+        guardPersistenceFraction = Mathf.Clamp01(guardPersistenceFraction);
+        momentumGainBonus = 0; // Reset combat-wide momentum gain bonus
     }
     
     // Calculate derived stats based on core attributes
     public void CalculateDerivedStats()
     {
+        dodgeChance = 0f;
+        guardEffectivenessPercent = 0f;
+        buffDurationIncreasedPercent = 0f;
+        randomAilmentChancePercent = 0f;
+        increasedDamageAfterGuardPercent = 0f;
+        
         // Attribute breakpoints
         int str = Mathf.Max(0, strength);
         int dex = Mathf.Max(0, dexterity);
@@ -563,6 +710,15 @@ public class Character
         data.lastPosY = lastPosition.y;
         data.lastPosZ = lastPosition.z;
         
+        data.completedEncounterIDs = new List<int>(completedEncounterIDs);
+        data.unlockedEncounterIDs = new List<int>(unlockedEncounterIDs);
+        data.enteredEncounterIDs = new List<int>(enteredEncounterIDs);
+        data.completedQuestIDs = new List<string>(completedQuestIDs);
+        data.completedTutorialIDs = new List<string>(completedTutorialIDs);
+        
+        // Warrants
+        data.ownedWarrants = new List<WarrantInstanceData>(ownedWarrants);
+        
         return data;
     }
     
@@ -593,9 +749,14 @@ public class Character
         character.reliance = data.reliance;
         character.maxReliance = data.maxReliance;
         
-        // Game State
-        character.currentScene = data.currentScene;
-        character.lastPosition = new Vector3(data.lastPosX, data.lastPosY, data.lastPosZ);
+        character.completedEncounterIDs = data.completedEncounterIDs != null ? new List<int>(data.completedEncounterIDs) : new List<int>();
+        character.unlockedEncounterIDs = data.unlockedEncounterIDs != null ? new List<int>(data.unlockedEncounterIDs) : new List<int>();
+        character.enteredEncounterIDs = data.enteredEncounterIDs != null ? new List<int>(data.enteredEncounterIDs) : new List<int>();
+        character.completedQuestIDs = data.completedQuestIDs != null ? new List<string>(data.completedQuestIDs) : new List<string>();
+        character.completedTutorialIDs = data.completedTutorialIDs != null ? new List<string>(data.completedTutorialIDs) : new List<string>();
+        
+        // Warrants
+        character.ownedWarrants = data.ownedWarrants != null ? new List<WarrantInstanceData>(data.ownedWarrants) : new List<WarrantInstanceData>();
         
         // Recalculate derived stats based on loaded attributes
         character.CalculateDerivedStats();
@@ -736,10 +897,12 @@ public class Character
     public void AddGuard(float guardAmount)
     {
         // Guard cannot exceed max health
-        float newGuard = currentGuard + guardAmount;
+        float effectivenessMultiplier = 1f + Mathf.Max(0f, guardEffectivenessPercent) / 100f;
+        float adjustedGuard = guardAmount * effectivenessMultiplier;
+        float newGuard = currentGuard + adjustedGuard;
         currentGuard = Mathf.Min(newGuard, maxHealth);
         
-        Debug.Log($"{characterName} gained {guardAmount} guard. Total guard: {currentGuard}/{maxHealth}");
+        Debug.Log($"{characterName} gained {adjustedGuard} guard (base {guardAmount}). Total guard: {currentGuard}/{maxHealth}");
     }
     
     // Set max guard based on max health (call this when max health changes)
@@ -759,6 +922,140 @@ public class Character
         reliance += relianceAmount;
         Debug.Log($"{characterName} gained {relianceAmount} reliance. Total reliance: {reliance}");
     }
+
+    public void SetGuardPersistenceFraction(float fraction)
+    {
+        guardPersistenceFraction = Mathf.Clamp01(fraction);
+    }
+
+    public void ModifyGuardPersistenceFraction(float delta)
+    {
+        guardPersistenceFraction = Mathf.Clamp01(guardPersistenceFraction + delta);
+    }
+
+    public float GetGuardPersistenceMultiplier()
+    {
+        return Mathf.Clamp01(guardPersistenceFraction);
+    }
+
+    public bool IsEncounterCompleted(int encounterId)
+    {
+        return completedEncounterIDs.Contains(encounterId);
+    }
+
+    public void MarkEncounterCompleted(int encounterId)
+    {
+        if (!completedEncounterIDs.Contains(encounterId))
+        {
+            completedEncounterIDs.Add(encounterId);
+        }
+    }
+
+    public void MarkEncounterUnlocked(int encounterId)
+    {
+        if (!unlockedEncounterIDs.Contains(encounterId))
+        {
+            unlockedEncounterIDs.Add(encounterId);
+        }
+    }
+
+    public bool HasEnteredEncounter(int encounterId)
+    {
+        return enteredEncounterIDs.Contains(encounterId);
+    }
+
+    public void MarkEncounterEntered(int encounterId)
+    {
+        if (!enteredEncounterIDs.Contains(encounterId))
+        {
+            enteredEncounterIDs.Add(encounterId);
+        }
+    }
+    
+    /// <summary>
+    /// Check if a tutorial has been completed
+    /// </summary>
+    public bool HasCompletedTutorial(string tutorialId)
+    {
+        return completedTutorialIDs.Contains(tutorialId);
+    }
+    
+    /// <summary>
+    /// Mark a tutorial as completed
+    /// </summary>
+    public void MarkTutorialCompleted(string tutorialId)
+    {
+        if (!completedTutorialIDs.Contains(tutorialId))
+        {
+            completedTutorialIDs.Add(tutorialId);
+            Debug.Log($"[Character] Character '{characterName}' completed tutorial: {tutorialId}");
+        }
+    }
+    
+    #region Stagger System
+    
+    /// <summary>
+    /// Add stagger to the player. Returns true if stagger threshold was reached and player should be stunned.
+    /// </summary>
+    public bool AddStagger(float amount, float staggerEffectiveness = 1f)
+    {
+        if (amount <= 0f) return false;
+        
+        float effectiveStagger = amount * staggerEffectiveness;
+        float previousStagger = currentStagger;
+        currentStagger += effectiveStagger;
+        
+        Debug.Log($"[Stagger] {characterName} gained {effectiveStagger:F1} stagger ({previousStagger:F1} -> {currentStagger:F1}/{staggerThreshold:F1})");
+        
+        // Check if stagger threshold was reached
+        if (previousStagger < staggerThreshold && currentStagger >= staggerThreshold)
+        {
+            Debug.Log($"[Stagger] {characterName} reached stagger threshold! ({currentStagger:F1}/{staggerThreshold:F1})");
+            return true; // Signal that stagger threshold was reached
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
+    /// Reduce stagger meter (decay over time)
+    /// </summary>
+    public void DecayStagger()
+    {
+        if (staggerDecayPerTurn > 0f && currentStagger > 0f)
+        {
+            float previousStagger = currentStagger;
+            currentStagger = Mathf.Max(0f, currentStagger - staggerDecayPerTurn);
+            
+            if (!Mathf.Approximately(previousStagger, currentStagger))
+            {
+                Debug.Log($"[Stagger] {characterName} stagger decayed ({previousStagger:F1} -> {currentStagger:F1})");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Reset stagger meter (called when player is stunned)
+    /// </summary>
+    public void ResetStagger()
+    {
+        if (currentStagger > 0f)
+        {
+            Debug.Log($"[Stagger] {characterName} stagger reset ({currentStagger:F1} -> 0)");
+            currentStagger = 0f;
+        }
+    }
+    
+    /// <summary>
+    /// Get stagger percentage (0-1)
+    /// </summary>
+    public float GetStaggerPercentage()
+    {
+        if (staggerThreshold <= 0f) return 0f;
+        return Mathf.Clamp01(currentStagger / staggerThreshold);
+    }
+    
+    #endregion
 }
 
 [Serializable]

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Area55-80
   m_EditorClassIdentifier: Assembly-CSharp::AreaLootTable
   areaLevel: 80
-  baseDropChance: 1
+  baseDropChance: 0.15
   itemTypeWeights:
   - itemType: 0
     weight: 30
@@ -134,4 +134,5 @@ MonoBehaviour:
     dropChance: 0.07
     minQuantity: 1
     maxQuantity: 3
+  effigyDrops: []
   enableDebugLogs: 0

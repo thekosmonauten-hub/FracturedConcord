@@ -36,6 +36,14 @@ public class StatusEffectManager : MonoBehaviour
         foreach (var effect in effectsToAdvance)
         {
             effect.AdvanceTurn();
+            
+            // Handle Crumble expiration (deal stored damage)
+            if (effect.effectType == StatusEffectType.Crumble && !effect.isActive && effect.magnitude > 0f)
+            {
+                float storedDamage = effect.magnitude;
+                Debug.Log($"[Crumble] Expired, dealing {storedDamage} stored physical damage");
+                ApplyDamageToEntity(storedDamage, DamageType.Physical);
+            }
         }
         
         // Remove expired effects
@@ -44,17 +52,132 @@ public class StatusEffectManager : MonoBehaviour
     
     /// <summary>
     /// Add a status effect to this entity
+    /// Handles special stacking rules for different effect types
     /// </summary>
     public bool AddStatusEffect(StatusEffect newEffect)
     {
         if (newEffect == null) return false;
         
+        // Special handling for effects with unique stacking rules
+        switch (newEffect.effectType)
+        {
+            case StatusEffectType.Bleed:
+                return AddBleedingEffect(newEffect);
+            
+            case StatusEffectType.Poison:
+                return AddPoisonEffect(newEffect);
+            
+            case StatusEffectType.Bolster:
+                return AddBolsterEffect(newEffect);
+            
+            default:
+                // Standard handling for other effects
+                return AddStandardStatusEffect(newEffect);
+        }
+    }
+    
+    /// <summary>
+    /// Add Bleeding effect: Only one instance, refreshes if higher magnitude
+    /// </summary>
+    private bool AddBleedingEffect(StatusEffect newEffect)
+    {
+        StatusEffect existing = activeStatusEffects.FirstOrDefault(e => e.effectType == StatusEffectType.Bleed);
+        
+        if (existing != null)
+        {
+            // If new bleed is higher, replace it and refresh duration
+            if (newEffect.magnitude > existing.magnitude)
+            {
+                existing.magnitude = newEffect.magnitude;
+                existing.timeRemaining = newEffect.duration;
+                existing.duration = newEffect.duration;
+                existing.sourcePhysicalDamage = newEffect.sourcePhysicalDamage;
+                Debug.Log($"Bleeding refreshed with higher magnitude: {existing.magnitude} (Duration: {existing.duration})");
+                UpdateStatusEffectVisuals();
+                return true;
+            }
+            else
+            {
+                // Lower bleed, just refresh duration
+                existing.timeRemaining = Mathf.Max(existing.timeRemaining, newEffect.duration);
+                existing.duration = Mathf.Max(existing.duration, newEffect.duration);
+                Debug.Log($"Bleeding duration refreshed: {existing.timeRemaining}");
+                UpdateStatusEffectVisuals();
+                return true;
+            }
+        }
+        
+        // No existing bleed, add new one
+        return AddStandardStatusEffect(newEffect);
+    }
+    
+    /// <summary>
+    /// Add Poison effect: Stacks independently, each with own duration
+    /// </summary>
+    private bool AddPoisonEffect(StatusEffect newEffect)
+    {
+        // Poison stacks independently - always add as new instance
+        if (activeStatusEffects.Count >= maxStatusEffects)
+        {
+            Debug.LogWarning($"Cannot add Poison: Maximum effects reached ({maxStatusEffects})");
+            return false;
+        }
+        
+        StatusEffect effect = newEffect.Clone();
+        activeStatusEffects.Add(effect);
+        ApplyRuntimeStatEffect(effect, true);
+        
+        Debug.Log($"Added Poison stack: {effect.magnitude} damage/turn (Duration: {effect.duration} turns)");
+        UpdateStatusEffectVisuals();
+        OnStatusEffectAdded?.Invoke(effect);
+        
+        return true;
+    }
+    
+    /// <summary>
+    /// Add Bolster effect: Stacks up to 10 (20% max damage reduction)
+    /// </summary>
+    private bool AddBolsterEffect(StatusEffect newEffect)
+    {
+        StatusEffect existing = activeStatusEffects.FirstOrDefault(e => e.effectType == StatusEffectType.Bolster);
+        
+        if (existing != null)
+        {
+            // Stack magnitude, cap at 10 stacks (20% damage reduction)
+            float newMagnitude = existing.magnitude + newEffect.magnitude;
+            if (newMagnitude > 10f)
+            {
+                newMagnitude = 10f;
+                Debug.Log($"Bolster capped at 10 stacks (20% damage reduction)");
+            }
+            existing.magnitude = newMagnitude;
+            existing.timeRemaining = Mathf.Max(existing.timeRemaining, newEffect.duration);
+            existing.duration = Mathf.Max(existing.duration, newEffect.duration);
+            Debug.Log($"Bolster stacked: {existing.magnitude} stacks ({existing.magnitude * 2f}% damage reduction)");
+            UpdateStatusEffectVisuals();
+            return true;
+        }
+        
+        // Cap new bolster at 10 stacks
+        if (newEffect.magnitude > 10f)
+        {
+            newEffect.magnitude = 10f;
+        }
+        
+        return AddStandardStatusEffect(newEffect);
+    }
+    
+    /// <summary>
+    /// Add standard status effect (handles most effects)
+    /// </summary>
+    private bool AddStandardStatusEffect(StatusEffect newEffect)
+    {
         // Check if we already have this type of effect
         StatusEffect existingEffect = activeStatusEffects.FirstOrDefault(e => e.effectType == newEffect.effectType);
         
         if (existingEffect != null)
         {
-            // Refresh existing effect (extend duration, update magnitude, etc.)
+            AccumulateStackAdjustments(existingEffect, newEffect);
             RefreshStatusEffect(existingEffect, newEffect);
             return true;
         }
@@ -265,10 +388,20 @@ public class StatusEffectManager : MonoBehaviour
         // Handle specific effect types
         switch (effect.effectType)
         {
+            case StatusEffectType.Bleed:
+                // Bleeding: 70% of physical damage per turn
+                ApplyBleedingDamage(effect);
+                break;
             case StatusEffectType.Poison:
+                // Poison: 30% of (physical + chaos) damage per turn
+                ApplyPoisonDamage(effect);
+                break;
             case StatusEffectType.Burn:
+                // Ignite: 90% of fire damage per second (tickInterval should be 1 second)
+                ApplyIgniteDamage(effect);
+                break;
             case StatusEffectType.ChaosDot:
-                // Apply damage over time
+                // Chaos DoT: Uses magnitude directly
                 ApplyDamageOverTime(effect);
                 break;
             case StatusEffectType.Regeneration:
@@ -282,6 +415,71 @@ public class StatusEffectManager : MonoBehaviour
             case StatusEffectType.Crumble:
                 // Crumble does not tick; it's consumed by a shout or expires
                 break;
+        }
+    }
+    
+    /// <summary>
+    /// Apply Bleeding damage: 70% of source physical damage per turn
+    /// </summary>
+    private void ApplyBleedingDamage(StatusEffect effect)
+    {
+        // Magnitude is already calculated as 70% of source physical damage
+        float damage = effect.magnitude;
+        Debug.Log($"Applying Bleeding: {damage} physical damage (70% of {effect.sourcePhysicalDamage} source damage)");
+        ApplyDamageToEntity(damage, DamageType.Physical);
+    }
+    
+    /// <summary>
+    /// Apply Poison damage: 30% of (physical + chaos) damage per turn
+    /// </summary>
+    private void ApplyPoisonDamage(StatusEffect effect)
+    {
+        // Magnitude is already calculated as 30% of (physical + chaos) damage
+        float damage = effect.magnitude;
+        float totalSource = effect.sourcePhysicalDamage + effect.sourceChaosDamage;
+        Debug.Log($"Applying Poison: {damage} chaos damage (30% of {totalSource} combined source damage)");
+        ApplyDamageToEntity(damage, DamageType.Chaos);
+    }
+    
+    /// <summary>
+    /// Apply Ignite damage: 90% of fire damage per turn
+    /// </summary>
+    private void ApplyIgniteDamage(StatusEffect effect)
+    {
+        // Magnitude is already calculated as 90% of source fire damage
+        float damage = effect.magnitude;
+        Debug.Log($"Applying Ignite: {damage} fire damage (90% of {effect.sourceFireDamage} source damage)");
+        ApplyDamageToEntity(damage, DamageType.Fire);
+    }
+    
+    /// <summary>
+    /// Apply damage to the entity (Character or Enemy)
+    /// </summary>
+    private void ApplyDamageToEntity(float damage, DamageType damageType)
+    {
+        Character character = GetComponent<Character>();
+        if (character != null)
+        {
+            character.TakeDamage(damage, damageType);
+            return;
+        }
+        
+        Enemy enemy = GetComponent<Enemy>();
+        if (enemy != null)
+        {
+            enemy.TakeDamage(damage);
+            return;
+        }
+        
+        // Try to get from display components
+        var enemyDisplay = GetComponent<EnemyCombatDisplay>();
+        if (enemyDisplay != null)
+        {
+            Enemy displayEnemy = enemyDisplay.GetCurrentEnemy();
+            if (displayEnemy != null)
+            {
+                displayEnemy.TakeDamage(damage);
+            }
         }
     }
     
@@ -352,10 +550,10 @@ public class StatusEffectManager : MonoBehaviour
         // Update magnitude (could be additive or multiplicative based on effect type)
         switch (existing.effectType)
         {
-            case StatusEffectType.Poison:
             case StatusEffectType.Burn:
-                // Stack damage over time effects
+                // Ignite stacks magnitude
                 existing.magnitude += newEffect.magnitude;
+                existing.sourceFireDamage += newEffect.sourceFireDamage;
                 break;
             case StatusEffectType.Strength:
             case StatusEffectType.Dexterity:
@@ -375,12 +573,87 @@ public class StatusEffectManager : MonoBehaviour
                 existing.magnitude += newEffect.magnitude;
                 break;
             }
+            case StatusEffectType.Chill:
+                // Update energy gain reduction based on cold damage
+                existing.sourceColdDamage = Mathf.Max(existing.sourceColdDamage, newEffect.sourceColdDamage);
+                existing.energyGainReduction = CalculateChilledEnergyReduction(existing.sourceColdDamage);
+                break;
+            case StatusEffectType.Shocked:
+                // Update damage multiplier based on lightning damage
+                existing.sourceLightningDamage = Mathf.Max(existing.sourceLightningDamage, newEffect.sourceLightningDamage);
+                existing.damageMultiplier = CalculateShockedDamageMultiplier(existing.sourceLightningDamage);
+                break;
             default:
                 // For most effects, just refresh duration
                 break;
         }
         
         Debug.Log($"Refreshed status effect: {existing.effectName} (New duration: {existing.timeRemaining}, New magnitude: {existing.magnitude})");
+    }
+    
+    /// <summary>
+    /// Calculate Bleeding magnitude: 70% of physical damage
+    /// </summary>
+    public static float CalculateBleedingMagnitude(float physicalDamage)
+    {
+        return physicalDamage * 0.7f;
+    }
+    
+    /// <summary>
+    /// Calculate Poison magnitude: 30% of (physical + chaos) damage
+    /// </summary>
+    public static float CalculatePoisonMagnitude(float physicalDamage, float chaosDamage)
+    {
+        return (physicalDamage + chaosDamage) * 0.3f;
+    }
+    
+    /// <summary>
+    /// Calculate Ignite magnitude: 90% of fire damage
+    /// </summary>
+    public static float CalculateIgniteMagnitude(float fireDamage)
+    {
+        return fireDamage * 0.9f;
+    }
+    
+    /// <summary>
+    /// Calculate Chilled energy gain reduction: up to 30% based on cold damage
+    /// </summary>
+    public static float CalculateChilledEnergyReduction(float coldDamage)
+    {
+        // Scale from 0% to 30% based on cold damage
+        // This is a placeholder - you may want to adjust the scaling formula
+        float reduction = Mathf.Clamp(coldDamage * 0.01f, 0f, 0.3f);
+        return reduction;
+    }
+    
+    /// <summary>
+    /// Calculate Frozen duration: 1-2 turns based on cold damage as percentage of target's max HP
+    /// Only considers the COLD damage portion, not total damage
+    /// </summary>
+    public static int CalculateFrozenDuration(float coldDamage, float targetMaxHP)
+    {
+        if (targetMaxHP <= 0f) return 1; // Safety check
+        
+        // Calculate cold damage as percentage of max HP
+        float coldDamagePercent = (coldDamage / targetMaxHP) * 100f;
+        
+        // Base 1 turn, +1 turn if cold damage >= 10% of max HP
+        if (coldDamagePercent >= 10f)
+        {
+            return 2;
+        }
+        return 1;
+    }
+    
+    /// <summary>
+    /// Calculate Shocked damage multiplier: up to 1.5x (50% increased) based on lightning damage
+    /// </summary>
+    public static float CalculateShockedDamageMultiplier(float lightningDamage)
+    {
+        // Scale from 1.0x to 1.5x based on lightning damage
+        // This is a placeholder - you may want to adjust the scaling formula
+        float multiplier = 1f + Mathf.Clamp(lightningDamage * 0.01f, 0f, 0.5f);
+        return multiplier;
     }
     
     /// <summary>
@@ -444,42 +717,211 @@ public class StatusEffectManager : MonoBehaviour
     {
         if (effect == null) return;
 
-        var playerDisplay = GetComponent<PlayerCombatDisplay>();
-        if (playerDisplay == null) return;
+        ApplyStackAdjustments(effect, applying);
+        ApplyOtherRuntimeEffects(effect, applying);
+    }
 
-        var characterManager = CharacterManager.Instance;
-        if (characterManager == null || !characterManager.HasCharacter()) return;
-
-        var character = characterManager.GetCurrentCharacter();
-        if (character == null) return;
+    private void ApplyOtherRuntimeEffects(StatusEffect effect, bool applying)
+    {
+        if (effect == null) return;
 
         float sign = applying ? 1f : -1f;
 
-        switch (effect.effectType)
+        var enemyDisplay = GetComponent<EnemyCombatDisplay>();
+        if (enemyDisplay != null)
         {
-            case StatusEffectType.TempMaxMana:
+            Enemy enemy = enemyDisplay.GetCurrentEnemy();
+            if (enemy != null)
             {
-                int delta = Mathf.RoundToInt(effect.magnitude * sign);
-                character.maxMana = Mathf.Max(0, character.maxMana + delta);
-                if (applying)
+                switch (effect.effectType)
                 {
-                    character.mana = Mathf.Min(character.maxMana, character.mana + delta);
+                    case StatusEffectType.Bolster:
+                        enemy.ModifyBolsterStacks(effect.magnitude * sign);
+                        break;
+                    case StatusEffectType.Strength:
+                        enemy.ModifyStrengthStacks(effect.magnitude * sign);
+                        break;
+                    case StatusEffectType.Dexterity:
+                        enemy.ModifyDexterityStacks(effect.magnitude * sign);
+                        break;
+                    case StatusEffectType.Intelligence:
+                        enemy.ModifyIntelligenceStacks(effect.magnitude * sign);
+                        break;
+                    case StatusEffectType.Chill:
+                        if (applying)
+                        {
+                            // Chilled: Reduce energy gain up to 30% based on cold damage
+                            effect.energyGainReduction = CalculateChilledEnergyReduction(effect.sourceColdDamage);
+                            enemy.ApplyEnergyDrainFromStatus(effect.effectType, effect.energyGainReduction);
+                        }
+                        // Note: Energy drain is automatically cleared when effect is removed
+                        break;
+                    case StatusEffectType.Slow:
+                        if (applying)
+                        {
+                            enemy.ApplyEnergyDrainFromStatus(effect.effectType, effect.magnitude);
+                        }
+                        // Note: Energy drain is automatically cleared when effect is removed
+                        break;
+                    case StatusEffectType.Freeze:
+                    case StatusEffectType.Stagger:
+                        // Frozen and Stagger prevent actions - handled in CanAct() method
+                        break;
+                    case StatusEffectType.Shocked:
+                        // Shocked increases damage taken - handled in damage calculation
+                        break;
                 }
-                else
-                {
-                    character.mana = Mathf.Min(character.mana, character.maxMana);
-                }
-                playerDisplay.UpdateManaDisplay();
-                break;
-            }
-            case StatusEffectType.TempEvasion:
-            {
-                float delta = (effect.magnitude / 100f) * sign;
-                character.increasedEvasion = Mathf.Max(0f, character.increasedEvasion + delta);
-                playerDisplay.RefreshDisplay();
-                break;
             }
         }
+
+        var playerDisplay = GetComponent<PlayerCombatDisplay>();
+        if (playerDisplay != null)
+        {
+            var characterManager = CharacterManager.Instance;
+            if (characterManager != null && characterManager.HasCharacter())
+            {
+                var character = characterManager.GetCurrentCharacter();
+                if (character != null)
+                {
+                    switch (effect.effectType)
+                    {
+                        case StatusEffectType.TempMaxMana:
+                        {
+                            int delta = Mathf.RoundToInt(effect.magnitude * sign);
+                            character.maxMana = Mathf.Max(0, character.maxMana + delta);
+                            if (applying)
+                            {
+                                character.mana = Mathf.Min(character.maxMana, character.mana + delta);
+                            }
+                            else
+                            {
+                                character.mana = Mathf.Min(character.mana, character.maxMana);
+                            }
+                            playerDisplay.UpdateManaDisplay();
+                            break;
+                        }
+                        case StatusEffectType.TempEvasion:
+                        {
+                            float delta = (effect.magnitude / 100f) * sign;
+                            character.increasedEvasion = Mathf.Max(0f, character.increasedEvasion + delta);
+                            playerDisplay.RefreshDisplay();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void ApplyStackAdjustments(StatusEffect effect, bool applying)
+    {
+        ApplyStackAdjustment(effect.stackAdjustment, applying);
+    }
+
+    public void ApplyStackAdjustment(StackAdjustmentDefinition adjustment, bool applying)
+    {
+        if (adjustment == null) return;
+
+        int signedMultiplier = applying ? 1 : -1;
+
+        var enemyDisplay = GetComponent<EnemyCombatDisplay>();
+        if (enemyDisplay != null)
+        {
+            Enemy enemy = enemyDisplay.GetCurrentEnemy();
+            if (enemy != null)
+            {
+                ApplyStackDeltaToEnemy(enemy, StackType.Agitate, CalculateAdjustedDelta(adjustment.agitateStacks, adjustment.agitateMoreMultiplier, adjustment.agitateIncreasedPercent, signedMultiplier));
+                ApplyStackDeltaToEnemy(enemy, StackType.Tolerance, CalculateAdjustedDelta(adjustment.toleranceStacks, adjustment.toleranceMoreMultiplier, adjustment.toleranceIncreasedPercent, signedMultiplier));
+                ApplyStackDeltaToEnemy(enemy, StackType.Potential, CalculateAdjustedDelta(adjustment.potentialStacks, adjustment.potentialMoreMultiplier, adjustment.potentialIncreasedPercent, signedMultiplier));
+                enemyDisplay.UpdateStackDisplay();
+            }
+        }
+
+        var playerDisplay = GetComponent<PlayerCombatDisplay>();
+        if (playerDisplay != null)
+        {
+            var stackSystem = StackSystem.Instance;
+            if (stackSystem != null)
+            {
+                ApplyStackDeltaToStackSystem(stackSystem, StackType.Agitate, CalculateAdjustedDelta(adjustment.agitateStacks, adjustment.agitateMoreMultiplier, adjustment.agitateIncreasedPercent, signedMultiplier));
+                ApplyStackDeltaToStackSystem(stackSystem, StackType.Tolerance, CalculateAdjustedDelta(adjustment.toleranceStacks, adjustment.toleranceMoreMultiplier, adjustment.toleranceIncreasedPercent, signedMultiplier));
+                ApplyStackDeltaToStackSystem(stackSystem, StackType.Potential, CalculateAdjustedDelta(adjustment.potentialStacks, adjustment.potentialMoreMultiplier, adjustment.potentialIncreasedPercent, signedMultiplier));
+                ApplyStackDeltaToStackSystem(stackSystem, StackType.Momentum, CalculateAdjustedDelta(adjustment.momentumStacks, adjustment.momentumMoreMultiplier, adjustment.momentumIncreasedPercent, signedMultiplier));
+            }
+        }
+    }
+
+    private void ApplyStackDeltaToEnemy(Enemy enemy, StackType type, int delta)
+    {
+        if (enemy == null || delta == 0) return;
+
+        if (delta > 0)
+        {
+            enemy.AddStacks(type, delta);
+        }
+        else if (delta < 0)
+        {
+            enemy.RemoveStacks(type, Mathf.Abs(delta));
+        }
+    }
+
+    private void ApplyStackDeltaToStackSystem(StackSystem system, StackType type, int delta)
+    {
+        if (system == null || delta == 0) return;
+
+        if (delta > 0)
+        {
+            system.AddStacks(type, delta);
+        }
+        else if (delta < 0)
+        {
+            system.RemoveStacks(type, Mathf.Abs(delta));
+        }
+    }
+
+    private int CalculateAdjustedDelta(int baseStacks, float moreMultiplier, float increasedPercent, int directionSign)
+    {
+        if (baseStacks == 0 && Mathf.Approximately(moreMultiplier, 0f) && Mathf.Approximately(increasedPercent, 0f))
+        {
+            return 0;
+        }
+
+        float value = baseStacks;
+        if (!Mathf.Approximately(moreMultiplier, 0f))
+        {
+            value += value * moreMultiplier;
+        }
+
+        if (!Mathf.Approximately(increasedPercent, 0f))
+        {
+            value += value * (increasedPercent / 100f);
+        }
+
+        int finalAmount = Mathf.RoundToInt(value);
+        return finalAmount * directionSign;
+    }
+
+    private void AccumulateStackAdjustments(StatusEffect existingEffect, StatusEffect newEffect)
+    {
+        if (existingEffect == null || newEffect == null) return;
+
+        var adjustment = newEffect.stackAdjustment;
+        if (adjustment == null)
+        {
+            return;
+        }
+
+        if (existingEffect.stackAdjustment == null)
+        {
+            existingEffect.stackAdjustment = adjustment.Clone();
+        }
+        else
+        {
+            existingEffect.stackAdjustment.MergeFrom(adjustment);
+        }
+
+        ApplyStackAdjustments(newEffect, true);
+        ApplyOtherRuntimeEffects(newEffect, true);
     }
     
     /// <summary>
@@ -496,6 +938,83 @@ public class StatusEffectManager : MonoBehaviour
     public List<StatusEffect> GetActiveDebuffs()
     {
         return activeStatusEffects.Where(e => e.isActive && e.isDebuff).ToList();
+    }
+    
+    /// <summary>
+    /// Check if this entity can act (not Frozen or Staggered)
+    /// </summary>
+    public bool CanAct()
+    {
+        bool isFrozen = HasStatusEffect(StatusEffectType.Freeze);
+        bool isStaggered = HasStatusEffect(StatusEffectType.Stagger);
+        return !isFrozen && !isStaggered;
+    }
+    
+    /// <summary>
+    /// Get total damage multiplier from Shocked status effect
+    /// </summary>
+    public float GetShockedDamageMultiplier()
+    {
+        StatusEffect shocked = GetStatusEffect(StatusEffectType.Shocked);
+        if (shocked != null && shocked.isActive)
+        {
+            return shocked.damageMultiplier;
+        }
+        return 1f;
+    }
+    
+    /// <summary>
+    /// Get damage multiplier from Vulnerability (20% more damage, consumed after one instance)
+    /// </summary>
+    public float GetVulnerabilityDamageMultiplier()
+    {
+        StatusEffect vulnerable = GetStatusEffect(StatusEffectType.Vulnerable);
+        if (vulnerable != null && vulnerable.isActive && !vulnerable.vulnerabilityConsumed)
+        {
+            return 1.2f; // 20% more damage
+        }
+        return 1f;
+    }
+    
+    /// <summary>
+    /// Consume Vulnerability after damage is dealt
+    /// </summary>
+    public void ConsumeVulnerability()
+    {
+        StatusEffect vulnerable = GetStatusEffect(StatusEffectType.Vulnerable);
+        if (vulnerable != null && !vulnerable.vulnerabilityConsumed)
+        {
+            vulnerable.vulnerabilityConsumed = true;
+            RemoveStatusEffect(vulnerable); // Remove after consumption
+            Debug.Log("[Vulnerability] Consumed after damage instance");
+        }
+    }
+    
+    /// <summary>
+    /// Get total damage reduction from Bolster (2% per stack, max 20% at 10 stacks)
+    /// </summary>
+    public float GetBolsterDamageReduction()
+    {
+        StatusEffect bolster = GetStatusEffect(StatusEffectType.Bolster);
+        if (bolster != null && bolster.isActive)
+        {
+            float stacks = Mathf.Min(bolster.magnitude, 10f); // Cap at 10
+            return stacks * 0.02f; // 2% per stack
+        }
+        return 0f;
+    }
+    
+    /// <summary>
+    /// Get energy gain reduction from Chilled (up to 30% based on cold damage)
+    /// </summary>
+    public float GetChilledEnergyReduction()
+    {
+        StatusEffect chilled = GetStatusEffect(StatusEffectType.Chill);
+        if (chilled != null && chilled.isActive)
+        {
+            return chilled.energyGainReduction;
+        }
+        return 0f;
     }
     
     /// <summary>

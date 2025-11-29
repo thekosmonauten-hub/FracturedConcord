@@ -1,0 +1,15 @@
+Name,Description,Color,Health%,Damage%,Accuracy%,Evasion%,CritChance%,CritMultiplier%,PhysicalRes%,FireRes%,ColdRes%,LightningRes%,ChaosRes%,RegenHealth,RegenAmount,IsHasted,IsArmored,ReflectsDamage,ReflectPercent%,QuantityMultiplier,RarityMultiplier,Weight
+Hasted,"This enemy moves and acts faster",cyan,0,0,20,15,0,0,0,0,0,0,0,false,0,true,false,false,0,1.0,1.0,100
+Armored,"This enemy has increased defenses",gray,30,0,0,0,0,0,25,0,0,0,0,false,0,false,true,false,0,1.0,1.0,100
+Resistant,"This enemy resists elemental damage",magenta,0,0,0,0,0,0,0,30,30,30,0,false,0,false,false,false,0,1.0,1.0,100
+Regenerating,"This enemy regenerates health each turn",green,20,0,0,0,0,0,0,0,0,0,0,true,10,false,false,false,0,1.0,1.0,100
+Reflective,"This enemy reflects damage back to attackers",red,0,0,0,0,0,0,0,0,0,0,0,false,0,false,false,true,25,1.0,1.0,100
+Tough,"This enemy has significantly more health",255,128,128,50,0,0,0,0,15,0,0,0,0,false,0,false,false,false,0,1.0,1.0,100
+Powerful,"This enemy deals increased damage",255,200,0,0,30,0,0,0,0,0,0,0,0,false,0,false,false,false,0,1.0,1.0,100
+Elusive,"This enemy is harder to hit",0,255,255,0,0,0,0,0,0,0,0,0,0,false,0,false,false,false,0,1.0,1.0,100
+Critical,"This enemy has increased critical strike chance and multiplier",255,0,255,0,0,0,0,15,20,0,0,0,0,false,0,false,false,false,0,1.0,1.0,100
+Elemental,"This enemy has high elemental resistances",255,165,0,0,0,0,0,0,0,40,40,40,0,false,0,false,false,false,0,1.0,1.0,100
+Loot-Rich,"This enemy drops significantly more items",yellow,0,0,0,0,0,0,0,0,0,0,0,false,0,false,false,false,0,2.0,1.5,50
+Treasure-Hunter,"This enemy drops much rarer items",255,215,0,0,0,0,0,0,0,0,0,0,0,false,0,false,false,false,0,1.5,3.0,25
+Plunderer,"This enemy drops both more and rarer items",255,140,0,0,0,0,0,0,0,0,0,0,0,false,0,false,false,false,0,2.5,2.5,10
+

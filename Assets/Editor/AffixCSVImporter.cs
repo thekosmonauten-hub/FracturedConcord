@@ -14,7 +14,6 @@ public class AffixCSVImporter : EditorWindow
     
     [Header("Import Filters")]
     private bool filterByPrefix = false;
-    private bool filterBySuffix = false;
     private bool onlyImportPrefixes = true;
     private bool onlyImportSuffixes = true;
     

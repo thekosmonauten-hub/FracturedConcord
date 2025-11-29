@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9be3bb50a3980b47ab1e7fc8419be94, type: 3}
+  m_Name: T1Maze
+  m_EditorClassIdentifier: Assembly-CSharp::EncounterDataAsset
+  encounterID: 100
+  encounterName: Broken Mandate
+  sceneName: MazeScene
+  actNumber: 1
+  encounterSprite: {fileID: -997650035692225810, guid: 788c677b1ad206946b73efcd3b7ff50f, type: 3}
+  prerequisiteEncounters: []
+  areaLevel: 33
+  totalWaves: 1
+  maxEnemiesPerWave: 3
+  randomizeEnemyCount: 1
+  uniqueEnemy: {fileID: 0}
+  lootTable: {fileID: 0}
+  areaLootTable: {fileID: 0}

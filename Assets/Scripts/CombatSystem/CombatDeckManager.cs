@@ -1,7 +1,9 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Random = UnityEngine.Random;
 
 /// <summary>
 /// Manages the card deck during combat.
@@ -30,6 +32,7 @@ public class CombatDeckManager : MonoBehaviour
     [SerializeField] private CardEffectProcessor cardEffectProcessor;
     [SerializeField] private EnemyTargetingManager targetingManager;
     [SerializeField] private CombatEffectManager combatEffectManager;
+    [SerializeField] private DiscardPanel discardPanel;
     
     [Header("UI References")]
     [SerializeField] private TMPro.TextMeshProUGUI deckCountText;
@@ -70,6 +73,9 @@ public class CombatDeckManager : MonoBehaviour
     public System.Action<Character, ChannelingTracker.ChannelingState> OnChannelingStateChanged;
     public System.Action<SpeedMeterState> OnSpeedMeterChanged;
     private ChannelingTracker.ChannelingState lastChannelingState = default;
+    
+    // Divine Favor state (next card applies discarded effect)
+    private bool nextCardAppliesDiscardedEffect = false;
     public ChannelingTracker.ChannelingState CurrentChannelingState => lastChannelingState;
     public SpeedMeterState CurrentSpeedMeterState => new SpeedMeterState
     {
@@ -78,6 +84,7 @@ public class CombatDeckManager : MonoBehaviour
         focusProgress = focusMeterValue / Mathf.Max(1f, focusChargeThreshold),
         focusCharges = focusCharges
     };
+    public SpeedMeterState GetSpeedMeterState() => CurrentSpeedMeterState;
     private static readonly Color ChannelingStartColor = new Color(0.25f, 0.85f, 1f);
     private static readonly Color ChannelingEndColor = new Color(1f, 0.5f, 0.3f);
     private PlayerCombatDisplay cachedPlayerDisplay;
@@ -85,6 +92,36 @@ public class CombatDeckManager : MonoBehaviour
     private int aggressionCharges = 0;
     private float focusMeterValue = 0f;
     private int focusCharges = 0;
+
+    #region Charge Modifier State
+
+    public enum AggressionChargeEffect
+    {
+        None,
+        HitsTwice,
+        HitsAllEnemies,
+        AlwaysCrit,
+        IgnoresGuardArmor
+    }
+
+    public enum FocusChargeEffect
+    {
+        None,
+        DoubleDamage,
+        HalfManaCost
+    }
+
+    [Header("Charge Modifier State")]
+    [SerializeField] private AggressionChargeEffect selectedAggressionEffect = AggressionChargeEffect.None;
+    [SerializeField] private FocusChargeEffect selectedFocusEffect = FocusChargeEffect.None;
+    private bool aggressionModifierConsumed = false;
+    private bool focusModifierConsumed = false;
+
+    public event System.Action<AggressionChargeEffect> OnAggressionModifierSelected;
+    public event System.Action<FocusChargeEffect> OnFocusModifierSelected;
+    public event System.Action OnChargeModifiersCleared;
+
+    #endregion
     
     // Combat Manager Integration
     private CombatDisplayManager combatDisplayManager;
@@ -143,6 +180,7 @@ public class CombatDeckManager : MonoBehaviour
 
         EnsureSpeedMeterDefaults();
         RaiseSpeedMeterChanged();
+        ResetChargeModifiers();
     }
     
     private void Start()
@@ -247,25 +285,37 @@ public class CombatDeckManager : MonoBehaviour
         
         // Load deck from CardDatabase as CardDataExtended - NO CONVERSION!
         List<CardDataExtended> cardDataDeck = LoadDeckFromCardDatabase(characterClass);
+        bool deckLoadedFromPreset = false;
+        
+        if (cardDataDeck == null || cardDataDeck.Count == 0)
+        {
+            cardDataDeck = LoadDeckFromActivePreset(characterClass);
+            deckLoadedFromPreset = cardDataDeck != null && cardDataDeck.Count > 0;
+        }
         
         if (cardDataDeck != null && cardDataDeck.Count > 0)
         {
-            // NO CONVERSION NEEDED! Use CardDataExtended directly!
-            foreach (CardDataExtended card in cardDataDeck)
+            if (deckLoadedFromPreset)
             {
-                // Add multiple copies based on typical deck composition
-                int copies = GetCardCopies(card.cardName);
-                for (int i = 0; i < copies; i++)
+                drawPile.AddRange(cardDataDeck);
+                Debug.Log($"<color=green>✓ Loaded {characterClass} deck from active DeckBuilder preset:</color> {drawPile.Count} cards");
+            }
+            else
+            {
+                foreach (CardDataExtended card in cardDataDeck)
                 {
-                    drawPile.Add(card);
+                    int copies = GetCardCopies(card.cardName);
+                    for (int i = 0; i < copies; i++)
+                    {
+                        drawPile.Add(card);
+                    }
+                    Debug.Log($"[CardDataExtended] Added {copies} copies of {card.cardName} to deck");
                 }
-                Debug.Log($"[CardDataExtended] Added {copies} copies of {card.cardName} to deck");
+                Debug.Log($"<color=green>✓ Loaded {characterClass} deck from CardDatabase:</color> {drawPile.Count} cards");
             }
             
-            Debug.Log($"<color=green>✓ Loaded {characterClass} deck from CardDatabase:</color> {drawPile.Count} cards");
             Debug.Log($"Draw pile now contains: {drawPile.Count} cards");
             
-            // Verify cards are actually in the list
             if (drawPile.Count > 0)
             {
                 Debug.Log($"First card in draw pile: {drawPile[0].cardName}");
@@ -276,6 +326,24 @@ public class CombatDeckManager : MonoBehaviour
         else
         {
             Debug.LogError($"<color=red>✗ Failed to load deck for {characterClass}!</color>");
+        }
+    }
+    
+    /// <summary>
+    /// Add a card to the discard pile (used for unleashed prepared cards)
+    /// </summary>
+    public void AddCardToDiscardPile(CardDataExtended card)
+    {
+        if (card != null)
+        {
+            discardPile.Add(card);
+            Debug.Log($"<color=cyan>[CombatDeckManager] Added {card.cardName} to discard pile (Total: {discardPile.Count})</color>");
+            
+            // Update discard count display if available
+            if (discardCountText != null)
+            {
+                discardCountText.text = discardPile.Count.ToString();
+            }
         }
     }
     
@@ -478,6 +546,52 @@ public class CombatDeckManager : MonoBehaviour
         }
     }
     
+    private List<CardDataExtended> LoadDeckFromActivePreset(string characterClass)
+    {
+        DeckManager deckManager = DeckManager.Instance;
+        if (deckManager == null || !deckManager.HasActiveDeck())
+        {
+            Debug.LogWarning("[CombatDeckManager] No active deck preset available. Falling back to CardDatabase.");
+            return null;
+        }
+        
+        DeckPreset activeDeck = deckManager.GetActiveDeck();
+        if (activeDeck == null)
+        {
+            Debug.LogWarning("[CombatDeckManager] Active deck preset is null.");
+            return null;
+        }
+        
+        if (!string.IsNullOrEmpty(activeDeck.characterClass) && !string.Equals(activeDeck.characterClass, characterClass, System.StringComparison.OrdinalIgnoreCase))
+        {
+            Debug.LogWarning($"[CombatDeckManager] Active deck preset class '{activeDeck.characterClass}' does not match expected class '{characterClass}'. Loading anyway.");
+        }
+        
+        List<CardDataExtended> result = new List<CardDataExtended>();
+        foreach (DeckCardEntry entry in activeDeck.GetCardEntries())
+        {
+            if (entry == null || entry.cardData == null || entry.quantity <= 0)
+                continue;
+            CardDataExtended extended = entry.cardData as CardDataExtended;
+            if (extended == null)
+            {
+                extended = LoadCardDataExtendedDirectly(entry.cardData.cardName);
+            }
+            if (extended == null)
+            {
+                Debug.LogWarning($"[CombatDeckManager] Could not resolve CardDataExtended for '{entry.cardData.cardName}'.");
+                continue;
+            }
+            for (int i = 0; i < entry.quantity; i++)
+            {
+                result.Add(extended);
+            }
+        }
+        
+        Debug.Log($"[CombatDeckManager] Loaded {result.Count} cards from active deck preset '{activeDeck.deckName}'.");
+        return result;
+    }
+    
     #endregion
     
     #region Deck Management
@@ -677,6 +791,15 @@ public class CombatDeckManager : MonoBehaviour
         CardDataExtended card = hand[handIndex]; // NOW USING CardDataExtended!
         GameObject cardObj = handVisuals[handIndex];
         
+        // Check if it's player's turn
+        var combatManager = FindFirstObjectByType<CombatDisplayManager>();
+        if (combatManager != null && !combatManager.isPlayerTurn)
+        {
+            Debug.Log($"<color=red>Cannot play {card.cardName}: Not player's turn!</color>");
+            AnimateInsufficientManaCard(cardObj);
+            return;
+        }
+        
         // Check if player has enough mana to play this card
         Character player = CharacterManager.Instance?.GetCurrentCharacter();
         if (player == null)
@@ -685,9 +808,12 @@ public class CombatDeckManager : MonoBehaviour
             return;
         }
         
-        if (player.mana < card.playCost) // Use playCost from CardDataExtended
+        // Apply charge modifiers to mana cost
+        int effectiveManaCost = ApplyManaCostModifier(card, card.playCost);
+        
+        if (player.mana < effectiveManaCost) // Use effective mana cost after modifiers
         {
-            Debug.Log($"<color=red>Cannot play {card.cardName}: Not enough mana! Required: {card.playCost}, Available: {player.mana}</color>");
+            Debug.Log($"<color=red>Cannot play {card.cardName}: Not enough mana! Required: {effectiveManaCost}, Available: {player.mana}</color>");
             
             // Animate the card to show it can't be played
             AnimateInsufficientManaCard(cardObj);
@@ -697,9 +823,64 @@ public class CombatDeckManager : MonoBehaviour
             return;
         }
         
-        // Deduct mana cost before playing the card
-        bool manaSpent = player.UseMana(card.playCost); // Use playCost from CardDataExtended
-        if (!manaSpent)
+        // Check if card should be delayed (Temporal Savant, etc.)
+        int delayTurns = GetCardDelayTurns(card, player);
+        if (delayTurns > 0)
+        {
+            // Spend mana NOW when delaying (mana is spent when queuing, not when executing)
+            bool manaSpent = player.UseMana(effectiveManaCost);
+            if (!manaSpent)
+            {
+                Debug.LogError($"Failed to spend mana for delayed card {card.cardName}!");
+                return;
+            }
+            
+            Debug.Log($"<color=green>Spent {effectiveManaCost} mana to queue {card.cardName} (delayed). Remaining mana: {player.mana}</color>");
+            
+            // Update mana display
+            var playerDisplayMana = FindFirstObjectByType<PlayerCombatDisplay>();
+            if (playerDisplayMana != null)
+            {
+                playerDisplayMana.UpdateManaDisplay();
+            }
+            
+            // Queue as delayed action instead of playing immediately
+            Enemy targetEnemy = GetTargetEnemy();
+            DelayedAction delayedAction = new DelayedAction(card, delayTurns, targetEnemy, targetPosition);
+            player.delayedActions.Add(delayedAction);
+            
+            // Remove from hand and visuals
+            hand.RemoveAt(handIndex);
+            handVisuals.RemoveAt(handIndex);
+            
+            // Reposition remaining cards
+            if (cardRuntimeManager != null)
+            {
+                cardRuntimeManager.RepositionCards(handVisuals, animated: true, duration: 0.3f);
+            }
+            
+            // Return card visual to pool (don't animate it)
+            if (cardRuntimeManager != null && cardObj != null)
+            {
+                cardRuntimeManager.ReturnCardToPool(cardObj);
+            }
+            
+            Debug.Log($"<color=cyan>[Delayed] {card.cardName} queued for {delayTurns} turn(s) later! (Mana already spent)</color>");
+            
+            // Update UI
+            UpdateCardUsability();
+            var combatUIUpdate = FindFirstObjectByType<CombatUI>();
+            if (combatUIUpdate != null)
+            {
+                combatUIUpdate.FlashEndTurnButton(); // Update UI feedback
+            }
+            
+            return; // Don't play the card immediately
+        }
+        
+        // Deduct mana cost before playing the card (using effective cost after modifiers)
+        bool manaSpentNormal = player.UseMana(effectiveManaCost);
+        if (!manaSpentNormal)
         {
             Debug.LogError($"Failed to spend mana for {card.cardName}!");
             return;
@@ -727,6 +908,64 @@ public class CombatDeckManager : MonoBehaviour
             playerDisplay.UpdateManaDisplay();
         }
         UpdateCardUsability();
+        
+        // APOSTLE: Check if card requires discarding other cards
+        // Check isDiscardCard property first, then fall back to description parsing for backwards compatibility
+        bool hasIsDiscardCardFlag = card.isDiscardCard;
+        bool hasDiscardInDescription = DiscardCardParser.RequiresDiscard(card.description);
+        bool isDiscardCard = hasIsDiscardCardFlag || hasDiscardInDescription;
+        
+        Debug.Log($"[Discard Check] Card: {card.cardName}");
+        Debug.Log($"[Discard Check]   - isDiscardCard property: {hasIsDiscardCardFlag}");
+        Debug.Log($"[Discard Check]   - Has discard in description: {hasDiscardInDescription}");
+        Debug.Log($"[Discard Check]   - Final isDiscardCard result: {isDiscardCard}");
+        
+        if (isDiscardCard)
+        {
+            int discardCount = DiscardCardParser.ParseDiscardCount(card.description);
+            // Default to 1 if parsing fails
+            if (discardCount <= 0)
+            {
+                discardCount = 1;
+            }
+            Debug.Log($"<color=orange>[Discard Card] {card.cardName} requires discarding {discardCount} card(s) (isDiscardCard={card.isDiscardCard})</color>");
+            
+            // Show discard panel and wait for selection
+            if (discardPanel == null)
+            {
+                discardPanel = FindFirstObjectByType<DiscardPanel>();
+                Debug.Log($"[Discard Card] DiscardPanel lookup: {(discardPanel != null ? "FOUND" : "NOT FOUND")}");
+            }
+            
+            if (discardPanel != null)
+            {
+                Debug.Log($"<color=green>[Discard Card] Showing DiscardPanel for {card.cardName}</color>");
+                
+                // Don't remove card from hand yet - wait for discard selection
+                // Store references for callback
+                int storedHandIndex = handIndex;
+                GameObject storedCardObj = cardObj;
+                Vector3 storedTargetPosition = targetPosition;
+                Character storedPlayer = player;
+                
+                // Show discard panel
+                discardPanel.ShowDiscardSelection(discardCount, card, (discardedCard) => {
+                    Debug.Log($"<color=green>[Discard Card] Discard selection complete for {card.cardName}. Processing effect...</color>");
+                    // Discard selection complete - now process the card effect
+                    ProcessDiscardCardEffect(card, discardedCard, storedHandIndex, storedCardObj, storedTargetPosition, storedPlayer);
+                });
+                return; // Exit early - will continue in callback
+            }
+            else
+            {
+                Debug.LogError("[Discard Card] DiscardPanel not found! Cannot show discard selection.");
+                // Fall through to normal card play (without discard)
+            }
+        }
+        else
+        {
+            Debug.Log($"[Discard Check] Card {card.cardName} is NOT a discard card - proceeding with normal play");
+        }
         
         // Remove from hand and visuals IMMEDIATELY
         // This prevents the card from being repositioned while animating
@@ -764,20 +1003,8 @@ public class CombatDeckManager : MonoBehaviour
             Debug.Log($"  ✓ Disabled CardHoverEffect on {cardObj.name}");
         }
         
-        // Disable button to prevent any click interference
-        UnityEngine.UI.Button cardButton = cardObj.GetComponent<UnityEngine.UI.Button>();
-        if (cardButton != null)
-        {
-            cardButton.enabled = false;
-        }
-        
-        // Set CanvasGroup to block raycasts completely
-        CanvasGroup cg = cardObj.GetComponent<CanvasGroup>();
-        if (cg != null)
-        {
-            cg.blocksRaycasts = false;
-            cg.interactable = false;
-        }
+        // Disable all interaction so the card can't be clicked again mid-animation
+        SetCardInteractable(cardObj, false);
         
         // ANIMATION SEQUENCE:
         // 1. Fly to target (enemy/player)
@@ -818,6 +1045,14 @@ public class CombatDeckManager : MonoBehaviour
                 Debug.Log($"  Player Character: {(playerCharacter != null ? playerCharacter.characterName : "NULL")}");
                 Debug.Log($"  Is AoE Card: {card.isAoE}");
                 
+                // DIVINE FAVOR: Check if next card should apply discarded effect
+                if (nextCardAppliesDiscardedEffect && !string.IsNullOrEmpty(card.ifDiscardedEffect))
+                {
+                    Debug.Log($"<color=yellow>[Divine Favor] {card.cardName} applies its discarded effect!</color>");
+                    ProcessIfDiscardedEffect(card, playerCharacter);
+                    nextCardAppliesDiscardedEffect = false; // Consume the effect
+                }
+                
                 var channelingState = UpdateChannelingState(playerCharacter, card);
                 bool channelingBonusApplied = false;
                 if (playerCharacter != null)
@@ -847,6 +1082,9 @@ public class CombatDeckManager : MonoBehaviour
                     #pragma warning disable CS0618 // Type or member is obsolete
                     Card cardForProcessor = card.ToCard();
                     #pragma warning restore CS0618
+                    
+                    // Apply charge modifiers to the card
+                    ApplyCardModifiers(cardForProcessor, card);
                     int requiredStacks = Mathf.Max(1, card.channelingMinStacks);
                     if (card.channelingBonusEnabled && channelingState.consecutiveCasts >= requiredStacks)
                     {
@@ -949,6 +1187,13 @@ public class CombatDeckManager : MonoBehaviour
                     }
                     
                     CardAbilityRouter.ApplyCardPlay(card, cardForProcessor, playerCharacter, targetEnemy, targetPosition);
+
+                    // Apply "hits twice" effect if Aggression charge is active
+                    if (ShouldHitTwice() && targetEnemy != null && !cardForProcessor.isAoE)
+                    {
+                        Debug.Log($"<color=yellow>[ChargeModifier] HitsTwice: Applying card effect again!</color>");
+                        cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, targetEnemy, playerCharacter, targetPosition);
+                    }
                 }
                 else
                 {
@@ -958,6 +1203,10 @@ public class CombatDeckManager : MonoBehaviour
                 // Trigger event for other systems
                 OnCardPlayed?.Invoke(card);
                 Debug.Log($"  → Card effect triggered: {card.cardName}");
+                
+                // Apply "hits twice" effect if Aggression charge is active
+                // Consume charge modifiers after card is played
+                ConsumeChargeModifiers();
                 
                 // Apply combo post-effects: mana refund, draw, ailments, buffs
                 if (comboApp != null)
@@ -1319,9 +1568,25 @@ public class CombatDeckManager : MonoBehaviour
         }
     }
 
+    private static readonly string SpellTagName = "Spell";
+
+    private bool CardHasTag(CardDataExtended card, string tagName)
+    {
+        if (card == null || string.IsNullOrEmpty(tagName) || card.tags == null)
+            return false;
+
+        return card.tags.Any(t => string.Equals(t, tagName, StringComparison.OrdinalIgnoreCase));
+    }
+
     private void ProcessSpeedMeters(CardDataExtended card, Character player)
     {
         if (card == null || player == null) return;
+
+        if (CardHasTag(card, SpellTagName))
+        {
+            AddFocusProgress(player.GetCastSpeedMultiplier());
+            return;
+        }
 
         CardType type = card.GetCardTypeEnum();
         switch (type)
@@ -1369,6 +1634,308 @@ public class CombatDeckManager : MonoBehaviour
         }
         RaiseSpeedMeterChanged();
     }
+
+    /// <summary>
+    /// Consume one Aggression charge (called when a charge effect is used).
+    /// </summary>
+    public void ConsumeAggressionCharge()
+    {
+        if (aggressionCharges > 0)
+        {
+            aggressionCharges--;
+            RaiseSpeedMeterChanged();
+            Debug.Log($"[SpeedMeter] Consumed 1 Aggression charge. Remaining: {aggressionCharges}");
+        }
+        else
+        {
+            Debug.LogWarning("[SpeedMeter] Attempted to consume Aggression charge but none available!");
+        }
+    }
+
+    /// <summary>
+    /// Consume one Focus charge (called when a charge effect is used).
+    /// </summary>
+    public void ConsumeFocusCharge()
+    {
+        if (focusCharges > 0)
+        {
+            focusCharges--;
+            RaiseSpeedMeterChanged();
+            Debug.Log($"[SpeedMeter] Consumed 1 Focus charge. Remaining: {focusCharges}");
+        }
+        else
+        {
+            Debug.LogWarning("[SpeedMeter] Attempted to consume Focus charge but none available!");
+        }
+    }
+
+    #region Charge Modifier Helpers
+
+    private void ResetChargeModifiers()
+    {
+        selectedAggressionEffect = AggressionChargeEffect.None;
+        selectedFocusEffect = FocusChargeEffect.None;
+        aggressionModifierConsumed = false;
+        focusModifierConsumed = false;
+        OnChargeModifiersCleared?.Invoke();
+    }
+
+    public AggressionChargeEffect GetAggressionChargeEffect()
+    {
+        return aggressionModifierConsumed ? AggressionChargeEffect.None : selectedAggressionEffect;
+    }
+
+    public FocusChargeEffect GetFocusChargeEffect()
+    {
+        return focusModifierConsumed ? FocusChargeEffect.None : selectedFocusEffect;
+    }
+
+    public bool SelectAggressionChargeEffect(AggressionChargeEffect effect)
+    {
+        if (effect == AggressionChargeEffect.None)
+        {
+            ClearAggressionChargeEffect();
+            return true;
+        }
+
+        if (aggressionCharges <= 0)
+        {
+            Debug.LogWarning("[ChargeModifiers] No Aggression charges available to assign effect.");
+            return false;
+        }
+
+        selectedAggressionEffect = effect;
+        aggressionModifierConsumed = false;
+        OnAggressionModifierSelected?.Invoke(effect);
+        Debug.Log($"[ChargeModifiers] Selected Aggression effect: {effect}");
+        return true;
+    }
+
+    public bool SelectFocusChargeEffect(FocusChargeEffect effect)
+    {
+        if (effect == FocusChargeEffect.None)
+        {
+            ClearFocusChargeEffect();
+            return true;
+        }
+
+        if (focusCharges <= 0)
+        {
+            Debug.LogWarning("[ChargeModifiers] No Focus charges available to assign effect.");
+            return false;
+        }
+
+        selectedFocusEffect = effect;
+        focusModifierConsumed = false;
+        OnFocusModifierSelected?.Invoke(effect);
+        Debug.Log($"[ChargeModifiers] Selected Focus effect: {effect}");
+        return true;
+    }
+
+    public void ClearAggressionChargeEffect()
+    {
+        selectedAggressionEffect = AggressionChargeEffect.None;
+        aggressionModifierConsumed = false;
+        OnAggressionModifierSelected?.Invoke(selectedAggressionEffect);
+    }
+
+    public void ClearFocusChargeEffect()
+    {
+        selectedFocusEffect = FocusChargeEffect.None;
+        focusModifierConsumed = false;
+        OnFocusModifierSelected?.Invoke(selectedFocusEffect);
+    }
+
+    public void ConsumeChargeModifiers()
+    {
+        if (selectedAggressionEffect != AggressionChargeEffect.None && !aggressionModifierConsumed)
+        {
+            aggressionModifierConsumed = true;
+            ConsumeAggressionCharge();
+        }
+
+        if (selectedFocusEffect != FocusChargeEffect.None && !focusModifierConsumed)
+        {
+            focusModifierConsumed = true;
+            ConsumeFocusCharge();
+        }
+
+        ResetChargeModifiers();
+    }
+
+    private int ApplyManaCostModifierInternal(CardDataExtended card, int baseManaCost)
+    {
+        int modifiedCost = baseManaCost;
+        
+        // Apply Focus charge modifiers
+        if (GetFocusChargeEffect() == FocusChargeEffect.HalfManaCost)
+        {
+            modifiedCost = Mathf.Max(0, Mathf.RoundToInt(modifiedCost * 0.5f));
+            Debug.Log($"[ChargeModifiers] Half Mana Cost applied: {baseManaCost} -> {modifiedCost}");
+        }
+        
+        // Apply momentum threshold cost reduction (e.g., "6+ Momentum: This card costs 1 less")
+        if (card != null && !string.IsNullOrEmpty(card.momentumEffectDescription))
+        {
+            Character player = characterManager != null && characterManager.HasCharacter() ? 
+                characterManager.GetCurrentCharacter() : null;
+            
+            if (player != null)
+            {
+                int currentMomentum = player.GetMomentum();
+                var thresholdEffects = MomentumThresholdEffectParser.ParseThresholdEffects(card.momentumEffectDescription);
+                
+                foreach (var effect in thresholdEffects)
+                {
+                    bool applies = effect.isExact ? (currentMomentum == effect.threshold) : (currentMomentum >= effect.threshold);
+                    if (applies)
+                    {
+                        var effectType = MomentumThresholdEffectParser.ParseEffectType(effect.effectText);
+                        if (effectType == MomentumEffectType.CostReduction)
+                        {
+                            int reduction = MomentumThresholdEffectParser.ParseNumericValue(effect.effectText);
+                            if (reduction > 0)
+                            {
+                                modifiedCost = Mathf.Max(0, modifiedCost - reduction);
+                                Debug.Log($"<color=cyan>[Momentum Threshold] {card.cardName}: Cost reduced by {reduction} (had {currentMomentum} momentum). New cost: {modifiedCost}</color>");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return modifiedCost;
+    }
+
+    private float ApplyDamageModifierInternal(float baseDamage)
+    {
+        if (GetFocusChargeEffect() == FocusChargeEffect.DoubleDamage)
+        {
+            float modified = baseDamage * 2f;
+            Debug.Log($"[ChargeModifiers] Double Damage applied: {baseDamage} -> {modified}");
+            return modified;
+        }
+        return baseDamage;
+    }
+
+    private void ApplyCardModifiersInternal(Card card, CardDataExtended cardData)
+    {
+        var effect = GetAggressionChargeEffect();
+        switch (effect)
+        {
+            case AggressionChargeEffect.HitsAllEnemies:
+                card.isAoE = true;
+                Debug.Log("[ChargeModifiers] Aggression effect: Hits All Enemies");
+                break;
+            case AggressionChargeEffect.AlwaysCrit:
+                Debug.Log("[ChargeModifiers] Aggression effect: Always Crit");
+                break;
+            case AggressionChargeEffect.IgnoresGuardArmor:
+                Debug.Log("[ChargeModifiers] Aggression effect: Ignores Guard/Armor");
+                break;
+        }
+    }
+
+    public static int ApplyManaCostModifier(CardDataExtended card, int baseManaCost)
+    {
+        return Instance != null ? Instance.ApplyManaCostModifierInternal(card, baseManaCost) : baseManaCost;
+    }
+    
+    /// <summary>
+    /// Calculate the modified card cost for display purposes (includes momentum-based cost reductions).
+    /// This is a read-only calculation that doesn't modify any state.
+    /// </summary>
+    public static int GetDisplayCost(CardDataExtended card, int baseManaCost, Character player = null)
+    {
+        if (card == null) return baseManaCost;
+        
+        int modifiedCost = baseManaCost;
+        
+        // Apply Focus charge modifiers (if applicable)
+        if (Instance != null && Instance.GetFocusChargeEffect() == FocusChargeEffect.HalfManaCost)
+        {
+            modifiedCost = Mathf.Max(0, Mathf.RoundToInt(modifiedCost * 0.5f));
+        }
+        
+        // Apply momentum threshold cost reduction (e.g., "6+ Momentum: This card costs 1 less")
+        if (!string.IsNullOrEmpty(card.momentumEffectDescription))
+        {
+            if (player == null)
+            {
+                // Try to get player from CharacterManager
+                if (Instance != null && Instance.characterManager != null && Instance.characterManager.HasCharacter())
+                {
+                    player = Instance.characterManager.GetCurrentCharacter();
+                }
+            }
+            
+            if (player != null)
+            {
+                int currentMomentum = player.GetMomentum();
+                var thresholdEffects = MomentumThresholdEffectParser.ParseThresholdEffects(card.momentumEffectDescription);
+                
+                foreach (var effect in thresholdEffects)
+                {
+                    bool applies = effect.isExact ? (currentMomentum == effect.threshold) : (currentMomentum >= effect.threshold);
+                    if (applies)
+                    {
+                        var effectType = MomentumThresholdEffectParser.ParseEffectType(effect.effectText);
+                        if (effectType == MomentumEffectType.CostReduction)
+                        {
+                            int reduction = MomentumThresholdEffectParser.ParseNumericValue(effect.effectText);
+                            if (reduction > 0)
+                            {
+                                modifiedCost = Mathf.Max(0, modifiedCost - reduction);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return modifiedCost;
+    }
+
+    public static float ApplyDamageModifier(float baseDamage)
+    {
+        return Instance != null ? Instance.ApplyDamageModifierInternal(baseDamage) : baseDamage;
+    }
+
+    public static void ApplyCardModifiers(Card card, CardDataExtended cardData)
+    {
+        if (Instance != null)
+        {
+            Instance.ApplyCardModifiersInternal(card, cardData);
+        }
+    }
+
+    public static bool ShouldHitTwice()
+    {
+        return Instance != null && Instance.GetAggressionChargeEffect() == AggressionChargeEffect.HitsTwice;
+    }
+
+    public static bool ShouldAlwaysCrit()
+    {
+        return Instance != null && Instance.GetAggressionChargeEffect() == AggressionChargeEffect.AlwaysCrit;
+    }
+
+    public static bool ShouldIgnoreGuardArmor()
+    {
+        return Instance != null && Instance.GetAggressionChargeEffect() == AggressionChargeEffect.IgnoresGuardArmor;
+    }
+
+    public static bool HasAggressionModifier()
+    {
+        return Instance != null && Instance.GetAggressionChargeEffect() != AggressionChargeEffect.None;
+    }
+
+    public static bool HasFocusModifier()
+    {
+        return Instance != null && Instance.GetFocusChargeEffect() != FocusChargeEffect.None;
+    }
+
+    #endregion
 
     private void RaiseSpeedMeterChanged()
     {
@@ -1424,18 +1991,23 @@ public class CombatDeckManager : MonoBehaviour
             Debug.Log($"Disabled DeckBuilderCardUI on {cardObj.name} for combat use");
         }
         
+        // Remove existing click handler if any
+        CardClickHandler existingHandler = cardObj.GetComponent<CardClickHandler>();
+        if (existingHandler != null)
+        {
+            Destroy(existingHandler);
+        }
+        
+        // Add our custom click handler that supports right-click and shift-click
+        CardClickHandler clickHandler = cardObj.AddComponent<CardClickHandler>();
+        clickHandler.Initialize(this, cardObj);
+        
+        // Also keep Button for left-click compatibility
         UnityEngine.UI.Button button = cardObj.GetComponent<UnityEngine.UI.Button>();
         if (button != null)
         {
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => OnCardClicked(cardObj));
-            
-            // Debug logging for high index cards
-            int siblingIndex = cardObj.transform.GetSiblingIndex();
-            if (siblingIndex >= 12)
-            {
-                Debug.Log($"<color=orange>[Setup Card {siblingIndex}] {cardObj.name} - Button interactable: {button.interactable}, enabled: {button.enabled}</color>");
-            }
+            button.onClick.AddListener(() => OnCardClicked(cardObj, false, false));
         }
         else
         {
@@ -1443,12 +2015,13 @@ public class CombatDeckManager : MonoBehaviour
         }
     }
     
-    private void OnCardClicked(GameObject clickedCardObj)
+    public void OnCardClicked(GameObject clickedCardObj, bool isRightClick = false, bool isShiftClick = false)
     {
         Debug.Log($"<color=cyan>═══ CARD CLICK DEBUG ═══</color>");
         Debug.Log($"Clicked card GameObject: {clickedCardObj.name}");
         Debug.Log($"Hand visuals count: {handVisuals.Count}");
         Debug.Log($"Hand data count: {hand.Count}");
+        Debug.Log($"Right-click: {isRightClick}, Shift-click: {isShiftClick}");
         
         // Find the index of this card in the hand visuals
         int handIndex = handVisuals.IndexOf(clickedCardObj);
@@ -1472,6 +2045,13 @@ public class CombatDeckManager : MonoBehaviour
         // Get the card data - NOW USING CardDataExtended!
         CardDataExtended clickedCard = hand[handIndex];
         
+        // Check if this is a preparation click (right-click or shift-click)
+        if (isRightClick || isShiftClick)
+        {
+            PrepareCard(handIndex);
+            return;
+        }
+        
         // Get target position from first available enemy
         Vector3 targetPos = GetTargetScreenPosition();
         
@@ -1482,6 +2062,78 @@ public class CombatDeckManager : MonoBehaviour
         PlayCard(handIndex, targetPos);
         
         Debug.Log($"<color=cyan>═══ END CLICK DEBUG ═══</color>");
+    }
+    
+    /// <summary>
+    /// Prepare a card instead of playing it (called on right-click or shift-click)
+    /// </summary>
+    private void PrepareCard(int handIndex)
+    {
+        if (handIndex < 0 || handIndex >= hand.Count)
+        {
+            Debug.LogWarning($"Invalid hand index for preparation: {handIndex}");
+            return;
+        }
+        
+        CardDataExtended card = hand[handIndex];
+        Character player = CharacterManager.Instance?.GetCurrentCharacter();
+        
+        if (player == null)
+        {
+            Debug.LogError("No player character found for preparation!");
+            return;
+        }
+        
+        // Check if we have space for preparation
+        var prepManager = PreparationManager.Instance;
+        if (prepManager == null)
+        {
+            Debug.LogError("PreparationManager not found!");
+            return;
+        }
+        
+        if (!prepManager.CanPrepareCard(card))
+        {
+            Debug.LogWarning($"Cannot prepare {card.cardName}: No space or invalid card!");
+            return;
+        }
+        
+        // Prepare the card
+        bool success = prepManager.PrepareCard(card, player);
+        
+        if (success)
+        {
+            // Remove card from hand and visuals
+            hand.RemoveAt(handIndex);
+            GameObject cardObj = handVisuals[handIndex];
+            handVisuals.RemoveAt(handIndex);
+            
+            // Return card visual to pool
+            if (cardRuntimeManager != null && cardObj != null)
+            {
+                cardRuntimeManager.ReturnCardToPool(cardObj);
+            }
+            
+            // Reposition remaining cards
+            if (cardRuntimeManager != null)
+            {
+                cardRuntimeManager.RepositionCards(handVisuals, animated: true, duration: 0.3f);
+            }
+            
+            Debug.Log($"<color=green>[Preparation] {card.cardName} prepared successfully!</color>");
+            
+            // Update UI
+            UpdateCardUsability();
+            var combatUIUpdate = FindFirstObjectByType<CombatUI>();
+            if (combatUIUpdate != null)
+            {
+                combatUIUpdate.FlashEndTurnButton(); // Update UI feedback
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"Failed to prepare {card.cardName}!");
+        }
     }
     
     /// <summary>
@@ -1717,6 +2369,10 @@ public class CombatDeckManager : MonoBehaviour
         UnityEngine.UI.Button button = cardObj.GetComponent<UnityEngine.UI.Button>();
         if (button != null)
         {
+            if (!button.enabled)
+            {
+                button.enabled = true;
+            }
             button.interactable = interactable;
         }
         
@@ -1731,6 +2387,37 @@ public class CombatDeckManager : MonoBehaviour
     /// <summary>
     /// Get the current target enemy from targeting system.
     /// </summary>
+    /// <summary>
+    /// Get the number of turns to delay a card (checks card property, tags, and ascendancy)
+    /// </summary>
+    private int GetCardDelayTurns(CardDataExtended card, Character player)
+    {
+        if (card == null) return 0;
+        
+        // Check card's delayTurns property
+        if (card.delayTurns > 0)
+        {
+            return card.delayTurns;
+        }
+        
+        // Check if card has "Delayed" tag
+        if (card.tags != null && card.tags.Contains("Delayed"))
+        {
+            return 1; // Default 1 turn delay for Delayed tag
+        }
+        
+        // Check if card is marked as delayed (set by ascendancy or effect)
+        if (card.isDelayed)
+        {
+            return 1; // Default 1 turn delay
+        }
+        
+        // TODO: Check ascendancy effects (Temporal Savant)
+        // This would check if player has Temporal Savant ascendancy and apply delay
+        
+        return 0; // No delay
+    }
+    
     private Enemy GetTargetEnemy()
     {
         if (targetingManager != null)
@@ -2277,6 +2964,376 @@ public class CombatDeckManager : MonoBehaviour
             .append(LeanTween.color(buttonImage.rectTransform, originalColor, 0.2f).setEase(LeanTweenType.easeOutQuad))
             .append(LeanTween.color(buttonImage.rectTransform, Color.red, 0.2f).setEase(LeanTweenType.easeOutQuad))
             .append(LeanTween.color(buttonImage.rectTransform, originalColor, 0.2f).setEase(LeanTweenType.easeOutQuad));
+    }
+    
+    /// <summary>
+    /// Process a discard card effect after discard selection is complete
+    /// </summary>
+    private void ProcessDiscardCardEffect(CardDataExtended card, CardDataExtended discardedCard, int handIndex, GameObject cardObj, Vector3 targetPosition, Character player)
+    {
+        if (card == null)
+        {
+            Debug.LogError("[Discard Card] Card is null!");
+            return;
+        }
+        
+        Debug.Log($"<color=orange>[Discard Card] Processing {card.cardName} after discarding {(discardedCard != null ? discardedCard.cardName : "nothing")}</color>");
+        
+        // Remove the discard card from hand now
+        if (handIndex >= 0 && handIndex < hand.Count && hand[handIndex] == card)
+        {
+            hand.RemoveAt(handIndex);
+        }
+        if (handIndex >= 0 && handIndex < handVisuals.Count && handVisuals[handIndex] == cardObj)
+        {
+            handVisuals.RemoveAt(handIndex);
+        }
+        
+        // Process the discarded card's ifDiscardedEffect if it exists
+        if (discardedCard != null && !string.IsNullOrEmpty(discardedCard.ifDiscardedEffect))
+        {
+            ProcessIfDiscardedEffect(discardedCard, player);
+        }
+        
+        // Calculate discard power for effects that use it
+        float discardPower = discardedCard != null 
+            ? DiscardPowerCalculator.CalculateDiscardPower(discardedCard, player) 
+            : 0f;
+        
+        // Process the discard card's main effect
+        ProcessDiscardCardMainEffect(card, discardedCard, discardPower, targetPosition, player);
+        
+        // Continue with normal card play animation and effects
+        // (Skip the discard check since we already handled it)
+        ContinueCardPlayAfterDiscard(card, cardObj, targetPosition, player);
+    }
+    
+    /// <summary>
+    /// Continue normal card play flow after discard selection is complete
+    /// </summary>
+    private void ContinueCardPlayAfterDiscard(CardDataExtended card, GameObject cardObj, Vector3 targetPosition, Character player)
+    {
+        // Reposition remaining cards
+        if (cardRuntimeManager != null)
+        {
+            cardRuntimeManager.RepositionCards(handVisuals, animated: true, duration: 0.3f);
+        }
+        
+        // Get target enemy
+        Enemy targetEnemy = GetTargetEnemy();
+        Character playerCharacter = characterManager != null && characterManager.HasCharacter() ? 
+            characterManager.GetCurrentCharacter() : null;
+        
+        // Continue with animation and effect application
+        if (animationManager != null && cardRuntimeManager != null)
+        {
+            StartCoroutine(SafetyTimeoutForCardAnimation(cardObj, card, 3.0f));
+            
+            // Animate to target position
+            animationManager.AnimateCardPlay(cardObj, targetPosition, () => {
+                // Apply card effects
+                if (cardEffectProcessor != null)
+                {
+                    #pragma warning disable CS0618
+                    Card cardForProcessor = card.ToCard();
+                    #pragma warning restore CS0618
+                    
+                    // Build combo application
+                    ComboSystem.ComboApplication comboApp = null;
+                    if (ComboSystem.Instance != null)
+                    {
+                        comboApp = ComboSystem.Instance.BuildComboApplication(card, playerCharacter);
+                    }
+                    
+                    // Apply modifiers
+                    ApplyCardModifiers(cardForProcessor, card);
+                    var channelingState = UpdateChannelingState(playerCharacter, card);
+                    ApplyChannelingMetadata(cardForProcessor, channelingState, card, false);
+                    
+                    // Apply combo
+                    if (comboApp != null)
+                    {
+                        if (comboApp.logic == ComboLogicType.Instead)
+                        {
+                            cardForProcessor.baseDamage = Mathf.Max(0f, comboApp.attackIncrease);
+                            cardForProcessor.baseGuard = Mathf.Max(0f, comboApp.guardIncrease);
+                            cardForProcessor.isAoE = comboApp.isAoEOverride;
+                        }
+                        else
+                        {
+                            cardForProcessor.baseDamage = Mathf.Max(0f, cardForProcessor.baseDamage + comboApp.attackIncrease);
+                            cardForProcessor.baseGuard = Mathf.Max(0f, cardForProcessor.baseGuard + comboApp.guardIncrease);
+                            cardForProcessor.isAoE = comboApp.isAoEOverride || cardForProcessor.isAoE;
+                        }
+                    }
+                    
+                    // Apply card effect
+                    if (cardForProcessor.isAoE)
+                    {
+                        cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, null, playerCharacter, targetPosition);
+                    }
+                    else if (targetEnemy != null)
+                    {
+                        cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, targetEnemy, playerCharacter, targetPosition);
+                    }
+                }
+                
+                // Play visual effects
+                if (combatEffectManager != null)
+                {
+                    PlayCardEffects(card, targetEnemy, playerCharacter);
+                }
+                
+                // Animate to discard pile
+                float effectDuration = 0.3f;
+                LeanTween.delayedCall(gameObject, effectDuration, () => {
+                    if (cardObj != null && discardPileTransform != null)
+                    {
+                        AnimateToDiscardPile(cardObj, card);
+                    }
+                    else if (cardObj != null)
+                    {
+                        discardPile.Add(card);
+                        OnCardDiscarded?.Invoke(card);
+                        if (cardRuntimeManager != null)
+                        {
+                            cardRuntimeManager.ReturnCardToPool(cardObj);
+                        }
+                    }
+                });
+            });
+        }
+    }
+    
+    /// <summary>
+    /// Process the main effect of a discard card (e.g., "draw 3 cards", "Gain 6 Guard")
+    /// </summary>
+    private void ProcessDiscardCardMainEffect(CardDataExtended card, CardDataExtended discardedCard, float discardPower, Vector3 targetPosition, Character player)
+    {
+        if (card == null || player == null) return;
+        
+        string description = card.description ?? "";
+        
+        // Forbidden Prayer: "Discard 1 card: draw 3 cards."
+        if (card.cardName.Contains("Forbidden Prayer") || (description.Contains("draw") && description.Contains("card")))
+        {
+            var drawMatch = System.Text.RegularExpressions.Regex.Match(description, @"draw\s+(\d+)\s+card", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            if (drawMatch.Success)
+            {
+                int drawCount = int.Parse(drawMatch.Groups[1].Value);
+                DrawCards(drawCount);
+                Debug.Log($"<color=green>[Discard Card] {card.cardName} drew {drawCount} cards</color>");
+            }
+        }
+        
+        // Scripture Burn: "Discard 1 card. Gain 6 Guard (+Int/2 + Discard Power/2) and 3 temporary Intelligence."
+        if (card.cardName.Contains("Scripture Burn"))
+        {
+            ProcessScriptureBurnEffect(card, player, discardPower);
+        }
+    }
+    
+    /// <summary>
+    /// Process ifDiscardedEffect when a card is discarded
+    /// </summary>
+    private void ProcessIfDiscardedEffect(CardDataExtended discardedCard, Character player)
+    {
+        if (discardedCard == null || player == null || string.IsNullOrEmpty(discardedCard.ifDiscardedEffect)) return;
+        
+        Debug.Log($"<color=cyan>[If Discarded] Processing effect for {discardedCard.cardName}: {discardedCard.ifDiscardedEffect}</color>");
+        
+        // Calculate discard power
+        float discardPower = DiscardPowerCalculator.CalculateDiscardPower(discardedCard, player);
+        
+        // Process the ifDiscardedEffect text
+        ProcessIfDiscardedEffectText(discardedCard.ifDiscardedEffect, discardedCard, player, discardPower);
+    }
+    
+    /// <summary>
+    /// Process ifDiscardedEffect text and apply effects
+    /// </summary>
+    private void ProcessIfDiscardedEffectText(string effectText, CardDataExtended card, Character player, float discardPower)
+    {
+        if (string.IsNullOrEmpty(effectText)) return;
+        
+        // Replace {discardPower} placeholder
+        effectText = effectText.Replace("{discardPower}", discardPower.ToString("F0"));
+        
+        // Parse and apply effects
+        // Pattern: "Deal {discardPower} chaos damage to all enemies."
+        if (System.Text.RegularExpressions.Regex.IsMatch(effectText, @"Deal.*damage.*all enemies", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+        {
+            ProcessIfDiscardedDamage(effectText, card, player, discardPower);
+        }
+        // Pattern: "Gain {discardPower} Guard."
+        else if (System.Text.RegularExpressions.Regex.IsMatch(effectText, @"Gain.*Guard", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+        {
+            ProcessIfDiscardedGuard(effectText, card, player, discardPower);
+        }
+        // Pattern: "Gain {discardPower} Temporary Intelligence."
+        else if (System.Text.RegularExpressions.Regex.IsMatch(effectText, @"Gain.*Temporary Intelligence", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+        {
+            ProcessIfDiscardedTempIntelligence(effectText, card, player, discardPower);
+        }
+        // Pattern: "Increase spell power by {intelligence/8}."
+        else if (System.Text.RegularExpressions.Regex.IsMatch(effectText, @"Increase.*spell power", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+        {
+            ProcessIfDiscardedSpellPower(effectText, card, player);
+        }
+        // Pattern: "Gain X Guard (+Int/Y + Discard Power/Z) and draw 1 card."
+        else if (System.Text.RegularExpressions.Regex.IsMatch(effectText, @"Gain.*Guard.*draw", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+        {
+            ProcessIfDiscardedGuardAndDraw(effectText, card, player, discardPower);
+        }
+    }
+    
+    private void ProcessIfDiscardedDamage(string effectText, CardDataExtended card, Character player, float discardPower)
+    {
+        // Parse damage type (chaos, physical, etc.)
+        bool isChaos = effectText.ToLower().Contains("chaos");
+        DamageType damageType = isChaos ? DamageType.Chaos : DamageType.Physical;
+        
+        // Deal damage to all enemies
+        var combatDisplay = FindFirstObjectByType<CombatDisplayManager>();
+        if (combatDisplay != null)
+        {
+            var enemySpawner = combatDisplay.enemySpawner;
+            if (enemySpawner != null)
+            {
+                var activeEnemies = enemySpawner.GetActiveEnemies();
+                if (activeEnemies != null)
+                {
+                    for (int i = 0; i < activeEnemies.Count; i++)
+                    {
+                        combatDisplay.PlayerAttackEnemy(i, discardPower);
+                    }
+                    Debug.Log($"<color=orange>[If Discarded] {card.cardName} dealt {discardPower:F0} {damageType} damage to all enemies</color>");
+                }
+            }
+        }
+    }
+    
+    private void ProcessIfDiscardedGuard(string effectText, CardDataExtended card, Character player, float discardPower)
+    {
+        player.AddGuard(discardPower);
+        Debug.Log($"<color=cyan>[If Discarded] {card.cardName} gained {discardPower:F0} guard</color>");
+        
+        var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        if (playerDisplay != null) playerDisplay.UpdateGuardDisplay();
+    }
+    
+    private void ProcessIfDiscardedTempIntelligence(string effectText, CardDataExtended card, Character player, float discardPower)
+    {
+        int tempInt = Mathf.RoundToInt(discardPower);
+        // Get StatusEffectManager from PlayerCombatDisplay
+        var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        if (playerDisplay != null)
+        {
+            var statusMgr = playerDisplay.GetStatusEffectManager();
+            if (statusMgr != null)
+            {
+                var intEffect = new StatusEffect(StatusEffectType.Intelligence, "TempIntelligence", tempInt, 3, false);
+                statusMgr.AddStatusEffect(intEffect);
+                Debug.Log($"<color=cyan>[If Discarded] {card.cardName} gained {tempInt} temporary Intelligence</color>");
+            }
+        }
+    }
+    
+    private void ProcessIfDiscardedSpellPower(string effectText, CardDataExtended card, Character player)
+    {
+        // Parse intelligence divisor (e.g., {intelligence/8})
+        var match = System.Text.RegularExpressions.Regex.Match(effectText, @"intelligence\s*/\s*(\d+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        if (match.Success)
+        {
+            float divisor = float.Parse(match.Groups[1].Value);
+            float spellPowerIncrease = player.intelligence / divisor;
+            
+            // Apply spell power as a status effect (each point = 1% increased spell damage)
+            var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+            if (playerDisplay != null)
+            {
+                var statusMgr = playerDisplay.GetStatusEffectManager();
+                if (statusMgr != null)
+                {
+                    // Spell power lasts for the duration of combat (999 turns = effectively entire combat)
+                    // Stacks additively with other spell power sources
+                    var spellPowerEffect = new StatusEffect(StatusEffectType.SpellPower, "Spell Power", spellPowerIncrease, 999, false);
+                    statusMgr.AddStatusEffect(spellPowerEffect);
+                    Debug.Log($"<color=cyan>[If Discarded] {card.cardName} increased spell power by {spellPowerIncrease:F1} (Int/{divisor}) for the duration of combat</color>");
+                }
+            }
+        }
+    }
+    
+    private void ProcessIfDiscardedGuardAndDraw(string effectText, CardDataExtended card, Character player, float discardPower)
+    {
+        // Parse guard amount
+        var guardMatch = System.Text.RegularExpressions.Regex.Match(effectText, @"Gain\s+(\d+)\s+Guard", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        if (guardMatch.Success)
+        {
+            float baseGuard = float.Parse(guardMatch.Groups[1].Value);
+            
+            // Parse Int divisor
+            float intDivisor = 0f;
+            var intMatch = System.Text.RegularExpressions.Regex.Match(effectText, @"Int\s*/\s*(\d+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            if (intMatch.Success)
+            {
+                intDivisor = float.Parse(intMatch.Groups[1].Value);
+            }
+            
+            // Parse Discard Power divisor
+            float discardDivisor = 0f;
+            var discardMatch = System.Text.RegularExpressions.Regex.Match(effectText, @"Discard Power\s*/\s*(\d+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            if (discardMatch.Success)
+            {
+                discardDivisor = float.Parse(discardMatch.Groups[1].Value);
+            }
+            
+            float totalGuard = baseGuard;
+            if (intDivisor > 0) totalGuard += player.intelligence / intDivisor;
+            if (discardDivisor > 0) totalGuard += discardPower / discardDivisor;
+            
+            player.AddGuard(totalGuard);
+            Debug.Log($"<color=cyan>[If Discarded] {card.cardName} gained {totalGuard:F1} guard (base: {baseGuard}, Int/{intDivisor}, Discard/{discardDivisor})</color>");
+            
+            var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+            if (playerDisplay != null) playerDisplay.UpdateGuardDisplay();
+        }
+        
+        // Draw 1 card
+        DrawCards(1);
+        Debug.Log($"<color=green>[If Discarded] {card.cardName} drew 1 card</color>");
+    }
+    
+    private void ProcessScriptureBurnEffect(CardDataExtended card, Character player, float discardPower)
+    {
+        if (card == null || player == null) return;
+        
+        // Parse: "Gain 6 Guard (+Int/2 + Discard Power/2) and 3 temporary Intelligence."
+        float baseGuard = 6f;
+        float intDivisor = 2f;
+        float discardDivisor = 2f;
+        int tempInt = 3;
+        
+        float totalGuard = baseGuard + (player.intelligence / intDivisor) + (discardPower / discardDivisor);
+        player.AddGuard(totalGuard);
+        
+        Debug.Log($"<color=cyan>[Discard Card] Scripture Burn gained {totalGuard:F1} guard (base: {baseGuard}, Int/{intDivisor}, Discard/{discardDivisor})</color>");
+        
+        var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        if (playerDisplay != null) playerDisplay.UpdateGuardDisplay();
+        
+        // Apply temporary Intelligence
+        if (playerDisplay != null)
+        {
+            var statusMgr = playerDisplay.GetStatusEffectManager();
+            if (statusMgr != null)
+            {
+                var intEffect = new StatusEffect(StatusEffectType.Intelligence, "TempIntelligence", tempInt, 3, false);
+                statusMgr.AddStatusEffect(intEffect);
+                Debug.Log($"<color=cyan>[Discard Card] Scripture Burn gained {tempInt} temporary Intelligence</color>");
+            }
+        }
     }
     
     /// <summary>

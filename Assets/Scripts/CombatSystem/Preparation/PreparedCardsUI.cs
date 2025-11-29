@@ -122,7 +122,7 @@ public class PreparedCardsUI : MonoBehaviour
     }
     
     /// <summary>
-    /// Update visual state of a prepared card (turn counter, glow, etc.)
+    /// Update visual state of a prepared card (turn counter, glow, damage/guard values, etc.)
     /// </summary>
     public void UpdatePreparedCard(PreparedCard prepared)
     {
@@ -138,6 +138,178 @@ public class PreparedCardsUI : MonoBehaviour
         
         // Update glow intensity based on charges
         UpdateGlowEffect(cardObj, prepared);
+        
+        // Update card damage/guard display with current prepared values
+        UpdateCardValues(cardObj, prepared);
+    }
+    
+    /// <summary>
+    /// Update the displayed damage/guard values on the card to show current prepared values
+    /// </summary>
+    private void UpdateCardValues(GameObject cardObj, PreparedCard prepared)
+    {
+        if (cardObj == null || prepared == null || prepared.sourceCard == null) return;
+        
+        // Calculate current values
+        int currentDamage = prepared.GetCurrentDamage();
+        int currentGuard = prepared.GetCurrentGuard();
+        int originalDamage = prepared.sourceCard.damage;
+        int originalBlock = prepared.sourceCard.block;
+        
+        // Find all text elements and update damage/guard values
+        TextMeshProUGUI[] allTexts = cardObj.GetComponentsInChildren<TextMeshProUGUI>(true);
+        
+        foreach (var text in allTexts)
+        {
+            if (text == null) continue;
+            
+            string textContent = text.text;
+            string textName = text.name.ToLower();
+            bool updated = false;
+            
+            // Update damage display
+            if (currentDamage > 0 && originalDamage > 0)
+            {
+                // Check if this text element likely contains damage information
+                bool isDamageText = textName.Contains("damage") || textName.Contains("attack") || 
+                                   textContent.Contains("{damage}") ||
+                                   (textContent.Contains(originalDamage.ToString()) && 
+                                    (textContent.ToLower().Contains("deal") || textContent.ToLower().Contains("damage")));
+                
+                if (isDamageText)
+                {
+                    // Replace {damage} placeholder
+                    if (textContent.Contains("{damage}"))
+                    {
+                        text.text = textContent.Replace("{damage}", currentDamage.ToString());
+                        updated = true;
+                    }
+                    // Replace the original damage number
+                    else if (textContent.Contains(originalDamage.ToString()))
+                    {
+                        text.text = System.Text.RegularExpressions.Regex.Replace(
+                            textContent, 
+                            @"\b" + originalDamage + @"\b", 
+                            currentDamage.ToString()
+                        );
+                        updated = true;
+                    }
+                }
+            }
+            
+            // Update guard/block display
+            if (currentGuard > 0 && originalBlock > 0 && !updated)
+            {
+                // Check if this text element likely contains guard/block information
+                bool isGuardText = textName.Contains("guard") || textName.Contains("block") || 
+                                  textContent.Contains("{guard}") || textContent.Contains("{block}") ||
+                                  (textContent.Contains(originalBlock.ToString()) && 
+                                   (textContent.ToLower().Contains("gain") || textContent.ToLower().Contains("guard") || textContent.ToLower().Contains("block")));
+                
+                if (isGuardText)
+                {
+                    // Replace {guard} or {block} placeholder
+                    if (textContent.Contains("{guard}"))
+                    {
+                        text.text = textContent.Replace("{guard}", currentGuard.ToString());
+                    }
+                    else if (textContent.Contains("{block}"))
+                    {
+                        text.text = textContent.Replace("{block}", currentGuard.ToString());
+                    }
+                    // Replace the original block number
+                    else if (textContent.Contains(originalBlock.ToString()))
+                    {
+                        text.text = System.Text.RegularExpressions.Regex.Replace(
+                            textContent, 
+                            @"\b" + originalBlock + @"\b", 
+                            currentGuard.ToString()
+                        );
+                    }
+                }
+            }
+        }
+        
+        // Update the card description with current prepared values
+        // The description may have {damage} or {guard} placeholders that need to show current values
+        var cardUI = cardObj.GetComponent<DeckBuilderCardUI>();
+        if (cardUI != null && prepared.sourceCard is CardDataExtended extendedCard)
+        {
+            // Find description text element (reuse allTexts from above)
+            foreach (var text in allTexts)
+            {
+                if (text == null) continue;
+                
+                // Check if this is the description text (usually contains the card description)
+                string textContent = text.text;
+                string originalDesc = extendedCard.description;
+                
+                // If this text matches or contains the original description, it's likely the description text
+                if (textContent.Contains(originalDesc) || textContent.Contains("{damage}") || textContent.Contains("{guard}"))
+                {
+                    // Get the dynamic description first (resolves other placeholders)
+                    string dynamicDesc = extendedCard.GetDynamicDescription(prepared.owner);
+                    
+                    // Override {damage} and {guard} with current prepared values
+                    if (currentDamage > 0)
+                    {
+                        // Replace any damage-related placeholders with current prepared damage
+                        dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                            dynamicDesc, 
+                            @"\{damage\}", 
+                            currentDamage.ToString()
+                        );
+                        dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                            dynamicDesc, 
+                            @"\{baseDamage\}", 
+                            currentDamage.ToString()
+                        );
+                        // Also replace the calculated damage from GetDynamicDescription with our prepared value
+                        if (originalDamage > 0 && dynamicDesc.Contains(originalDamage.ToString()))
+                        {
+                            // Replace the original damage number with current prepared damage
+                            dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                                dynamicDesc, 
+                                @"\b" + originalDamage + @"\b", 
+                                currentDamage.ToString()
+                            );
+                        }
+                    }
+                    
+                    if (currentGuard > 0)
+                    {
+                        // Replace guard-related placeholders
+                        dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                            dynamicDesc, 
+                            @"\{guard\}", 
+                            currentGuard.ToString()
+                        );
+                        dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                            dynamicDesc, 
+                            @"\{block\}", 
+                            currentGuard.ToString()
+                        );
+                        dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                            dynamicDesc, 
+                            @"\{baseGuard\}", 
+                            currentGuard.ToString()
+                        );
+                        // Also replace the original block number with current prepared guard
+                        if (originalBlock > 0 && dynamicDesc.Contains(originalBlock.ToString()))
+                        {
+                            dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                                dynamicDesc, 
+                                @"\b" + originalBlock + @"\b", 
+                                currentGuard.ToString()
+                            );
+                        }
+                    }
+                    
+                    text.text = dynamicDesc;
+                    break; // Found description text, no need to continue
+                }
+            }
+        }
     }
     
     /// <summary>
@@ -179,11 +351,21 @@ public class PreparedCardsUI : MonoBehaviour
         if (cardUI != null)
         {
             cardUI.Initialize(prepared.sourceCard, null, prepared.owner);
+            
+            // Store reference to PreparedCard for dynamic value updates
+            var preparedCardRef = cardObj.AddComponent<PreparedCardReference>();
+            if (preparedCardRef != null)
+            {
+                preparedCardRef.preparedCard = prepared;
+            }
         }
         else
         {
             Debug.LogWarning($"[PreparedCardsUI] Card prefab missing DeckBuilderCardUI component!");
         }
+        
+        // Update card values immediately after initialization
+        UpdateCardValues(cardObj, prepared);
         
         // Add glow effect
         AddGlowEffect(cardObj);

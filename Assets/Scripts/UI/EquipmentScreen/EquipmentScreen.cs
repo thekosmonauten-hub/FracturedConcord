@@ -147,11 +147,22 @@ public class EquipmentScreen : MonoBehaviour
         InitializeStashTabs();
         InitializeCurrencySystem();
         InitializeEffigyGrid();
-        LoadEffigiesFromResources(); // Load all effigies for storage display
+        LoadEffigiesFromResources(); // Load effigies for storage display
+        
+        // Load actual player data (inventory and currencies)
+        LoadInventoryFromCharacterManager();
+        LoadCurrenciesFromLootManager();
         
         // Debug: Log grid creation
         Debug.Log($"Inventory grid created with {inventorySlots.Count} slots ({inventoryWidth}x{inventoryHeight} = {inventoryWidth * inventoryHeight} expected) - 60x60px slots");
         Debug.Log($"Stash grid created with {stashSlots.Count} slots ({inventoryWidth}x{inventoryHeight} = {inventoryWidth * inventoryHeight} expected) - 60x60px slots");
+    }
+    
+    private void OnEnable()
+    {
+        // Refresh inventory and currencies when screen is opened
+        LoadInventoryFromCharacterManager();
+        LoadCurrenciesFromLootManager();
     }
     
     /// <summary>
@@ -169,6 +180,8 @@ public class EquipmentScreen : MonoBehaviour
         {
             // Create the effigy grid
             effigyGrid = new EffigyGrid(effigyGridContainer);
+            effigyGrid.EffigiesChanged += OnEffigyGridChanged;
+            OnEffigyGridChanged(effigyGrid.GetPlacedEffigies());
             
             // Load player's effigies (TODO: Load from save data)
             Debug.Log("[EquipmentScreen] Effigy grid initialized (6x4 grid)");
@@ -177,6 +190,16 @@ public class EquipmentScreen : MonoBehaviour
         {
             Debug.LogError($"[EquipmentScreen] Error initializing Effigy grid: {ex.Message}\n{ex.StackTrace}");
         }
+    }
+
+    private void OnEffigyGridChanged(IReadOnlyCollection<Effigy> effigies)
+    {
+        var manager = EquipmentManager.Instance;
+        if (manager == null)
+            return;
+
+        var stats = EffigyStatHelper.CalculateStats(effigies);
+        manager.SetEffigyStats(stats);
     }
     
     /// <summary>
@@ -356,11 +379,31 @@ public class EquipmentScreen : MonoBehaviour
     {
         playerEffigies.Clear();
         
-        // Load all Effigy assets from Resources
-        Effigy[] allEffigies = Resources.LoadAll<Effigy>("Items");
-        playerEffigies.AddRange(allEffigies);
+        CharacterManager characterManager = CharacterManager.Instance;
+        Character character = characterManager != null && characterManager.HasCharacter()
+            ? characterManager.GetCurrentCharacter()
+            : null;
         
-        Debug.Log($"[EquipmentScreen] Loaded {playerEffigies.Count} effigies from Resources");
+        if (character != null && character.ownedEffigies != null && character.ownedEffigies.Count > 0)
+        {
+            playerEffigies.AddRange(character.ownedEffigies);
+            Debug.Log($"[EquipmentScreen] Loaded {playerEffigies.Count} effigies from character inventory");
+            return;
+        }
+        
+        // Fallback for editor/dev scenarios where no character inventory exists yet
+        Effigy[] allEffigyBlueprints = Resources.LoadAll<Effigy>("Items/Effigies");
+        AffixDatabase database = AffixDatabase.Instance;
+        foreach (Effigy blueprint in allEffigyBlueprints)
+        {
+            Effigy instance = EffigyFactory.CreateInstance(blueprint, database);
+            if (instance != null)
+            {
+                playerEffigies.Add(instance);
+            }
+        }
+        
+        Debug.Log($"[EquipmentScreen] Loaded {playerEffigies.Count} fallback effigies from Resources");
     }
     
     /// <summary>
@@ -1990,7 +2033,7 @@ public class EquipmentScreen : MonoBehaviour
     {
         playerCurrencies.Clear();
         
-        // Add some test currencies
+        // Initialize with all currencies from database (quantities will be loaded from LootManager)
         foreach (var currency in currencyDatabase.currencies)
         {
             CurrencyData playerCurrency = new CurrencyData
@@ -2000,7 +2043,7 @@ public class EquipmentScreen : MonoBehaviour
                 description = currency.description,
                 rarity = currency.rarity,
                 currencySprite = currency.currencySprite,
-                quantity = UnityEngine.Random.Range(0, 5), // Random quantity for testing
+                quantity = 0, // Will be updated from LootManager
                 canTargetCards = currency.canTargetCards,
                 canTargetEquipment = currency.canTargetEquipment,
                 validEquipmentRarities = currency.validEquipmentRarities,
@@ -2010,6 +2053,269 @@ public class EquipmentScreen : MonoBehaviour
             };
             
             playerCurrencies.Add(playerCurrency);
+        }
+    }
+    
+    /// <summary>
+    /// Loads currencies from LootManager and updates EquipmentScreen's currency list
+    /// </summary>
+    private void LoadCurrenciesFromLootManager()
+    {
+        if (LootManager.Instance == null)
+        {
+            Debug.LogWarning("[EquipmentScreen] LootManager.Instance is null - cannot load currencies");
+            return;
+        }
+        
+        // Get all currencies from LootManager
+        Dictionary<CurrencyType, int> lootManagerCurrencies = LootManager.Instance.GetAllCurrencies();
+        
+        if (lootManagerCurrencies == null || lootManagerCurrencies.Count == 0)
+        {
+            Debug.Log("[EquipmentScreen] No currencies found in LootManager");
+            return;
+        }
+        
+        // Update quantities in playerCurrencies list
+        foreach (var currencyEntry in lootManagerCurrencies)
+        {
+            CurrencyData playerCurrency = playerCurrencies.Find(c => c.currencyType == currencyEntry.Key);
+            if (playerCurrency != null)
+            {
+                playerCurrency.quantity = currencyEntry.Value;
+            }
+            else
+            {
+                // Currency type not in database - add it
+                Debug.LogWarning($"[EquipmentScreen] Currency type {currencyEntry.Key} not found in CurrencyDatabase");
+            }
+        }
+        
+        // Update display
+        UpdateCurrencyDisplay();
+        
+        Debug.Log($"[EquipmentScreen] Loaded {lootManagerCurrencies.Count} currencies from LootManager");
+    }
+    
+    /// <summary>
+    /// Loads inventory items from CharacterManager and converts them to ItemData
+    /// </summary>
+    private void LoadInventoryFromCharacterManager()
+    {
+        CharacterManager charManager = CharacterManager.Instance;
+        if (charManager == null)
+        {
+            Debug.LogWarning("[EquipmentScreen] CharacterManager.Instance is null - cannot load inventory");
+            return;
+        }
+        
+        // Clear existing inventory items
+        inventoryItems.Clear();
+        
+        // Get items from CharacterManager
+        List<BaseItem> characterInventory = charManager.inventoryItems;
+        if (characterInventory == null || characterInventory.Count == 0)
+        {
+            Debug.Log("[EquipmentScreen] No items found in CharacterManager inventory");
+            UpdateInventoryDisplay();
+            return;
+        }
+        
+        // Convert each BaseItem to ItemData
+        foreach (BaseItem baseItem in characterInventory)
+        {
+            if (baseItem == null) continue;
+            
+            ItemData itemData = ConvertBaseItemToItemData(baseItem);
+            if (itemData != null)
+            {
+                inventoryItems.Add(itemData);
+            }
+        }
+        
+        // Update display
+        UpdateInventoryDisplay();
+        
+        Debug.Log($"[EquipmentScreen] Loaded {inventoryItems.Count} items from CharacterManager inventory");
+    }
+    
+    /// <summary>
+    /// Converts a BaseItem ScriptableObject to ItemData for display
+    /// </summary>
+    private ItemData ConvertBaseItemToItemData(BaseItem baseItem)
+    {
+        if (baseItem == null) return null;
+
+        ItemData itemData = new ItemData
+        {
+            itemName = baseItem.GetDisplayName(),
+            itemType = baseItem.itemType,
+            equipmentType = baseItem.equipmentType,
+            rarity = baseItem.GetCalculatedRarity(),
+            level = baseItem.requiredLevel,
+            itemSprite = baseItem.itemIcon,
+            requiredLevel = baseItem.requiredLevel,
+            sourceItem = baseItem
+        };
+
+        // Convert weapon-specific properties
+        if (baseItem is WeaponItem weapon)
+        {
+            itemData.baseDamageMin = weapon.minDamage;
+            itemData.baseDamageMax = weapon.maxDamage;
+            itemData.criticalStrikeChance = weapon.criticalStrikeChance;
+            itemData.attackSpeed = weapon.attackSpeed;
+            itemData.requiredStrength = weapon.requiredStrength;
+            itemData.requiredDexterity = weapon.requiredDexterity;
+            itemData.requiredIntelligence = weapon.requiredIntelligence;
+        }
+
+        // Convert armor-specific properties
+        if (baseItem is Armour armor)
+        {
+            itemData.baseArmour = armor.armour;
+            itemData.baseEvasion = armor.evasion;
+            itemData.baseEnergyShield = armor.energyShield;
+            itemData.requiredStrength = armor.requiredStrength;
+            itemData.requiredDexterity = armor.requiredDexterity;
+            itemData.requiredIntelligence = armor.requiredIntelligence;
+        }
+
+        // Convert jewellery-specific properties
+        if (baseItem is Jewellery jewellery)
+        {
+            itemData.requiredStrength = jewellery.requiredStrength;
+            itemData.requiredDexterity = jewellery.requiredDexterity;
+            itemData.requiredIntelligence = jewellery.requiredIntelligence;
+            
+            // Add jewellery stats to stats dictionary
+            if (jewellery.life > 0)
+                itemData.stats["MaxLife"] = jewellery.life;
+            if (jewellery.mana > 0)
+                itemData.stats["MaxMana"] = jewellery.mana;
+            if (jewellery.energyShield > 0)
+                itemData.stats["MaxEnergyShield"] = jewellery.energyShield;
+            if (jewellery.ward > 0)
+                itemData.stats["MaxWard"] = jewellery.ward;
+        }
+
+        // Convert affixes to stat dictionary
+        itemData.stats = ConvertAffixesToStatsDictionary(baseItem);
+
+        // Convert modifiers to string lists (for tooltips)
+        ConvertAffixesToStrings(baseItem, itemData);
+
+        return itemData;
+    }
+    
+    /// <summary>
+    /// Converts affixes from BaseItem to a stats dictionary
+    /// </summary>
+    private Dictionary<string, float> ConvertAffixesToStatsDictionary(BaseItem baseItem)
+    {
+        Dictionary<string, float> stats = new Dictionary<string, float>();
+
+        // Add base item properties as stats
+        if (baseItem is WeaponItem weapon)
+        {
+            stats["WeaponMinDamage"] = weapon.minDamage;
+            stats["WeaponMaxDamage"] = weapon.maxDamage;
+            stats["WeaponCritChance"] = weapon.criticalStrikeChance;
+            stats["WeaponAttackSpeed"] = weapon.attackSpeed;
+        }
+        else if (baseItem is Armour armor)
+        {
+            stats["Armour"] = armor.armour;
+            stats["Evasion"] = armor.evasion;
+            stats["EnergyShield"] = armor.energyShield;
+        }
+
+        // Process all affixes (implicit, prefixes, suffixes)
+        List<Affix> allAffixes = new List<Affix>();
+        allAffixes.AddRange(baseItem.implicitModifiers);
+        allAffixes.AddRange(baseItem.prefixes);
+        allAffixes.AddRange(baseItem.suffixes);
+
+        foreach (Affix affix in allAffixes)
+        {
+            foreach (AffixModifier modifier in affix.modifiers)
+            {
+                // Get the actual value from the modifier
+                float value = GetModifierValueFromAffix(modifier);
+
+                if (!string.IsNullOrEmpty(modifier.statName))
+                {
+                    // Handle damage type modifiers
+                    string statName = modifier.statName;
+                    if (modifier.damageType != DamageType.None)
+                    {
+                        if (modifier.modifierType == ModifierType.Flat)
+                        {
+                            statName = $"{modifier.damageType}Damage";
+                        }
+                        else if (modifier.modifierType == ModifierType.Increased)
+                        {
+                            statName = $"Increased{modifier.damageType}Damage";
+                        }
+                    }
+                    
+                    if (stats.ContainsKey(statName))
+                        stats[statName] += value;
+                    else
+                        stats[statName] = value;
+                }
+            }
+        }
+
+        return stats;
+    }
+    
+    /// <summary>
+    /// Gets the actual value from an AffixModifier
+    /// </summary>
+    private float GetModifierValueFromAffix(AffixModifier modifier)
+    {
+        if (modifier.isDualRange)
+        {
+            // For dual-range, use the average of both ranges
+            return (modifier.rolledFirstValue + modifier.rolledSecondValue) / 2f;
+        }
+        else
+        {
+            // Use the rolled value or minValue as fallback
+            return modifier.minValue;
+        }
+    }
+    
+    /// <summary>
+    /// Converts affixes to string lists for tooltip display
+    /// </summary>
+    private void ConvertAffixesToStrings(BaseItem baseItem, ItemData itemData)
+    {
+        // Initialize lists if needed
+        if (itemData.implicitModifiers == null)
+            itemData.implicitModifiers = new List<string>();
+        if (itemData.prefixModifiers == null)
+            itemData.prefixModifiers = new List<string>();
+        if (itemData.suffixModifiers == null)
+            itemData.suffixModifiers = new List<string>();
+        
+        foreach (Affix affix in baseItem.implicitModifiers)
+        {
+            if (!string.IsNullOrEmpty(affix.description))
+                itemData.implicitModifiers.Add(affix.description);
+        }
+
+        foreach (Affix affix in baseItem.prefixes)
+        {
+            if (!string.IsNullOrEmpty(affix.description))
+                itemData.prefixModifiers.Add(affix.description);
+        }
+
+        foreach (Affix affix in baseItem.suffixes)
+        {
+            if (!string.IsNullOrEmpty(affix.description))
+                itemData.suffixModifiers.Add(affix.description);
         }
     }
     
@@ -2967,6 +3273,7 @@ public class ItemData
     public int level;
     public Sprite itemSprite;
     public Dictionary<string, float> stats = new Dictionary<string, float>();
+    [System.NonSerialized] public BaseItem sourceItem;
     
     // Weapon-specific stats
     public float baseDamageMin;

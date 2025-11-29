@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9be3bb50a3980b47ab1e7fc8419be94, type: 3}
+  m_Name: 12.AsheslopeRidge
+  m_EditorClassIdentifier: Assembly-CSharp::EncounterDataAsset
+  encounterID: 12
+  encounterName: Asheslope Ridge
+  sceneName: CombatScene
+  actNumber: 1
+  encounterSprite: {fileID: -1540426309290004842, guid: f4aec09d76847cd489a6c09a8f26f8de, type: 3}
+  prerequisiteEncounters:
+  - {fileID: 11400000, guid: 9cfc2b3516fb2d34ebbdb455370c83f5, type: 2}
+  areaLevel: 17
+  totalWaves: 5
+  maxEnemiesPerWave: 4
+  randomizeEnemyCount: 1
+  uniqueEnemy: {fileID: 0}
+  lootTable: {fileID: 0}
+  areaLootTable: {fileID: 11400000, guid: 4457bb8ee4549ff4b99c3ab08fdbcc2a, type: 2}

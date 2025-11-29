@@ -53,7 +53,10 @@ public class AscendancyBranch
     public List<AscendancyPassive> branchNodes = new List<AscendancyPassive>();
     
     [Header("Branch Layout")]
-    [Tooltip("Starting angle from start node (0 = right, 90 = up, 180 = left, 270 = down)")]
+    [Tooltip("Name of the node this branch starts from (empty = start node). Allows branches to start from any node, enabling split nodes.")]
+    public string sourceNodeName = "";
+    
+    [Tooltip("Starting angle from source node (0 = right, 90 = up, 180 = left, 270 = down)")]
     public float branchAngle = 0f;
     
     [Tooltip("Horizontal offset from center for this branch (legacy, use branchAngle instead)")]
@@ -89,7 +92,7 @@ public class AscendancyBranch
     /// <summary>
     /// Auto-generate prerequisites and positions for nodes in this branch
     /// </summary>
-    public void GenerateBranchStructure(string startNodeName, Vector2 startNodePosition = default)
+    public void GenerateBranchStructure(string startNodeName, Vector2 startNodePosition = default, AscendancyData ascendancyData = null)
     {
         if (branchNodes == null || branchNodes.Count == 0) return;
         
@@ -98,8 +101,37 @@ public class AscendancyBranch
             Debug.LogWarning($"[AscendancyBranch] Cross-branch connections detected on '{branchName}'. Consider migrating to floating nodes.");
         }
 
+        // Determine source node (the node this branch starts from)
+        string actualSourceNodeName = string.IsNullOrEmpty(sourceNodeName) ? startNodeName : sourceNodeName;
+        Vector2 sourceNodePosition = startNodePosition;
+        
+        // If source is not the start node, find its position
+        if (!string.IsNullOrEmpty(sourceNodeName) && ascendancyData != null)
+        {
+            AscendancyPassive sourceNode = ascendancyData.FindPassiveByName(actualSourceNodeName);
+            if (sourceNode != null)
+            {
+                sourceNodePosition = sourceNode.treePosition;
+                
+                // Validate that source node position is set (not zero or uninitialized)
+                // Note: Vector2.zero is valid for start node, but for other nodes it indicates uninitialized
+                if (sourceNodePosition == Vector2.zero && actualSourceNodeName != startNodeName)
+                {
+                    Debug.LogWarning($"[AscendancyBranch] Source node '{actualSourceNodeName}' has zero position for branch '{branchName}'. This may cause overlapping nodes. Ensure source node is generated before this branch. Falling back to start node position.");
+                    sourceNodePosition = startNodePosition;
+                    actualSourceNodeName = startNodeName;
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[AscendancyBranch] Source node '{actualSourceNodeName}' not found for branch '{branchName}'. Using start node position.");
+                actualSourceNodeName = startNodeName;
+                sourceNodePosition = startNodePosition;
+            }
+        }
+
         // Track current position and direction
-        Vector2 currentPosition = startNodePosition;
+        // Start from source node position - first node will be spaced from source
         float currentAngle = branchAngle;
         float baseSpacing = 80f; // Default spacing between nodes
         
@@ -107,6 +139,30 @@ public class AscendancyBranch
         {
             AscendancyPassive node = branchNodes[i];
             if (node == null) continue;
+            
+            // Determine the position to start from (previous node or source)
+            Vector2 startPosition;
+            if (i == 0)
+            {
+                // First node: start from source node position
+                startPosition = sourceNodePosition;
+            }
+            else
+            {
+                // Subsequent nodes: start from the ACTUAL position of the previous node
+                // This ensures we're always spacing from the real previous node position
+                AscendancyPassive previousNode = branchNodes[i - 1];
+                if (previousNode != null)
+                {
+                    startPosition = previousNode.treePosition;
+                }
+                else
+                {
+                    // Fallback to source if previous node is null (shouldn't happen)
+                    startPosition = sourceNodePosition;
+                    Debug.LogWarning($"[AscendancyBranch] Previous node is null at index {i}, using source position");
+                }
+            }
             
             // Check for direction changes at this node
             BranchDirectionChange directionChange = GetDirectionChangeAtIndex(i);
@@ -119,21 +175,22 @@ public class AscendancyBranch
                 Debug.Log($"[AscendancyBranch] Direction change at node {i}: new angle = {currentAngle}°");
             }
             
-            // Calculate direction vector
+            // Calculate direction vector from current angle
             float angleRad = currentAngle * Mathf.Deg2Rad;
             Vector2 direction = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad));
             
-            // Calculate position
+            // Calculate position: space from start position (previous node or source)
+            // This ensures consistent spacing between all nodes in the branch
             Vector2 offset = direction * baseSpacing;
-            currentPosition += offset;
-            node.treePosition = currentPosition;
+            Vector2 newNodePosition = startPosition + offset;
+            node.treePosition = newNodePosition;
             
-            // Set prerequisite (previous node or start)
+            // Set prerequisite (previous node or source)
             node.prerequisitePassives.Clear();
             if (i == 0)
             {
-                // First node connects to Start
-                node.prerequisitePassives.Add(startNodeName);
+                // First node connects to source node
+                node.prerequisitePassives.Add(actualSourceNodeName);
             }
             else
             {
@@ -146,7 +203,7 @@ public class AscendancyBranch
             // Add cross-branch connections if defined
             AddCrossBranchPrerequisites(node, i);
             
-            Debug.Log($"[AscendancyBranch] {node.name} positioned at {node.treePosition} (branch: {branchName}, angle: {currentAngle}°, index: {i})");
+            Debug.Log($"[AscendancyBranch] {node.name} positioned at {node.treePosition} (branch: {branchName}, source: {actualSourceNodeName} at {sourceNodePosition}, angle: {currentAngle}°, spacing: {baseSpacing}, index: {i})");
         }
     }
     

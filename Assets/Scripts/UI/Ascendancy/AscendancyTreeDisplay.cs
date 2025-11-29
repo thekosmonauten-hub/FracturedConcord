@@ -40,6 +40,9 @@ public class AscendancyTreeDisplay : MonoBehaviour
     [SerializeField] private AscendancyTooltipController tooltipController;
     [SerializeField] private bool enableTooltips = true;
     
+    // Public accessor for tooltip controller (used by SubNodeHoverHandler)
+    public AscendancyTooltipController TooltipController => tooltipController;
+    
     [Header("Optional: Legacy Info Panel")]
     [SerializeField] private GameObject infoPanel;
     [SerializeField] private TextMeshProUGUI passiveNameText;
@@ -235,6 +238,12 @@ public class AscendancyTreeDisplay : MonoBehaviour
             node.OnNodeHoverExit += OnNodeHoverExit;
             
             spawnedNodes.Add(node);
+            
+            // Handle choice nodes: spawn sub-nodes in a circle around the main node
+            if (passive.isChoiceNode && passive.subNodes != null && passive.subNodes.Count > 0)
+            {
+                SpawnChoiceNodeSubNodes(passive, node, parent);
+            }
         }
         
         // Draw connection lines between nodes
@@ -245,6 +254,153 @@ public class AscendancyTreeDisplay : MonoBehaviour
         
         if (showDebugLogs)
             Debug.Log($"[AscendancyTreeDisplay] Spawned {spawnedNodes.Count} passive nodes");
+    }
+    
+    /// <summary>
+    /// Spawn sub-nodes in a circle around a choice node
+    /// </summary>
+    void SpawnChoiceNodeSubNodes(AscendancyPassive choiceNode, AscendancyPassiveNode mainNode, Transform parent)
+    {
+        if (choiceNode == null || mainNode == null || choiceNode.subNodes == null || choiceNode.subNodes.Count == 0)
+            return;
+        
+        // Check if a sub-node is already selected
+        int selectedIndex = -1;
+        if (progression != null)
+        {
+            selectedIndex = progression.GetSelectedSubNodeIndex(choiceNode.name);
+        }
+        
+        // If a sub-node is selected, apply its sprite to the main node and hide sub-nodes
+        if (selectedIndex >= 0 && selectedIndex < choiceNode.subNodes.Count)
+        {
+            var selectedSubNode = choiceNode.subNodes[selectedIndex];
+            if (selectedSubNode.icon != null)
+            {
+                // Apply selected sub-node's sprite to main node
+                var nodeImage = mainNode.GetComponentInChildren<UnityEngine.UI.Image>();
+                if (nodeImage != null)
+                {
+                    nodeImage.sprite = selectedSubNode.icon;
+                }
+            }
+            // Don't spawn sub-nodes if one is selected
+            return;
+        }
+        
+        // Spawn sub-nodes in a circle around the main node
+        RectTransform mainRect = mainNode.GetComponent<RectTransform>();
+        if (mainRect == null) return;
+        
+        Vector2 mainPosition = mainRect.anchoredPosition;
+        float radius = choiceNode.subNodeRadius > 0 ? choiceNode.subNodeRadius : 100f;
+        
+        // Calculate angle step for even distribution
+        float angleStep = 360f / choiceNode.subNodes.Count;
+        
+        for (int i = 0; i < choiceNode.subNodes.Count; i++)
+        {
+            var subNode = choiceNode.subNodes[i];
+            if (subNode == null) continue;
+            
+            // Calculate position in circle
+            float angle = subNode.angleOffset > 0 ? subNode.angleOffset : (angleStep * i);
+            float angleRad = angle * Mathf.Deg2Rad;
+            Vector2 offset = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad)) * radius;
+            Vector2 subNodePosition = mainPosition + offset;
+            
+            // Spawn sub-node
+            GameObject subNodeObj = Instantiate(nodePrefab, parent);
+            subNodeObj.name = $"SubNode_{choiceNode.name}_{i}_{subNode.name}";
+            
+            RectTransform subRect = subNodeObj.GetComponent<RectTransform>();
+            if (subRect == null)
+            {
+                subRect = subNodeObj.AddComponent<RectTransform>();
+                subRect.sizeDelta = new Vector2(60, 60); // Smaller than main node
+            }
+            
+            subRect.pivot = new Vector2(0.5f, 0.5f);
+            subRect.anchoredPosition = subNodePosition;
+            subRect.localScale = Vector3.one * 0.75f; // Smaller scale for sub-nodes
+            
+            // Set sub-node icon
+            var subNodeImage = subNodeObj.GetComponentInChildren<UnityEngine.UI.Image>();
+            if (subNodeImage != null && subNode.icon != null)
+            {
+                subNodeImage.sprite = subNode.icon;
+            }
+            
+            // Add click handler for sub-node selection
+            var subNodeButton = subNodeObj.GetComponentInChildren<UnityEngine.UI.Button>();
+            if (subNodeButton == null)
+            {
+                subNodeButton = subNodeObj.AddComponent<UnityEngine.UI.Button>();
+            }
+            
+            int subNodeIndex = i; // Capture for closure
+            subNodeButton.onClick.AddListener(() => OnSubNodeClicked(choiceNode, mainNode, subNodeIndex));
+            
+            // Add hover handlers for tooltip
+            var subNodeHoverHandler = subNodeObj.GetComponent<SubNodeHoverHandler>();
+            if (subNodeHoverHandler == null)
+            {
+                subNodeHoverHandler = subNodeObj.AddComponent<SubNodeHoverHandler>();
+            }
+            subNodeHoverHandler.Initialize(subNode, choiceNode.name, this);
+            
+            // Make sub-node slightly transparent to distinguish from main node
+            if (subNodeImage != null)
+            {
+                var color = subNodeImage.color;
+                color.a = 0.8f;
+                subNodeImage.color = color;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Show tooltip for a sub-node
+    /// </summary>
+    public void ShowSubNodeTooltip(AscendancySubNode subNode, string choiceNodeName, Vector2 position)
+    {
+        if (enableTooltips && tooltipController != null)
+        {
+            tooltipController.ShowSubNodeTooltip(subNode, choiceNodeName, position);
+        }
+    }
+    
+    /// <summary>
+    /// Handle sub-node click - select it and apply its sprite to main node
+    /// </summary>
+    void OnSubNodeClicked(AscendancyPassive choiceNode, AscendancyPassiveNode mainNode, int subNodeIndex)
+    {
+        if (choiceNode == null || mainNode == null || progression == null)
+            return;
+        
+        if (choiceNode.subNodes == null || subNodeIndex < 0 || subNodeIndex >= choiceNode.subNodes.Count)
+            return;
+        
+        var subNode = choiceNode.subNodes[subNodeIndex];
+        
+        // Select the sub-node
+        bool success = progression.SelectSubNode(choiceNode.name, subNodeIndex, currentAscendancy);
+        if (success)
+        {
+            // Apply sub-node's sprite to main node
+            var nodeImage = mainNode.GetComponentInChildren<UnityEngine.UI.Image>();
+            if (nodeImage != null && subNode.icon != null)
+            {
+                nodeImage.sprite = subNode.icon;
+            }
+            
+            // Hide all sub-nodes (they'll be hidden on next refresh)
+            // For now, just log - you might want to store sub-node references to hide them
+            Debug.Log($"[AscendancyTreeDisplay] Selected sub-node {subNodeIndex} ('{subNode.name}') for choice node '{choiceNode.name}'");
+            
+            // Refresh the display to hide sub-nodes
+            // You could also manually hide them here if you store references
+        }
     }
     
     /// <summary>
@@ -458,6 +614,15 @@ public class AscendancyTreeDisplay : MonoBehaviour
             }
         }
         
+        // Check node group (mutually exclusive nodes)
+        if (currentAscendancy != null && !string.IsNullOrEmpty(passive.nodeGroup))
+        {
+            if (currentAscendancy.IsAnyNodeInGroupUnlocked(passive.nodeGroup, progression))
+            {
+                return false; // Another node in this group is already unlocked
+            }
+        }
+        
         return true;
     }
     
@@ -467,10 +632,29 @@ public class AscendancyTreeDisplay : MonoBehaviour
     void OnNodeClicked(AscendancyPassiveNode node)
     {
         selectedNode = node;
+        
+        AscendancyPassive passive = node.GetPassiveData();
+        
+        // Check if this is a choice node that needs sub-node selection
+        if (passive != null && passive.isChoiceNode && progression != null)
+        {
+            // If choice node is unlocked but no sub-node selected, show sub-nodes
+            if (progression.IsPassiveUnlocked(passive.name))
+            {
+                int selectedIndex = progression.GetSelectedSubNodeIndex(passive.name);
+                if (selectedIndex < 0) // No selection yet
+                {
+                    // Sub-nodes should already be visible, just show info
+                    ShowNodeInfo(node);
+                    return;
+                }
+            }
+        }
+        
         ShowNodeInfo(node);
         
         if (showDebugLogs)
-            Debug.Log($"[AscendancyTreeDisplay] Node clicked: {node.GetPassiveData().name}");
+            Debug.Log($"[AscendancyTreeDisplay] Node clicked: {passive.name}");
     }
     
     /// <summary>

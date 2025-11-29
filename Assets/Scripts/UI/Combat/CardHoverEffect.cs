@@ -285,10 +285,40 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 	private string[] BuildLinesFromCard(Card card)
 	{
 		var lines = new System.Collections.Generic.List<string>();
-		// Damage scaling
+		Character character = GetCurrentCharacter();
+		
+		// Calculate actual damage value
+		if (card.baseDamage > 0)
+		{
+			float totalDamage = card.baseDamage;
+			if (character != null)
+			{
+				// Use DamageCalculator for accurate damage calculation
+				totalDamage = DamageCalculator.CalculateCardDamage(card, character);
+			}
+			else if (card.damageScaling != null)
+			{
+				// Fallback: just add base + scaling bonus (without weapon/embossing)
+				totalDamage += card.damageScaling.CalculateScalingBonus(null);
+			}
+			lines.Add($"Damage: {card.baseDamage:F0} → {totalDamage:F0} (with scaling)");
+		}
+		
+		// Calculate actual guard value
+		if (card.baseGuard > 0)
+		{
+			float totalGuard = card.baseGuard;
+			if (character != null && card.guardScaling != null)
+			{
+				totalGuard += card.guardScaling.CalculateScalingBonus(character);
+			}
+			lines.Add($"Guard: {card.baseGuard:F0} → {totalGuard:F0} (with scaling)");
+		}
+		
+		// Damage scaling details
 		var dmgScale = BuildScalingString("Scaling", card.scalesWithMeleeWeapon, card.scalesWithProjectileWeapon, card.scalesWithSpellWeapon, card.damageScaling);
 		if (!string.IsNullOrEmpty(dmgScale)) lines.Add(dmgScale);
-		// Guard scaling
+		// Guard scaling details
 		var grdScale = BuildScalingString("Guard Scaling", false, false, false, card.guardScaling);
 		if (!string.IsNullOrEmpty(grdScale)) lines.Add(grdScale);
 		// Ailments
@@ -318,10 +348,41 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 	private string[] BuildLinesFromExtended(CardDataExtended ext)
 	{
 		var lines = new System.Collections.Generic.List<string>();
-		// Damage scaling (weapons + stats)
+		Character character = GetCurrentCharacter();
+		
+		// Calculate actual damage value
+		if (ext.damage > 0)
+		{
+			float totalDamage = ext.damage;
+			if (character != null)
+			{
+				// Convert CardDataExtended to Card for DamageCalculator
+				Card tempCard = ext.ToCard();
+				totalDamage = DamageCalculator.CalculateCardDamage(tempCard, character);
+			}
+			else if (ext.damageScaling != null)
+			{
+				// Fallback: just add base + scaling bonus (without weapon/embossing)
+				totalDamage += ext.damageScaling.CalculateScalingBonus(null);
+			}
+			lines.Add($"Damage: {ext.damage:F0} → {totalDamage:F0} (with scaling)");
+		}
+		
+		// Calculate actual guard value
+		if (ext.block > 0)
+		{
+			float totalGuard = ext.block;
+			if (character != null && ext.guardScaling != null)
+			{
+				totalGuard += ext.guardScaling.CalculateScalingBonus(character);
+			}
+			lines.Add($"Guard: {ext.block:F0} → {totalGuard:F0} (with scaling)");
+		}
+		
+		// Damage scaling details (weapons + stats)
 		var dmgScale = BuildScalingString("Scaling", ext.scalesWithMeleeWeapon, ext.scalesWithProjectileWeapon, ext.scalesWithSpellWeapon, ext.damageScaling);
 		if (!string.IsNullOrEmpty(dmgScale)) lines.Add(dmgScale);
-		// Guard scaling
+		// Guard scaling details
 		var grdScale = BuildScalingString("Guard Scaling", false, false, false, ext.guardScaling);
 		if (!string.IsNullOrEmpty(grdScale)) lines.Add(grdScale);
 		// Ailments from asset-defined combo/apply
@@ -348,6 +409,23 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 				}
 			}
 		}
+		// Momentum effects (shown in tooltip, not on card)
+		if (character != null)
+		{
+			string momentumDesc = ext.GetDynamicMomentumDescription(character);
+			if (string.IsNullOrWhiteSpace(momentumDesc))
+			{
+				momentumDesc = ext.momentumEffectDescription;
+			}
+			if (!string.IsNullOrWhiteSpace(momentumDesc))
+			{
+				lines.Add($"Momentum: {momentumDesc}");
+			}
+		}
+		else if (!string.IsNullOrWhiteSpace(ext.momentumEffectDescription))
+		{
+			lines.Add($"Momentum: {ext.momentumEffectDescription}");
+		}
 		// Combo requirement (typed)
 		if (ext.enableCombo)
 		{
@@ -367,16 +445,119 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		if (ext.isAoE) lines.Add($"AoE: Hits {Mathf.Max(1, ext.aoeTargets)} enemies");
 		return lines.ToArray();
 	}
+	
+	/// <summary>
+	/// Get the current character for tooltip calculations
+	/// </summary>
+	private Character GetCurrentCharacter()
+	{
+		// Try to get character from CharacterManager
+		CharacterManager characterManager = CharacterManager.Instance;
+		if (characterManager != null && characterManager.HasCharacter())
+		{
+			return characterManager.GetCurrentCharacter();
+		}
+		
+		// Try to get character from CombatDeckManager
+		CombatDeckManager deckManager = CombatDeckManager.Instance;
+		if (deckManager != null)
+		{
+			return deckManager.GetCurrentCharacter();
+		}
+		
+		return null;
+	}
 
 	private string BuildScalingString(string title, bool melee, bool proj, bool spell, AttributeScaling scaling)
 	{
 		if (scaling == null && !melee && !proj && !spell) return string.Empty;
 		System.Collections.Generic.List<string> parts = new System.Collections.Generic.List<string>();
-		if (melee) parts.Add("Melee weapon");
-		if (proj) parts.Add("Projectile weapon");
-		if (spell) parts.Add("Spell power");
-		if (scaling != null)
+		Character character = GetCurrentCharacter();
+		
+		if (melee) 
 		{
+			if (character != null)
+			{
+				float weaponDmg = character.weapons.GetWeaponDamage(WeaponType.Melee);
+				parts.Add($"Melee weapon (+{weaponDmg:F0})");
+			}
+			else
+			{
+				parts.Add("Melee weapon");
+			}
+		}
+		if (proj) 
+		{
+			if (character != null)
+			{
+				float weaponDmg = character.weapons.GetWeaponDamage(WeaponType.Projectile);
+				parts.Add($"Projectile weapon (+{weaponDmg:F0})");
+			}
+			else
+			{
+				parts.Add("Projectile weapon");
+			}
+		}
+		if (spell) 
+		{
+			if (character != null)
+			{
+				float weaponDmg = character.weapons.GetWeaponDamage(WeaponType.Spell);
+				parts.Add($"Spell power (+{weaponDmg:F0})");
+			}
+			else
+			{
+				parts.Add("Spell power");
+			}
+		}
+		if (scaling != null && character != null)
+		{
+			// Calculate actual scaling bonus values
+			float scalingBonus = scaling.CalculateScalingBonus(character);
+			if (scalingBonus > 0f)
+			{
+				// Build detailed breakdown
+				System.Collections.Generic.List<string> statParts = new System.Collections.Generic.List<string>();
+				if (scaling.strengthScaling > 0f)
+				{
+					float strBonus = character.strength * scaling.strengthScaling;
+					statParts.Add($"STR: +{strBonus:F0}");
+				}
+				if (scaling.strengthDivisor > 0f)
+				{
+					float strDivBonus = character.strength / scaling.strengthDivisor;
+					statParts.Add($"STR/{scaling.strengthDivisor:F0}: +{strDivBonus:F0}");
+				}
+				if (scaling.dexterityScaling > 0f)
+				{
+					float dexBonus = character.dexterity * scaling.dexterityScaling;
+					statParts.Add($"DEX: +{dexBonus:F0}");
+				}
+				if (scaling.dexterityDivisor > 0f)
+				{
+					float dexDivBonus = character.dexterity / scaling.dexterityDivisor;
+					statParts.Add($"DEX/{scaling.dexterityDivisor:F0}: +{dexDivBonus:F0}");
+				}
+				if (scaling.intelligenceScaling > 0f)
+				{
+					float intBonus = character.intelligence * scaling.intelligenceScaling;
+					statParts.Add($"INT: +{intBonus:F0}");
+				}
+				if (scaling.intelligenceDivisor > 0f)
+				{
+					float intDivBonus = character.intelligence / scaling.intelligenceDivisor;
+					statParts.Add($"INT/{scaling.intelligenceDivisor:F0}: +{intDivBonus:F0}");
+				}
+				
+				if (statParts.Count > 0)
+				{
+					parts.Add($"Stats: {string.Join(", ", statParts)} (Total: +{scalingBonus:F0})");
+				}
+			}
+		}
+		else if (scaling != null)
+		{
+			// Fallback to format-only when character is not available
 			if (scaling.strengthScaling > 0f) parts.Add(FormatStatScaling("STR", scaling.strengthScaling));
 			if (scaling.dexterityScaling > 0f) parts.Add(FormatStatScaling("DEX", scaling.dexterityScaling));
 			if (scaling.intelligenceScaling > 0f) parts.Add(FormatStatScaling("INT", scaling.intelligenceScaling));

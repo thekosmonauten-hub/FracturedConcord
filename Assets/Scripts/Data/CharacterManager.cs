@@ -109,12 +109,35 @@ public class CharacterManager : MonoBehaviour
     {
         currentCharacter = new Character(characterName, characterClass);
         
-        // Initialize starter deck and cards
         InitializeStarterDeck(currentCharacter);
+        
+        // For new characters, only unlock encounter 1 by default
+        // Other encounters will unlock as prerequisites are completed
+        // Note: We mark it unlocked here, but ApplyCharacterProgression will also ensure it's unlocked
+        currentCharacter.MarkEncounterUnlocked(1);
+        
+        // Refresh encounter manager to apply progression
+        // This will detect the new character and ensure encounter 1 is unlocked
+        var encounterMgr = EncounterManager.Instance;
+        if (encounterMgr != null)
+        {
+            // Ensure encounters are loaded and graph is initialized
+            // InitializeEncounterGraph will populate encounterNodes and apply progression
+            encounterMgr.InitializeEncounterGraph();
+            
+            // Double-check that encounter 1 is unlocked (in case graph wasn't ready)
+            var encounter1 = encounterMgr.GetEncounterByID(1);
+            if (encounter1 != null && !encounter1.isUnlocked)
+                {
+                encounter1.isUnlocked = true;
+                currentCharacter.MarkEncounterUnlocked(1);
+                Debug.Log($"[CharacterManager] Force-unlocked encounter 1 for new character: {encounter1.encounterName}");
+            }
+        }
         
         SaveCharacter();
         OnCharacterLoaded?.Invoke(currentCharacter);
-        Debug.Log($"Created new character: {currentCharacter.characterName}");
+        Debug.Log($"Created new character: {currentCharacter.characterName} (Encounter 1 unlocked)");
         PlayerPrefs.SetString("LastCharacterName", characterName);
         PlayerPrefs.Save();
     }
@@ -412,7 +435,14 @@ public class CharacterManager : MonoBehaviour
         {
             DeckManager.Instance.SaveDeck(starterDeckPreset);
             
-            // Set as active deck in DeckManager
+            // Ensure the character knows about this deck
+            if (!character.deckData.savedDeckNames.Contains(starterDeckPreset.deckName))
+            {
+                character.deckData.AddDeck(starterDeckPreset.deckName);
+            }
+            character.deckData.SetActiveDeck(starterDeckPreset.deckName);
+            
+            // Set as active deck in DeckManager (this will also sync back to character data)
             DeckManager.Instance.SetActiveDeck(starterDeckPreset);
             
             Debug.Log($"Created and activated starter deck: {starterDeckPreset.deckName} for {character.characterName}");

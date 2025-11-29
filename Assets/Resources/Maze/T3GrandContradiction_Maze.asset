@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de27970e650b2c4c9e3283cfc363c27, type: 3}
+  m_Name: T3GrandContradiction_Maze
+  m_EditorClassIdentifier: Assembly-CSharp::Dexiled.MazeSystem.MazeConfig
+  totalFloors: 10
+  minNodesPerFloor: 12
+  maxNodesPerFloor: 12
+  gridSize: {x: 6, y: 4}
+  combatWeight: 45
+  chestWeight: 15
+  shrineWeight: 10
+  trapWeight: 10
+  forgeWeight: 10
+  specialWeight: 5
+  floorEnemyTiers: 00000000000000000000000000000000010000000100000001000000020000000200000002000000
+  bossFloors: 04000000080000000a000000
+  bossRetreatThreshold: 0.45
+  tier1GridTile: {fileID: 2595917572512140702, guid: 97f7f3f7f11f7fa489f5075cfb1254ad, type: 3}
+  tier2GridTile: {fileID: -2980710394841186339, guid: 962ebd4a362fbb34fa0f177c47e87c03, type: 3}
+  tier3GridTile: {fileID: -8746389906562890914, guid: 654c1880f0d9353498b8aadc70f92e57, type: 3}
+  tier4GridTile: {fileID: 5208258995862081806, guid: 29b07c725ae032f4faa7a1e352712901, type: 3}
+  floorsPerTier: 4
+  backgroundImages:
+  - {fileID: -424282900352314099, guid: a23aea0955d7ba643a56765b98860b59, type: 3}
+  - {fileID: -442538466840701022, guid: 8b0a1afa18056734080523e4b838dc65, type: 3}
+  - {fileID: -3034450404386565593, guid: 711f0729644697d41a7434a6ef656b09, type: 3}
+  - {fileID: 7586776267085339380, guid: 90dd9cf04150cd244bc9ea2c5d218db3, type: 3}
+  - {fileID: -2838983237633164014, guid: df4216e42d139aa4d986b99a1a4977f6, type: 3}
+  - {fileID: -4824256499513508032, guid: c6e757a503dd6d0439b305f35d6ae885, type: 3}
+  useTierBasedBackgrounds: 0
+  tier1Backgrounds: []
+  tier2Backgrounds: []
+  tier3Backgrounds: []
+  tier4Backgrounds: []
+  mazeEnemies:
+  - {fileID: 11400000, guid: d3691c32172165f4e8e1b7a05960abec, type: 2}
+  - {fileID: 11400000, guid: 426bdd3757c815d4f9899be8b26aa314, type: 2}
+  - {fileID: 11400000, guid: 8744a8bed1274a74f8264919925268bd, type: 2}
+  - {fileID: 11400000, guid: c4a270ffa6bea4d4b819f473cbf97a43, type: 2}
+  - {fileID: 11400000, guid: ec5287165c0e56b4ebaa3d9078544171, type: 2}
+  - {fileID: 11400000, guid: 5df83a86d810f1d4aa6305701fbb1fbe, type: 2}
+  - {fileID: 11400000, guid: 77f194e4e1623cf459f20ffe59749a6c, type: 2}
+  - {fileID: 11400000, guid: fb4e5a64b31837340878edbe0b183cc5, type: 2}
+  - {fileID: 11400000, guid: a2ef60fdd47a5fc44b2b36c5b59e82dc, type: 2}
+  - {fileID: 11400000, guid: 2556a6c721d781a4b893d3ff091f95cc, type: 2}
+  tier1NormalWeight: 90
+  tier1MagicWeight: 9
+  tier1RareWeight: 1
+  tier1UniqueWeight: 0
+  tier2NormalWeight: 75
+  tier2MagicWeight: 20
+  tier2RareWeight: 5
+  tier2UniqueWeight: 0
+  tier3NormalWeight: 60
+  tier3MagicWeight: 30
+  tier3RareWeight: 9
+  tier3UniqueWeight: 1
+  tier4NormalWeight: 50
+  tier4MagicWeight: 35
+  tier4RareWeight: 13
+  tier4UniqueWeight: 2

@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: The Broken Lecturer
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: The Broken Lecturer
+  description: "A transparent silhouette flickering between bodies, endlessly teaching
+    a lesson no one can hear. Mouth moves constantly but produces no sound\u2014yet
+    players feel lectured."
+  enemySprite: {fileID: -8206965689885830360, guid: 2845d330baca82243a638b81d38f9b57, type: 3}
+  tier: 1
+  rarity: 0
+  category: 4
+  minHealth: 45
+  maxHealth: 65
+  baseDamage: 7
+  baseArmor: 0
+  criticalChance: 0.05
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 100
+  evasionRating: 0
+  physicalResistance: 0
+  fireResistance: 0
+  coldResistance: 0
+  lightningResistance: 0
+  chaosResistance: 0
+  displayScale: 1
+  basePanelHeight: 280
+  enableEnergy: 0
+  baseMaxEnergy: 100
+  energyRegenPerTurn: 10
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  staggerThreshold: 100
+  staggerDecayPerTurn: 0
+  defendGuardPercent: 0.1
+  aiPattern: 0
+  attackPreference: 0.5
+  specialAbilities: []
+  abilities:
+  - {fileID: 11400000, guid: d38a872d10d138c4c9027568b8e2e693, type: 2}
+  - {fileID: 11400000, guid: 41d7f398a25aa3b489763d4838549df7, type: 2}
+  - {fileID: 11400000, guid: 9eec8c5e374d8a74d8659281a96262a8, type: 2}
+  summonPool: []
+  spiritTags: 
+  guaranteedSpiritDrop: 1
+  minGoldDrop: 13
+  maxGoldDrop: 21
+  experienceReward: 10
+  cardDropChance: 0.18
+  initialAgitateStacks: 0
+  initialToleranceStacks: 0
+  initialPotentialStacks: 0
+  excludeFromRandom: 1
+  healthBarColor: {r: 1, g: 0, b: 0, a: 1}
+  animatorController: {fileID: 0}

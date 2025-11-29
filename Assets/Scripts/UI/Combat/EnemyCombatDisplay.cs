@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Collections.Generic;
 
 public class EnemyCombatDisplay : MonoBehaviour
 {
@@ -15,6 +16,12 @@ public class EnemyCombatDisplay : MonoBehaviour
     public TextMeshProUGUI healthText;
     public Image healthFillImage;
     
+    [Header("Stagger Display")]
+    [Tooltip("Stagger bar overlay that appears on top of the health bar")]
+    public Image staggerBarOverlay;
+    [Tooltip("Optional text to display stagger percentage")]
+    public TextMeshProUGUI staggerText;
+    
     [Header("Intent Display")]
     public GameObject intentContainer;
     public Image intentIcon;
@@ -25,16 +32,32 @@ public class EnemyCombatDisplay : MonoBehaviour
     public Transform statusEffectsContainer;
     public GameObject statusEffectPrefab;
     
+    [Header("Energy Display")]
+    [SerializeField] private GameObject energyContainer;
+    [SerializeField] private Image energyFillImage;
+    [SerializeField] private TextMeshProUGUI energyText;
+    [SerializeField] private Color energyReadyColor = new Color(0.3f, 0.85f, 1f);
+    [SerializeField] private Color energyDepletedColor = new Color(0.1f, 0.25f, 0.4f);
+    
+    [Header("Stacks")]
+    public Transform stacksContainer;
+    public GameObject stackIconPrefab;
+    [Tooltip("If true, stack icons are hidden while their value is zero.")]
+    public bool hideZeroStacks = true;
+    
     private StatusEffectManager statusEffectManager;
     
     [Header("Colors")]
+    public static readonly Color DefaultAbilityIntentColor = new Color(0.6f, 0.3f, 1f, 1f);
     public Color healthColor = Color.red;
     public Color attackIntentColor = Color.red;
     public Color defendIntentColor = Color.blue;
+    public Color abilityIntentColor = DefaultAbilityIntentColor;
     
     [Header("Intent Icons")]
     public Sprite attackIcon;
     public Sprite defendIcon;
+    public Sprite abilityIcon;
     
     [Header("Animation")]
     public Animator enemyAnimator; // Animator for enemy sprite animations
@@ -42,7 +65,28 @@ public class EnemyCombatDisplay : MonoBehaviour
     
     private Enemy currentEnemy;
     private EnemyData enemyData; // Reference to the data used to create this enemy
+    private EnemyAbilityRunner abilityRunner;
+    private bool deathNotified = false;
+    private bool showingAbilityIntent = false;
+    private string activeAbilityIntentName = null;
+    
+    private Vector2 baseHealthAnchoredPos;
+    private Vector2 baseIntentAnchoredPos;
+    private Vector2 baseNameAnchoredPos;
+    private bool cachedBaseAnchoredPositions = false;
     private bool isInitialized = false;
+    private Enemy subscribedEnemyForStacks;
+    private Enemy energySubscribedEnemy;
+    
+    private class StackIconElements
+    {
+        public GameObject root;
+        public Image icon;
+        public TextMeshProUGUI value;
+    }
+
+    private readonly Dictionary<StackType, StackIconElements> stackIconLookup = new Dictionary<StackType, StackIconElements>();
+    private readonly Dictionary<StackType, Sprite> stackSpriteCache = new Dictionary<StackType, Sprite>();
     
     /// <summary>
     /// Get the current Enemy instance
@@ -67,6 +111,8 @@ public class EnemyCombatDisplay : MonoBehaviour
     
     private void InitializeDisplay()
     {
+        EnsureAbilityRunner();
+
         // Initialize StatusEffectManager
         statusEffectManager = GetComponent<StatusEffectManager>();
         if (statusEffectManager == null)
@@ -113,6 +159,8 @@ public class EnemyCombatDisplay : MonoBehaviour
                 fitter.verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize;
             }
         }
+        
+        EnsureEnergyUI();
         
         // Provide a default runtime status-effect icon prefab if none assigned
         if (statusEffectPrefab == null)
@@ -199,9 +247,16 @@ public class EnemyCombatDisplay : MonoBehaviour
         if (statusEffectsContainer == null)
             statusEffectsContainer = transform.Find("StatusEffectsContainer")?.transform;
         
+        if (stacksContainer == null)
+            stacksContainer = transform.Find("StacksContainer");
+        
+        EnsureStacksUI();
+        
         // Set up colors
         if (healthFillImage != null)
             healthFillImage.color = healthColor;
+        
+        CacheBaseAnchoredPositions();
         
         // Auto-find enemy animator if not assigned
         if (enemyAnimator == null && enemyPortrait != null)
@@ -292,8 +347,14 @@ public class EnemyCombatDisplay : MonoBehaviour
     
     public void SetEnemy(Enemy enemy, EnemyData data = null)
     {
+        UnsubscribeFromEnemyStacks();
+        UnsubscribeFromEnemyEnergy();
         currentEnemy = enemy;
         enemyData = data;
+        deathNotified = false;
+        InitializeAbilityRunner();
+        SubscribeToEnemyStacks();
+        SubscribeToEnemyEnergy();
         
         // Set up animator when enemy data changes
         SetupEnemyAnimator();
@@ -309,8 +370,11 @@ public class EnemyCombatDisplay : MonoBehaviour
     /// </summary>
     public void ClearEnemy()
     {
+        UnsubscribeFromEnemyStacks();
+        UnsubscribeFromEnemyEnergy();
         currentEnemy = null;
         enemyData = null;
+        deathNotified = false;
         
         // Clear visual elements
         if (enemyNameText != null)
@@ -346,6 +410,8 @@ public class EnemyCombatDisplay : MonoBehaviour
             statusEffectManager.ClearAllStatusEffects();
         }
         
+        ClearStackDisplay();
+        
         // Force Canvas update to clear any cached rendering
         Canvas.ForceUpdateCanvases();
         
@@ -359,8 +425,19 @@ public class EnemyCombatDisplay : MonoBehaviour
     {
         if (data == null) return;
         
+        UnsubscribeFromEnemyStacks();
+        UnsubscribeFromEnemyEnergy();
         enemyData = data;
-        currentEnemy = data.CreateEnemy();
+        
+        // Get area level for scaling (from EncounterManager or maze context)
+        int areaLevel = GetAreaLevel();
+        
+        // Create enemy with area level scaling
+        currentEnemy = data.CreateEnemy(areaLevel);
+        deathNotified = false;
+        InitializeAbilityRunner();
+        SubscribeToEnemyStacks();
+        SubscribeToEnemyEnergy();
         
         // Set up animator when enemy data changes
         SetupEnemyAnimator();
@@ -377,7 +454,11 @@ public class EnemyCombatDisplay : MonoBehaviour
         
         // Update basic info
         if (enemyNameText != null)
+        {
             enemyNameText.text = currentEnemy.enemyName;
+            // Set color based on rarity and tier
+            enemyNameText.color = GetEnemyNameColor(currentEnemy.rarity, enemyData?.tier ?? EnemyTier.Normal);
+        }
         
         // Update sprite from EnemyData if available
         if (enemyData != null && enemyPortrait != null && enemyData.enemySprite != null)
@@ -419,8 +500,8 @@ public class EnemyCombatDisplay : MonoBehaviour
             // Force sprite to render by setting color to fully opaque
             enemyPortrait.color = Color.white;
             
-            // Ensure portrait is in front of siblings
-            enemyPortrait.transform.SetAsLastSibling();
+            // Ensure portrait order/layering
+            EnsureUILayering();
             
             // Check for CanvasGroup that might block visibility
             CanvasGroup cg = enemyPortrait.GetComponent<CanvasGroup>();
@@ -481,11 +562,15 @@ public class EnemyCombatDisplay : MonoBehaviour
         // Update health
         UpdateHealthDisplay();
         
+        // Update stagger display
+        UpdateStaggerDisplay();
+        
         // Update intent
         UpdateIntentDisplay();
         
         // Update status effects
         UpdateStatusEffects();
+        UpdateEnergyDisplay();
 
         // Apply layout scaling if EnemyData provides displayScale/basePanelHeight
         if (enemyData != null)
@@ -495,6 +580,8 @@ public class EnemyCombatDisplay : MonoBehaviour
             float scaled = Mathf.Clamp(enemyData.basePanelHeight * Mathf.Max(0.25f, enemyData.displayScale), 100f, 1200f);
             le.preferredHeight = scaled;
         }
+
+        UpdateStackDisplay();
     }
     
     private void UpdateHealthDisplay()
@@ -522,11 +609,91 @@ public class EnemyCombatDisplay : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Update the stagger bar overlay on the health bar
+    /// </summary>
+    public void UpdateStaggerDisplay()
+    {
+        if (currentEnemy == null) return;
+        
+        // Show/hide stagger bar based on whether enemy can be staggered
+        bool canStagger = currentEnemy.staggerThreshold > 0f;
+        
+        if (staggerBarOverlay != null)
+        {
+            // Only show if enemy can be staggered and has some stagger
+            bool shouldShow = canStagger && currentEnemy.currentStagger > 0f;
+            staggerBarOverlay.gameObject.SetActive(shouldShow);
+            
+            if (shouldShow)
+            {
+                // Calculate stagger percentage (0-1)
+                float staggerPercentage = currentEnemy.GetStaggerPercentage();
+                
+                // Update fill amount (assuming Image Type is Filled)
+                if (staggerBarOverlay.type == Image.Type.Filled)
+                {
+                    // Animate the fill smoothly
+                    if (Application.isPlaying)
+                    {
+                        LeanTween.cancel(staggerBarOverlay.gameObject);
+                        LeanTween.value(staggerBarOverlay.gameObject, staggerBarOverlay.fillAmount, staggerPercentage, 0.3f)
+                            .setEase(LeanTweenType.easeOutQuad)
+                            .setOnUpdate((float v) => {
+                                if (staggerBarOverlay != null)
+                                    staggerBarOverlay.fillAmount = v;
+                            });
+                    }
+                    else
+                    {
+                        staggerBarOverlay.fillAmount = staggerPercentage;
+                    }
+                }
+                else
+                {
+                    // If not using filled, adjust scale or width
+                    RectTransform rect = staggerBarOverlay.GetComponent<RectTransform>();
+                    if (rect != null && healthSlider != null)
+                    {
+                        // Match the health bar width and scale horizontally
+                        RectTransform healthRect = healthSlider.GetComponent<RectTransform>();
+                        if (healthRect != null)
+                        {
+                            float healthBarWidth = healthRect.rect.width;
+                            rect.sizeDelta = new Vector2(healthBarWidth * staggerPercentage, rect.sizeDelta.y);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Update stagger text if available
+        if (staggerText != null)
+        {
+            if (canStagger && currentEnemy.currentStagger > 0f)
+            {
+                float staggerPercent = currentEnemy.GetStaggerPercentage() * 100f;
+                staggerText.text = $"Stagger: {staggerPercent:F0}%";
+                staggerText.gameObject.SetActive(true);
+            }
+            else
+            {
+                staggerText.gameObject.SetActive(false);
+            }
+        }
+    }
+    
     private void UpdateIntentDisplay()
     {
         if (intentContainer != null)
         {
             intentContainer.SetActive(true);
+        }
+        
+        if (showingAbilityIntent)
+        {
+            intentText.text = activeAbilityIntentName;
+            return;
         }
         
         if (intentText != null)
@@ -576,6 +743,480 @@ public class EnemyCombatDisplay : MonoBehaviour
             // This method can be used for additional custom logic if needed
         }
     }
+
+    private void EnsureStacksUI()
+    {
+        if (stacksContainer == null)
+        {
+            stacksContainer = transform.Find("StacksContainer");
+            if (stacksContainer == null)
+            {
+                GameObject container = new GameObject("StacksContainer", typeof(RectTransform));
+                container.transform.SetParent(transform, false);
+                var rect = container.GetComponent<RectTransform>();
+                rect.anchorMin = new Vector2(0f, 1f);
+                rect.anchorMax = new Vector2(0f, 1f);
+                rect.pivot = new Vector2(0.5f, 0.5f);
+                rect.anchoredPosition = new Vector2(119.6f, -20f);
+                rect.sizeDelta = new Vector2(239.2f, 40f);
+                stacksContainer = rect;
+            }
+        }
+
+        if (stacksContainer != null)
+        {
+            var layout = stacksContainer.GetComponent<UnityEngine.UI.HorizontalLayoutGroup>();
+            if (layout == null)
+            {
+                layout = stacksContainer.gameObject.AddComponent<UnityEngine.UI.HorizontalLayoutGroup>();
+                layout.spacing = 6f;
+                layout.childAlignment = TextAnchor.MiddleCenter;
+                layout.childForceExpandWidth = false;
+                layout.childForceExpandHeight = false;
+            }
+
+            var fitter = stacksContainer.GetComponent<UnityEngine.UI.ContentSizeFitter>();
+            if (fitter == null)
+            {
+                fitter = stacksContainer.gameObject.AddComponent<UnityEngine.UI.ContentSizeFitter>();
+                fitter.horizontalFit = UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize;
+                fitter.verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize;
+            }
+        }
+
+        EnsureStackIcons();
+    }
+
+    private void EnsureStackIcons()
+    {
+        if (stacksContainer == null) return;
+
+        foreach (StackType type in Enum.GetValues(typeof(StackType)))
+        {
+            if (stackIconLookup.ContainsKey(type))
+                continue;
+
+            StackIconElements elements = stackIconPrefab != null
+                ? ExtractStackIconElements(Instantiate(stackIconPrefab, stacksContainer))
+                : CreateDefaultStackIconElements();
+
+            elements.root.name = $"Stack_{type}";
+            stackIconLookup[type] = elements;
+
+            UpdateStackIconSprite(type, elements);
+
+            if (elements.value != null)
+            {
+                elements.value.text = "0";
+            }
+
+            if (hideZeroStacks)
+            {
+                elements.root.SetActive(false);
+            }
+            else
+            {
+                elements.root.SetActive(true);
+            }
+        }
+    }
+
+    private StackIconElements CreateDefaultStackIconElements()
+    {
+        var root = new GameObject("StackIcon", typeof(RectTransform));
+        root.transform.SetParent(stacksContainer, false);
+        var rect = root.GetComponent<RectTransform>();
+        rect.sizeDelta = new Vector2(48f, 48f);
+
+        var background = root.AddComponent<Image>();
+        background.color = new Color(0f, 0f, 0f, 0.4f);
+        background.raycastTarget = false;
+
+        var iconGO = new GameObject("Icon", typeof(RectTransform));
+        iconGO.transform.SetParent(root.transform, false);
+        var iconRect = iconGO.GetComponent<RectTransform>();
+        iconRect.anchorMin = new Vector2(0.5f, 0.5f);
+        iconRect.anchorMax = new Vector2(0.5f, 0.5f);
+        iconRect.sizeDelta = new Vector2(36f, 36f);
+        var iconImage = iconGO.AddComponent<Image>();
+        iconImage.raycastTarget = false;
+
+        var valueGO = new GameObject("Value", typeof(RectTransform));
+        valueGO.transform.SetParent(root.transform, false);
+        var valueRect = valueGO.GetComponent<RectTransform>();
+        valueRect.anchorMin = Vector2.zero;
+        valueRect.anchorMax = Vector2.one;
+        valueRect.offsetMin = Vector2.zero;
+        valueRect.offsetMax = Vector2.zero;
+        var valueText = valueGO.AddComponent<TextMeshProUGUI>();
+        valueText.alignment = TextAlignmentOptions.BottomRight;
+        valueText.fontSize = 26f;
+        valueText.raycastTarget = false;
+        if (enemyNameText != null)
+        {
+            valueText.font = enemyNameText.font;
+        }
+
+        return new StackIconElements
+        {
+            root = root,
+            icon = iconImage,
+            value = valueText
+        };
+    }
+
+    private StackIconElements ExtractStackIconElements(GameObject instance)
+    {
+        var elements = new StackIconElements
+        {
+            root = instance,
+            icon = FindIconImage(instance),
+            value = FindValueLabel(instance)
+        };
+
+        if (elements.icon == null)
+        {
+            elements.icon = instance.GetComponent<Image>();
+            if (elements.icon == null)
+            {
+                elements.icon = instance.AddComponent<Image>();
+            }
+            elements.icon.raycastTarget = false;
+        }
+
+        if (elements.value == null)
+        {
+            var valueGO = new GameObject("Value", typeof(RectTransform));
+            valueGO.transform.SetParent(instance.transform, false);
+            var valueRect = valueGO.GetComponent<RectTransform>();
+            valueRect.anchorMin = Vector2.zero;
+            valueRect.anchorMax = Vector2.one;
+            valueRect.offsetMin = Vector2.zero;
+            valueRect.offsetMax = Vector2.zero;
+            var valueText = valueGO.AddComponent<TextMeshProUGUI>();
+            valueText.alignment = TextAlignmentOptions.BottomRight;
+            valueText.fontSize = 26f;
+            valueText.raycastTarget = false;
+            if (enemyNameText != null)
+            {
+                valueText.font = enemyNameText.font;
+            }
+            elements.value = valueText;
+        }
+
+        return elements;
+    }
+
+    private Image FindIconImage(GameObject root)
+    {
+        if (root == null) return null;
+
+        Transform iconTransform = root.transform.Find("Icon");
+        if (iconTransform != null)
+        {
+            var icon = iconTransform.GetComponent<Image>();
+            if (icon != null) return icon;
+        }
+
+        var directImage = root.GetComponent<Image>();
+        if (directImage != null && directImage.sprite != null)
+        {
+            return directImage;
+        }
+
+        foreach (var image in root.GetComponentsInChildren<Image>(true))
+        {
+            if (image.gameObject == root) continue;
+            return image;
+        }
+
+        return null;
+    }
+
+    private TextMeshProUGUI FindValueLabel(GameObject root)
+    {
+        if (root == null) return null;
+
+        Transform valueTransform = root.transform.Find("Value");
+        if (valueTransform != null)
+        {
+            var label = valueTransform.GetComponent<TextMeshProUGUI>();
+            if (label != null) return label;
+        }
+
+        return root.GetComponentInChildren<TextMeshProUGUI>();
+    }
+
+    private Sprite LoadStackSprite(StackType type)
+    {
+        if (stackSpriteCache.TryGetValue(type, out var cached))
+        {
+            return cached;
+        }
+
+        Sprite sprite = Resources.Load<Sprite>($"UI/Stacks/{type}");
+        stackSpriteCache[type] = sprite;
+        return sprite;
+    }
+
+    private void UpdateStackIconSprite(StackType type, StackIconElements elements)
+    {
+        if (elements == null || elements.icon == null) return;
+
+        Sprite sprite = LoadStackSprite(type);
+        if (sprite != null)
+        {
+            elements.icon.sprite = sprite;
+            elements.icon.enabled = true;
+        }
+        else
+        {
+            elements.icon.enabled = false;
+        }
+    }
+
+    private void EnsureEnergyUI()
+    {
+        if (energyContainer == null)
+        {
+            var existing = transform.Find("EnergyContainer");
+            if (existing != null)
+            {
+                energyContainer = existing.gameObject;
+                energyFillImage = energyContainer.transform.Find("EnergyFill")?.GetComponent<Image>();
+                energyText = energyContainer.GetComponentInChildren<TextMeshProUGUI>();
+            }
+        }
+
+        if (energyContainer == null)
+        {
+            var container = new GameObject("EnergyContainer", typeof(RectTransform));
+            container.transform.SetParent(transform, false);
+            var rect = container.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.5f, 0f);
+            rect.anchorMax = new Vector2(0.5f, 0f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = new Vector2(0f, -24f);
+            rect.sizeDelta = new Vector2(200f, 22f);
+            energyContainer = container;
+
+            var bgGO = new GameObject("EnergyBackground", typeof(RectTransform), typeof(Image));
+            bgGO.transform.SetParent(container.transform, false);
+            var bgRect = bgGO.GetComponent<RectTransform>();
+            bgRect.anchorMin = Vector2.zero;
+            bgRect.anchorMax = Vector2.one;
+            bgRect.offsetMin = Vector2.zero;
+            bgRect.offsetMax = Vector2.zero;
+            var bgImage = bgGO.GetComponent<Image>();
+            bgImage.color = new Color(0f, 0f, 0f, 0.35f);
+
+            var fillGO = new GameObject("EnergyFill", typeof(RectTransform), typeof(Image));
+            fillGO.transform.SetParent(container.transform, false);
+            var fillRect = fillGO.GetComponent<RectTransform>();
+            fillRect.anchorMin = Vector2.zero;
+            fillRect.anchorMax = Vector2.one;
+            fillRect.offsetMin = new Vector2(2f, 2f);
+            fillRect.offsetMax = new Vector2(-2f, -2f);
+            energyFillImage = fillGO.GetComponent<Image>();
+            energyFillImage.type = Image.Type.Filled;
+            energyFillImage.fillMethod = Image.FillMethod.Horizontal;
+            energyFillImage.color = energyReadyColor;
+
+            var textGO = new GameObject("EnergyText", typeof(RectTransform));
+            textGO.transform.SetParent(container.transform, false);
+            var textRect = textGO.GetComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+            energyText = textGO.AddComponent<TextMeshProUGUI>();
+            energyText.alignment = TextAlignmentOptions.Center;
+            energyText.fontSize = 22f;
+            energyText.color = Color.white;
+            energyText.raycastTarget = false;
+        }
+
+        ConfigureEnergyFillImage();
+
+        if (energyContainer != null)
+        {
+            energyContainer.SetActive(false);
+        }
+    }
+
+    private void ConfigureEnergyFillImage()
+    {
+        if (energyFillImage == null)
+            return;
+
+        energyFillImage.type = Image.Type.Filled;
+        energyFillImage.fillMethod = Image.FillMethod.Horizontal;
+        energyFillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
+        energyFillImage.fillAmount = Mathf.Clamp01(currentEnemy != null && currentEnemy.maxEnergy > 0f
+            ? currentEnemy.currentEnergy / currentEnemy.maxEnergy
+            : 1f);
+    }
+
+    private void UpdateEnergyDisplay()
+    {
+        if (energyContainer == null || currentEnemy == null)
+            return;
+
+        bool shouldShow = currentEnemy.usesEnergy && currentEnemy.maxEnergy > 0f;
+        energyContainer.SetActive(shouldShow);
+        if (!shouldShow)
+            return;
+
+        // Force read the latest values directly from the enemy
+        float current = currentEnemy.currentEnergy;
+        float max = currentEnemy.maxEnergy;
+        float percent = max > 0f ? Mathf.Clamp01(current / max) : 0f;
+        
+        if (energyFillImage != null)
+        {
+            if (Application.isPlaying)
+            {
+                LeanTween.cancel(energyFillImage.gameObject);
+                float startFill = energyFillImage.fillAmount;
+                LeanTween.value(energyFillImage.gameObject, startFill, percent, 0.35f)
+                    .setEase(LeanTweenType.easeOutQuad)
+                    .setOnUpdate((float value) =>
+                    {
+                        if (energyFillImage == null) return;
+                        energyFillImage.fillAmount = value;
+                        energyFillImage.color = value <= 0.05f ? energyDepletedColor : energyReadyColor;
+                    });
+            }
+            else
+            {
+                energyFillImage.fillAmount = percent;
+                energyFillImage.color = percent <= 0.05f ? energyDepletedColor : energyReadyColor;
+            }
+        }
+
+        if (energyText != null)
+        {
+            energyText.text = $"{Mathf.RoundToInt(current)}/{Mathf.RoundToInt(max)}";
+        }
+    }
+
+    private void SubscribeToEnemyEnergy()
+    {
+        if (currentEnemy == null)
+            return;
+
+        UnsubscribeFromEnemyEnergy();
+        currentEnemy.OnEnergyChanged += HandleEnemyEnergyChanged;
+        energySubscribedEnemy = currentEnemy;
+        HandleEnemyEnergyChanged(currentEnemy.currentEnergy, currentEnemy.maxEnergy);
+    }
+
+    private void UnsubscribeFromEnemyEnergy()
+    {
+        if (energySubscribedEnemy != null)
+        {
+            energySubscribedEnemy.OnEnergyChanged -= HandleEnemyEnergyChanged;
+            energySubscribedEnemy = null;
+        }
+
+        if (energyContainer != null)
+        {
+            energyContainer.SetActive(false);
+        }
+    }
+
+    private void HandleEnemyEnergyChanged(float current, float max)
+    {
+        // Ensure we update the display with the latest values
+        if (currentEnemy != null)
+        {
+            UpdateEnergyDisplay();
+        }
+    }
+
+    public void UpdateStackDisplay()
+    {
+        EnsureStacksUI();
+        if (stackIconLookup.Count == 0)
+        {
+            EnsureStackIcons();
+        }
+
+        if (stackIconLookup.Count == 0)
+            return;
+
+        if (currentEnemy == null)
+        {
+            ClearStackDisplay();
+            return;
+        }
+
+        foreach (StackType type in Enum.GetValues(typeof(StackType)))
+        {
+            if (!stackIconLookup.TryGetValue(type, out var elements) || elements.root == null)
+                continue;
+
+            int stackCount = currentEnemy.GetStacks(type);
+
+            if (elements.value != null)
+            {
+                elements.value.text = stackCount.ToString();
+            }
+
+            UpdateStackIconSprite(type, elements);
+
+            bool shouldShow = hideZeroStacks ? stackCount > 0 : true;
+            elements.root.SetActive(shouldShow);
+        }
+    }
+
+    private void ClearStackDisplay()
+    {
+        foreach (var kvp in stackIconLookup)
+        {
+            var elements = kvp.Value;
+            if (elements == null) continue;
+
+            if (elements.value != null)
+            {
+                elements.value.text = "0";
+            }
+
+            if (elements.root != null)
+            {
+                elements.root.SetActive(!hideZeroStacks);
+                if (hideZeroStacks)
+                {
+                    elements.root.SetActive(false);
+                }
+            }
+        }
+    }
+
+    private void SubscribeToEnemyStacks()
+    {
+        if (currentEnemy == null) return;
+        if (subscribedEnemyForStacks == currentEnemy) return;
+
+        UnsubscribeFromEnemyStacks();
+        currentEnemy.OnStacksChanged += HandleEnemyStacksChanged;
+        subscribedEnemyForStacks = currentEnemy;
+        UpdateStackDisplay();
+    }
+
+    private void UnsubscribeFromEnemyStacks()
+    {
+        if (subscribedEnemyForStacks != null)
+        {
+            subscribedEnemyForStacks.OnStacksChanged -= HandleEnemyStacksChanged;
+            subscribedEnemyForStacks = null;
+        }
+    }
+
+    private void HandleEnemyStacksChanged(StackType type, int value)
+    {
+        UpdateStackDisplay();
+    }
     
     /// <summary>
     /// Add a status effect to this enemy
@@ -585,6 +1226,15 @@ public class EnemyCombatDisplay : MonoBehaviour
         if (statusEffectManager != null)
         {
             statusEffectManager.AddStatusEffect(effect);
+        }
+    }
+
+    public void ApplyStackAdjustment(StackAdjustmentDefinition adjustment)
+    {
+        if (statusEffectManager != null && adjustment != null)
+        {
+            statusEffectManager.ApplyStackAdjustment(adjustment, true);
+            UpdateStackDisplay();
         }
     }
     
@@ -626,13 +1276,65 @@ public class EnemyCombatDisplay : MonoBehaviour
         }
     }
     
-    public void TakeDamage(float damage)
+    public void ShowAbilityIntent(string abilityName, int? previewDamage = null)
+    {
+        showingAbilityIntent = true;
+        activeAbilityIntentName = abilityName;
+        if (intentContainer != null)
+        {
+            intentContainer.SetActive(true);
+        }
+        if (intentText != null)
+        {
+            intentText.text = abilityName;
+        }
+        if (intentDamageText != null)
+        {
+            if (previewDamage.HasValue && previewDamage.Value > 0)
+            {
+                intentDamageText.text = previewDamage.Value.ToString();
+                intentDamageText.color = attackIntentColor;
+            }
+            else
+            {
+                intentDamageText.text = string.Empty;
+            }
+        }
+        if (intentIcon != null)
+        {
+            if (abilityIcon != null)
+            {
+                intentIcon.sprite = abilityIcon;
+                intentIcon.enabled = true;
+                intentIcon.color = abilityIntentColor;
+            }
+            else
+            {
+                intentIcon.sprite = null;
+            }
+        }
+    }
+    
+    public void ClearAbilityIntent()
+    {
+        showingAbilityIntent = false;
+        activeAbilityIntentName = null;
+        UpdateIntentDisplay();
+    }
+    
+    public void TakeDamage(float damage, bool ignoreGuardArmor = false)
     {
         if (currentEnemy != null)
         {
-            currentEnemy.TakeDamage(damage);
+            currentEnemy.TakeDamage(damage, ignoreGuardArmor);
+            abilityRunner?.OnDamaged();
             UpdateHealthDisplay();
+            UpdateStaggerDisplay(); // Update stagger when damage is taken (stagger may have been applied)
             PlayDamageAnimation();
+            if (currentEnemy.currentHealth <= 0)
+            {
+                NotifyAbilityRunnerDeath();
+            }
         }
     }
     
@@ -701,6 +1403,43 @@ public class EnemyCombatDisplay : MonoBehaviour
     public StatusEffectManager GetStatusEffectManager()
     {
         return statusEffectManager;
+    }
+
+    public EnemyAbilityRunner GetAbilityRunner()
+    {
+        EnsureAbilityRunner();
+        return abilityRunner;
+    }
+
+    public void NotifyAbilityRunnerDeath()
+    {
+        if (deathNotified)
+            return;
+
+        EnsureAbilityRunner();
+        abilityRunner?.OnDeath();
+        deathNotified = true;
+    }
+
+    private void EnsureAbilityRunner()
+    {
+        if (abilityRunner == null)
+        {
+            abilityRunner = GetComponent<EnemyAbilityRunner>();
+            if (abilityRunner == null)
+            {
+                abilityRunner = gameObject.AddComponent<EnemyAbilityRunner>();
+            }
+        }
+    }
+
+    private void InitializeAbilityRunner()
+    {
+        if (currentEnemy == null && enemyData == null)
+            return;
+
+        EnsureAbilityRunner();
+        abilityRunner?.Initialize(currentEnemy, enemyData);
     }
     
     [ContextMenu("Create Test Enemy")]
@@ -786,6 +1525,39 @@ public class EnemyCombatDisplay : MonoBehaviour
         }
         
         Debug.Log("=== Validation Complete ===");
+    }
+    
+    /// <summary>
+    /// Gets the area level for enemy scaling (from EncounterManager or maze context).
+    /// </summary>
+    private int GetAreaLevel()
+    {
+        // Check if this is maze combat
+        string mazeContext = PlayerPrefs.GetString("MazeCombatContext", "");
+        bool isMazeCombat = !string.IsNullOrEmpty(mazeContext);
+        
+        if (isMazeCombat && Dexiled.MazeSystem.MazeRunManager.Instance != null)
+        {
+            var run = Dexiled.MazeSystem.MazeRunManager.Instance.GetCurrentRun();
+            if (run != null)
+            {
+                // Use floor number as area level for maze combat
+                return run.currentFloor;
+            }
+        }
+        
+        // Check EncounterManager for regular encounters
+        if (EncounterManager.Instance != null)
+        {
+            var encounter = EncounterManager.Instance.GetCurrentEncounter();
+            if (encounter != null)
+            {
+                return Mathf.Max(1, encounter.areaLevel);
+            }
+        }
+        
+        // Default fallback
+        return 1;
     }
     
     [ContextMenu("Test Attack Animation NOW")]
@@ -1001,7 +1773,72 @@ public class EnemyCombatDisplay : MonoBehaviour
         Vector3 baseScale = Vector3.one;
         portraitRect.localScale = baseScale * enemyData.displayScale;
         
-        Debug.Log($"✓ Applied display scale {enemyData.displayScale} to {enemyData.enemyName} portrait");
+        Debug.Log($"V Applied display scale {enemyData.displayScale} to {enemyData.enemyName} portrait");
+    }
+    
+    private void CacheBaseAnchoredPositions()
+    {
+        if (cachedBaseAnchoredPositions)
+            return;
+        
+        if (healthSlider != null)
+        {
+            RectTransform rect = healthSlider.GetComponent<RectTransform>();
+            if (rect != null)
+            {
+                baseHealthAnchoredPos = rect.anchoredPosition;
+            }
+        }
+        
+        if (intentContainer != null)
+        {
+            RectTransform rect = intentContainer.GetComponent<RectTransform>();
+            if (rect != null)
+            {
+                baseIntentAnchoredPos = rect.anchoredPosition;
+            }
+        }
+        
+        if (enemyNameText != null)
+        {
+            RectTransform rect = enemyNameText.GetComponent<RectTransform>();
+            if (rect != null)
+            {
+                baseNameAnchoredPos = rect.anchoredPosition;
+            }
+        }
+        
+        cachedBaseAnchoredPositions = true;
+    }
+    
+    private void EnsureUILayering()
+    {
+        int nextIndex = 0;
+        
+        if (enemyPortrait != null)
+        {
+            enemyPortrait.transform.SetSiblingIndex(nextIndex++);
+        }
+        
+        if (healthSlider != null)
+        {
+            healthSlider.transform.SetSiblingIndex(nextIndex++);
+        }
+        
+        if (intentContainer != null)
+        {
+            intentContainer.transform.SetSiblingIndex(nextIndex++);
+        }
+        
+        if (statusEffectsContainer != null)
+        {
+            statusEffectsContainer.SetSiblingIndex(nextIndex++);
+        }
+        
+        if (enemyNameText != null)
+        {
+            enemyNameText.transform.SetSiblingIndex(transform.childCount - 1);
+        }
     }
     
     /// <summary>
@@ -1011,78 +1848,41 @@ public class EnemyCombatDisplay : MonoBehaviour
     /// </summary>
     private void AdjustUILayoutForPortraitScale()
     {
-        if (enemyData == null || enemyPortrait == null) return;
-        
-        RectTransform portraitRect = enemyPortrait.GetComponent<RectTransform>();
-        if (portraitRect == null) return;
-        
-        // Calculate the actual displayed height of the scaled portrait
-        float portraitHeight = portraitRect.rect.height * enemyData.displayScale;
-        float portraitCenterY = portraitRect.anchoredPosition.y;
-        float portraitBottom = portraitCenterY - (portraitHeight / 2f);
-        
-        // Spacing between UI elements (in pixels)
-        const float spacingBetweenElements = 15f;
-        
-        // Start positioning elements right below the portrait
-        float currentY = portraitBottom;
-        
-        // 1. Health Bar - Position directly below portrait
+        CacheBaseAnchoredPositions();
+
+        RectTransform portraitRect = enemyPortrait != null ? enemyPortrait.GetComponent<RectTransform>() : null;
+        if (portraitRect == null)
+            return;
+
+        float scale = enemyData != null ? Mathf.Max(0.25f, enemyData.displayScale) : 1f;
+        float extraHeight = (scale - 1f) * portraitRect.rect.height * portraitRect.pivot.y;
+
         if (healthSlider != null)
         {
             RectTransform healthRect = healthSlider.GetComponent<RectTransform>();
             if (healthRect != null)
             {
-                // Position health bar directly below portrait
-                currentY -= spacingBetweenElements;
-                float healthHeight = healthRect.rect.height;
-                float healthY = currentY - (healthHeight / 2f);
-                
-                Vector2 currentHealthPos = healthRect.anchoredPosition;
-                healthRect.anchoredPosition = new Vector2(currentHealthPos.x, healthY);
-                
-                // Move current position down for next element
-                currentY -= healthHeight;
+                healthRect.anchoredPosition = baseHealthAnchoredPos - new Vector2(0f, extraHeight);
             }
         }
-        
-        // 2. Intent Container - Position directly below health bar (or portrait if no health bar)
+
         if (intentContainer != null)
         {
             RectTransform intentRect = intentContainer.GetComponent<RectTransform>();
             if (intentRect != null)
             {
-                currentY -= spacingBetweenElements;
-                float intentHeight = intentRect.rect.height;
-                float intentY = currentY - (intentHeight / 2f);
-                
-                Vector2 currentIntentPos = intentRect.anchoredPosition;
-                intentRect.anchoredPosition = new Vector2(currentIntentPos.x, intentY);
+                intentRect.anchoredPosition = baseIntentAnchoredPos - new Vector2(0f, extraHeight);
             }
         }
-        
-        // 3. Enemy Name - Keep at top (above portrait) but ensure it doesn't overlap
-        // Only adjust name if portrait scale would cause overlap
-        if (enemyNameText != null && enemyData.displayScale > 1.0f)
+
+        if (enemyNameText != null)
         {
             RectTransform nameRect = enemyNameText.GetComponent<RectTransform>();
             if (nameRect != null)
             {
-                Vector2 currentNamePos = nameRect.anchoredPosition;
-                float nameBottom = currentNamePos.y - (nameRect.rect.height / 2f);
-                float portraitTop = portraitCenterY + (portraitHeight / 2f);
-                
-                // If name overlaps with scaled portrait, move it up
-                if (nameBottom > portraitTop)
-                {
-                    float nameHeight = nameRect.rect.height;
-                    float newNameY = portraitTop + (nameHeight / 2f) + spacingBetweenElements;
-                    nameRect.anchoredPosition = new Vector2(currentNamePos.x, newNameY);
-                }
+                nameRect.anchoredPosition = baseNameAnchoredPos + new Vector2(0f, extraHeight);
             }
         }
-        
-        Debug.Log($"✓ Stacked UI layout for {enemyData.enemyName}: Portrait (scale: {enemyData.displayScale}x) -> Health -> Intent");
     }
     
     /// <summary>
@@ -1162,5 +1962,39 @@ public class EnemyCombatDisplay : MonoBehaviour
         {
             Debug.LogWarning($"⚠ Cannot display static sprite for {enemyData?.enemyName ?? "unknown"}: sprite is null");
         }
+    }
+
+    /// <summary>
+    /// Gets the color for enemy name based on rarity and tier.
+    /// Common (Normal) - White, Magic - Blue, Rare - Yellow, Unique/Boss/Mini-boss - Orange
+    /// </summary>
+    public Color GetEnemyNameColor(EnemyRarity rarity, EnemyTier tier)
+    {
+        // Boss and Mini-boss always use Orange
+        if (tier == EnemyTier.Boss || tier == EnemyTier.Miniboss)
+        {
+            return new Color(1f, 0.65f, 0f); // Orange
+        }
+        
+        // Otherwise use rarity-based colors
+        switch (rarity)
+        {
+            case EnemyRarity.Normal:
+                return Color.white;
+            case EnemyRarity.Magic:
+                return new Color(0.3f, 0.6f, 1f); // Blue
+            case EnemyRarity.Rare:
+                return new Color(1f, 0.9f, 0.2f); // Yellow
+            case EnemyRarity.Unique:
+                return new Color(1f, 0.65f, 0f); // Orange
+            default:
+                return Color.white;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeFromEnemyStacks();
+        UnsubscribeFromEnemyEnergy();
     }
 }

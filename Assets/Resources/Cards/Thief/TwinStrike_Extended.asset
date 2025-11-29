@@ -13,15 +13,17 @@ MonoBehaviour:
   m_Name: TwinStrike_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Twin Strike
+  groupKey: Twin_Strike
   cardType: Attack
   playCost: 1
-  description: 'Deal 5 physical damage (+Dex/4). Dual: Deal 1(+Dex/4) off-hand damage
-    to all enemies. Prepare: Instead of playing, prepare this card. When triggered,
-    deal +2 damage (+Dex/2).'
+  description: 'Deal 5 physical damage (+Dex/4).\nPrepare: When this card is unleashed,
+    deal 7 damage (+Dex/2).'
   rarity: 0
   element: 4
   category: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: -3329322690525412906, guid: 0e924623258fe18419b341d5518732c8, type: 3}
+  cardThumbnail: {fileID: 2526878873471080885, guid: a415991df05d4104484f8cb94545fd46, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -30,7 +32,10 @@ MonoBehaviour:
   isDiscardCard: 0
   isDualWield: 0
   ifDiscardedEffect: 
-  dualWieldEffect: 
+  dualWieldEffect: 'Dual: Deal 1(+Dex/4) off-hand damage to all enemies.'
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 1
@@ -39,14 +44,31 @@ MonoBehaviour:
   isAoE: 0
   aoeTargets: 1
   aoeRowScope: 0
+  isMultiHit: 0
+  hitCount: 2
   damageScaling:
     strengthScaling: 1
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -57,6 +79,7 @@ MonoBehaviour:
   enableCombo: 1
   comboWith: 
   comboDescription: 
+  momentumEffectDescription: 
   comboWithCardType: 0
   comboAttackIncrease: 0
   comboGuardIncrease: 0
@@ -77,6 +100,21 @@ MonoBehaviour:
   comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Attack
   - Physical
+  delayTurns: 0
+  isDelayed: 0
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

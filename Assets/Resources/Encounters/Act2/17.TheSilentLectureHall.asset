@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9be3bb50a3980b47ab1e7fc8419be94, type: 3}
+  m_Name: 17.TheSilentLectureHall
+  m_EditorClassIdentifier: Assembly-CSharp::EncounterDataAsset
+  encounterID: 17
+  encounterName: The Silent Lecture Hall
+  sceneName: CombatScene
+  actNumber: 2
+  encounterSprite: {fileID: 0}
+  prerequisiteEncounters:
+  - {fileID: 11400000, guid: d5f05906f148937458112b4608a8b19c, type: 2}
+  areaLevel: 25
+  totalWaves: 5
+  maxEnemiesPerWave: 5
+  randomizeEnemyCount: 1
+  uniqueEnemy: {fileID: 0}
+  lootTable: {fileID: 0}
+  areaLootTable: {fileID: 11400000, guid: 31cdd30eee385cb4da36c49186baaa43, type: 2}

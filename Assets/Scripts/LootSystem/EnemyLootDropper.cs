@@ -112,29 +112,9 @@ public class EnemyLootDropper : MonoBehaviour
         
         Character character = charManager.GetCurrentCharacter();
         
-        foreach (var drop in drops)
-        {
-            switch (drop.rewardType)
-            {
-                case RewardType.Currency:
-                    lootManager.AddCurrency(drop.currencyType, drop.currencyAmount);
-                    break;
-                    
-                case RewardType.Experience:
-                    character.AddExperience(drop.experienceAmount);
-                    break;
-                    
-                case RewardType.Item:
-                    // TODO: Add to inventory
-                    Debug.Log($"[EnemyLootDropper] Item dropped: {drop.itemData?.itemName}");
-                    break;
-                    
-                case RewardType.Card:
-                    // TODO: Add to card collection
-                    Debug.Log($"[EnemyLootDropper] Card dropped: {drop.cardName}");
-                    break;
-            }
-        }
+        LootDropResult tempResult = new LootDropResult();
+        tempResult.rewards.AddRange(drops);
+        lootManager.ApplyRewards(tempResult);
     }
     
     private CurrencyType GetSpiritForTag(EnemySpiritTag tag)

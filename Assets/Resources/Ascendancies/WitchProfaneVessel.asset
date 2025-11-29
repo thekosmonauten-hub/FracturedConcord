@@ -14,44 +14,543 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AscendancyData
   ascendancyName: Profane Vessel
   baseClass: Witch
-  tagline: 
+  tagline: "Every breath is a trade \u2014 life for annihilation."
   splashArt: {fileID: 5746648468239424744, guid: bd45ae9dc83480b4f843cba6c1b8bec1, type: 3}
   icon: {fileID: 4863415642575893155, guid: 26022073a910fe143ae6b1a02326bc8c, type: 3}
   themeColor: {r: 1, g: 1, b: 1, a: 1}
   description: "Every breath is a trade \u2014 life for annihilation."
   playstyleKeywords: []
   coreMechanicName: Corruption
-  coreMechanicDescription: 'Each Spell cast adds 1 Corruption (max 10). '
+  coreMechanicDescription: Each card played adds 1 Corruption Pressure.
   passiveAbilities: []
   startNode:
     name: Unsable Corruption
     nodeType: 0
-    description: 'Each Spell cast adds 1 Corruption (max 10).\nEach stack grants
-      +5% Spell Damage and reduces your max HP by 2% for this combat. \nAt 10 stacks,
-      you become Overwhelmed: reset Corruption and cast a Chaos Nova for massive
-      AoE.'
-    icon: {fileID: 0}
+    description: 'Whenever you play a card, lose life equal to 1% of CURRENT HP and
+      gain 1 Corruption Pressure.\nYou can hold any amount.\nEach Corruption Pressure
+      grants:
+
+      +2% All Damage
+
+      +0.2% increased Life Lost from self-inflicted
+      effects.\nAt 10, 20, 30, 40, ... Corruption Pressure, automatically trigger:
+
+      Chaos
+      Surge
+
+      Deal moderate AoE Chaos damage
+
+      Gain +1 Corruption flow
+      (stacking) - +1 Corruption on card play per stack
+
+      Lose 5% of max HP'
+    icon: {fileID: -873090334391177266, guid: c2233f082e6d9d445ad4ce876be92f0b, type: 3}
     nodeScale: 1
     pointCost: 0
     unlockedByDefault: 1
     prerequisitePassives: []
     requireAllPrerequisites: 1
-    treePosition: {x: 0, y: 0}
-  branches: []
+    treePosition: {x: 0, y: -240}
+    nodeGroup: 
+    isChoiceNode: 0
+    subNodes: []
+    subNodeRadius: 100
+    selectedSubNodeIndex: -1
+  branches:
+  - branchName: Pact of the Harvester
+    branchTheme: 
+    branchNodes:
+    - name: Reduced self-inflicted damage & Chaos Resistance
+      nodeType: 1
+      description: +3% Chaos Resistance\n+1% reduced self-inflicted damage
+      icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Unsable Corruption
+      requireAllPrerequisites: 1
+      treePosition: {x: -0.0000034969112, y: -160}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Feast of Pain
+      nodeType: 2
+      description: 'Killing an enemy while you have 10+ Corruption Pressure:
+
+        Heal
+        10% of Missing HP.'
+      icon: {fileID: -873090334391177266, guid: c2233f082e6d9d445ad4ce876be92f0b, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Reduced self-inflicted damage & Chaos Resistance
+      requireAllPrerequisites: 1
+      treePosition: {x: -0.0000069938224, y: -80}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Reduced self-inflicted damage & Chaos Resistance
+      nodeType: 1
+      description: +3% Chaos Resistance\n+1% reduced self-inflicted damage
+      icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Feast of Pain
+      requireAllPrerequisites: 1
+      treePosition: {x: -0.000010490734, y: 0}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Searing Insight
+      nodeType: 2
+      description: 'Whenever you play a Fire or Chaos card:
+
+        Lose 2% of
+        Max HP to gain +8% More Damage for 1 turn (stacks to 5).'
+      icon: {fileID: -873090334391177266, guid: c2233f082e6d9d445ad4ce876be92f0b, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Reduced self-inflicted damage & Chaos Resistance
+      requireAllPrerequisites: 1
+      treePosition: {x: -0.000013987645, y: 80}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Reduced self-inflicted damage & Chaos Resistance
+      nodeType: 1
+      description: +3% Chaos Resistance\n+1% reduced self-inflicted damage
+      icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Searing Insight
+      requireAllPrerequisites: 1
+      treePosition: {x: -0.000017484555, y: 160}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Pact of the Harvester
+      nodeType: 2
+      description: 'You take 25% increased self-inflicted damage.
+
+        You deal
+        40% more damage per 20 Corruption Pressure.
+
+        At 50 Corruption Pressure,
+        automatically trigger Profane Harvest:\Release all Corruption Pressure.
+
+        Heal
+        1% of Missing HP per Corrpution pressure.
+
+        Gain +20% Max Mana for
+        1 turn
+
+        Next 3 cards deal extra Chaos damage with +30% more base
+        damage.'
+      icon: {fileID: -873090334391177266, guid: c2233f082e6d9d445ad4ce876be92f0b, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Reduced self-inflicted damage & Chaos Resistance
+      requireAllPrerequisites: 1
+      treePosition: {x: -0.000020981466, y: 240}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    sourceNodeName: 
+    branchAngle: 90
+    horizontalOffset: 0
+    directionChanges: []
+    crossBranchConnections: []
+  - branchName: Chaotic Pendulum
+    branchTheme: 
+    branchNodes:
+    - name: Increased Chaos Damage & Increased Self-Damage_1
+      nodeType: 1
+      description: '+2% Damage Taken from your own effects
+
+        +4% Increased
+        Chaos Damage'
+      icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Unsable Corruption
+      requireAllPrerequisites: 1
+      treePosition: {x: 69.28203, y: -200}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Abyssal Bargain
+      nodeType: 2
+      description: 'Upon reaching 20 stack thresholds of Corruption: Recover 25%
+        Mana and draw 1 card.'
+      icon: {fileID: -873090334391177266, guid: c2233f082e6d9d445ad4ce876be92f0b, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Increased Chaos Damage & Increased Self-Damage_1
+      requireAllPrerequisites: 1
+      treePosition: {x: 138.56406, y: -160}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Increased Chaos Damage & Increased Self-Damage_2
+      nodeType: 1
+      description: '+2% Damage Taken from your own effects
+
+        +4% Increased
+        Chaos Damage'
+      icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Abyssal Bargain
+      requireAllPrerequisites: 1
+      treePosition: {x: 145.53651, y: -80.30442}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Tormented Knowledge
+      nodeType: 2
+      description: 'Whenever you lose life from your own effects,
+
+        your
+        next card has +30% More effect.'
+      icon: {fileID: -873090334391177266, guid: c2233f082e6d9d445ad4ce876be92f0b, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Increased Chaos Damage & Increased Self-Damage_2
+      requireAllPrerequisites: 1
+      treePosition: {x: 152.50897, y: -0.60884094}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Increased Chaos Damage & Increased Self-Damage_3
+      nodeType: 1
+      description: '+2% Damage Taken from your own effects
+
+        +4% Increased
+        Chaos Damage'
+      icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Tormented Knowledge
+      requireAllPrerequisites: 1
+      treePosition: {x: 221.791, y: 39.39116}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Chaotic Pendulum
+      nodeType: 2
+      description: 'At the start of each wave:
+
+        Gain a buff that alternates
+        between Chaos & Fire, gaining +25% more damage for that element, playing
+        the pendulum element also grans +1 corruption pressure.'
+      icon: {fileID: -873090334391177266, guid: c2233f082e6d9d445ad4ce876be92f0b, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Increased Chaos Damage & Increased Self-Damage_3
+      requireAllPrerequisites: 1
+      treePosition: {x: 221.791, y: 119.39116}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    sourceNodeName: 
+    branchAngle: 30
+    horizontalOffset: 0
+    directionChanges:
+    - atNodeIndex: 2
+      newAngle: 85
+      newSpacing: 0
+    - atNodeIndex: 4
+      newAngle: 30
+      newSpacing: 0
+    - atNodeIndex: 5
+      newAngle: 90
+      newSpacing: 0
+    crossBranchConnections: []
+  - branchName: Echo of Agony
+    branchTheme: 
+    branchNodes:
+    - name: Combat Sacrifice & Increased Corruption Gain Rate_1
+      nodeType: 1
+      description: Lose 1% Max HP at start of combat\n+5% Corruption Gain Rate.
+      icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Unsable Corruption
+      requireAllPrerequisites: 1
+      treePosition: {x: -69.28203, y: -200}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Descent of Thought
+      nodeType: 2
+      description: 'Whenever you lose life from your own effects:
+
+        Gain
+        either +1 Intelligence OR +1 Dexterity Or +1 Strength for the remainder of
+        this combat. (33/33/33)'
+      icon: {fileID: -873090334391177266, guid: c2233f082e6d9d445ad4ce876be92f0b, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Combat Sacrifice & Increased Corruption Gain Rate_1
+      requireAllPrerequisites: 1
+      treePosition: {x: -138.56406, y: -160}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Combat Sacrifice & Increased Corruption Gain Rate_2
+      nodeType: 1
+      description: Lose 1% Max HP at start of combat\n+5% Corruption Gain Rate.
+      icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Descent of Thought
+      requireAllPrerequisites: 1
+      treePosition: {x: -145.53651, y: -80.30442}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Blood Pact
+      nodeType: 2
+      description: "Start of combat:\r\nLose 10% of Max HP \u2192\r\nGain +25% Damage
+        and +1 Draw for 3 turns."
+      icon: {fileID: -873090334391177266, guid: c2233f082e6d9d445ad4ce876be92f0b, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Combat Sacrifice & Increased Corruption Gain Rate_2
+      requireAllPrerequisites: 1
+      treePosition: {x: -152.50897, y: -0.60884094}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Combat Sacrifice & Increased Corruption Gain Rate_3
+      nodeType: 1
+      description: Lose 1% Max HP at start of combat\n+5% Corruption Gain Rate.
+      icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Blood Pact
+      requireAllPrerequisites: 1
+      treePosition: {x: -221.791, y: 39.391163}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Echo of Agony
+      nodeType: 2
+      description: 'After Chaos Surge triggers:
+
+        Your next card cast is
+        duplicated.
+
+        Duplicate deals its damage as extra Chaos damage regardless
+        of original type.'
+      icon: {fileID: -873090334391177266, guid: c2233f082e6d9d445ad4ce876be92f0b, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Combat Sacrifice & Increased Corruption Gain Rate_3
+      requireAllPrerequisites: 1
+      treePosition: {x: -221.791, y: 119.39116}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    sourceNodeName: 
+    branchAngle: 150
+    horizontalOffset: 0
+    directionChanges:
+    - atNodeIndex: 2
+      newAngle: 95
+      newSpacing: 0
+    - atNodeIndex: 4
+      newAngle: 150
+      newSpacing: 0
+    - atNodeIndex: 5
+      newAngle: 90
+      newSpacing: 0
+    crossBranchConnections: []
+  splitNodes: []
   useBranchSystem: 1
-  floatingNodes: []
+  floatingNodes:
+  - node:
+      name: Combat Sacrifice & Increased Corruption Gain Rate_4
+      nodeType: 1
+      description: Lose 1% Max HP at start of combat\n+5% Corruption Gain Rate.
+      icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Descent of Thought
+      - Feast of Pain
+      requireAllPrerequisites: 0
+      treePosition: {x: -69.28203, y: -120}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    firstNodeName: Descent of Thought
+    secondNodeName: Feast of Pain
+    positionOffset: {x: 0, y: 0}
+    midpointBias: 0.5
+    distanceMultiplier: 0
+    perpendicularOffset: 0
+    nodeScaleOverride: 0
+  - node:
+      name: Combat Sacrifice & Increased Corruption Gain Rate_4
+      nodeType: 1
+      description: Lose 1% Max HP at start of combat\n+5% Corruption Gain Rate.
+      icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Abyssal Bargain
+      - Feast of Pain
+      requireAllPrerequisites: 0
+      treePosition: {x: 69.28203, y: -120}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    firstNodeName: Abyssal Bargain
+    secondNodeName: Feast of Pain
+    positionOffset: {x: 0, y: 0}
+    midpointBias: 0.5
+    distanceMultiplier: 0
+    perpendicularOffset: 0
+    nodeScaleOverride: 0
+  - node:
+      name: Combat Sacrifice & Increased Corruption Gain Rate_6
+      nodeType: 1
+      description: Lose 1% Max HP at start of combat\n+5% Corruption Gain Rate.
+      icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Blood Pact
+      - Searing Insight
+      requireAllPrerequisites: 0
+      treePosition: {x: -76.25449, y: 39.69558}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    firstNodeName: Blood Pact
+    secondNodeName: Searing Insight
+    positionOffset: {x: 0, y: 0}
+    midpointBias: 0.5
+    distanceMultiplier: 0
+    perpendicularOffset: 0
+    nodeScaleOverride: 0
+  - node:
+      name: Combat Sacrifice & Increased Corruption Gain Rate_7
+      nodeType: 1
+      description: Lose 1% Max HP at start of combat\n+5% Corruption Gain Rate.
+      icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Tormented Knowledge
+      - Searing Insight
+      requireAllPrerequisites: 0
+      treePosition: {x: 76.25448, y: 39.69558}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    firstNodeName: Tormented Knowledge
+    secondNodeName: Searing Insight
+    positionOffset: {x: 0, y: 0}
+    midpointBias: 0.5
+    distanceMultiplier: 0
+    perpendicularOffset: 0
+    nodeScaleOverride: 0
   signatureCard:
     copies: 3
     cardName: Chaotic Eruption
     cardType: Spell
     manaCost: 1
-    description: Consume Corruption stacks to cast a Chaos nova with increased Damage
-      per corruption stack.
+    description: Release all Corruption Pressure to unleash a massive Chaos Nova.\nDamage
+      scales quadratically with stacks.\nHeal 1% missing HP per Corruption pressure.
     cardData: {fileID: 0}
   requiredLevel: 21
   unlockRequirement: 
   maxAscendancyPoints: 8
-  startNodePosition: {x: 0, y: 0}
+  startNodePosition: {x: 0, y: -240}
   treePaths: []
   useAutoGeneratedPaths: 1
-  numberOfBranches: 2
+  numberOfBranches: 3

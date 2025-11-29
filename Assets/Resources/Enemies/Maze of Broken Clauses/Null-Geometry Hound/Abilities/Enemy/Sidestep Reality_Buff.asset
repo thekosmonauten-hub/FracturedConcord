@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca6aa4a13af395743aaffafd471f25f4, type: 3}
+  m_Name: Sidestep Reality_Buff
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectEffect
+  statusType: 18
+  magnitude: 0.5
+  durationTurns: 2
+  overrideEffectName: 
+  isDebuff: 0
+  stackAdjustment: {fileID: 0}
+  applyStatusEffect: 1
+  useInlineStackSettings: 0
+  inlineAgitateStacks: 0
+  inlineToleranceStacks: 0
+  inlinePotentialStacks: 0
+  inlineAgitateIncreasedPercent: 0
+  inlineToleranceIncreasedPercent: 0
+  inlinePotentialIncreasedPercent: 0
+  inlineAgitateMoreMultiplier: 0
+  inlineToleranceMoreMultiplier: 0
+  inlinePotentialMoreMultiplier: 0

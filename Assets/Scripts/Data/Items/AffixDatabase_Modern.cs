@@ -149,33 +149,142 @@ public class AffixDatabase_Modern : ScriptableObject
     {
         AffixTier maxTier = GetMaxTierForLevel(itemLevel);
         
+        // Track which modifier groups are already present on the item
+        HashSet<string> usedModifierGroups = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
+        
+        // Collect modifier groups from existing affixes (implicit modifiers)
+        CollectModifierGroups(item, usedModifierGroups);
+        
         // Generate prefixes
-        for (int i = 0; i < prefixCount && item.CanAddPrefix(); i++)
+        int attempts = 0;
+        int maxAttempts = prefixCount * 10; // Allow up to 10 attempts per desired prefix to find non-duplicate
+        for (int i = 0; i < prefixCount && item.CanAddPrefix() && attempts < maxAttempts; attempts++)
         {
             Affix prefix = GetRandomCompatiblePrefix(item, itemLevel, maxTier);
             if (prefix != null)
             {
+                // Check if this prefix would add duplicate modifier groups
+                if (HasDuplicateModifierGroups(prefix, usedModifierGroups))
+                {
+                    continue; // Skip this affix, try another one
+                }
+                
+                // Add the prefix and track its modifier groups
                 item.AddPrefix(prefix);
+                CollectModifierGroupsFromAffix(prefix, usedModifierGroups);
+                i++; // Successfully added a prefix
             }
             else
             {
                 Debug.LogWarning($"[AffixDatabase_Modern] No compatible prefix found for {item.itemName} (Level {itemLevel})");
+                break; // If no compatible affix exists, stop trying
             }
         }
         
         // Generate suffixes
-        for (int i = 0; i < suffixCount && item.CanAddSuffix(); i++)
+        attempts = 0;
+        maxAttempts = suffixCount * 10; // Allow up to 10 attempts per desired suffix
+        for (int i = 0; i < suffixCount && item.CanAddSuffix() && attempts < maxAttempts; attempts++)
         {
             Affix suffix = GetRandomCompatibleSuffix(item, itemLevel, maxTier);
             if (suffix != null)
             {
+                // Check if this suffix would add duplicate modifier groups
+                if (HasDuplicateModifierGroups(suffix, usedModifierGroups))
+                {
+                    continue; // Skip this affix, try another one
+                }
+                
+                // Add the suffix and track its modifier groups
                 item.AddSuffix(suffix);
+                CollectModifierGroupsFromAffix(suffix, usedModifierGroups);
+                i++; // Successfully added a suffix
             }
             else
             {
                 Debug.LogWarning($"[AffixDatabase_Modern] No compatible suffix found for {item.itemName} (Level {itemLevel})");
+                break; // If no compatible affix exists, stop trying
             }
         }
+    }
+    
+    /// <summary>
+    /// Collects modifier groups from all existing affixes on the item (implicit modifiers, prefixes, suffixes).
+    /// </summary>
+    private void CollectModifierGroups(BaseItem item, HashSet<string> modifierGroups)
+    {
+        // Collect from implicit modifiers
+        if (item.implicitModifiers != null)
+        {
+            foreach (var affix in item.implicitModifiers)
+            {
+                CollectModifierGroupsFromAffix(affix, modifierGroups);
+            }
+        }
+        
+        // Collect from existing prefixes
+        if (item.prefixes != null)
+        {
+            foreach (var affix in item.prefixes)
+            {
+                CollectModifierGroupsFromAffix(affix, modifierGroups);
+            }
+        }
+        
+        // Collect from existing suffixes
+        if (item.suffixes != null)
+        {
+            foreach (var affix in item.suffixes)
+            {
+                CollectModifierGroupsFromAffix(affix, modifierGroups);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Collects modifier groups from a single affix and adds them to the set.
+    /// Modifier groups are identified by stat name (normalized to lowercase).
+    /// </summary>
+    private void CollectModifierGroupsFromAffix(Affix affix, HashSet<string> modifierGroups)
+    {
+        if (affix == null || affix.modifiers == null)
+            return;
+        
+        foreach (var modifier in affix.modifiers)
+        {
+            if (!string.IsNullOrEmpty(modifier.statName))
+            {
+                // Normalize stat name to lowercase for case-insensitive comparison
+                string normalizedStatName = modifier.statName.ToLowerInvariant();
+                modifierGroups.Add(normalizedStatName);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Checks if an affix would add duplicate modifier groups (stat names) that already exist.
+    /// </summary>
+    private bool HasDuplicateModifierGroups(Affix affix, HashSet<string> usedModifierGroups)
+    {
+        if (affix == null || affix.modifiers == null)
+            return false;
+        
+        foreach (var modifier in affix.modifiers)
+        {
+            if (!string.IsNullOrEmpty(modifier.statName))
+            {
+                // Normalize stat name to lowercase for case-insensitive comparison
+                string normalizedStatName = modifier.statName.ToLowerInvariant();
+                
+                // If this modifier group already exists, it's a duplicate
+                if (usedModifierGroups.Contains(normalizedStatName))
+                {
+                    return true;
+                }
+            }
+        }
+        
+        return false; // No duplicates found
     }
     
     private AffixTier GetMaxTierForLevel(int itemLevel)

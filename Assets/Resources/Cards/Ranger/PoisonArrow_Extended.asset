@@ -16,12 +16,13 @@ MonoBehaviour:
   groupKey: PoisonArrow
   cardType: Attack
   playCost: 1
-  description: 'Deal 5 physical damage and apply 2 Poison stacks to all enemies.
-    Combo (Focus + Poison Arrow): 3x Poison duration.'
+  description: 'Deal {damage} choas damage and apply 2 Poison stacks to all enemies. '
   rarity: 0
-  element: 4
+  element: 5
   category: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: b76ffc08d0fb6ec479e0097dcd01791e, type: 3}
+  cardThumbnail: {fileID: -7173702628647565374, guid: fa309f0f45a01fe44a78b6b5624d7808, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -31,21 +32,42 @@ MonoBehaviour:
   isDualWield: 0
   ifDiscardedEffect: 
   dualWieldEffect: 
-  primaryDamageType: 1
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
+  primaryDamageType: 5
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 1
   scalesWithProjectileWeapon: 0
   scalesWithSpellWeapon: 0
   isAoE: 1
   aoeTargets: 0
+  aoeRowScope: 0
+  isMultiHit: 0
+  hitCount: 2
   damageScaling:
-    strengthScaling: 1
+    strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 6
+    intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -55,9 +77,43 @@ MonoBehaviour:
   effects: []
   enableCombo: 1
   comboWith: Focus
-  comboDescription: Combo (Focus + Poison Arrow): 3x poison duration.
+  comboDescription: 3x Poison duration.
+  momentumEffectDescription: 
+  comboWithCardType: 0
+  comboAttackIncrease: 0
+  comboGuardIncrease: 0
+  comboIsAoE: 0
+  comboManaRefund: 0
+  comboApplyAilment: 
+  comboBuffs: []
+  comboConsumeAilment: 0
+  comboConsumeAilmentId: 0
+  comboDrawCards: 0
+  comboAilment: 0
+  comboAilmentPortion: 0
+  comboAilmentDuration: 0
+  consumeAilment: 0
+  consumeAilmentId: 0
+  comboScaling: 0
+  comboScalingDivisor: 1
+  comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Attack
   - Physical
+  delayTurns: 0
+  isDelayed: 0
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

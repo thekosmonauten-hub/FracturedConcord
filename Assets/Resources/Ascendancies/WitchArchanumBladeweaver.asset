@@ -1,0 +1,430 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbc266e3ace2db94093de6c368eac738, type: 3}
+  m_Name: WitchArchanumBladeweaver
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyData
+  ascendancyName: Archanum Bladeweaver
+  baseClass: Witch
+  tagline: Where steel ends, spellwork begins.
+  splashArt: {fileID: 4441468831690332995, guid: d14d01dcbe453e74589017eec0929ea4, type: 3}
+  icon: {fileID: -955594391929792325, guid: 87e37d1915af5254a83552f8517fbbbe, type: 3}
+  themeColor: {r: 1, g: 1, b: 1, a: 1}
+  description: "\u201CYour deck is a ritual circle; every discard a new incantation.\u201D"
+  playstyleKeywords: []
+  coreMechanicName: Arcane Rebound
+  coreMechanicDescription: Prime your attacks using spells, regardless of build type.
+  passiveAbilities: []
+  startNode:
+    name: Arcane Rebound
+    nodeType: 0
+    description: 'After you cast a Spell, your next weapon Attack gains one of these:
+
+      20%
+      more damage
+
+      +1 hit (extra strike)
+
+      +50 Elemental damage (Cold,
+      Fire & Lightning)'
+    icon: {fileID: 4441468831690332995, guid: e0f9374fb57cdeb4f847782824502705, type: 3}
+    nodeScale: 1.5
+    pointCost: 0
+    unlockedByDefault: 1
+    prerequisitePassives: []
+    requireAllPrerequisites: 1
+    treePosition: {x: -160, y: -220}
+    nodeGroup: 
+    isChoiceNode: 0
+    subNodes: []
+    subNodeRadius: 100
+    selectedSubNodeIndex: -1
+  branches:
+  - branchName: Elemental Branding
+    branchTheme: 
+    branchNodes:
+    - name: Flat Physical and Spell Power_1
+      nodeType: 2
+      description: +24% increased elemental damage with attacks.
+      icon: {fileID: -5003415579738833247, guid: 7dd7b92e26d0ff246bb3ae63c27967ca, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Arcane Rebound
+      requireAllPrerequisites: 1
+      treePosition: {x: -82.218254, y: -142.21826}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Elemental Branding
+      nodeType: 2
+      description: 'Select a Elemental Branding:'
+      icon: {fileID: 4441468831690332995, guid: e0f9374fb57cdeb4f847782824502705, type: 3}
+      nodeScale: 1.5
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Flat Physical and Spell Power_1
+      requireAllPrerequisites: 1
+      treePosition: {x: 55.654823, y: -166.52905}
+      nodeGroup: 
+      isChoiceNode: 1
+      subNodes:
+      - name: Frost Brand
+        icon: {fileID: -3055742988401036064, guid: eb79f3bc5c2168340bbcd1789ff25ee4, type: 3}
+        description: Every 3rd attack releases a cold wave that applies "Weak" to
+          all enemies.
+        pointCost: 1
+        angleOffset: 0
+      - name: Storm Brand
+        icon: {fileID: -3937134516562846803, guid: bd16763fa9703144aaa69c3b004c0c70, type: 3}
+        description: Every 3rd attack releases a cold wave that applies "Weak" to
+          all enemies.
+        pointCost: 1
+        angleOffset: 0
+      - name: Flame Brand
+        icon: {fileID: -5707942955400795422, guid: f42dd5892f984794bbea9ef0e0622ff7, type: 3}
+        description: 'Your attacks mark enemies with a burning sigil for 3s.
+
+          When
+          the sigil expires or the enemy dies, it detonates, dealing Fire Spell damage
+          scaling with Attack Damage.'
+        pointCost: 1
+        angleOffset: 0
+      subNodeRadius: 40
+      selectedSubNodeIndex: -1
+    - name: Flat Physical and Spell Power_2
+      nodeType: 2
+      description: +24% increased elemental damage with attacks.
+      icon: {fileID: -5003415579738833247, guid: 7dd7b92e26d0ff246bb3ae63c27967ca, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Elemental Branding
+      requireAllPrerequisites: 1
+      treePosition: {x: 124.93685, y: -126.52905}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Mirrorsteel Guard
+      nodeType: 2
+      description: 'Start combat with 3 Mirrorsteel stacks, 1 stack is comsumed when
+        hit.
+
+        Each Mirrorsteel stack:
+
+        Reduce hit damage by 40%
+
+        Playing
+        a Guard skill after a Spell refreshes one stack.'
+      icon: {fileID: 4441468831690332995, guid: e0f9374fb57cdeb4f847782824502705, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Flat Physical and Spell Power_2
+      requireAllPrerequisites: 1
+      treePosition: {x: 124.936844, y: -26.529053}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    sourceNodeName: 
+    branchAngle: 45
+    horizontalOffset: 0
+    directionChanges:
+    - atNodeIndex: 0
+      newAngle: 45
+      newSpacing: 110
+    - atNodeIndex: 1
+      newAngle: 350
+      newSpacing: 140
+    - atNodeIndex: 2
+      newAngle: 30
+      newSpacing: 80
+    - atNodeIndex: 3
+      newAngle: 90
+      newSpacing: 100
+    crossBranchConnections: []
+  - branchName: Prismatic Arsenal
+    branchTheme: 
+    branchNodes:
+    - name: Attack and Cast Speed_1
+      nodeType: 1
+      description: '+5% Increased Attack Speed
+
+        +5% Increased Cast Speed'
+      icon: {fileID: -5003415579738833247, guid: 7dd7b92e26d0ff246bb3ae63c27967ca, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Mirrorsteel Guard
+      requireAllPrerequisites: 1
+      treePosition: {x: 34.936844, y: -26.52906}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Prismatic Arsenal
+      nodeType: 2
+      description: "When you Attack after casting a Spell, convert 50% of your weapon
+        damage to that spell\u2019s element."
+      icon: {fileID: 4441468831690332995, guid: e0f9374fb57cdeb4f847782824502705, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Attack and Cast Speed_1
+      requireAllPrerequisites: 1
+      treePosition: {x: -55.063156, y: -26.529068}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Attack and Cast Speed_2
+      nodeType: 1
+      description: '+5% Increased Attack Speed
+
+        +5% Increased Cast Speed'
+      icon: {fileID: -5003415579738833247, guid: 7dd7b92e26d0ff246bb3ae63c27967ca, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Prismatic Arsenal
+      requireAllPrerequisites: 1
+      treePosition: {x: -120.59532, y: 19.357048}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Twin Arts Invocation
+      nodeType: 2
+      description: 'Every 3rd Attack casts your last Spell.
+
+        Every 3rd Spell
+        performs your last Attack.'
+      icon: {fileID: 4441468831690332995, guid: e0f9374fb57cdeb4f847782824502705, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Attack and Cast Speed_2
+      requireAllPrerequisites: 1
+      treePosition: {x: -186.12749, y: 65.243164}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    sourceNodeName: Blades of Conduction
+    branchAngle: 170
+    horizontalOffset: 0
+    directionChanges:
+    - atNodeIndex: 0
+      newAngle: 180
+      newSpacing: 90
+    crossBranchConnections: []
+  - branchName: Flux Weaving
+    branchTheme: 
+    branchNodes:
+    - name: Attack and Cast Speed_3
+      nodeType: 1
+      description: '+5% Increased Attack Speed
+
+        +5% Increased Cast Speed'
+      icon: {fileID: -5003415579738833247, guid: 7dd7b92e26d0ff246bb3ae63c27967ca, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Mirrorsteel Guard
+      requireAllPrerequisites: 1
+      treePosition: {x: 84.936844, y: 42.752975}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Flux Weaving
+      nodeType: 2
+      description: "Whenever you alternate actions (Attack \u2192 Spell or Spell
+        \u2192 Attack):\r\nGain +15% More Damage for your next action\r\nGain +15%
+        More Guard for your next action"
+      icon: {fileID: 4441468831690332995, guid: e0f9374fb57cdeb4f847782824502705, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Attack and Cast Speed_3
+      requireAllPrerequisites: 1
+      treePosition: {x: 19.404678, y: 88.63909}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Attack and Cast Speed_4
+      nodeType: 1
+      description: '+5% Increased Attack Speed
+
+        +5% Increased Cast Speed'
+      icon: {fileID: -5003415579738833247, guid: 7dd7b92e26d0ff246bb3ae63c27967ca, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Flux Weaving
+      requireAllPrerequisites: 1
+      treePosition: {x: -20.595325, y: 157.92111}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Blades Ascend, Spells Break
+      nodeType: 2
+      description: 'Every 4 cards you play in a turn (Attack or Spell):
+
+        Your
+        next damaging card is considered both an Attack and a Spell, sacling with
+        both weapon and spell damage.'
+      icon: {fileID: 4441468831690332995, guid: e0f9374fb57cdeb4f847782824502705, type: 3}
+      nodeScale: 1.5
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Attack and Cast Speed_4
+      - Attack and Cast Speed_6
+      requireAllPrerequisites: 0
+      treePosition: {x: -60.59533, y: 227.20314}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    sourceNodeName: Blades of Conduction
+    branchAngle: 120
+    horizontalOffset: 0
+    directionChanges:
+    - atNodeIndex: 1
+      newAngle: 145
+      newSpacing: 0
+    - atNodeIndex: 2
+      newAngle: 120
+      newSpacing: 0
+    crossBranchConnections: []
+  - branchName: Blades of Conduction
+    branchTheme: 
+    branchNodes:
+    - name: Attack and Cast Speed_5
+      nodeType: 1
+      description: '+5% Increased Attack Speed
+
+        +5% Increased Cast Speed'
+      icon: {fileID: -5003415579738833247, guid: 7dd7b92e26d0ff246bb3ae63c27967ca, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Mirrorsteel Guard
+      requireAllPrerequisites: 1
+      treePosition: {x: 145.64236, y: 50.74501}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Blades of Conduction
+      nodeType: 2
+      description: 'Your weapon attacks scale with of 20% of your Spell Power.
+
+        Your
+        spells gain damage equal to 20% of your weapon damage.'
+      icon: {fileID: 4441468831690332995, guid: e0f9374fb57cdeb4f847782824502705, type: 3}
+      nodeScale: 1.5
+      pointCost: 0
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Attack and Cast Speed_5
+      requireAllPrerequisites: 1
+      treePosition: {x: 166.34789, y: 128.01907}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    - name: Attack and Cast Speed_6
+      nodeType: 1
+      description: '+5% Increased Attack Speed
+
+        +5% Increased Cast Speed'
+      icon: {fileID: -5003415579738833247, guid: 7dd7b92e26d0ff246bb3ae63c27967ca, type: 3}
+      nodeScale: 0
+      pointCost: 1
+      unlockedByDefault: 0
+      prerequisitePassives:
+      - Blades of Conduction
+      requireAllPrerequisites: 1
+      treePosition: {x: 126.347885, y: 197.3011}
+      nodeGroup: 
+      isChoiceNode: 0
+      subNodes: []
+      subNodeRadius: 100
+      selectedSubNodeIndex: -1
+    sourceNodeName: Mirrorsteel Guard
+    branchAngle: 75
+    horizontalOffset: 0
+    directionChanges:
+    - atNodeIndex: 2
+      newAngle: 120
+      newSpacing: 0
+    - atNodeIndex: 2
+      newAngle: 120
+      newSpacing: 0
+    crossBranchConnections: []
+  splitNodes:
+  - nodeName: Mirrorsteel Guard
+    branchNames:
+    - Prismatic Arsenal
+    - Flux Weaving
+    - Blades of Conduction
+    branchAngles:
+    - 170
+    - 120
+    - 75
+  useBranchSystem: 1
+  floatingNodes: []
+  signatureCard:
+    copies: 3
+    cardName: Collapse
+    cardType: Spell
+    manaCost: 2
+    description: Consume Entropy stacks to recover 5% Mana per stack consumed.
+    cardData: {fileID: 0}
+  requiredLevel: 21
+  unlockRequirement: 
+  maxAscendancyPoints: 8
+  startNodePosition: {x: -160, y: -220}
+  treePaths: []
+  useAutoGeneratedPaths: 1
+  numberOfBranches: 2

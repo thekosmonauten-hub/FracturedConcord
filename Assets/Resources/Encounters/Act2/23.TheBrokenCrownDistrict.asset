@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9be3bb50a3980b47ab1e7fc8419be94, type: 3}
+  m_Name: 23.TheBrokenCrownDistrict
+  m_EditorClassIdentifier: Assembly-CSharp::EncounterDataAsset
+  encounterID: 23
+  encounterName: The Broken Crown District
+  sceneName: CombatScene
+  actNumber: 2
+  encounterSprite: {fileID: 0}
+  prerequisiteEncounters:
+  - {fileID: 11400000, guid: de582dd6e60d9854aa215b6b70231cf0, type: 2}
+  areaLevel: 35
+  totalWaves: 7
+  maxEnemiesPerWave: 5
+  randomizeEnemyCount: 1
+  uniqueEnemy: {fileID: 0}
+  lootTable: {fileID: 0}
+  areaLootTable: {fileID: 11400000, guid: a96e9229b77286f4e8a71bcaf0a36c39, type: 2}

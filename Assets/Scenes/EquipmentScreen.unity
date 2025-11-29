@@ -5257,7 +5257,7 @@ GameObject:
   - component: {fileID: 955623343}
   - component: {fileID: 955623344}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: EquipmentMaster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5336,6 +5336,11 @@ MonoBehaviour:
     accuracyRating: 0
     increasedEvasion: 0
     baseEvasionRating: 0
+    dodgeChance: 0
+    guardEffectivenessPercent: 0
+    buffDurationIncreasedPercent: 0
+    randomAilmentChancePercent: 0
+    increasedDamageAfterGuardPercent: 0
     attackSpeedIncreasedPercent: 0
     castSpeedIncreasedPercent: 0
     movementSpeedIncreasedPercent: 0
@@ -5370,6 +5375,7 @@ MonoBehaviour:
     currentScene: 
     isNewCharacter: 0
     inventory: []
+    ownedEffigies: []
     unlockedAbilities: []
     weapons:
       meleeWeapon:
@@ -8044,6 +8050,11 @@ MonoBehaviour:
     accuracyRating: 0
     increasedEvasion: 0
     baseEvasionRating: 0
+    dodgeChance: 0
+    guardEffectivenessPercent: 0
+    buffDurationIncreasedPercent: 0
+    randomAilmentChancePercent: 0
+    increasedDamageAfterGuardPercent: 0
     attackSpeedIncreasedPercent: 0
     castSpeedIncreasedPercent: 0
     movementSpeedIncreasedPercent: 0
@@ -8078,6 +8089,7 @@ MonoBehaviour:
     currentScene: 
     isNewCharacter: 0
     inventory: []
+    ownedEffigies: []
     unlockedAbilities: []
     weapons:
       meleeWeapon:
@@ -10078,6 +10090,60 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1526163634}
   m_CullTransparentMesh: 1
+--- !u!1 &1527345007
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1527345009}
+  - component: {fileID: 1527345008}
+  m_Layer: 0
+  m_Name: ItemTooltipManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1527345008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1527345007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cda0e6de39840e24d863b1fad12311c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemTooltipManager
+  targetCanvas: {fileID: 236284790}
+  tooltipContainer: {fileID: 704015658}
+  weaponTooltipPrefab: {fileID: 8288085521255949069, guid: dc7046f08488e0c41a2e941b4ec7e6e3, type: 3}
+  equipmentTooltipPrefab: {fileID: 7383855672617452432, guid: eef1dc2c76c3bdb428526205f4f8ccf0, type: 3}
+  effigyTooltipPrefab: {fileID: 4066239187467797211, guid: b5a09ac564dfbeb4daa382f7efa87391, type: 3}
+  cardTooltipPrefab: {fileID: 8288085521255949069, guid: 5af4c8aef6d119e4ea2096c1219fbb7c, type: 3}
+  currencyTooltipPrefab: {fileID: 8288085521255949069, guid: be44b4c1759c6b247a84707bd6de21e2, type: 3}
+  cursorHorizontalOffset: 32
+  cursorVerticalOffset: 0
+  screenEdgePadding: 16
+--- !u!4 &1527345009
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1527345007}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 877.9856, y: 530.24316, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1545388739
 GameObject:
   m_ObjectHideFlags: 0
@@ -13255,6 +13321,15 @@ GameObject:
   - component: {fileID: 2079604500}
   - component: {fileID: 2079604499}
   - component: {fileID: 2079604501}
+  - component: {fileID: 2079604502}
+  - component: {fileID: 2079604503}
+  - component: {fileID: 2079604504}
+  - component: {fileID: 2079604505}
+  - component: {fileID: 2079604506}
+  - component: {fileID: 2079604507}
+  - component: {fileID: 2079604508}
+  - component: {fileID: 2079604509}
+  - component: {fileID: 2079604510}
   m_Layer: 5
   m_Name: EffigyGridContainer
   m_TagString: Untagged
@@ -13341,6 +13416,373 @@ MonoBehaviour:
   emptyCellColor: {r: 1, g: 1, b: 1, a: 1}
   validPlacementColor: {r: 0, g: 0.6981132, b: 0, a: 0.6}
   invalidPlacementColor: {r: 0.6981132, g: 0, b: 0, a: 0.6}
+--- !u!114 &2079604502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079604497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e450503bac9ec0c4093d7ed44779544e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffigySpriteSetInitializer
+  entries:
+  - effigyName: Z_1
+    sprites:
+    - {fileID: 6176016249707147351, guid: 70aac9e8f53dea248b51559438b01bc3, type: 3}
+    - {fileID: 2356513333107677671, guid: 70aac9e8f53dea248b51559438b01bc3, type: 3}
+    - {fileID: -2734760019320475564, guid: 70aac9e8f53dea248b51559438b01bc3, type: 3}
+    - {fileID: 4100473677826587579, guid: 70aac9e8f53dea248b51559438b01bc3, type: 3}
+  - effigyName: Z_2
+    sprites:
+    - {fileID: 3056835681659464243, guid: 468673c2f139f76429497c5ae98309df, type: 3}
+    - {fileID: 5581659869864064286, guid: 468673c2f139f76429497c5ae98309df, type: 3}
+    - {fileID: 2726827774677256199, guid: 468673c2f139f76429497c5ae98309df, type: 3}
+    - {fileID: -6358468770989545742, guid: 468673c2f139f76429497c5ae98309df, type: 3}
+  - effigyName: Z_3
+    sprites:
+    - {fileID: 3785441645348319464, guid: 4e36669d19222c04993272b2a4b4e192, type: 3}
+    - {fileID: 5571187698715593561, guid: 4e36669d19222c04993272b2a4b4e192, type: 3}
+    - {fileID: -3652273090413695795, guid: 4e36669d19222c04993272b2a4b4e192, type: 3}
+    - {fileID: 6359191854581873881, guid: 4e36669d19222c04993272b2a4b4e192, type: 3}
+  - effigyName: Z_4
+    sprites:
+    - {fileID: -139545065965286750, guid: dc3d1596b277595428ff95ffe3ac6ed3, type: 3}
+    - {fileID: -2818201472908268408, guid: dc3d1596b277595428ff95ffe3ac6ed3, type: 3}
+    - {fileID: -5122383755451699, guid: dc3d1596b277595428ff95ffe3ac6ed3, type: 3}
+    - {fileID: 4757163682209169270, guid: dc3d1596b277595428ff95ffe3ac6ed3, type: 3}
+  - effigyName: Z_5
+    sprites:
+    - {fileID: 6154779946199898135, guid: acd7c1be6959dda49baf231a3ce7ae04, type: 3}
+    - {fileID: -5101961041950554423, guid: acd7c1be6959dda49baf231a3ce7ae04, type: 3}
+    - {fileID: -849512207984865912, guid: acd7c1be6959dda49baf231a3ce7ae04, type: 3}
+    - {fileID: 8556882895169927985, guid: acd7c1be6959dda49baf231a3ce7ae04, type: 3}
+--- !u!114 &2079604503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079604497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e450503bac9ec0c4093d7ed44779544e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffigySpriteSetInitializer
+  entries:
+  - effigyName: Small_L_1
+    sprites:
+    - {fileID: -2938862635847811353, guid: 34170a5d98d31794ba25157530884ef4, type: 3}
+    - {fileID: -5441018548060469938, guid: 34170a5d98d31794ba25157530884ef4, type: 3}
+    - {fileID: 3412414908865894956, guid: 34170a5d98d31794ba25157530884ef4, type: 3}
+  - effigyName: Small_L_2
+    sprites:
+    - {fileID: 7713665188031517536, guid: 6010c21c26981a14e9adc4b2c27515d7, type: 3}
+    - {fileID: -7505296100485026995, guid: 6010c21c26981a14e9adc4b2c27515d7, type: 3}
+    - {fileID: -5676542145053249361, guid: 6010c21c26981a14e9adc4b2c27515d7, type: 3}
+  - effigyName: Small_L_3
+    sprites:
+    - {fileID: -9125055428335952837, guid: 8d0f5b0e0cc94c44c859af4039bccc20, type: 3}
+    - {fileID: -1632480717725447053, guid: 8d0f5b0e0cc94c44c859af4039bccc20, type: 3}
+    - {fileID: -3341106094206340811, guid: 8d0f5b0e0cc94c44c859af4039bccc20, type: 3}
+  - effigyName: Small_L_4
+    sprites:
+    - {fileID: 3389881763537718532, guid: 74d79d0ddb7b51c469fc0fb063fb828d, type: 3}
+    - {fileID: 7041728051343922104, guid: 74d79d0ddb7b51c469fc0fb063fb828d, type: 3}
+    - {fileID: 8068878025661548234, guid: 74d79d0ddb7b51c469fc0fb063fb828d, type: 3}
+--- !u!114 &2079604504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079604497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e450503bac9ec0c4093d7ed44779544e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffigySpriteSetInitializer
+  entries:
+  - effigyName: T_1
+    sprites:
+    - {fileID: 2689594882768555295, guid: 54d2840a4723aef49b5bbbee13318bb4, type: 3}
+    - {fileID: -229419141490356581, guid: 54d2840a4723aef49b5bbbee13318bb4, type: 3}
+    - {fileID: 5186214801664531176, guid: 54d2840a4723aef49b5bbbee13318bb4, type: 3}
+    - {fileID: -1353452295715200489, guid: 54d2840a4723aef49b5bbbee13318bb4, type: 3}
+  - effigyName: T_2
+    sprites:
+    - {fileID: -352567130416777815, guid: 226cd696d09c0974fab44bf7548b1c52, type: 3}
+    - {fileID: -3774626918257672055, guid: 226cd696d09c0974fab44bf7548b1c52, type: 3}
+    - {fileID: 3657309163536889328, guid: 226cd696d09c0974fab44bf7548b1c52, type: 3}
+    - {fileID: -4196064184002193941, guid: 226cd696d09c0974fab44bf7548b1c52, type: 3}
+  - effigyName: T_3
+    sprites:
+    - {fileID: -6383524249839779346, guid: 09ff3049944abc9449319db9454a8f72, type: 3}
+    - {fileID: -5786404470333572929, guid: 09ff3049944abc9449319db9454a8f72, type: 3}
+    - {fileID: 4547723155553246842, guid: 09ff3049944abc9449319db9454a8f72, type: 3}
+    - {fileID: -2403713776113042817, guid: 09ff3049944abc9449319db9454a8f72, type: 3}
+  - effigyName: T_4
+    sprites:
+    - {fileID: 4046434528366531923, guid: d489e21b0eb4cdd4baeb9ce0fa891e3c, type: 3}
+    - {fileID: -1911870410291062366, guid: d489e21b0eb4cdd4baeb9ce0fa891e3c, type: 3}
+    - {fileID: 3557164215043884089, guid: d489e21b0eb4cdd4baeb9ce0fa891e3c, type: 3}
+    - {fileID: 3614474532915055348, guid: d489e21b0eb4cdd4baeb9ce0fa891e3c, type: 3}
+  - effigyName: T_5
+    sprites:
+    - {fileID: 6239470822536766997, guid: 47a9b4f593eac824794fbd279894e5b0, type: 3}
+    - {fileID: 5962405001144839675, guid: 47a9b4f593eac824794fbd279894e5b0, type: 3}
+    - {fileID: 8948291300462554358, guid: 47a9b4f593eac824794fbd279894e5b0, type: 3}
+    - {fileID: 601049068363409639, guid: 47a9b4f593eac824794fbd279894e5b0, type: 3}
+--- !u!114 &2079604505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079604497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e450503bac9ec0c4093d7ed44779544e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffigySpriteSetInitializer
+  entries:
+  - effigyName: L_1
+    sprites:
+    - {fileID: 8589831095640256285, guid: a530205ebcb8e0747adfdb1fecd53682, type: 3}
+    - {fileID: 6183585709747190695, guid: a530205ebcb8e0747adfdb1fecd53682, type: 3}
+    - {fileID: -3166749782059823109, guid: a530205ebcb8e0747adfdb1fecd53682, type: 3}
+    - {fileID: 9173122990352084234, guid: a530205ebcb8e0747adfdb1fecd53682, type: 3}
+  - effigyName: L_2
+    sprites:
+    - {fileID: -807742683785575616, guid: 07342aeb446f64a429edef277ffc698b, type: 3}
+    - {fileID: 2969086030336401710, guid: 07342aeb446f64a429edef277ffc698b, type: 3}
+    - {fileID: -4438844712432451445, guid: 07342aeb446f64a429edef277ffc698b, type: 3}
+    - {fileID: 4686849872343751373, guid: 07342aeb446f64a429edef277ffc698b, type: 3}
+  - effigyName: L_3
+    sprites:
+    - {fileID: -3428668115228323473, guid: d603476e1ba5c834da7d48e13d23ea16, type: 3}
+    - {fileID: 5839779726981008992, guid: d603476e1ba5c834da7d48e13d23ea16, type: 3}
+    - {fileID: -5736413029767627025, guid: d603476e1ba5c834da7d48e13d23ea16, type: 3}
+    - {fileID: 3408326909818558423, guid: d603476e1ba5c834da7d48e13d23ea16, type: 3}
+  - effigyName: L_4
+    sprites:
+    - {fileID: 356017523396124326, guid: db67c215a2365064080a40603d5de743, type: 3}
+    - {fileID: -7239640540163067318, guid: db67c215a2365064080a40603d5de743, type: 3}
+    - {fileID: -2365712259292321868, guid: db67c215a2365064080a40603d5de743, type: 3}
+    - {fileID: 6722705953413916884, guid: db67c215a2365064080a40603d5de743, type: 3}
+  - effigyName: L_5
+    sprites:
+    - {fileID: 4414400432723381763, guid: 0efb7af735895dc4e804cb3b453e4a0d, type: 3}
+    - {fileID: 6840414102556160908, guid: 0efb7af735895dc4e804cb3b453e4a0d, type: 3}
+    - {fileID: 4890157834417820333, guid: 0efb7af735895dc4e804cb3b453e4a0d, type: 3}
+    - {fileID: 2411773241282348192, guid: 0efb7af735895dc4e804cb3b453e4a0d, type: 3}
+--- !u!114 &2079604506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079604497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e450503bac9ec0c4093d7ed44779544e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffigySpriteSetInitializer
+  entries:
+  - effigyName: SQ_1
+    sprites:
+    - {fileID: 2949078597744054798, guid: b1d58b04086aa1a42a095d2e724d2c08, type: 3}
+    - {fileID: -5019517827817409160, guid: b1d58b04086aa1a42a095d2e724d2c08, type: 3}
+    - {fileID: -1611368288271287884, guid: b1d58b04086aa1a42a095d2e724d2c08, type: 3}
+    - {fileID: 1504421706091518707, guid: b1d58b04086aa1a42a095d2e724d2c08, type: 3}
+  - effigyName: SQ_2
+    sprites:
+    - {fileID: 2173523992441521165, guid: cedf9f04c4d2ca84fbf906e2f55bbaee, type: 3}
+    - {fileID: -5997056487607804407, guid: cedf9f04c4d2ca84fbf906e2f55bbaee, type: 3}
+    - {fileID: 1016867976944352064, guid: cedf9f04c4d2ca84fbf906e2f55bbaee, type: 3}
+    - {fileID: 9204220240074495799, guid: cedf9f04c4d2ca84fbf906e2f55bbaee, type: 3}
+  - effigyName: SQ_3
+    sprites:
+    - {fileID: 5358170240606047907, guid: 2e3c2926e145da84983ebb1e7255d92c, type: 3}
+    - {fileID: 4686202314226223321, guid: 2e3c2926e145da84983ebb1e7255d92c, type: 3}
+    - {fileID: 1661769603543072506, guid: 2e3c2926e145da84983ebb1e7255d92c, type: 3}
+    - {fileID: 8750428990202573248, guid: 2e3c2926e145da84983ebb1e7255d92c, type: 3}
+  - effigyName: SQ_4
+    sprites:
+    - {fileID: -3400627891534927596, guid: e51024b86aa84a84bb5e963923f9277e, type: 3}
+    - {fileID: 1912109633603874723, guid: e51024b86aa84a84bb5e963923f9277e, type: 3}
+    - {fileID: 1220560095601859640, guid: e51024b86aa84a84bb5e963923f9277e, type: 3}
+    - {fileID: -1945114200190711624, guid: e51024b86aa84a84bb5e963923f9277e, type: 3}
+  - effigyName: SQ_5
+    sprites:
+    - {fileID: -1155775082973365784, guid: 2ed2fe123dc7526498dd33f2da937d34, type: 3}
+    - {fileID: -6814361191565594852, guid: 2ed2fe123dc7526498dd33f2da937d34, type: 3}
+    - {fileID: -4930431083678494257, guid: 2ed2fe123dc7526498dd33f2da937d34, type: 3}
+    - {fileID: 4635178963338400374, guid: 2ed2fe123dc7526498dd33f2da937d34, type: 3}
+--- !u!114 &2079604507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079604497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e450503bac9ec0c4093d7ed44779544e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffigySpriteSetInitializer
+  entries:
+  - effigyName: Single_1
+    sprites:
+    - {fileID: -1178694903275056801, guid: 7a84c3311629b0248b7242f363181def, type: 3}
+  - effigyName: Single_2
+    sprites:
+    - {fileID: 1382838507195367734, guid: 3176f972ad035f341a61175f57fd28b9, type: 3}
+  - effigyName: Single_3
+    sprites:
+    - {fileID: -2292376824105356141, guid: 48c1735a04f2a394ca69457986308e00, type: 3}
+  - effigyName: Single_4
+    sprites:
+    - {fileID: -1324594982593415331, guid: eca8df7fef97599468956d96761af637, type: 3}
+  - effigyName: Single_5
+    sprites:
+    - {fileID: -3707661822701284539, guid: 02117b8b27bc0c844bd1c30bd090ef6a, type: 3}
+--- !u!114 &2079604508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079604497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e450503bac9ec0c4093d7ed44779544e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffigySpriteSetInitializer
+  entries:
+  - effigyName: Line_1
+    sprites:
+    - {fileID: 5580086842746746846, guid: d77e7168c505272449eab191f06982c3, type: 3}
+    - {fileID: 5115194639657097257, guid: d77e7168c505272449eab191f06982c3, type: 3}
+    - {fileID: -5350845157877855474, guid: d77e7168c505272449eab191f06982c3, type: 3}
+    - {fileID: -5292622635247310339, guid: d77e7168c505272449eab191f06982c3, type: 3}
+  - effigyName: Line_2
+    sprites:
+    - {fileID: 7984640825133578525, guid: 09937e5025d4f894d9a82481496ca806, type: 3}
+    - {fileID: 8014622595315884154, guid: 09937e5025d4f894d9a82481496ca806, type: 3}
+    - {fileID: -7839081636889619431, guid: 09937e5025d4f894d9a82481496ca806, type: 3}
+    - {fileID: 3277067711406517816, guid: 09937e5025d4f894d9a82481496ca806, type: 3}
+  - effigyName: Line_3
+    sprites:
+    - {fileID: 1800553473641591103, guid: 1e9c8082210573c429e9ed7eca673a7f, type: 3}
+    - {fileID: -3492061050814016392, guid: 1e9c8082210573c429e9ed7eca673a7f, type: 3}
+    - {fileID: 2935910501935528653, guid: 1e9c8082210573c429e9ed7eca673a7f, type: 3}
+    - {fileID: 5428319001330354550, guid: 1e9c8082210573c429e9ed7eca673a7f, type: 3}
+  - effigyName: Line_4
+    sprites:
+    - {fileID: -4426709540734130355, guid: 8af5804ffa3355242acb799c3390a58d, type: 3}
+    - {fileID: -3275392738325368597, guid: 8af5804ffa3355242acb799c3390a58d, type: 3}
+    - {fileID: -5014808757916636018, guid: 8af5804ffa3355242acb799c3390a58d, type: 3}
+    - {fileID: -2717276483161948359, guid: 8af5804ffa3355242acb799c3390a58d, type: 3}
+  - effigyName: Line_5
+    sprites:
+    - {fileID: 2604627430608425732, guid: 371fef1ca5e608843b1a48a3df181852, type: 3}
+    - {fileID: 7249210116312551109, guid: 371fef1ca5e608843b1a48a3df181852, type: 3}
+    - {fileID: 2961954407489528163, guid: 371fef1ca5e608843b1a48a3df181852, type: 3}
+    - {fileID: -7477677268188987172, guid: 371fef1ca5e608843b1a48a3df181852, type: 3}
+--- !u!114 &2079604509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079604497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e450503bac9ec0c4093d7ed44779544e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffigySpriteSetInitializer
+  entries:
+  - effigyName: Cross_1
+    sprites:
+    - {fileID: 3147259628683854435, guid: 34793e110548ae84a9a5b4c7637eb13b, type: 3}
+    - {fileID: 7938949242442315644, guid: 34793e110548ae84a9a5b4c7637eb13b, type: 3}
+    - {fileID: 8910260461049264612, guid: 34793e110548ae84a9a5b4c7637eb13b, type: 3}
+    - {fileID: 7636485631646039396, guid: 34793e110548ae84a9a5b4c7637eb13b, type: 3}
+    - {fileID: -5553649085040975722, guid: 34793e110548ae84a9a5b4c7637eb13b, type: 3}
+  - effigyName: Cross_2
+    sprites:
+    - {fileID: 5697527023317849945, guid: 8f07677c6deef4546abe96b4e41802b8, type: 3}
+    - {fileID: -3574142264031115526, guid: 8f07677c6deef4546abe96b4e41802b8, type: 3}
+    - {fileID: 8255203236561519568, guid: 8f07677c6deef4546abe96b4e41802b8, type: 3}
+    - {fileID: 6659977554391239290, guid: 8f07677c6deef4546abe96b4e41802b8, type: 3}
+    - {fileID: 247659567356208399, guid: 8f07677c6deef4546abe96b4e41802b8, type: 3}
+  - effigyName: Cross_3
+    sprites:
+    - {fileID: 7634297056405455480, guid: 6e251d187d90e4d489e2e0d8ffe51bfe, type: 3}
+    - {fileID: 6014210746283044078, guid: 6e251d187d90e4d489e2e0d8ffe51bfe, type: 3}
+    - {fileID: -5693990659853490686, guid: 6e251d187d90e4d489e2e0d8ffe51bfe, type: 3}
+    - {fileID: -5961053941784614747, guid: 6e251d187d90e4d489e2e0d8ffe51bfe, type: 3}
+    - {fileID: 9069002905882004435, guid: 6e251d187d90e4d489e2e0d8ffe51bfe, type: 3}
+  - effigyName: Cross_4
+    sprites:
+    - {fileID: 8536623139899665486, guid: 3ef3ab8902dcfe94496452e0fc68ddb8, type: 3}
+    - {fileID: 3803341836809403298, guid: 3ef3ab8902dcfe94496452e0fc68ddb8, type: 3}
+    - {fileID: 981521804634371519, guid: 3ef3ab8902dcfe94496452e0fc68ddb8, type: 3}
+    - {fileID: -1759930332514365479, guid: 3ef3ab8902dcfe94496452e0fc68ddb8, type: 3}
+    - {fileID: 8185126872468261256, guid: 3ef3ab8902dcfe94496452e0fc68ddb8, type: 3}
+  - effigyName: Cross_5
+    sprites:
+    - {fileID: -5858336978005489850, guid: 4e954c2059114854aaeeed4e45e05b5f, type: 3}
+    - {fileID: -5434550156903908613, guid: 4e954c2059114854aaeeed4e45e05b5f, type: 3}
+    - {fileID: -1497650295476388182, guid: 4e954c2059114854aaeeed4e45e05b5f, type: 3}
+    - {fileID: -5881219100139342667, guid: 4e954c2059114854aaeeed4e45e05b5f, type: 3}
+    - {fileID: 6040700874058410175, guid: 4e954c2059114854aaeeed4e45e05b5f, type: 3}
+--- !u!114 &2079604510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079604497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e450503bac9ec0c4093d7ed44779544e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffigySpriteSetInitializer
+  entries:
+  - effigyName: S_1
+    sprites:
+    - {fileID: 6832967171323424650, guid: cb6324ca708004948887667257cd6c24, type: 3}
+    - {fileID: -9059416192361987697, guid: cb6324ca708004948887667257cd6c24, type: 3}
+    - {fileID: -3569109218498599956, guid: cb6324ca708004948887667257cd6c24, type: 3}
+    - {fileID: 969756647882695720, guid: cb6324ca708004948887667257cd6c24, type: 3}
+  - effigyName: S_2
+    sprites:
+    - {fileID: -4030122809015345288, guid: eac139b197d30b043ba1449c542fa299, type: 3}
+    - {fileID: 1885020670434245844, guid: eac139b197d30b043ba1449c542fa299, type: 3}
+    - {fileID: 588886234989397164, guid: eac139b197d30b043ba1449c542fa299, type: 3}
+    - {fileID: -7563452241647610842, guid: eac139b197d30b043ba1449c542fa299, type: 3}
+  - effigyName: S_3
+    sprites:
+    - {fileID: -3480845536399721396, guid: c200db39140f7df45989b9acd3fa6f78, type: 3}
+    - {fileID: -2914530053002055966, guid: c200db39140f7df45989b9acd3fa6f78, type: 3}
+    - {fileID: -8299040064476737472, guid: c200db39140f7df45989b9acd3fa6f78, type: 3}
+    - {fileID: 8411679467180162280, guid: c200db39140f7df45989b9acd3fa6f78, type: 3}
+  - effigyName: S_4
+    sprites:
+    - {fileID: 1405871715244820334, guid: 028df10f913f60741bf8dcbb65fe08b4, type: 3}
+    - {fileID: 3557017167679712148, guid: 028df10f913f60741bf8dcbb65fe08b4, type: 3}
+    - {fileID: 229013791355863592, guid: 028df10f913f60741bf8dcbb65fe08b4, type: 3}
+    - {fileID: 8788918022019216482, guid: 028df10f913f60741bf8dcbb65fe08b4, type: 3}
+  - effigyName: S_5
+    sprites:
+    - {fileID: 5811491195929729008, guid: 7a1627addde3d384e8d72225eaf7ae51, type: 3}
+    - {fileID: -2485664612419359720, guid: 7a1627addde3d384e8d72225eaf7ae51, type: 3}
+    - {fileID: 1050425334137243788, guid: 7a1627addde3d384e8d72225eaf7ae51, type: 3}
+    - {fileID: 4074239432352398321, guid: 7a1627addde3d384e8d72225eaf7ae51, type: 3}
 --- !u!1 &2084538011
 GameObject:
   m_ObjectHideFlags: 0
@@ -13832,3 +14274,4 @@ SceneRoots:
   - {fileID: 47063739}
   - {fileID: 1804960277}
   - {fileID: 29520565}
+  - {fileID: 1527345009}

@@ -294,7 +294,13 @@ public class AnimatedCombatUI : MonoBehaviour
         
         // Update name
         if (panel.nameText != null)
+        {
             panel.nameText.text = enemy.enemyName;
+            // Set color based on rarity and tier
+            EnemyData enemyData = GetEnemyDataForEnemy(enemy);
+            EnemyTier tier = enemyData != null ? enemyData.tier : EnemyTier.Normal;
+            panel.nameText.color = GetEnemyNameColor(enemy.rarity, tier);
+        }
         
         // Update health text
         if (panel.healthText != null)
@@ -648,7 +654,10 @@ public class AnimatedCombatUI : MonoBehaviour
         }
     }
     
-    private void AnimatePlayerMana()
+    /// <summary>
+    /// Updates and animates the player mana display. Can be called externally to force UI update.
+    /// </summary>
+    public void AnimatePlayerMana()
     {
         CharacterManager charManager = CharacterManager.Instance;
         if (charManager == null || !charManager.HasCharacter()) return;
@@ -951,6 +960,69 @@ public class AnimatedCombatUI : MonoBehaviour
         if (endTurnButton != null)
         {
             endTurnButton.onClick.RemoveAllListeners();
+        }
+    }
+    
+    /// <summary>
+    /// Gets the EnemyData for an Enemy instance by looking it up in the database or finding its display.
+    /// </summary>
+    private EnemyData GetEnemyDataForEnemy(Enemy enemy)
+    {
+        if (enemy == null) return null;
+        
+        // Try to find the EnemyCombatDisplay that has this enemy
+        if (combatDisplayManager != null)
+        {
+            var activeDisplays = combatDisplayManager.GetActiveEnemyDisplays();
+            foreach (var display in activeDisplays)
+            {
+                if (display != null && display.GetEnemy() == enemy)
+                {
+                    return display.GetEnemyData();
+                }
+            }
+        }
+        
+        // Fallback: Look up by name in EnemyDatabase (strip rarity suffix if present)
+        string baseName = enemy.enemyName;
+        if (baseName.Contains(" (Magic)") || baseName.Contains(" (Rare)") || baseName.Contains(" (Unique)"))
+        {
+            baseName = baseName.Substring(0, baseName.LastIndexOf(" ("));
+        }
+        
+        if (EnemyDatabase.Instance != null)
+        {
+            return EnemyDatabase.Instance.GetEnemyByName(baseName);
+        }
+        
+        return null;
+    }
+    
+    /// <summary>
+    /// Gets the color for enemy name based on rarity and tier.
+    /// Common (Normal) - White, Magic - Blue, Rare - Yellow, Unique/Boss/Mini-boss - Orange
+    /// </summary>
+    private Color GetEnemyNameColor(EnemyRarity rarity, EnemyTier tier)
+    {
+        // Boss and Mini-boss always use Orange
+        if (tier == EnemyTier.Boss || tier == EnemyTier.Miniboss)
+        {
+            return new Color(1f, 0.65f, 0f); // Orange
+        }
+        
+        // Otherwise use rarity-based colors
+        switch (rarity)
+        {
+            case EnemyRarity.Normal:
+                return Color.white;
+            case EnemyRarity.Magic:
+                return new Color(0.3f, 0.6f, 1f); // Blue
+            case EnemyRarity.Rare:
+                return new Color(1f, 0.9f, 0.2f); // Yellow
+            case EnemyRarity.Unique:
+                return new Color(1f, 0.65f, 0f); // Orange
+            default:
+                return Color.white;
         }
     }
     

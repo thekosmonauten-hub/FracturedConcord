@@ -3,6 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
+/// Damage breakdown by type for status effect calculations
+/// </summary>
+public struct DamageBreakdown
+{
+    public float physical;
+    public float fire;
+    public float cold;
+    public float lightning;
+    public float chaos;
+    public float total;
+    
+    public DamageBreakdown(float phys, float f, float c, float l, float ch, float tot)
+    {
+        physical = phys;
+        fire = f;
+        cold = c;
+        lightning = l;
+        chaos = ch;
+        total = tot;
+    }
+}
+
+/// <summary>
 /// Processes card effects and applies them to targets (enemies/player).
 /// Handles damage calculation, guard, status effects, etc.
 /// </summary>
@@ -44,11 +67,13 @@ public class CardEffectProcessor : MonoBehaviour
     /// <summary>
     /// Apply a card's effect to a target enemy.
     /// </summary>
-    public void ApplyCardToEnemy(Card card, Enemy targetEnemy, Character player, Vector3 targetScreenPosition)
+    public void ApplyCardToEnemy(Card card, Enemy targetEnemy, Character player, Vector3 targetScreenPosition, bool isDelayed = false)
     {
-        Debug.Log($"<color=magenta>╔══════════════════════════════════╗</color>");
-        Debug.Log($"<color=magenta>║ APPLYING CARD EFFECT DEBUG      ║</color>");
-        Debug.Log($"<color=magenta>╚══════════════════════════════════╝</color>");
+        // Debug logs commented out to prevent memory leaks from string allocations
+        // Uncomment only when debugging card application issues:
+        // Debug.Log($"<color=magenta>╔══════════════════════════════════╗</color>");
+        // Debug.Log($"<color=magenta>║ APPLYING CARD EFFECT DEBUG      ║</color>");
+        // Debug.Log($"<color=magenta>╚══════════════════════════════════╝</color>");
         
         if (card == null)
         {
@@ -62,28 +87,29 @@ public class CardEffectProcessor : MonoBehaviour
             return;
         }
         
-        Debug.Log($"✓ Card: {card.cardName} (Type: {card.cardType})");
-        if (targetEnemy != null)
-        {
-            Debug.Log($"✓ Target: {targetEnemy.enemyName}");
-            Debug.Log($"✓ Target HP BEFORE: {targetEnemy.currentHealth}/{targetEnemy.maxHealth}");
-        }
-        else if (card.isAoE)
-        {
-            Debug.Log($"✓ AoE Target: All enemies");
-        }
+        // Debug.Log($"✓ Card: {card.cardName} (Type: {card.cardType})");
+        // if (targetEnemy != null)
+        // {
+        //     Debug.Log($"✓ Target: {targetEnemy.enemyName}");
+        //     Debug.Log($"✓ Target HP BEFORE: {targetEnemy.currentHealth}/{targetEnemy.maxHealth}");
+        // }
+        // else if (card.isAoE)
+        // {
+        //     Debug.Log($"✓ AoE Target: All enemies");
+        // }
         
-        if (showDetailedLogs)
-        {
-            string targetName = targetEnemy != null ? targetEnemy.enemyName : "All enemies";
-            Debug.Log($"<color=cyan>═══ Applying {card.cardName} to {targetName} ═══</color>");
-        }
+        // if (showDetailedLogs)
+        // {
+        //     string targetName = targetEnemy != null ? targetEnemy.enemyName : "All enemies";
+        //     Debug.Log($"<color=cyan>═══ Applying {card.cardName} to {targetName} ═══</color>");
+        // }
         
         // Check if this is an AoE card
         if (card.isAoE)
         {
-            Debug.Log($"<color=orange>⚡ AoE Card detected: {card.cardName} will hit all enemies!</color>");
-            ApplyAoECard(card, player, targetScreenPosition);
+            // Debug log removed to prevent memory leaks:
+            // Debug.Log($"<color=orange>⚡ AoE Card detected: {card.cardName} will hit all enemies!</color>");
+            ApplyAoECard(card, player, targetScreenPosition, isDelayed);
         }
         else
         {
@@ -91,19 +117,19 @@ public class CardEffectProcessor : MonoBehaviour
             switch (card.cardType)
             {
                 case CardType.Attack:
-                    ApplyAttackCard(card, targetEnemy, player, targetScreenPosition);
+                    ApplyAttackCard(card, targetEnemy, player, targetScreenPosition, isDelayed);
                     break;
                 
                 case CardType.Guard:
-                    ApplyGuardCard(card, player);
+                    ApplyGuardCard(card, player, isDelayed);
                     break;
                 
                 case CardType.Skill:
-                    ApplySkillCard(card, targetEnemy, player, targetScreenPosition);
+                    ApplySkillCard(card, targetEnemy, player, targetScreenPosition, isDelayed);
                     break;
                 
                 case CardType.Power:
-                    ApplyPowerCard(card, player);
+                    ApplyPowerCard(card, player, isDelayed);
                     break;
                 
                 default:
@@ -116,9 +142,10 @@ public class CardEffectProcessor : MonoBehaviour
     /// <summary>
     /// Apply an AoE card - affects all enemies
     /// </summary>
-    private void ApplyAoECard(Card card, Character player, Vector3 targetScreenPosition)
+    private void ApplyAoECard(Card card, Character player, Vector3 targetScreenPosition, bool isDelayed = false)
     {
-        Debug.Log($"<color=orange>🎯 Applying AoE card: {card.cardName}</color>");
+        // Debug log removed to prevent memory leaks:
+        // Debug.Log($"<color=orange>🎯 Applying AoE card: {card.cardName}</color>");
         
         // Get all active enemies and their display indices BEFORE applying damage
         // This prevents index mismatches when enemies are killed during AoE
@@ -133,7 +160,8 @@ public class CardEffectProcessor : MonoBehaviour
         var activeDisplays = combatDisplayManager.GetActiveEnemyDisplays();
         List<(Enemy enemy, int displayIndex)> validTargets = new List<(Enemy, int)>();
         
-        Debug.Log($"<color=cyan>🔍 AoE Debug: Found {activeDisplays.Count} active displays</color>");
+        // Debug log removed to prevent memory leaks:
+        // Debug.Log($"<color=cyan>🔍 AoE Debug: Found {activeDisplays.Count} active displays</color>");
         
         for (int i = 0; i < activeDisplays.Count; i++)
         {
@@ -184,12 +212,64 @@ public class CardEffectProcessor : MonoBehaviour
         // Mark AoE attack as in progress to defer wave completion checks
         combatDisplayManager.StartAoEAttack();
         
-        // Calculate damage once for all targets
-        float totalDamage = (card.cardType == CardType.Attack || (card.cardType == CardType.Skill && card.baseDamage > 0))
-            ? DamageCalculator.CalculateCardDamage(card, player)
-            : 0f;
+        // Check for momentum-based damage scaling ("per Momentum spent")
+        float totalDamage = 0f;
+        int momentumSpent = 0;
+        
+        if (player != null && MomentumEffectParser.HasPerMomentumSpent(card.description))
+        {
+            // Handle "per Momentum spent" damage
+            string desc = card.description ?? "";
+            
+            // Spend momentum first
+            int spendAmount = MomentumEffectParser.ParseSpendMomentum(desc);
+            if (spendAmount == -1) // Spend all
+            {
+                momentumSpent = player.SpendAllMomentum();
+            }
+            else if (spendAmount > 0)
+            {
+                momentumSpent = player.SpendMomentum(spendAmount);
+            }
+            
+            if (momentumSpent > 0)
+            {
+                // Calculate damage per momentum with attribute scaling
+                // Pass card parameter so it can use card.baseDamage if description uses {damage} placeholder
+                totalDamage = MomentumEffectParser.CalculatePerMomentumDamage(desc, momentumSpent, player, card);
+                Debug.Log($"<color=cyan>[Momentum] Spent {momentumSpent} momentum, dealing {totalDamage:F1} total damage (per momentum scaling)</color>");
+            }
+            else
+            {
+                Debug.LogWarning($"[Momentum] {card.cardName} requires momentum but player has none!");
+                combatDisplayManager.EndAoEAttack();
+                return;
+            }
+        }
+        else
+        {
+            // Standard damage calculation
+            totalDamage = (card.cardType == CardType.Attack || (card.cardType == CardType.Skill && card.baseDamage > 0))
+                ? DamageCalculator.CalculateCardDamage(card, player)
+                : 0f;
+        }
+
+        // Apply delayed card bonus: +25% damage for delayed attack cards
+        if (isDelayed && totalDamage > 0f)
+        {
+            totalDamage *= 1.25f;
+            Debug.Log($"<color=cyan>[Delayed Bonus] AoE attack card gains +25% damage: {totalDamage:F1}</color>");
+        }
+
+        if (totalDamage > 0f)
+        {
+            totalDamage = CombatDeckManager.ApplyDamageModifier(totalDamage);
+        }
         
         Debug.Log($"<color=green>🎯 AoE will hit all {validTargets.Count} enemies (aoeTargets: {card.aoeTargets}, damage: {totalDamage})</color>");
+        
+        // Calculate damage breakdown for status effects (same for all targets)
+        DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, totalDamage);
         
         // Apply all damage in batch
         for (int n = 0; n < maxTargets; n++)
@@ -207,6 +287,9 @@ public class CardEffectProcessor : MonoBehaviour
             
             // Apply damage
             combatDisplayManager.PlayerAttackEnemy(displayIndex, totalDamage);
+            
+            // Apply automatic status effects based on damage types
+            ApplyAutomaticStatusEffects(enemy, damageBreakdown, card);
             
             Debug.Log($"<color=yellow>  After damage: {enemy.enemyName} HP is now {enemy.currentHealth}/{enemy.maxHealth}</color>");
         }
@@ -387,20 +470,354 @@ public class CardEffectProcessor : MonoBehaviour
     }
     
     /// <summary>
+    /// Calculate damage breakdown by type for a card
+    /// This is needed for status effects that scale with specific damage types
+    /// </summary>
+    private DamageBreakdown CalculateDamageBreakdown(Card card, Character player, float totalDamage)
+    {
+        // For now, we'll use a simplified approach:
+        // If card has a primary damage type, assign all damage to that type
+        // TODO: In the future, this could be enhanced to track actual damage by type from modifiers
+        
+        DamageBreakdown breakdown = new DamageBreakdown(0f, 0f, 0f, 0f, 0f, totalDamage);
+        
+        if (card == null) return breakdown;
+        
+        // Assign damage based on primary damage type
+        // This is a simplification - ideally we'd track actual damage by type
+        switch (card.primaryDamageType)
+        {
+            case DamageType.Physical:
+                breakdown.physical = totalDamage;
+                break;
+            case DamageType.Fire:
+                breakdown.fire = totalDamage;
+                break;
+            case DamageType.Cold:
+                breakdown.cold = totalDamage;
+                break;
+            case DamageType.Lightning:
+                breakdown.lightning = totalDamage;
+                break;
+            case DamageType.Chaos:
+                breakdown.chaos = totalDamage;
+                break;
+        }
+        
+        return breakdown;
+    }
+    
+    /// <summary>
+    /// Apply automatic status effects based on damage types
+    /// - Cold damage always inflicts Chilled (and Freeze if threshold met)
+    /// - Fire damage can inflict Ignite
+    /// - Lightning damage can inflict Shocked
+    /// - Physical damage from attacks can inflict Bleeding
+    /// </summary>
+    private void ApplyAutomaticStatusEffects(Enemy targetEnemy, DamageBreakdown damageBreakdown, Card card)
+    {
+        if (targetEnemy == null) return;
+        
+        // Cold damage always inflicts Chilled
+        if (damageBreakdown.cold > 0f)
+        {
+            StatusEffect chilledEffect = StatusEffectFactory.CreateChilled(damageBreakdown.cold, 2);
+            ApplyStatusEffectToEnemy(targetEnemy, chilledEffect);
+            Debug.Log($"[Auto Status] Applied Chilled from {damageBreakdown.cold} cold damage");
+            
+            // Check for Freeze: cold damage >= 10% of enemy max HP
+            float coldDamagePercent = (damageBreakdown.cold / targetEnemy.maxHealth) * 100f;
+            if (coldDamagePercent >= 10f)
+            {
+                StatusEffect frozenEffect = StatusEffectFactory.CreateFrozen(damageBreakdown.cold, targetEnemy.maxHealth);
+                ApplyStatusEffectToEnemy(targetEnemy, frozenEffect);
+                Debug.Log($"[Auto Status] Applied Frozen from {damageBreakdown.cold} cold damage ({coldDamagePercent:F1}% of max HP)");
+            }
+        }
+        
+        // Fire damage can inflict Ignite
+        if (damageBreakdown.fire > 0f)
+        {
+            StatusEffect igniteEffect = StatusEffectFactory.CreateIgnite(damageBreakdown.fire, 4);
+            ApplyStatusEffectToEnemy(targetEnemy, igniteEffect);
+            Debug.Log($"[Auto Status] Applied Ignite from {damageBreakdown.fire} fire damage");
+        }
+        
+        // Lightning damage can inflict Shocked
+        if (damageBreakdown.lightning > 0f)
+        {
+            StatusEffect shockedEffect = StatusEffectFactory.CreateShocked(damageBreakdown.lightning, 2);
+            ApplyStatusEffectToEnemy(targetEnemy, shockedEffect);
+            Debug.Log($"[Auto Status] Applied Shocked from {damageBreakdown.lightning} lightning damage");
+        }
+        
+        // Physical damage from attacks can inflict Bleeding
+        if (damageBreakdown.physical > 0f && card != null && card.cardType == CardType.Attack)
+        {
+            StatusEffect bleedEffect = StatusEffectFactory.CreateBleeding(damageBreakdown.physical, 5);
+            ApplyStatusEffectToEnemy(targetEnemy, bleedEffect);
+            Debug.Log($"[Auto Status] Applied Bleeding from {damageBreakdown.physical} physical attack damage");
+        }
+    }
+    
+    /// <summary>
     /// Apply an attack card - deal damage to enemy.
     /// </summary>
-    private void ApplyAttackCard(Card card, Enemy targetEnemy, Character player, Vector3 targetScreenPosition)
+    private void ApplyAttackCard(Card card, Enemy targetEnemy, Character player, Vector3 targetScreenPosition, bool isDelayed = false)
     {
         Debug.Log($"<color=yellow>→ Attack card detected!</color>");
         
-        // Calculate total damage
-        float totalDamage = DamageCalculator.CalculateCardDamage(card, player);
+        // Process momentum threshold effects BEFORE damage calculation
+        MomentumThresholdResult momentumEffects = ProcessMomentumThresholdEffects(card, player, CardType.Attack);
+        
+        // Check if card should be AoE based on description ("to all enemies")
+        // This handles cases where isAoE is false but description says "to all enemies"
+        string desc = card.description ?? "";
+        bool shouldBeAoE = card.isAoE || 
+                          desc.Contains("to all enemies", System.StringComparison.OrdinalIgnoreCase) ||
+                          desc.Contains("all enemies", System.StringComparison.OrdinalIgnoreCase);
+        
+        // If card has "per Momentum spent" AND "to all enemies", route to AoE path
+        // ApplyAoECard already handles "per Momentum spent" damage calculation
+        if (shouldBeAoE && player != null && MomentumEffectParser.HasPerMomentumSpent(desc))
+        {
+            Debug.Log($"<color=yellow>[Momentum + AoE] {card.cardName} has 'per Momentum spent' and 'to all enemies' - routing to AoE path</color>");
+            ApplyAoECard(card, player, targetScreenPosition, isDelayed);
+            
+            // Process generic on-play effects (e.g., Draw, Momentum gain)
+            ApplyOnPlayEffects(card, player, momentumEffects);
+            
+            // Apply momentum threshold effects
+            if (momentumEffects != null)
+            {
+                ApplyMomentumThresholdResult(momentumEffects, card, player, targetEnemy);
+            }
+            return; // AoE path handles everything
+        }
+        
+        // Check for momentum-based damage scaling ("per Momentum spent")
+        float totalDamage = 0f;
+        int momentumSpent = 0;
+        
+        if (player != null && MomentumEffectParser.HasPerMomentumSpent(desc))
+        {
+            // Handle "per Momentum spent" damage (single target)
+            // Spend momentum first
+            int spendAmount = MomentumEffectParser.ParseSpendMomentum(desc);
+            if (spendAmount == -1) // Spend all
+            {
+                momentumSpent = player.SpendAllMomentum();
+            }
+            else if (spendAmount > 0)
+            {
+                momentumSpent = player.SpendMomentum(spendAmount);
+            }
+            
+            if (momentumSpent > 0)
+            {
+                // Calculate damage per momentum with attribute scaling
+                // Pass card parameter so it can use card.baseDamage if description uses {damage} placeholder
+                totalDamage = MomentumEffectParser.CalculatePerMomentumDamage(desc, momentumSpent, player, card);
+                Debug.Log($"<color=cyan>[Momentum] Spent {momentumSpent} momentum, dealing {totalDamage:F1} total damage (per momentum scaling)</color>");
+            }
+            else
+            {
+                Debug.LogWarning($"[Momentum] {card.cardName} requires momentum but player has none!");
+                return;
+            }
+        }
+        else
+        {
+            // Standard damage calculation
+            totalDamage = DamageCalculator.CalculateCardDamage(card, player);
+        }
+        
+        // Multi-hit attack: Check card's isMultiHit property EARLY (before momentum effects that might return early)
+        bool isMultiHit = card.isMultiHit;
+        int hitCount = isMultiHit ? Mathf.Max(1, card.hitCount) : 1; // Ensure at least 1 hit
+        
+        // Debug logs removed to prevent memory leaks from string allocations
+        // Uncomment only when debugging multi-hit issues:
+        // Debug.Log($"[Multi-Hit Debug] Card: {card.cardName}, isMultiHit: {card.isMultiHit}, hitCount: {card.hitCount}, calculated hits: {hitCount}");
+        // Debug.Log($"[Multi-Hit Debug] Card type: {card.cardType}, baseDamage: {card.baseDamage}");
+        
+        // if (isMultiHit)
+        // {
+        //     Debug.Log($"<color=cyan>[Multi-Hit] {card.cardName} will hit {hitCount} times!</color>");
+        // }
+        
+        // Apply momentum threshold effects that modify damage/targeting
+        // NOTE: Multi-hit cards should still apply multi-hit even if momentum converts to AoE/random targets
+        if (momentumEffects != null)
+        {
+            // Convert to AoE if threshold met
+            if (momentumEffects.convertToAoE)
+            {
+                // For multi-hit AoE, we need to handle it specially
+                if (isMultiHit && hitCount > 1)
+                {
+                    Debug.Log($"<color=yellow>[Multi-Hit + AoE] {card.cardName} is multi-hit AND AoE - applying {hitCount} hits to all enemies</color>");
+                    // Apply multi-hit AoE (each enemy gets hit multiple times)
+                    StartCoroutine(ApplyMultiHitAoE(card, player, targetScreenPosition, hitCount, totalDamage, isDelayed));
+                }
+                else
+                {
+                    // Convert single-target attack to AoE
+                    ApplyAoECard(card, player, targetScreenPosition, isDelayed);
+                }
+                // Apply other momentum effects
+                ApplyMomentumThresholdResult(momentumEffects, card, player, targetEnemy);
+                return; // AoE path handles everything
+            }
+            
+            // Random targets instead of single target
+            if (momentumEffects.randomTargetCount > 0)
+            {
+                // For multi-hit random targets, apply multi-hit to each random target
+                var allEnemies = GetAllActiveEnemies();
+                if (allEnemies.Count > 0)
+                {
+                    // Shuffle and pick random targets
+                    var shuffled = new List<Enemy>(allEnemies);
+                    for (int i = 0; i < shuffled.Count; i++)
+                    {
+                        var temp = shuffled[i];
+                        int randomIndex = Random.Range(i, shuffled.Count);
+                        shuffled[i] = shuffled[randomIndex];
+                        shuffled[randomIndex] = temp;
+                    }
+                    
+                    int targetsToHit = Mathf.Min(momentumEffects.randomTargetCount, shuffled.Count);
+                    
+                    if (isMultiHit && hitCount > 1)
+                    {
+                        Debug.Log($"<color=yellow>[Multi-Hit + Random] {card.cardName} is multi-hit AND random targets - applying {hitCount} hits to {targetsToHit} random enemies</color>");
+                        // Apply multi-hit to each random target
+                        StartCoroutine(ApplyMultiHitRandomTargets(shuffled, targetsToHit, totalDamage, hitCount, card, targetScreenPosition));
+                    }
+                    else
+                    {
+                        // Single hit to random targets
+                        for (int i = 0; i < targetsToHit; i++)
+                        {
+                            Enemy randomEnemy = shuffled[i];
+                            int enemyIdx = FindActiveEnemyIndex(randomEnemy);
+                            if (enemyIdx >= 0 && combatManager != null)
+                            {
+                                combatManager.PlayerAttackEnemy(enemyIdx, totalDamage);
+                            }
+                        }
+                    }
+                    Debug.Log($"<color=cyan>[Momentum Effect] Hit {targetsToHit} random enemies instead of single target</color>");
+                    
+                    // Apply other momentum effects
+                    ApplyMomentumThresholdResult(momentumEffects, card, player, targetEnemy);
+                    return;
+                }
+            }
+        }
+        
+        // Apply delayed card bonus: +25% damage for delayed attack cards
+        if (isDelayed)
+        {
+            totalDamage *= 1.25f;
+            Debug.Log($"<color=cyan>[Delayed Bonus] Attack card gains +25% damage: {totalDamage:F1}</color>");
+        }
+        
+        // THIEF CARD EFFECTS: Check for prepared card interactions and dual wield
+        CardDataExtended extendedCard = GetCardDataExtended(card);
+        if (extendedCard != null && player != null)
+        {
+            // Check for prepared card count bonuses (Ambush, Poisoned Blade)
+            int preparedCount = ThiefCardEffects.GetPreparedCardCount();
+            if (preparedCount > 0)
+            {
+                // Ambush: +1 (+Dex/3) damage per prepared card
+                if (card.cardName.Contains("Ambush") || card.description.Contains("prepared cards"))
+                {
+                    // Check if dual wielding for enhanced effect
+                    bool isDualWielding = ThiefCardEffects.IsDualWielding(player);
+                    float bonusPerCard = isDualWielding ? 2f : 1f; // Dual: +2, Normal: +1
+                    
+                    // Parse dexterity scaling from description
+                    float dexDivisor = ParseDexterityDivisor(card.description);
+                    float dexBonus = dexDivisor > 0 ? player.dexterity / dexDivisor : 0f;
+                    
+                    float bonusDamage = (bonusPerCard + dexBonus) * preparedCount;
+                    totalDamage += bonusDamage;
+                    Debug.Log($"<color=cyan>[Thief] {card.cardName} gains +{bonusDamage:F1} damage from {preparedCount} prepared cards (dual wield: {isDualWielding})</color>");
+                }
+                
+                // Poisoned Blade: +1 Poison per prepared card
+                if (card.cardName.Contains("Poisoned Blade") || card.description.Contains("prepared cards"))
+                {
+                    // This will be handled in ApplySkillCard for status effects
+                }
+            }
+            
+            // Perfect Strike: Consume all prepared cards for bonus damage
+            if (card.cardName.Contains("Perfect Strike") || card.description.Contains("Consume all prepared"))
+            {
+                int consumedCount = ThiefCardEffects.ConsumeAllPreparedCards(player);
+                if (consumedCount > 0)
+                {
+                    bool isDualWielding = ThiefCardEffects.IsDualWielding(player);
+                    float bonusPerCard = isDualWielding ? 4f : 2f; // Dual: +4, Normal: +2
+                    
+                    // Parse dexterity scaling from description
+                    float dexDivisor = ParseDexterityDivisor(card.description);
+                    float dexBonus = dexDivisor > 0 ? player.dexterity / dexDivisor : 0f;
+                    
+                    float bonusDamage = (bonusPerCard + dexBonus) * consumedCount;
+                    totalDamage += bonusDamage;
+                    // Debug log removed to prevent memory leaks - uncomment only when debugging:
+                    // Debug.Log($"<color=orange>[Thief] Perfect Strike consumed {consumedCount} prepared cards, gained +{bonusDamage:F1} damage (dual wield: {isDualWielding})</color>");
+                }
+            }
+            
+            // Process dual wield effects
+            if (!string.IsNullOrEmpty(extendedCard.dualWieldEffect) && ThiefCardEffects.IsDualWielding(player))
+            {
+                ThiefCardEffects.ProcessDualWieldEffect(extendedCard.dualWieldEffect, card, player, targetEnemy);
+            }
+        }
+        
+        // Apply charge modifiers to damage
+        totalDamage = CombatDeckManager.ApplyDamageModifier(totalDamage); // CardDataExtended not available here, but damage modifier doesn't need it
 
         // Prefer CombatDisplayManager routing if we can resolve the enemy index
         int idx = FindActiveEnemyIndex(targetEnemy);
         if (idx >= 0 && combatManager != null)
         {
-            combatManager.PlayerAttackEnemy(idx, totalDamage);
+            // For multi-hit attacks, use coroutine to space out hits with animations
+            if (isMultiHit && hitCount > 1)
+            {
+                StartCoroutine(ApplyMultiHitAttack(combatManager, idx, totalDamage, hitCount, card, targetScreenPosition));
+            }
+            else
+            {
+                // Single hit - use normal path
+                // Note: combatManager is CombatDisplayManager which has PlayerAttackEnemy
+                combatManager.PlayerAttackEnemy(idx, totalDamage);
+                
+                // Trigger nudge animation for single hit
+                var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+                if (playerDisplay != null)
+                {
+                    playerDisplay.TriggerAttackNudge();
+                }
+            }
+            
+            // Process generic on-play effects (e.g., Draw, Momentum gain) BEFORE applying momentum threshold effects
+            // NOTE: momentumEffects was already processed at the start of this method (line 445)
+            // IMPORTANT: This must be called BEFORE the early return so card effects (like GainMomentum) are processed
+            ApplyOnPlayEffects(card, player, momentumEffects);
+            
+            // Apply momentum threshold effects after damage
+            if (momentumEffects != null)
+            {
+                ApplyMomentumThresholdResult(momentumEffects, card, player, targetEnemy);
+            }
             return;
         }
 
@@ -439,30 +856,49 @@ public class CardEffectProcessor : MonoBehaviour
         
         Debug.Log($"  Base damage: {card.baseDamage}");
         Debug.Log($"  Total calculated damage: {totalDamage}");
-        Debug.Log($"  Calling Enemy.TakeDamage({totalDamage})...");
         
-        // Apply damage to enemy
-        targetEnemy.TakeDamage(totalDamage);
+        // Note: isMultiHit and hitCount are already set above (before early return check)
+        // If we reach here, the early return didn't happen, so use the fallback path with multi-hit support
         
-        Debug.Log($"<color=red>  ⚔️ Dealt {totalDamage:F0} damage to {targetEnemy.enemyName}</color>");
-        Debug.Log($"<color=red>  💔 Target HP AFTER: {targetEnemy.currentHealth}/{targetEnemy.maxHealth}</color>");
+        // Apply damage to enemy (with charge modifier: ignore guard/armor)
+        bool ignoreGuardArmor = CombatDeckManager.ShouldIgnoreGuardArmor();
         
-        if (showDetailedLogs)
+        // For multi-hit in fallback path, use coroutine to space out hits
+        if (isMultiHit && hitCount > 1)
         {
-            Debug.Log($"  ⚔️ Dealt {totalDamage:F0} damage to {targetEnemy.enemyName}");
-            Debug.Log($"  💔 {targetEnemy.enemyName} HP: {targetEnemy.currentHealth}/{targetEnemy.maxHealth}");
+            StartCoroutine(ApplyMultiHitFallback(targetEnemy, totalDamage, hitCount, ignoreGuardArmor, card, targetScreenPosition));
         }
-        
-        // Show damage number
-        if (animationManager != null)
+        else
         {
-            // Convert DamageType to DamageNumberType
-            DamageNumberType damageNumberType = ConvertDamageType(card.primaryDamageType);
-            animationManager.ShowDamageNumber(totalDamage, targetScreenPosition, damageNumberType);
+            // Single hit - apply damage directly
+            targetEnemy.TakeDamage(totalDamage, ignoreGuardArmor);
+            
+            Debug.Log($"<color=red>  ⚔️ Dealt {totalDamage:F0} damage to {targetEnemy.enemyName}</color>");
+            Debug.Log($"<color=red>  💔 Target HP AFTER: {targetEnemy.currentHealth}/{targetEnemy.maxHealth}</color>");
+            
+            // Calculate damage breakdown for status effects
+            DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, totalDamage);
+            
+            // Apply automatic status effects based on damage types
+            ApplyAutomaticStatusEffects(targetEnemy, damageBreakdown, card);
+            
+            // Show damage number
+            if (animationManager != null)
+            {
+                DamageNumberType damageNumberType = ConvertDamageType(card.primaryDamageType);
+                animationManager.ShowDamageNumber(totalDamage, targetScreenPosition, damageNumberType);
+            }
+            
+            // Trigger nudge animation
+            var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+            if (playerDisplay != null)
+            {
+                playerDisplay.TriggerAttackNudge();
+            }
+            
+            // Update enemy display
+            UpdateEnemyDisplay(targetEnemy);
         }
-        
-        // Update enemy display to show new HP
-        UpdateEnemyDisplay(targetEnemy);
         
         // Apply guard if this attack grants any
         if (player != null && card.baseGuard > 0f)
@@ -480,8 +916,28 @@ public class CardEffectProcessor : MonoBehaviour
             }
         }
         
-        // Process generic on-play effects (e.g., Draw)
-        ApplyOnPlayEffects(card);
+        // Process generic on-play effects (e.g., Draw, Momentum gain)
+        // NOTE: momentumEffects was already processed at the start of this method (line 445)
+        ApplyOnPlayEffects(card, player, momentumEffects);
+        
+        // Apply momentum threshold effects (draw cards, stat boosts, etc.)
+        // Note: Additional momentum is handled in ApplyOnPlayEffects
+        if (momentumEffects != null)
+        {
+            // Don't apply additional momentum here - it's handled in ApplyOnPlayEffects
+            var effectsToApply = new MomentumThresholdResult
+            {
+                drawCards = momentumEffects.drawCards,
+                tempStrength = momentumEffects.tempStrength,
+                tempDexterity = momentumEffects.tempDexterity,
+                tempIntelligence = momentumEffects.tempIntelligence,
+                energyGain = momentumEffects.energyGain,
+                applyBleed = momentumEffects.applyBleed,
+                doubleNextAttack = momentumEffects.doubleNextAttack,
+                triggerAdrenalineBurst = momentumEffects.triggerAdrenalineBurst
+            };
+            ApplyMomentumThresholdResult(effectsToApply, card, player, targetEnemy);
+        }
         
         // NEW: Hook - apply structured combo ailment if present
         if (card.comboAilmentId != AilmentId.None)
@@ -513,11 +969,18 @@ public class CardEffectProcessor : MonoBehaviour
                 case AilmentId.Chill:
                     if (targetEnemy != null)
                     {
+                        // Calculate damage breakdown to get cold damage
+                        DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, totalDamage);
                         int chillDuration = card.comboAilmentDuration > 0 ? card.comboAilmentDuration : 2;
-                        float chillMagnitude = Mathf.Approximately(card.comboAilmentPortion, 0f) ? 20f : card.comboAilmentPortion;
-                        var chillEffect = new StatusEffect(StatusEffectType.Chill, "Chilled", chillMagnitude, chillDuration, true);
-                        ApplyStatusEffectToEnemy(targetEnemy, chillEffect);
-                        Debug.Log($"[Chill] Applied Chill (mag {chillMagnitude}, dur {chillDuration}) to {targetEnemy.enemyName}");
+                        
+                        // Chilled always applies when cold damage is dealt
+                        // Use actual cold damage from breakdown, or fallback to portion if no cold damage
+                        float coldDmg = damageBreakdown.cold > 0f ? damageBreakdown.cold : 
+                                       (Mathf.Approximately(card.comboAilmentPortion, 0f) ? 20f : card.comboAilmentPortion);
+                        
+                        StatusEffect chilledEffect = StatusEffectFactory.CreateChilled(coldDmg, chillDuration);
+                        ApplyStatusEffectToEnemy(targetEnemy, chilledEffect);
+                        Debug.Log($"[Chill] Applied Chill (cold damage: {coldDmg}, dur {chillDuration}) to {targetEnemy.enemyName}");
                     }
                     break;
             }
@@ -623,7 +1086,7 @@ public class CardEffectProcessor : MonoBehaviour
         // Basic implementation: create a transient GameObject with TooltipTrigger under the root canvas
         try
         {
-            var canvas = GameObject.FindObjectOfType<Canvas>();
+            var canvas = GameObject.FindFirstObjectByType<Canvas>();
             if (canvas == null) return;
             var go = new GameObject("LootTooltipProxy");
             go.transform.SetParent(canvas.transform, false);
@@ -704,16 +1167,25 @@ public class CardEffectProcessor : MonoBehaviour
         float baseXP = 5f;
         float areaMultiplier = 1f + 0.1f * (areaLevel - 1);
 
-        // Prefer rolled rarity on Enemy for XP
+        // Use enemy's experienceMultiplier from rarity modifiers (hidden base modifiers)
         float rarityMultiplier = 1f;
         if (enemy != null)
         {
-            switch (enemy.rarity)
+            // Prefer the hidden experienceMultiplier if available (from MonsterRarityModifiers)
+            if (enemy.experienceMultiplier > 1f)
             {
-                case EnemyRarity.Magic: rarityMultiplier = 1.4f; break;
-                case EnemyRarity.Rare: rarityMultiplier = 2.0f; break;
-                case EnemyRarity.Unique: rarityMultiplier = 3.0f; break;
-                default: rarityMultiplier = 1f; break;
+                rarityMultiplier = enemy.experienceMultiplier;
+            }
+            else
+            {
+                // Fallback to old hardcoded values if experienceMultiplier not set
+                switch (enemy.rarity)
+                {
+                    case EnemyRarity.Magic: rarityMultiplier = 1.4f; break;
+                    case EnemyRarity.Rare: rarityMultiplier = 2.0f; break;
+                    case EnemyRarity.Unique: rarityMultiplier = 3.0f; break;
+                    default: rarityMultiplier = 1f; break;
+                }
             }
         }
 
@@ -796,9 +1268,95 @@ public class CardEffectProcessor : MonoBehaviour
     /// <summary>
     /// Apply a guard card - add block to player.
     /// </summary>
-    private void ApplyGuardCard(Card card, Character player)
+    private void ApplyGuardCard(Card card, Character player, bool isDelayed = false)
     {
-        float guardAmount = CalculateGuard(card, player);
+        float guardAmount = 0f;
+        int momentumSpent = 0;
+        
+        // Check for momentum-based guard scaling ("Guard per Momentum spent")
+        if (player != null && MomentumEffectParser.HasGuardPerMomentumSpent(card.description))
+        {
+            // Handle "Guard per Momentum spent"
+            string desc = card.description ?? "";
+            
+            // Calculate base guard first (this will be added to momentum-based guard)
+            float baseGuard = CalculateGuard(card, player);
+            
+            // Spend momentum first
+            int spendAmount = MomentumEffectParser.ParseSpendMomentum(desc);
+            if (spendAmount == -1) // Spend all
+            {
+                momentumSpent = player.SpendAllMomentum();
+            }
+            else if (spendAmount > 0)
+            {
+                momentumSpent = player.SpendMomentum(spendAmount);
+            }
+            
+            if (momentumSpent > 0)
+            {
+                // Calculate guard per momentum (uses card's base guard + guard scaling)
+                float momentumGuard = MomentumEffectParser.CalculatePerMomentumGuard(desc, momentumSpent, card, player);
+                // Add base guard to momentum-based guard
+                guardAmount = baseGuard + momentumGuard;
+                Debug.Log($"<color=cyan>[Momentum] Spent {momentumSpent} momentum, gaining {baseGuard:F1} base guard + {momentumGuard:F1} momentum guard = {guardAmount:F1} total</color>");
+            }
+            else
+            {
+                Debug.LogWarning($"[Momentum] {card.cardName} requires momentum but player has none!");
+                // Still apply base guard if any
+                guardAmount = baseGuard;
+            }
+        }
+        else
+        {
+            // Standard guard calculation
+            guardAmount = CalculateGuard(card, player);
+        }
+        
+        // Apply delayed card bonus: +30% guard for delayed guard cards
+        if (isDelayed)
+        {
+            guardAmount *= 1.30f;
+            Debug.Log($"<color=cyan>[Delayed Bonus] Guard card gains +30% guard: {guardAmount:F1}</color>");
+        }
+        
+        // THIEF CARD EFFECTS: Check for dual wield and preparation bonuses
+        CardDataExtended extendedCard = GetCardDataExtended(card);
+        if (extendedCard != null && player != null)
+        {
+            // Shadow Step: Preparation bonus (+2 Guard + 1 temp Dex when unleashed)
+            // This is handled in PreparationManager when card is unleashed
+            
+            // Process dual wield effects
+            if (!string.IsNullOrEmpty(extendedCard.dualWieldEffect) && ThiefCardEffects.IsDualWielding(player))
+            {
+                ThiefCardEffects.ProcessDualWieldEffect(extendedCard.dualWieldEffect, card, player);
+            }
+        }
+        
+        // Process momentum threshold effects BEFORE applying guard
+        MomentumThresholdResult momentumEffects = ProcessMomentumThresholdEffects(card, player, CardType.Guard);
+        
+        // Apply momentum-based guard bonuses
+        if (momentumEffects != null)
+        {
+            // Guard per momentum (e.g., "Momentum, gain +1 Guard per Momentum")
+            if (momentumEffects.guardPerMomentum > 0)
+            {
+                int currentMomentum = player.GetMomentum();
+                float bonusGuard = momentumEffects.guardPerMomentum * currentMomentum;
+                guardAmount += bonusGuard;
+                Debug.Log($"<color=cyan>[Momentum Effect] Gained {bonusGuard:F0} guard from {currentMomentum} momentum ({momentumEffects.guardPerMomentum} per momentum)</color>");
+            }
+            
+            // Additional guard flat amount
+            if (momentumEffects.additionalGuard > 0)
+            {
+                guardAmount += momentumEffects.additionalGuard;
+                Debug.Log($"<color=cyan>[Momentum Effect] Gained {momentumEffects.additionalGuard} additional guard</color>");
+            }
+        }
         
         // Apply guard to player
         if (player != null)
@@ -819,28 +1377,281 @@ public class CardEffectProcessor : MonoBehaviour
             }
         }
         
-        // Process generic on-play effects (e.g., Draw)
-        ApplyOnPlayEffects(card);
+        // Process generic on-play effects (e.g., Draw, Momentum gain)
+        ApplyOnPlayEffects(card, player);
+        
+        // Apply momentum threshold effects (draw cards, stat boosts, etc.)
+        if (momentumEffects != null)
+        {
+            ApplyMomentumThresholdResult(momentumEffects, card, player);
+        }
+    }
+    
+    /// <summary>
+    /// Apply temporary evasion buff to player from Skill card.
+    /// Supports both flat evasion (baseEvasion > 0) and percentage-based evasion (baseEvasion = 0, percentage in description).
+    /// </summary>
+    private void ApplyEvasionBuff(CardDataExtended card, Character player, bool isDelayed = false)
+    {
+        if (card == null || player == null) return;
+        
+        // Check if this is percentage-based evasion (Focus card pattern: "Gain X% increased evasion")
+        // Priority: Check description first, then fall back to baseEvasion
+        bool isPercentageBased = card.description.ToLower().Contains("% increased evasion");
+        float evasionAmount = 0f;
+        
+        if (isPercentageBased)
+        {
+            // Extract percentage from description (e.g., "Gain 20% increased evasion" -> 20)
+            // For Focus: "Gain 20% increased evasion for 2 turns"
+            var match = System.Text.RegularExpressions.Regex.Match(card.description, @"(\d+)%\s*increased\s*evasion", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            if (match.Success && float.TryParse(match.Groups[1].Value, out float percentage))
+            {
+                evasionAmount = percentage; // TempEvasion uses magnitude/100, so 20 = 20% increased
+            }
+            else
+            {
+                Debug.LogWarning($"[CardEffectProcessor] Could not parse percentage from Focus card description: {card.description}");
+                return;
+            }
+        }
+        else
+        {
+            // Flat evasion: base + scaling
+            evasionAmount = card.baseEvasion;
+            evasionAmount += card.evasionScaling.CalculateScalingBonus(player);
+        }
+        
+        // Apply delayed card bonus: +30% for delayed skill effects
+        if (isDelayed)
+        {
+            if (isPercentageBased)
+            {
+                evasionAmount *= 1.30f; // 30% more percentage
+            }
+            else
+            {
+                evasionAmount *= 1.30f; // 30% more flat evasion
+            }
+            Debug.Log($"<color=cyan>[Delayed Bonus] Evasion card gains +30% evasion: {evasionAmount:F1}</color>");
+        }
+        
+        // Find player's StatusEffectManager
+        PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        if (playerDisplay == null)
+        {
+            Debug.LogWarning("[CardEffectProcessor] PlayerCombatDisplay not found - cannot apply evasion buff");
+            return;
+        }
+        
+        StatusEffectManager statusManager = playerDisplay.GetStatusEffectManager();
+        if (statusManager == null)
+        {
+            Debug.LogWarning("[CardEffectProcessor] StatusEffectManager not found on player display - cannot apply evasion buff");
+            return;
+        }
+        
+        // Create and apply TempEvasion status effect
+        // Note: TempEvasion applies magnitude/100 as increasedEvasion percentage
+        int duration = card.evasionDuration < 0 ? -1 : card.evasionDuration; // -1 = rest of combat
+        StatusEffect evasionBuff = new StatusEffect(
+            StatusEffectType.TempEvasion,
+            $"{card.cardName}: Evasion",
+            evasionAmount,
+            duration,
+            false // Not a debuff
+        );
+        
+        statusManager.AddStatusEffect(evasionBuff);
+        string evasionType = isPercentageBased ? "% increased" : "flat";
+        Debug.Log($"  🟢 Player gained {evasionAmount:F0} {evasionType} evasion for {(duration < 0 ? "rest of combat" : $"{duration} turns")} from {card.cardName}");
     }
     
     /// <summary>
     /// Apply a skill card - various effects.
     /// </summary>
-    private void ApplySkillCard(Card card, Enemy targetEnemy, Character player, Vector3 targetScreenPosition)
+    private void ApplySkillCard(Card card, Enemy targetEnemy, Character player, Vector3 targetScreenPosition, bool isDelayed = false)
     {
         // Skills can have both damage and other effects
         if (card.baseDamage > 0)
         {
-            ApplyAttackCard(card, targetEnemy, player, targetScreenPosition);
+            ApplyAttackCard(card, targetEnemy, player, targetScreenPosition, isDelayed);
         }
         
-        if (card.baseGuard > 0)
+        // Check for guard granting (either baseGuard > 0 OR "Guard per Momentum spent" pattern)
+        bool hasGuardEffect = card.baseGuard > 0 || (player != null && MomentumEffectParser.HasGuardPerMomentumSpent(card.description));
+        
+        if (hasGuardEffect)
         {
-            ApplyGuardCard(card, player);
+            // Handle momentum-based guard for Skill cards
+            if (MomentumEffectParser.HasGuardPerMomentumSpent(card.description))
+            {
+                string desc = card.description ?? "";
+                int momentumSpent = 0;
+                
+                // Spend momentum first
+                int spendAmount = MomentumEffectParser.ParseSpendMomentum(desc);
+                if (spendAmount == -1) // Spend all
+                {
+                    momentumSpent = player.SpendAllMomentum();
+                }
+                else if (spendAmount > 0)
+                {
+                    momentumSpent = player.SpendMomentum(spendAmount);
+                }
+                
+                if (momentumSpent > 0)
+                {
+                    // Calculate guard per momentum (uses card's base guard + guard scaling)
+                    float guardAmount = MomentumEffectParser.CalculatePerMomentumGuard(desc, momentumSpent, card, player);
+                    
+                    // Apply delayed card bonus: +30% guard for delayed skill cards
+                    if (isDelayed)
+                    {
+                        guardAmount *= 1.30f;
+                        Debug.Log($"<color=cyan>[Delayed Bonus] Skill guard card gains +30% guard: {guardAmount:F1}</color>");
+                    }
+                    
+                    // Apply guard to player
+                    player.AddGuard(guardAmount);
+                    Debug.Log($"<color=cyan>[Momentum] Spent {momentumSpent} momentum, gained {guardAmount:F1} guard from {card.cardName}</color>");
+                    Debug.Log($"  🛡️ Player gained {guardAmount:F0} guard (Total: {player.currentGuard}/{player.maxHealth})");
+                    
+                    // Update the guard display UI
+                    PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+                    if (playerDisplay != null)
+                    {
+                        playerDisplay.UpdateGuardDisplay();
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"[Momentum] {card.cardName} requires momentum but player has none!");
+                }
+            }
+            else
+            {
+                // Standard guard card processing
+                ApplyGuardCard(card, player, isDelayed);
+            }
         }
         
-        // Process generic on-play effects (e.g., Draw)
-        ApplyOnPlayEffects(card);
+        // Apply evasion buffs (for Skill cards that grant evasion)
+        // Try to get CardDataExtended from card's source reference or lookup by name
+        CardDataExtended extendedCard = null;
+        
+        // Check if Card has sourceCardData reference (CardDataExtended)
+        if (card is Card cardObj && cardObj.sourceCardData != null)
+        {
+            extendedCard = cardObj.sourceCardData;
+        }
+        else
+        {
+            // Fallback: Look up by card name from Resources
+            var allCards = Resources.LoadAll<CardDataExtended>("Cards");
+            foreach (var cardAsset in allCards)
+            {
+                if (cardAsset != null && cardAsset.cardName == card.cardName)
+                {
+                    extendedCard = cardAsset;
+                    break;
+                }
+            }
+        }
+        
+        if (extendedCard != null && (extendedCard.baseEvasion > 0 || extendedCard.evasionScaling.CalculateScalingBonus(player) > 0 || extendedCard.description.ToLower().Contains("% increased evasion")))
+        {
+            ApplyEvasionBuff(extendedCard, player, isDelayed);
+        }
+        
+        // THIEF CARD EFFECTS: Check for prepared card interactions and dual wield
+        if (extendedCard != null && player != null)
+        {
+            // Feint: Advance prepared cards charge by 1 (or 2 if dual wielding)
+            if (card.cardName.Contains("Feint") || card.description.Contains("Advance prepared"))
+            {
+                bool isDualWielding = ThiefCardEffects.IsDualWielding(player);
+                int advanceAmount = isDualWielding ? 2 : 1;
+                ThiefCardEffects.AdvancePreparedCardCharges(advanceAmount);
+            }
+            
+            // Poisoned Blade: Apply +1 Poison per prepared card
+            if (card.cardName.Contains("Poisoned Blade") && targetEnemy != null)
+            {
+                int preparedCount = ThiefCardEffects.GetPreparedCardCount();
+                if (preparedCount > 0)
+                {
+                    // Find enemy's StatusEffectManager via EnemyCombatDisplay
+                    var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+                    foreach (var display in enemyDisplays)
+                    {
+                        if (display != null && display.GetCurrentEnemy() == targetEnemy)
+                        {
+                            var statusMgr = display.GetComponent<StatusEffectManager>();
+                            if (statusMgr != null)
+                            {
+                                // For Poisoned Blade, calculate damage if card deals damage
+                                // Otherwise use a base value for poison calculation
+                                float skillDamage = card.baseDamage > 0 ? DamageCalculator.CalculateCardDamage(card, player) : 10f;
+                                DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, skillDamage);
+                                
+                                // For Poisoned Blade, we apply poison per prepared card
+                                // Use actual damage breakdown, but ensure we have some damage to work with
+                                float physDmg = damageBreakdown.physical > 0f ? damageBreakdown.physical : 10f; // Fallback
+                                float chaosDmg = damageBreakdown.chaos > 0f ? damageBreakdown.chaos : 0f;
+                                
+                                // Apply poison for each prepared card (each is a separate stack)
+                                for (int i = 0; i < preparedCount; i++)
+                                {
+                                    StatusEffect poisonEffect = StatusEffectFactory.CreatePoison(physDmg, chaosDmg, 3);
+                                    statusMgr.AddStatusEffect(poisonEffect);
+                                }
+                                Debug.Log($"<color=green>[Thief] Poisoned Blade applied {preparedCount} Poison stacks from {preparedCount} prepared cards</color>");
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Process dual wield effects
+            if (!string.IsNullOrEmpty(extendedCard.dualWieldEffect) && ThiefCardEffects.IsDualWielding(player))
+            {
+                ThiefCardEffects.ProcessDualWieldEffect(extendedCard.dualWieldEffect, card, player, targetEnemy);
+            }
+        }
+        
+        // Apply delayed card bonus for skill effects: +1 stack/effect or +30% duration
+        if (isDelayed)
+        {
+            ApplyDelayedSkillBonuses(card, targetEnemy, player);
+        }
+        
+        // Process momentum threshold effects
+        MomentumThresholdResult momentumEffects = ProcessMomentumThresholdEffects(card, player, CardType.Skill);
+        
+        // Process generic on-play effects (e.g., Draw, Momentum gain)
+        // NOTE: If momentum threshold modifies momentum gain, we need to handle it specially
+        ApplyOnPlayEffects(card, player, momentumEffects);
+        
+        // Apply momentum threshold effects (draw cards, stat boosts, etc.)
+        // Note: Additional momentum is handled in ApplyOnPlayEffects
+        if (momentumEffects != null)
+        {
+            // Don't apply additional momentum here - it's handled in ApplyOnPlayEffects
+            var effectsToApply = new MomentumThresholdResult
+            {
+                drawCards = momentumEffects.drawCards,
+                tempStrength = momentumEffects.tempStrength,
+                tempDexterity = momentumEffects.tempDexterity,
+                tempIntelligence = momentumEffects.tempIntelligence,
+                energyGain = momentumEffects.energyGain,
+                applyBleed = momentumEffects.applyBleed,
+                doubleNextAttack = momentumEffects.doubleNextAttack,
+                triggerAdrenalineBurst = momentumEffects.triggerAdrenalineBurst
+            };
+            ApplyMomentumThresholdResult(effectsToApply, card, player, targetEnemy);
+        }
         
         // NEW: If this skill is a Shout, consume Crumble on targets
         // Or if the card explicitly consumes an ailment (per-card)
@@ -895,29 +1706,206 @@ public class CardEffectProcessor : MonoBehaviour
     /// <summary>
     /// Apply a power card - buff player.
     /// </summary>
-    private void ApplyPowerCard(Card card, Character player)
+    private void ApplyPowerCard(Card card, Character player, bool isDelayed = false)
     {
-        // TODO: Implement buff system
         Debug.Log($"  💪 Power card applied: {card.cardName}");
         
-        // Process generic on-play effects (e.g., Draw)
-        ApplyOnPlayEffects(card);
+        // DIVINE FAVOR: "The next card you play applies their 'discarded' effect."
+        if (card.cardName.Contains("Divine Favor") || (card.description != null && card.description.Contains("next card") && card.description.Contains("discarded")))
+        {
+            var deckManager = CombatDeckManager.Instance;
+            if (deckManager != null)
+            {
+                // Use reflection to set the flag
+                var field = typeof(CombatDeckManager).GetField("nextCardAppliesDiscardedEffect", 
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                if (field != null)
+                {
+                    field.SetValue(deckManager, true);
+                    Debug.Log($"<color=yellow>[Divine Favor] Next card played will apply its discarded effect!</color>");
+                }
+            }
+        }
+        
+        // BERSERKER'S FURY: "For the rest of combat, when you gain Momentum, gain 1 additional."
+        if (player != null && (card.cardName == "Berserker's Fury" || card.groupKey == "Berserkers_Fury"))
+        {
+            player.momentumGainBonus += 1;
+            Debug.Log($"<color=orange>[Berserker's Fury] Activated! All momentum gains now grant +1 additional (Total bonus: {player.momentumGainBonus})</color>");
+        }
+        
+        // Apply delayed card bonus for power effects: +1 stack/effect or +30% duration
+        if (isDelayed)
+        {
+            ApplyDelayedPowerBonuses(card, player);
+        }
+        
+        // Process momentum threshold effects
+        MomentumThresholdResult momentumEffects = ProcessMomentumThresholdEffects(card, player, CardType.Power);
+        
+        // Process generic on-play effects (e.g., Draw, Momentum gain)
+        ApplyOnPlayEffects(card, player);
+        
+        // Apply momentum threshold effects (draw cards, stat boosts, etc.)
+        if (momentumEffects != null)
+        {
+            ApplyMomentumThresholdResult(momentumEffects, card, player);
+        }
+    }
+    
+    /// <summary>
+    /// Apply delayed bonuses for skill cards: +1 stack/effect or +30% duration
+    /// </summary>
+    private void ApplyDelayedSkillBonuses(Card card, Enemy targetEnemy, Character player)
+    {
+        if (card == null || card.effects == null) return;
+        
+        Debug.Log($"<color=cyan>[Delayed Bonus] Applying skill bonuses for {card.cardName}</color>");
+        
+        // Apply bonuses to status effects when they are created
+        // We'll modify the effects before they're processed
+        foreach (var effect in card.effects)
+        {
+            if (effect == null) continue;
+            
+            if (effect.effectType == EffectType.ApplyStatus)
+            {
+                // Increase magnitude by 1 (extra stack) or duration by 30%
+                if (effect.value > 0f)
+                {
+                    // If it's a stack-based effect, add 1 stack
+                    float originalValue = effect.value;
+                    effect.value += 1f;
+                    Debug.Log($"  → Status effect magnitude increased by 1: {originalValue} → {effect.value}");
+                }
+                else if (effect.duration > 0)
+                {
+                    // If it's duration-based, increase by 30%
+                    int originalDuration = effect.duration;
+                    effect.duration = Mathf.RoundToInt(effect.duration * 1.30f);
+                    Debug.Log($"  → Status effect duration increased by 30%: {originalDuration} → {effect.duration} turns");
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Apply delayed bonuses for power cards: +1 stack/effect or +30% duration
+    /// </summary>
+    private void ApplyDelayedPowerBonuses(Card card, Character player)
+    {
+        if (card == null || card.effects == null) return;
+        
+        Debug.Log($"<color=cyan>[Delayed Bonus] Applying power bonuses for {card.cardName}</color>");
+        
+        // Apply bonuses to buffs/effects
+        foreach (var effect in card.effects)
+        {
+            if (effect == null) continue;
+            
+            if (effect.effectType == EffectType.ApplyStatus || effect.effectType == EffectType.TemporaryStatBoost)
+            {
+                // Increase magnitude by 1 (extra stack) or duration by 30%
+                if (effect.value > 0f)
+                {
+                    // If it's a stack-based effect, add 1 stack
+                    float originalValue = effect.value;
+                    effect.value += 1f;
+                    Debug.Log($"  → Effect magnitude increased by 1: {originalValue} → {effect.value}");
+                }
+                else if (effect.duration > 0)
+                {
+                    // If it's duration-based, increase by 30%
+                    int originalDuration = effect.duration;
+                    effect.duration = Mathf.RoundToInt(effect.duration * 1.30f);
+                    Debug.Log($"  → Effect duration increased by 30%: {originalDuration} → {effect.duration} turns");
+                }
+            }
+        }
     }
 
     /// <summary>
-    /// Handle generic on-play effects that should apply regardless of card type (e.g., Draw).
+    /// Handle generic on-play effects that should apply regardless of card type (e.g., Draw, Momentum gain).
     /// </summary>
-    private void ApplyOnPlayEffects(Card card)
+    private void ApplyOnPlayEffects(Card card, Character player = null, MomentumThresholdResult momentumEffects = null)
     {
-        if (card == null || card.effects == null) return;
+        if (card == null)
+        {
+            Debug.LogWarning("[ApplyOnPlayEffects] Card is null!");
+            return;
+        }
+        
+        if (card.effects == null)
+        {
+            Debug.LogWarning($"[ApplyOnPlayEffects] Card '{card.cardName}' has null effects list!");
+            return;
+        }
+        
+        // Get player if not provided
+        if (player == null)
+        {
+            var charMgr = CharacterManager.Instance;
+            if (charMgr != null && charMgr.HasCharacter())
+            {
+                player = charMgr.GetCurrentCharacter();
+            }
+        }
+        
         int drawTotal = 0;
+        int momentumGain = 0;
+        
+        Debug.Log($"[ApplyOnPlayEffects] Processing {card.cardName} with {card.effects.Count} effect(s)");
+        
         foreach (var eff in card.effects)
         {
-            if (eff != null && eff.effectType == EffectType.Draw)
+            if (eff == null)
+            {
+                Debug.LogWarning($"[ApplyOnPlayEffects] Null effect found in card '{card.cardName}'");
+                continue;
+            }
+            
+            Debug.Log($"[ApplyOnPlayEffects] Effect: {eff.effectType}, Value: {eff.value}, Name: {eff.effectName}");
+            
+            if (eff.effectType == EffectType.Draw)
             {
                 drawTotal += Mathf.RoundToInt(eff.value);
             }
+            else if (eff.effectType == EffectType.GainMomentum)
+            {
+                // GainMomentum grants momentum stacks via StackSystem
+                int amount = Mathf.RoundToInt(eff.value);
+                momentumGain += amount;
+                Debug.Log($"[ApplyOnPlayEffects] Found GainMomentum effect: {amount} momentum");
+            }
         }
+        
+        // Apply momentum threshold modifications to momentum gain
+        if (momentumEffects != null && momentumEffects.additionalMomentum > 0)
+        {
+            // Check if this is a replacement ("instead of") or additional gain
+            CardDataExtended extendedCard = GetCardDataExtended(card);
+            bool isReplacement = false;
+            if (extendedCard != null && !string.IsNullOrEmpty(extendedCard.momentumEffectDescription))
+            {
+                // Check if effect text says "instead of"
+                isReplacement = extendedCard.momentumEffectDescription.ToLower().Contains("instead of");
+            }
+            
+            if (isReplacement && momentumGain > 0)
+            {
+                // Replace base momentum gain with the threshold amount
+                int oldGain = momentumGain;
+                momentumGain = momentumEffects.additionalMomentum;
+                Debug.Log($"<color=cyan>[Momentum Threshold] Replaced momentum gain: {oldGain} → {momentumGain} (from threshold effect)</color>");
+            }
+            else if (!isReplacement)
+            {
+                // Add to base momentum gain
+                momentumGain += momentumEffects.additionalMomentum;
+                Debug.Log($"<color=cyan>[Momentum Threshold] Added {momentumEffects.additionalMomentum} momentum to base gain (Total: {momentumGain})</color>");
+            }
+        }
+        
         if (drawTotal > 0)
         {
             var deckMgr = CombatDeckManager.Instance;
@@ -927,11 +1915,377 @@ public class CardEffectProcessor : MonoBehaviour
                 deckMgr.DrawCards(drawTotal);
             }
         }
+        
+        if (momentumGain > 0 && player != null)
+        {
+            // Apply combat-wide momentum gain bonus (e.g., Berserker's Fury)
+            int bonus = player.momentumGainBonus;
+            int totalMomentumGain = momentumGain + bonus;
+            
+            // Grant momentum stacks via StackSystem
+            var stackSystem = StackSystem.Instance;
+            if (stackSystem != null)
+            {
+                stackSystem.AddStacks(StackType.Momentum, totalMomentumGain);
+                if (bonus > 0)
+                {
+                    Debug.Log($"[Effect] Gained {momentumGain} Momentum stack(s) from {card.cardName} + {bonus} bonus = {totalMomentumGain} total (Total: {player.GetMomentum()})");
+                }
+                else
+                {
+                    Debug.Log($"[Effect] Gained {momentumGain} Momentum stack(s) from {card.cardName} (Total: {player.GetMomentum()})");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[Effect] StackSystem.Instance is null - cannot grant momentum stacks");
+            }
+        }
     }
     
     // REMOVED: Old CalculateDamage() method
     // Now using DamageCalculator.CalculateCardDamage() for consistent damage calculation
     // with proper character modifiers, embossing effects, and debug logging
+    
+    /// <summary>
+    /// Get CardDataExtended from a Card object
+    /// </summary>
+    private CardDataExtended GetCardDataExtended(Card card)
+    {
+        if (card == null) return null;
+        
+        // Check if Card has sourceCardData reference (CardDataExtended)
+        if (card is Card cardObj && cardObj.sourceCardData != null)
+        {
+            return cardObj.sourceCardData;
+        }
+        
+        // Fallback: Look up by card name from Resources
+        var allCards = Resources.LoadAll<CardDataExtended>("Cards");
+        foreach (var cardAsset in allCards)
+        {
+            if (cardAsset != null && cardAsset.cardName == card.cardName)
+            {
+                return cardAsset;
+            }
+        }
+        
+        return null;
+    }
+    
+    /// <summary>
+    /// Process momentum threshold effects for a card.
+    /// Returns a MomentumThresholdResult containing any modifications to apply.
+    /// </summary>
+    private MomentumThresholdResult ProcessMomentumThresholdEffects(Card card, Character player, CardType cardType)
+    {
+        var result = new MomentumThresholdResult();
+        if (card == null || player == null) return result;
+        
+        // Get CardDataExtended to access momentumEffectDescription
+        CardDataExtended extendedCard = GetCardDataExtended(card);
+        if (extendedCard == null || string.IsNullOrEmpty(extendedCard.momentumEffectDescription))
+        {
+            return result;
+        }
+        
+        int currentMomentum = player.GetMomentum();
+        if (currentMomentum <= 0) return result;
+        
+        // Parse threshold effects
+        var thresholdEffects = MomentumThresholdEffectParser.ParseThresholdEffects(extendedCard.momentumEffectDescription);
+        if (thresholdEffects.Count == 0) return result;
+        
+        // Get all applicable effects (sorted by threshold, highest first)
+        var applicableEffects = MomentumThresholdEffectParser.GetAllApplicableEffects(thresholdEffects, currentMomentum);
+        applicableEffects.Sort((a, b) => b.threshold.CompareTo(a.threshold)); // Highest threshold first
+        
+        Debug.Log($"<color=orange>[Momentum Threshold] {card.cardName} has {currentMomentum} momentum, checking {applicableEffects.Count} applicable effects</color>");
+        
+        // Process each applicable effect
+        foreach (var effect in applicableEffects)
+        {
+            var effectType = MomentumThresholdEffectParser.ParseEffectType(effect.effectText);
+            int numericValue = MomentumThresholdEffectParser.ParseNumericValue(effect.effectText);
+            
+            Debug.Log($"<color=yellow>[Momentum Threshold] {effect.threshold}+ Momentum: {effect.effectText} (Type: {effectType}, Value: {numericValue})</color>");
+            
+            switch (effectType)
+            {
+                case MomentumEffectType.CostReduction:
+                    result.costReduction = numericValue > 0 ? numericValue : 1; // Default to 1 if not specified
+                    Debug.Log($"<color=green>[Momentum] Cost reduced by {result.costReduction}</color>");
+                    break;
+                    
+                case MomentumEffectType.ConvertToAoE:
+                    result.convertToAoE = true;
+                    Debug.Log($"<color=green>[Momentum] Card converted to AoE</color>");
+                    break;
+                    
+                case MomentumEffectType.RandomTargets:
+                    result.randomTargetCount = numericValue > 0 ? numericValue : 2; // Default to 2
+                    Debug.Log($"<color=green>[Momentum] Will hit {result.randomTargetCount} random enemies</color>");
+                    break;
+                    
+                case MomentumEffectType.AdditionalMomentum:
+                    result.additionalMomentum = numericValue > 0 ? numericValue : 1; // Default to 1
+                    Debug.Log($"<color=green>[Momentum] Will gain {result.additionalMomentum} additional momentum</color>");
+                    break;
+                    
+                case MomentumEffectType.DrawCards:
+                    result.drawCards = numericValue > 0 ? numericValue : 1; // Default to 1
+                    Debug.Log($"<color=green>[Momentum] Will draw {result.drawCards} cards</color>");
+                    break;
+                    
+                case MomentumEffectType.TemporaryStatBoost:
+                    // Parse which stat and amount
+                    string lowerText = effect.effectText.ToLower();
+                    if (lowerText.Contains("strength"))
+                    {
+                        result.tempStrength = numericValue > 0 ? numericValue : 1;
+                        Debug.Log($"<color=green>[Momentum] Will gain {result.tempStrength} temporary Strength</color>");
+                    }
+                    else if (lowerText.Contains("dexterity"))
+                    {
+                        result.tempDexterity = numericValue > 0 ? numericValue : 1;
+                        Debug.Log($"<color=green>[Momentum] Will gain {result.tempDexterity} temporary Dexterity</color>");
+                    }
+                    else if (lowerText.Contains("intelligence"))
+                    {
+                        result.tempIntelligence = numericValue > 0 ? numericValue : 1;
+                        Debug.Log($"<color=green>[Momentum] Will gain {result.tempIntelligence} temporary Intelligence</color>");
+                    }
+                    break;
+                    
+                case MomentumEffectType.EnergyGain:
+                    result.energyGain = numericValue > 0 ? numericValue : 1; // Default to 1
+                    Debug.Log($"<color=green>[Momentum] Will gain {result.energyGain} Energy</color>");
+                    break;
+                    
+                case MomentumEffectType.ApplyAilment:
+                    // Parse ailment type and amount
+                    string ailmentText = effect.effectText.ToLower();
+                    if (ailmentText.Contains("bleed"))
+                    {
+                        result.applyBleed = numericValue > 0 ? numericValue : 1;
+                        Debug.Log($"<color=green>[Momentum] Will apply {result.applyBleed} Bleed to all enemies</color>");
+                    }
+                    // Add other ailments as needed
+                    break;
+                    
+                case MomentumEffectType.DoubleDamage:
+                    result.doubleNextAttack = true;
+                    Debug.Log($"<color=green>[Momentum] Next attack will deal double damage</color>");
+                    break;
+                    
+                case MomentumEffectType.GuardPerMomentum:
+                    result.guardPerMomentum = numericValue > 0 ? numericValue : 1; // Default to 1 per momentum
+                    Debug.Log($"<color=green>[Momentum] Will gain {result.guardPerMomentum} Guard per Momentum</color>");
+                    break;
+                    
+                case MomentumEffectType.AdditionalGuard:
+                    result.additionalGuard = numericValue > 0 ? numericValue : 1; // Default to 1
+                    Debug.Log($"<color=green>[Momentum] Will gain {result.additionalGuard} additional Guard</color>");
+                    break;
+                    
+                case MomentumEffectType.SpecialEffect:
+                    // Handle special effects like "Adrenaline Burst"
+                    // Match patterns like "Trigger Adrenaline Burst" or "Adrenaline Burst"
+                    string effectLower = effect.effectText.ToLower();
+                    if (effectLower.Contains("adrenaline burst") || 
+                        (effectLower.Contains("trigger") && effectLower.Contains("adrenaline")))
+                    {
+                        result.triggerAdrenalineBurst = true;
+                        Debug.Log($"<color=green>[Momentum] Will trigger Adrenaline Burst from: {effect.effectText}</color>");
+                    }
+                    break;
+            }
+        }
+        
+        return result;
+    }
+    
+    /// <summary>
+    /// Result of processing momentum threshold effects
+    /// </summary>
+    private class MomentumThresholdResult
+    {
+        public int costReduction = 0;
+        public bool convertToAoE = false;
+        public int randomTargetCount = 0;
+        public int additionalMomentum = 0;
+        public int drawCards = 0;
+        public int tempStrength = 0;
+        public int tempDexterity = 0;
+        public int tempIntelligence = 0;
+        public int energyGain = 0;
+        public int applyBleed = 0;
+        public bool doubleNextAttack = false;
+        public int guardPerMomentum = 0;
+        public int additionalGuard = 0;
+        public bool triggerAdrenalineBurst = false;
+    }
+    
+    /// <summary>
+    /// Apply momentum threshold result effects
+    /// </summary>
+    private void ApplyMomentumThresholdResult(MomentumThresholdResult result, Card card, Character player, Enemy targetEnemy = null)
+    {
+        if (result == null || player == null) return;
+        
+        // Draw cards
+        if (result.drawCards > 0)
+        {
+            var deckMgr = CombatDeckManager.Instance;
+            if (deckMgr != null)
+            {
+                deckMgr.DrawCards(result.drawCards);
+                Debug.Log($"<color=cyan>[Momentum Effect] Drew {result.drawCards} card(s)</color>");
+            }
+        }
+        
+        // Additional momentum gain (only if not already handled in ApplyOnPlayEffects)
+        // This is for cases where momentum is gained separately from card effects
+        // If momentum threshold says "Gain X instead of Y", that's handled in ApplyOnPlayEffects
+        // This is for pure additional momentum (not replacing base gain)
+        if (result.additionalMomentum > 0)
+        {
+            // Check if this is a replacement ("instead of") or additional gain
+            CardDataExtended extendedCard = GetCardDataExtended(card);
+            bool isReplacement = false;
+            if (extendedCard != null && !string.IsNullOrEmpty(extendedCard.momentumEffectDescription))
+            {
+                // Check if effect text says "instead of"
+                isReplacement = extendedCard.momentumEffectDescription.ToLower().Contains("instead of");
+            }
+            
+            if (!isReplacement)
+            {
+                var stackSystem = StackSystem.Instance;
+                if (stackSystem != null)
+                {
+                    int bonus = player.momentumGainBonus;
+                    int totalGain = result.additionalMomentum + bonus;
+                    stackSystem.AddStacks(StackType.Momentum, totalGain);
+                    Debug.Log($"<color=cyan>[Momentum Effect] Gained {result.additionalMomentum} additional momentum (Total: {player.GetMomentum()})</color>");
+                }
+            }
+            else
+            {
+                Debug.Log($"<color=cyan>[Momentum Effect] Momentum gain replacement handled in ApplyOnPlayEffects</color>");
+            }
+        }
+        
+        // Temporary stat boosts
+        PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        if (playerDisplay != null)
+        {
+            StatusEffectManager statusManager = playerDisplay.GetStatusEffectManager();
+            if (statusManager != null)
+            {
+                if (result.tempStrength > 0)
+                {
+                    var strengthEffect = new StatusEffect(StatusEffectType.Strength, "TempStrength", result.tempStrength, -1, false);
+                    statusManager.AddStatusEffect(strengthEffect);
+                    Debug.Log($"<color=cyan>[Momentum Effect] Gained {result.tempStrength} temporary Strength</color>");
+                }
+                
+                if (result.tempDexterity > 0)
+                {
+                    var dexEffect = new StatusEffect(StatusEffectType.Dexterity, "TempDexterity", result.tempDexterity, -1, false);
+                    statusManager.AddStatusEffect(dexEffect);
+                    Debug.Log($"<color=cyan>[Momentum Effect] Gained {result.tempDexterity} temporary Dexterity</color>");
+                }
+                
+                if (result.tempIntelligence > 0)
+                {
+                    var intEffect = new StatusEffect(StatusEffectType.Intelligence, "TempIntelligence", result.tempIntelligence, -1, false);
+                    statusManager.AddStatusEffect(intEffect);
+                    Debug.Log($"<color=cyan>[Momentum Effect] Gained {result.tempIntelligence} temporary Intelligence</color>");
+                }
+            }
+        }
+        
+        // Energy gain (next turn)
+        if (result.energyGain > 0)
+        {
+            // Store energy gain for next turn
+            // This would need to be tracked in Character or CombatDeckManager
+            // For now, we'll add it directly to current energy
+            player.RestoreMana(result.energyGain);
+            Debug.Log($"<color=cyan>[Momentum Effect] Gained {result.energyGain} Energy</color>");
+        }
+        
+        // Apply ailments to all enemies
+        if (result.applyBleed > 0)
+        {
+            var allEnemies = GetAllActiveEnemies();
+            // For momentum effects, use applyBleed as the physical damage amount
+            // This represents the physical damage that would cause bleeding
+            float physicalDmg = result.applyBleed;
+            foreach (var enemy in allEnemies)
+            {
+                StatusEffect bleedEffect = StatusEffectFactory.CreateBleeding(physicalDmg, 5);
+                ApplyStatusEffectToEnemy(enemy, bleedEffect);
+            }
+            Debug.Log($"<color=cyan>[Momentum Effect] Applied Bleed to all enemies (physical damage: {physicalDmg})</color>");
+        }
+        
+        // Double next attack (store flag on player)
+        if (result.doubleNextAttack)
+        {
+            // This would need to be tracked in Character or CombatDeckManager
+            // For now, we'll apply it immediately to the current attack
+            // TODO: Implement "next attack" tracking
+            Debug.Log($"<color=cyan>[Momentum Effect] Next attack will deal double damage (TODO: implement next attack tracking)</color>");
+        }
+        
+        // Adrenaline Burst special effect
+        if (result.triggerAdrenalineBurst)
+        {
+            // Parse damage from effect text: "deal 3 (+dex/6) damage to all enemies"
+            CardDataExtended extendedCard = GetCardDataExtended(card);
+            if (extendedCard != null && !string.IsNullOrEmpty(extendedCard.momentumEffectDescription))
+            {
+                string desc = extendedCard.momentumEffectDescription;
+                var match = System.Text.RegularExpressions.Regex.Match(desc, @"deal\s+(\d+)\s*\([^)]*dex/(\d+)[^)]*\)\s*damage\s+to\s+all\s+enemies", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                if (match.Success)
+                {
+                    if (int.TryParse(match.Groups[1].Value, out int baseDmg) && int.TryParse(match.Groups[2].Value, out int dexDiv))
+                    {
+                        float dexBonus = player.dexterity / (float)dexDiv;
+                        float totalDmg = baseDmg + dexBonus;
+                        
+                        var allEnemies = GetAllActiveEnemies();
+                        foreach (var enemy in allEnemies)
+                        {
+                            int idx = FindActiveEnemyIndex(enemy);
+                            if (idx >= 0 && combatManager != null)
+                            {
+                                combatManager.PlayerAttackEnemy(idx, totalDmg);
+                            }
+                        }
+                        Debug.Log($"<color=orange>[Momentum Effect] Adrenaline Burst: Dealt {totalDmg:F1} damage to all enemies</color>");
+                    }
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Parse dexterity divisor from card description (e.g., "+Dex/4" -> 4)
+    /// </summary>
+    private float ParseDexterityDivisor(string description)
+    {
+        if (string.IsNullOrEmpty(description)) return 0f;
+        
+        var match = System.Text.RegularExpressions.Regex.Match(description, @"\([^)]*Dex\s*/\s*(\d+)[^)]*\)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        if (match.Success)
+        {
+            return float.Parse(match.Groups[1].Value);
+        }
+        return 0f;
+    }
     
     /// <summary>
     /// Calculate total guard from a card + player stats.
@@ -945,14 +2299,13 @@ public class CardEffectProcessor : MonoBehaviour
             return baseGuard;
         }
         
-        // Add attribute scaling for guard
+        // Add attribute scaling for guard (includes both multiplicative and divisor scaling)
         if (card.guardScaling != null)
         {
-            float strBonus = player.strength * card.guardScaling.strengthScaling;
-            float dexBonus = player.dexterity * card.guardScaling.dexterityScaling;
-            float intBonus = player.intelligence * card.guardScaling.intelligenceScaling;
+            float scalingBonus = card.guardScaling.CalculateScalingBonus(player);
+            baseGuard += scalingBonus;
             
-            baseGuard += strBonus + dexBonus + intBonus;
+            Debug.Log($"[Guard Calculation] {card.cardName}: Base={card.baseGuard}, ScalingBonus={scalingBonus:F2}, Total={baseGuard:F2}");
         }
         
         return baseGuard;
@@ -1023,6 +2376,241 @@ public class CardEffectProcessor : MonoBehaviour
                 return DamageNumberType.Normal; // Chaos uses Normal for now
             default:
                 return DamageNumberType.Normal;
+        }
+    }
+    
+    /// <summary>
+    /// Coroutine to apply multi-hit attack via CombatDisplayManager with delays between hits.
+    /// </summary>
+    private IEnumerator ApplyMultiHitAttack(CombatDisplayManager combatMgr, int enemyIndex, float damage, int hits, Card card, Vector3 targetPosition)
+    {
+        var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        Character player = characterManager != null && characterManager.HasCharacter() ? characterManager.GetCurrentCharacter() : null;
+        
+        // Calculate damage breakdown for status effects (same for all hits)
+        DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, damage);
+        
+        // Get enemy from index for status effects
+        Enemy targetEnemy = null;
+        var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+        if (enemyIndex >= 0 && enemyIndex < enemyDisplays.Length && enemyDisplays[enemyIndex] != null)
+        {
+            targetEnemy = enemyDisplays[enemyIndex].GetCurrentEnemy();
+        }
+        
+        Debug.Log($"<color=cyan>[Multi-Hit Coroutine] Starting {hits} hits with 0.3s delay between each</color>");
+        
+        for (int hit = 0; hit < hits; hit++)
+        {
+            Debug.Log($"<color=yellow>[Multi-Hit Coroutine] Processing hit {hit + 1}/{hits}</color>");
+            
+            // Trigger nudge animation FIRST (before damage) so it's visible
+            if (playerDisplay != null)
+            {
+                playerDisplay.TriggerAttackNudge();
+                Debug.Log($"<color=green>[Multi-Hit] Triggered nudge animation for hit {hit + 1}</color>");
+            }
+            
+            // Small delay to let nudge animation start
+            yield return new WaitForSeconds(0.05f);
+            
+            // Apply damage via CombatDisplayManager (handles floating text internally)
+            combatMgr.PlayerAttackEnemy(enemyIndex, damage);
+            Debug.Log($"<color=red>  ⚔️ Hit {hit + 1}/{hits}: Dealt {damage:F0} damage via CombatDisplayManager</color>");
+            
+            // Apply automatic status effects (only on first hit to avoid stacking issues)
+            if (hit == 0 && targetEnemy != null)
+            {
+                ApplyAutomaticStatusEffects(targetEnemy, damageBreakdown, card);
+            }
+            
+            // Wait before next hit (except for the last one)
+            // Use 0.3s delay to allow nudge animation (0.3s) to complete before next hit
+            if (hit < hits - 1)
+            {
+                Debug.Log($"<color=cyan>[Multi-Hit] Waiting 0.3s before next hit...</color>");
+                yield return new WaitForSeconds(0.3f); // 0.3 second delay between hits (matches nudge duration)
+            }
+        }
+        
+        Debug.Log($"<color=cyan>[Multi-Hit Coroutine] Completed all {hits} hits</color>");
+    }
+    
+    /// <summary>
+    /// Coroutine to apply multi-hit AoE (each enemy gets hit multiple times)
+    /// </summary>
+    private IEnumerator ApplyMultiHitAoE(Card card, Character player, Vector3 targetScreenPosition, int hitCount, float totalDamage, bool isDelayed)
+    {
+        Debug.Log($"<color=yellow>[Multi-Hit AoE] Starting {hitCount} hits on all enemies (damage per hit: {totalDamage})</color>");
+        
+        var allEnemies = GetAllActiveEnemies();
+        var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        var combatDisplayManager = combatManager != null ? combatManager : FindFirstObjectByType<CombatDisplayManager>();
+        
+        if (combatDisplayManager == null)
+        {
+            Debug.LogError("[Multi-Hit AoE] CombatDisplayManager not found!");
+            yield break;
+        }
+        
+        // Calculate damage breakdown for status effects (same for all hits)
+        DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, totalDamage);
+        
+        for (int hit = 0; hit < hitCount; hit++)
+        {
+            Debug.Log($"<color=yellow>[Multi-Hit AoE] Hit {hit + 1}/{hitCount} on all enemies</color>");
+            
+            // Trigger nudge animation
+            if (playerDisplay != null)
+            {
+                playerDisplay.TriggerAttackNudge();
+            }
+            
+            yield return new WaitForSeconds(0.05f);
+            
+            // Apply damage to each enemy for this hit
+            foreach (var enemy in allEnemies)
+            {
+                if (enemy == null || enemy.currentHealth <= 0) continue;
+                
+                int enemyIdx = FindActiveEnemyIndex(enemy);
+                if (enemyIdx >= 0)
+                {
+                    combatDisplayManager.PlayerAttackEnemy(enemyIdx, totalDamage);
+                    
+                    // Apply automatic status effects (only on first hit to avoid stacking issues)
+                    if (hit == 0)
+                    {
+                        ApplyAutomaticStatusEffects(enemy, damageBreakdown, card);
+                    }
+                }
+            }
+            
+            // Wait before next hit (except for the last one)
+            if (hit < hitCount - 1)
+            {
+                yield return new WaitForSeconds(0.3f);
+            }
+        }
+        
+        Debug.Log($"<color=yellow>[Multi-Hit AoE] Completed all {hitCount} hits on all enemies</color>");
+        
+        // End AoE attack
+        StartCoroutine(DelayedWaveCompletionCheck(combatDisplayManager));
+    }
+    
+    /// <summary>
+    /// Coroutine to apply multi-hit to random targets (each random target gets hit multiple times)
+    /// </summary>
+    private IEnumerator ApplyMultiHitRandomTargets(List<Enemy> shuffledEnemies, int targetsToHit, float totalDamage, int hitCount, Card card, Vector3 targetScreenPosition)
+    {
+        Debug.Log($"<color=yellow>[Multi-Hit Random] Starting {hitCount} hits on {targetsToHit} random enemies</color>");
+        
+        var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        Character player = characterManager != null && characterManager.HasCharacter() ? characterManager.GetCurrentCharacter() : null;
+        
+        // Calculate damage breakdown for status effects (same for all hits)
+        DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, totalDamage);
+        
+        for (int hit = 0; hit < hitCount; hit++)
+        {
+            Debug.Log($"<color=yellow>[Multi-Hit Random] Hit {hit + 1}/{hitCount} on {targetsToHit} random enemies</color>");
+            
+            // Trigger nudge animation
+            if (playerDisplay != null)
+            {
+                playerDisplay.TriggerAttackNudge();
+            }
+            
+            yield return new WaitForSeconds(0.05f);
+            
+            // Apply damage to each random target for this hit
+            for (int i = 0; i < targetsToHit; i++)
+            {
+                Enemy randomEnemy = shuffledEnemies[i];
+                if (randomEnemy == null || randomEnemy.currentHealth <= 0) continue;
+                
+                int enemyIdx = FindActiveEnemyIndex(randomEnemy);
+                if (enemyIdx >= 0 && combatManager != null)
+                {
+                    combatManager.PlayerAttackEnemy(enemyIdx, totalDamage);
+                    
+                    // Apply automatic status effects (only on first hit to avoid stacking issues)
+                    if (hit == 0)
+                    {
+                        ApplyAutomaticStatusEffects(randomEnemy, damageBreakdown, card);
+                    }
+                }
+            }
+            
+            // Wait before next hit (except for the last one)
+            if (hit < hitCount - 1)
+            {
+                yield return new WaitForSeconds(0.3f);
+            }
+        }
+        
+        Debug.Log($"<color=yellow>[Multi-Hit Random] Completed all {hitCount} hits on {targetsToHit} random enemies</color>");
+    }
+    
+    /// <summary>
+    /// Coroutine to apply multi-hit attack in fallback path with delays between hits.
+    /// </summary>
+    private IEnumerator ApplyMultiHitFallback(Enemy targetEnemy, float damage, int hits, bool ignoreGuardArmor, Card card, Vector3 targetPosition)
+    {
+        var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        DamageNumberType damageNumberType = ConvertDamageType(card.primaryDamageType);
+        Character player = characterManager != null && characterManager.HasCharacter() ? characterManager.GetCurrentCharacter() : null;
+        
+        // Calculate damage breakdown for status effects (same for all hits)
+        DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, damage);
+        
+        for (int hit = 0; hit < hits; hit++)
+        {
+            // Apply damage for each hit
+            targetEnemy.TakeDamage(damage, ignoreGuardArmor);
+            
+            Debug.Log($"<color=red>  ⚔️ Hit {hit + 1}/{hits}: Dealt {damage:F0} damage to {targetEnemy.enemyName}</color>");
+            Debug.Log($"<color=red>  💔 Target HP AFTER: {targetEnemy.currentHealth}/{targetEnemy.maxHealth}</color>");
+            
+            // Apply automatic status effects (only on first hit to avoid stacking issues)
+            if (hit == 0)
+            {
+                ApplyAutomaticStatusEffects(targetEnemy, damageBreakdown, card);
+            }
+            
+            if (showDetailedLogs)
+            {
+                Debug.Log($"  ⚔️ Hit {hit + 1}/{hits}: Dealt {damage:F0} damage to {targetEnemy.enemyName}");
+                Debug.Log($"  💔 {targetEnemy.enemyName} HP: {targetEnemy.currentHealth}/{targetEnemy.maxHealth}");
+            }
+            
+            // Show damage number for each hit (with slight offset for visual clarity)
+            if (animationManager != null)
+            {
+                Vector3 hitPosition = targetPosition;
+                if (hits > 1)
+                {
+                    // Offset each hit slightly to the right for visual separation
+                    hitPosition.x += hit * 20f;
+                }
+                animationManager.ShowDamageNumber(damage, hitPosition, damageNumberType);
+            }
+            
+            // Trigger nudge animation for each hit
+            if (playerDisplay != null)
+            {
+                playerDisplay.TriggerAttackNudge();
+            }
+            
+            // Update enemy display after each hit
+            UpdateEnemyDisplay(targetEnemy);
+            
+            // Wait before next hit (except for the last one)
+            if (hit < hits - 1)
+            {
+                yield return new WaitForSeconds(0.2f); // 0.2 second delay between hits
+            }
         }
     }
 }

@@ -7,7 +7,15 @@ public class EncounterDataAsset : ScriptableObject
 	public int encounterID = 1;
 	public string encounterName = "Encounter";
 	public string sceneName = "CombatScene";
+	[Header("Campaign")]
+	[Tooltip("Story act this encounter belongs to (e.g., 1 = Act 1, 2 = Act 2)")]
+	[Min(1)] public int actNumber = 1;
+	[Tooltip("Icon displayed on encounter selection and world map nodes.")]
+	public Sprite encounterSprite;
 
+	[Header("Progression")]
+	[Tooltip("Encounters that must be completed before this node unlocks.")]
+	public EncounterDataAsset[] prerequisiteEncounters;
 	[Header("Difficulty")]
 	public int areaLevel = 1;
 	[Header("Waves")]
@@ -21,8 +29,10 @@ public class EncounterDataAsset : ScriptableObject
 	public EnemyData uniqueEnemy;
 	
 	[Header("Loot Rewards")]
-	[Tooltip("Loot table that defines rewards for completing this encounter")]
+	[Tooltip("Classic loot table that defines rewards for completing this encounter")]
 	public LootTable lootTable;
+	[Tooltip("Optional AreaLootTable override. If assigned, this will be used instead of the classic LootTable.")]
+	public AreaLootTable areaLootTable;
 }
 
 

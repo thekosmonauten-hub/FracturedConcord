@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: Berserker'sFury_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Berserker's Fury
+  groupKey: Berserkers_Fury
   cardType: Power
-  playCost: 2
-  description: 'Gain 3 Momentum. For the rest of combat, when you gain Momentum,
-    gain 1 additional. If you have 5+ Momentum: Your next Attack deals double damage.'
-  rarity: 0
+  playCost: 3
+  description: Gain 3 Momentum.\nFor the rest of combat, when you gain Momentum,
+    gain 1 additional.
+  rarity: 2
   element: 0
   category: 2
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: dba160ec4dc1e2847954d852e64b1cb7, type: 3}
+  cardThumbnail: {fileID: -3026258862297579660, guid: e626fa8976515d64485683860471c4d1, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -30,6 +33,9 @@ MonoBehaviour:
   isDualWield: 0
   ifDiscardedEffect: 
   dualWieldEffect: 
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 0
@@ -37,25 +43,89 @@ MonoBehaviour:
   scalesWithSpellWeapon: 0
   isAoE: 0
   aoeTargets: 1
+  aoeRowScope: 0
+  isMultiHit: 0
+  hitCount: 2
   damageScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
     requiredIntelligence: 0
     requiredWeaponTypes: 
     requiredLevel: 1
-  effects: []
+  effects:
+  - effectType: 9
+    effectName: Gain Momentum
+    description: Gain 3 Momentum
+    value: 3
+    duration: 0
+    damageType: 0
+    targetsSelf: 1
+    targetsEnemy: 0
+    targetsAllEnemies: 0
+    targetsAll: 0
+    condition: 
+  enableCombo: 0
   comboWith: 
   comboDescription: 
+  momentumEffectDescription: 
+  comboWithCardType: 0
+  comboAttackIncrease: 0
+  comboGuardIncrease: 0
+  comboIsAoE: 0
+  comboManaRefund: 0
+  comboApplyAilment: 
+  comboBuffs: []
+  comboConsumeAilment: 0
+  comboConsumeAilmentId: 0
+  comboDrawCards: 0
+  comboAilment: 0
+  comboAilmentPortion: 0
+  comboAilmentDuration: 0
+  consumeAilment: 0
+  consumeAilmentId: 0
+  comboScaling: 0
+  comboScalingDivisor: 1
+  comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Power
   - Basic
+  delayTurns: 0
+  isDelayed: 0
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

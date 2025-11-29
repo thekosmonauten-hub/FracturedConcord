@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9be3bb50a3980b47ab1e7fc8419be94, type: 3}
+  m_Name: 2.CampConcordia
+  m_EditorClassIdentifier: Assembly-CSharp::EncounterDataAsset
+  encounterID: 2
+  encounterName: Camp Concordia
+  sceneName: TownScene
+  actNumber: 1
+  encounterSprite: {fileID: 6937817954938267909, guid: 203c0d8fca766de43aaf1a34938d4602, type: 3}
+  prerequisiteEncounters:
+  - {fileID: 11400000, guid: 7210adf267ba4ce4fb743ad7f017d38e, type: 2}
+  areaLevel: 2
+  totalWaves: 3
+  maxEnemiesPerWave: 3
+  randomizeEnemyCount: 1
+  uniqueEnemy: {fileID: 0}
+  lootTable: {fileID: 0}
+  areaLootTable: {fileID: 11400000, guid: fefaa3f8b4dc14f4187e1335dc47773f, type: 2}

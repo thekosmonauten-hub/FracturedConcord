@@ -16,12 +16,12 @@ MonoBehaviour:
   groupKey: PackHunter
   cardType: Attack
   playCost: 1
-  description: Deal 5 physical damage (+Dex/2) to a single enemy.
+  description: Deal {damage} physical damage to a single enemy.
   rarity: 0
   element: 4
   category: 0
-  cardImage: {fileID: 0}
-  cardThumbnail: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: 5af9badc4860bf04cb7bd35985359c09, type: 3}
+  cardThumbnail: {fileID: -9027854369165933646, guid: ef6a9e25ded9568459daf67d0d36ec58, type: 3}
   cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
@@ -43,14 +43,31 @@ MonoBehaviour:
   isAoE: 0
   aoeTargets: 5
   aoeRowScope: 0
+  isMultiHit: 0
+  hitCount: 2
   damageScaling:
     strengthScaling: 0
-    dexterityScaling: 0.5
+    dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 2
+    intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -61,6 +78,7 @@ MonoBehaviour:
   enableCombo: 1
   comboWith: PackHunter
   comboDescription: 'Repeat: Deal 100% damage to ALL enemies.'
+  momentumEffectDescription: 
   comboWithCardType: 0
   comboAttackIncrease: 0
   comboGuardIncrease: 0
@@ -91,6 +109,8 @@ MonoBehaviour:
   tags:
   - Attack
   - Physical
+  delayTurns: 0
+  isDelayed: 0
   canPrepare: 0
   maxPrepTurns: 3
   multiplierPerTurn: 0.5

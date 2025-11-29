@@ -1,0 +1,920 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a775bde4140a4a9986c0c7ec0103a1d, type: 3}
+  m_Name: MasterWarrantGraph
+  m_EditorClassIdentifier: Assembly-CSharp::WarrantBoardGraphDefinition
+  positionScale: 5
+  positionOffset: {x: 0, y: 0}
+  nodes:
+  - id: Anchor
+    nodeType: 1
+    position: {x: 0, y: -230}
+  - id: TopLeft
+    nodeType: 1
+    position: {x: -140, y: 130}
+  - id: TopRight
+    nodeType: 1
+    position: {x: 140, y: 130}
+  - id: BottomLeft
+    nodeType: 1
+    position: {x: -140, y: -130}
+  - id: BottomRight
+    nodeType: 1
+    position: {x: 140, y: -130}
+  - id: MidTop
+    nodeType: 1
+    position: {x: 0, y: 130}
+  - id: MidBottom
+    nodeType: 1
+    position: {x: 0, y: -130}
+  - id: MidLeft
+    nodeType: 1
+    position: {x: -140, y: 0}
+  - id: MidRight
+    nodeType: 1
+    position: {x: 140, y: 0}
+  - id: TopLeft_MidTop_Socket
+    nodeType: 1
+    position: {x: -70, y: 130}
+  - id: MidTop_TopRight_Socket
+    nodeType: 1
+    position: {x: 70, y: 130}
+  - id: BottomLeft_MidBottom_Socket
+    nodeType: 1
+    position: {x: -70, y: -130}
+  - id: MidBottom_BottomRight_Socket
+    nodeType: 1
+    position: {x: 70, y: -130}
+  - id: TopLeft_MidLeft_Socket
+    nodeType: 1
+    position: {x: -140, y: 65}
+  - id: MidLeft_BottomLeft_Socket
+    nodeType: 1
+    position: {x: -140, y: -65}
+  - id: TopRight_MidRight_Socket
+    nodeType: 1
+    position: {x: 140, y: 65}
+  - id: MidRight_BottomRight_Socket
+    nodeType: 1
+    position: {x: 140, y: -65}
+  - id: Center
+    nodeType: 1
+    position: {x: 0, y: 0}
+  - id: Anchor_BottomLeft_Section1_Socket
+    nodeType: 1
+    position: {x: -70, y: -180}
+  - id: Anchor_to_Anchor_BottomLeft_Section1_Socket_effect1
+    nodeType: 2
+    position: {x: -17.5, y: -217.5}
+  - id: Anchor_to_Anchor_BottomLeft_Section1_Socket_effect2
+    nodeType: 2
+    position: {x: -35, y: -205}
+  - id: Anchor_to_Anchor_BottomLeft_Section1_Socket_effect3
+    nodeType: 2
+    position: {x: -52.5, y: -192.5}
+  - id: Anchor_BottomLeft_Section1_Socket_to_BottomLeft_effect1
+    nodeType: 2
+    position: {x: -87.5, y: -167.5}
+  - id: Anchor_BottomLeft_Section1_Socket_to_BottomLeft_effect2
+    nodeType: 2
+    position: {x: -105, y: -155}
+  - id: Anchor_BottomLeft_Section1_Socket_to_BottomLeft_effect3
+    nodeType: 2
+    position: {x: -122.5, y: -142.5}
+  - id: Anchor_MidBottom_Section1_Socket
+    nodeType: 1
+    position: {x: 0, y: -180}
+  - id: Anchor_to_Anchor_MidBottom_Section1_Socket_effect1
+    nodeType: 2
+    position: {x: 0, y: -217.5}
+  - id: Anchor_to_Anchor_MidBottom_Section1_Socket_effect2
+    nodeType: 2
+    position: {x: 0, y: -205}
+  - id: Anchor_to_Anchor_MidBottom_Section1_Socket_effect3
+    nodeType: 2
+    position: {x: 0, y: -192.5}
+  - id: Anchor_MidBottom_Section1_Socket_to_MidBottom_effect1
+    nodeType: 2
+    position: {x: 0, y: -167.5}
+  - id: Anchor_MidBottom_Section1_Socket_to_MidBottom_effect2
+    nodeType: 2
+    position: {x: 0, y: -155}
+  - id: Anchor_MidBottom_Section1_Socket_to_MidBottom_effect3
+    nodeType: 2
+    position: {x: 0, y: -142.5}
+  - id: Anchor_BottomRight_Section1_Socket
+    nodeType: 1
+    position: {x: 70, y: -180}
+  - id: Anchor_to_Anchor_BottomRight_Section1_Socket_effect1
+    nodeType: 2
+    position: {x: 17.5, y: -217.5}
+  - id: Anchor_to_Anchor_BottomRight_Section1_Socket_effect2
+    nodeType: 2
+    position: {x: 35, y: -205}
+  - id: Anchor_to_Anchor_BottomRight_Section1_Socket_effect3
+    nodeType: 2
+    position: {x: 52.5, y: -192.5}
+  - id: Anchor_BottomRight_Section1_Socket_to_BottomRight_effect1
+    nodeType: 2
+    position: {x: 87.5, y: -167.5}
+  - id: Anchor_BottomRight_Section1_Socket_to_BottomRight_effect2
+    nodeType: 2
+    position: {x: 105, y: -155}
+  - id: Anchor_BottomRight_Section1_Socket_to_BottomRight_effect3
+    nodeType: 2
+    position: {x: 122.5, y: -142.5}
+  - id: TopLeft_to_TopLeft_MidTop_Socket_effect1
+    nodeType: 2
+    position: {x: -122.5, y: 130}
+  - id: TopLeft_to_TopLeft_MidTop_Socket_effect2
+    nodeType: 2
+    position: {x: -105, y: 130}
+  - id: TopLeft_to_TopLeft_MidTop_Socket_effect3
+    nodeType: 2
+    position: {x: -87.5, y: 130}
+  - id: TopLeft_MidTop_Socket_to_MidTop_effect1
+    nodeType: 2
+    position: {x: -52.5, y: 130}
+  - id: TopLeft_MidTop_Socket_to_MidTop_effect2
+    nodeType: 2
+    position: {x: -35, y: 130}
+  - id: TopLeft_MidTop_Socket_to_MidTop_effect3
+    nodeType: 2
+    position: {x: -17.5, y: 130}
+  - id: MidTop_to_MidTop_TopRight_Socket_effect1
+    nodeType: 2
+    position: {x: 17.5, y: 130}
+  - id: MidTop_to_MidTop_TopRight_Socket_effect2
+    nodeType: 2
+    position: {x: 35, y: 130}
+  - id: MidTop_to_MidTop_TopRight_Socket_effect3
+    nodeType: 2
+    position: {x: 52.5, y: 130}
+  - id: MidTop_TopRight_Socket_to_TopRight_effect1
+    nodeType: 2
+    position: {x: 87.5, y: 130}
+  - id: MidTop_TopRight_Socket_to_TopRight_effect2
+    nodeType: 2
+    position: {x: 105, y: 130}
+  - id: MidTop_TopRight_Socket_to_TopRight_effect3
+    nodeType: 2
+    position: {x: 122.5, y: 130}
+  - id: BottomLeft_to_BottomLeft_MidBottom_Socket_effect1
+    nodeType: 2
+    position: {x: -122.5, y: -130}
+  - id: BottomLeft_to_BottomLeft_MidBottom_Socket_effect2
+    nodeType: 2
+    position: {x: -105, y: -130}
+  - id: BottomLeft_to_BottomLeft_MidBottom_Socket_effect3
+    nodeType: 2
+    position: {x: -87.5, y: -130}
+  - id: BottomLeft_MidBottom_Socket_to_MidBottom_effect1
+    nodeType: 2
+    position: {x: -52.5, y: -130}
+  - id: BottomLeft_MidBottom_Socket_to_MidBottom_effect2
+    nodeType: 2
+    position: {x: -35, y: -130}
+  - id: BottomLeft_MidBottom_Socket_to_MidBottom_effect3
+    nodeType: 2
+    position: {x: -17.5, y: -130}
+  - id: MidBottom_to_MidBottom_BottomRight_Socket_effect1
+    nodeType: 2
+    position: {x: 17.5, y: -130}
+  - id: MidBottom_to_MidBottom_BottomRight_Socket_effect2
+    nodeType: 2
+    position: {x: 35, y: -130}
+  - id: MidBottom_to_MidBottom_BottomRight_Socket_effect3
+    nodeType: 2
+    position: {x: 52.5, y: -130}
+  - id: MidBottom_BottomRight_Socket_to_BottomRight_effect1
+    nodeType: 2
+    position: {x: 87.5, y: -130}
+  - id: MidBottom_BottomRight_Socket_to_BottomRight_effect2
+    nodeType: 2
+    position: {x: 105, y: -130}
+  - id: MidBottom_BottomRight_Socket_to_BottomRight_effect3
+    nodeType: 2
+    position: {x: 122.5, y: -130}
+  - id: TopLeft_to_TopLeft_MidLeft_Socket_effect1
+    nodeType: 2
+    position: {x: -140, y: 113.75}
+  - id: TopLeft_to_TopLeft_MidLeft_Socket_effect2
+    nodeType: 2
+    position: {x: -140, y: 97.5}
+  - id: TopLeft_to_TopLeft_MidLeft_Socket_effect3
+    nodeType: 2
+    position: {x: -140, y: 81.25}
+  - id: TopLeft_MidLeft_Socket_to_MidLeft_effect1
+    nodeType: 2
+    position: {x: -140, y: 48.75}
+  - id: TopLeft_MidLeft_Socket_to_MidLeft_effect2
+    nodeType: 2
+    position: {x: -140, y: 32.5}
+  - id: TopLeft_MidLeft_Socket_to_MidLeft_effect3
+    nodeType: 2
+    position: {x: -140, y: 16.25}
+  - id: MidLeft_to_MidLeft_BottomLeft_Socket_effect1
+    nodeType: 2
+    position: {x: -140, y: -16.25}
+  - id: MidLeft_to_MidLeft_BottomLeft_Socket_effect2
+    nodeType: 2
+    position: {x: -140, y: -32.5}
+  - id: MidLeft_to_MidLeft_BottomLeft_Socket_effect3
+    nodeType: 2
+    position: {x: -140, y: -48.75}
+  - id: MidLeft_BottomLeft_Socket_to_BottomLeft_effect1
+    nodeType: 2
+    position: {x: -140, y: -81.25}
+  - id: MidLeft_BottomLeft_Socket_to_BottomLeft_effect2
+    nodeType: 2
+    position: {x: -140, y: -97.5}
+  - id: MidLeft_BottomLeft_Socket_to_BottomLeft_effect3
+    nodeType: 2
+    position: {x: -140, y: -113.75}
+  - id: TopRight_to_TopRight_MidRight_Socket_effect1
+    nodeType: 2
+    position: {x: 140, y: 113.75}
+  - id: TopRight_to_TopRight_MidRight_Socket_effect2
+    nodeType: 2
+    position: {x: 140, y: 97.5}
+  - id: TopRight_to_TopRight_MidRight_Socket_effect3
+    nodeType: 2
+    position: {x: 140, y: 81.25}
+  - id: TopRight_MidRight_Socket_to_MidRight_effect1
+    nodeType: 2
+    position: {x: 140, y: 48.75}
+  - id: TopRight_MidRight_Socket_to_MidRight_effect2
+    nodeType: 2
+    position: {x: 140, y: 32.5}
+  - id: TopRight_MidRight_Socket_to_MidRight_effect3
+    nodeType: 2
+    position: {x: 140, y: 16.25}
+  - id: MidRight_to_MidRight_BottomRight_Socket_effect1
+    nodeType: 2
+    position: {x: 140, y: -16.25}
+  - id: MidRight_to_MidRight_BottomRight_Socket_effect2
+    nodeType: 2
+    position: {x: 140, y: -32.5}
+  - id: MidRight_to_MidRight_BottomRight_Socket_effect3
+    nodeType: 2
+    position: {x: 140, y: -48.75}
+  - id: MidRight_BottomRight_Socket_to_BottomRight_effect1
+    nodeType: 2
+    position: {x: 140, y: -81.25}
+  - id: MidRight_BottomRight_Socket_to_BottomRight_effect2
+    nodeType: 2
+    position: {x: 140, y: -97.5}
+  - id: MidRight_BottomRight_Socket_to_BottomRight_effect3
+    nodeType: 2
+    position: {x: 140, y: -113.75}
+  - id: Center_TopLeft_Section1_Socket
+    nodeType: 1
+    position: {x: -70, y: 65}
+  - id: Center_to_Center_TopLeft_Section1_Socket_effect1
+    nodeType: 2
+    position: {x: -17.5, y: 16.25}
+  - id: Center_to_Center_TopLeft_Section1_Socket_effect2
+    nodeType: 2
+    position: {x: -35, y: 32.5}
+  - id: Center_to_Center_TopLeft_Section1_Socket_effect3
+    nodeType: 2
+    position: {x: -52.5, y: 48.75}
+  - id: Center_TopLeft_Section1_Socket_to_TopLeft_effect1
+    nodeType: 2
+    position: {x: -87.5, y: 81.25}
+  - id: Center_TopLeft_Section1_Socket_to_TopLeft_effect2
+    nodeType: 2
+    position: {x: -105, y: 97.5}
+  - id: Center_TopLeft_Section1_Socket_to_TopLeft_effect3
+    nodeType: 2
+    position: {x: -122.5, y: 113.75}
+  - id: Center_TopRight_Section1_Socket
+    nodeType: 1
+    position: {x: 70, y: 65}
+  - id: Center_to_Center_TopRight_Section1_Socket_effect1
+    nodeType: 2
+    position: {x: 17.5, y: 16.25}
+  - id: Center_to_Center_TopRight_Section1_Socket_effect2
+    nodeType: 2
+    position: {x: 35, y: 32.5}
+  - id: Center_to_Center_TopRight_Section1_Socket_effect3
+    nodeType: 2
+    position: {x: 52.5, y: 48.75}
+  - id: Center_TopRight_Section1_Socket_to_TopRight_effect1
+    nodeType: 2
+    position: {x: 87.5, y: 81.25}
+  - id: Center_TopRight_Section1_Socket_to_TopRight_effect2
+    nodeType: 2
+    position: {x: 105, y: 97.5}
+  - id: Center_TopRight_Section1_Socket_to_TopRight_effect3
+    nodeType: 2
+    position: {x: 122.5, y: 113.75}
+  - id: Center_MidRight_Section1_Socket
+    nodeType: 1
+    position: {x: 70, y: 0}
+  - id: Center_to_Center_MidRight_Section1_Socket_effect1
+    nodeType: 2
+    position: {x: 17.5, y: 0}
+  - id: Center_to_Center_MidRight_Section1_Socket_effect2
+    nodeType: 2
+    position: {x: 35, y: 0}
+  - id: Center_to_Center_MidRight_Section1_Socket_effect3
+    nodeType: 2
+    position: {x: 52.5, y: 0}
+  - id: Center_MidRight_Section1_Socket_to_MidRight_effect1
+    nodeType: 2
+    position: {x: 87.5, y: 0}
+  - id: Center_MidRight_Section1_Socket_to_MidRight_effect2
+    nodeType: 2
+    position: {x: 105, y: 0}
+  - id: Center_MidRight_Section1_Socket_to_MidRight_effect3
+    nodeType: 2
+    position: {x: 122.5, y: 0}
+  - id: Center_BottomRight_Section1_Socket
+    nodeType: 1
+    position: {x: 70, y: -65}
+  - id: Center_to_Center_BottomRight_Section1_Socket_effect1
+    nodeType: 2
+    position: {x: 17.5, y: -16.25}
+  - id: Center_to_Center_BottomRight_Section1_Socket_effect2
+    nodeType: 2
+    position: {x: 35, y: -32.5}
+  - id: Center_to_Center_BottomRight_Section1_Socket_effect3
+    nodeType: 2
+    position: {x: 52.5, y: -48.75}
+  - id: Center_BottomRight_Section1_Socket_to_BottomRight_effect1
+    nodeType: 2
+    position: {x: 87.5, y: -81.25}
+  - id: Center_BottomRight_Section1_Socket_to_BottomRight_effect2
+    nodeType: 2
+    position: {x: 105, y: -97.5}
+  - id: Center_BottomRight_Section1_Socket_to_BottomRight_effect3
+    nodeType: 2
+    position: {x: 122.5, y: -113.75}
+  - id: Center_BottomLeft_Section1_Socket
+    nodeType: 1
+    position: {x: -70, y: -65}
+  - id: Center_to_Center_BottomLeft_Section1_Socket_effect1
+    nodeType: 2
+    position: {x: -17.5, y: -16.25}
+  - id: Center_to_Center_BottomLeft_Section1_Socket_effect2
+    nodeType: 2
+    position: {x: -35, y: -32.5}
+  - id: Center_to_Center_BottomLeft_Section1_Socket_effect3
+    nodeType: 2
+    position: {x: -52.5, y: -48.75}
+  - id: Center_BottomLeft_Section1_Socket_to_BottomLeft_effect1
+    nodeType: 2
+    position: {x: -87.5, y: -81.25}
+  - id: Center_BottomLeft_Section1_Socket_to_BottomLeft_effect2
+    nodeType: 2
+    position: {x: -105, y: -97.5}
+  - id: Center_BottomLeft_Section1_Socket_to_BottomLeft_effect3
+    nodeType: 2
+    position: {x: -122.5, y: -113.75}
+  - id: Center_MidLeft_Section1_Socket
+    nodeType: 1
+    position: {x: -70, y: 0}
+  - id: Center_to_Center_MidLeft_Section1_Socket_effect1
+    nodeType: 2
+    position: {x: -17.5, y: 0}
+  - id: Center_to_Center_MidLeft_Section1_Socket_effect2
+    nodeType: 2
+    position: {x: -35, y: 0}
+  - id: Center_to_Center_MidLeft_Section1_Socket_effect3
+    nodeType: 2
+    position: {x: -52.5, y: 0}
+  - id: Center_MidLeft_Section1_Socket_to_MidLeft_effect1
+    nodeType: 2
+    position: {x: -87.5, y: 0}
+  - id: Center_MidLeft_Section1_Socket_to_MidLeft_effect2
+    nodeType: 2
+    position: {x: -105, y: 0}
+  - id: Center_MidLeft_Section1_Socket_to_MidLeft_effect3
+    nodeType: 2
+    position: {x: -122.5, y: 0}
+  - id: MidTopSpecial_1_SpecialSocket
+    nodeType: 3
+    position: {x: -50.4, y: 65}
+  - id: MidTop_to_MidTopSpecial_1_SpecialSocket_effect1
+    nodeType: 2
+    position: {x: -12.6, y: 113.75}
+  - id: MidTop_to_MidTopSpecial_1_SpecialSocket_effect2
+    nodeType: 2
+    position: {x: -25.2, y: 97.5}
+  - id: MidTop_to_MidTopSpecial_1_SpecialSocket_effect3
+    nodeType: 2
+    position: {x: -37.800003, y: 81.25}
+  - id: MidTopSpecial_2_SpecialSocket
+    nodeType: 3
+    position: {x: 50.4, y: 65}
+  - id: MidTop_to_MidTopSpecial_2_SpecialSocket_effect1
+    nodeType: 2
+    position: {x: 12.6, y: 113.75}
+  - id: MidTop_to_MidTopSpecial_2_SpecialSocket_effect2
+    nodeType: 2
+    position: {x: 25.2, y: 97.5}
+  - id: MidTop_to_MidTopSpecial_2_SpecialSocket_effect3
+    nodeType: 2
+    position: {x: 37.800003, y: 81.25}
+  - id: MidBottomSpecial_1_SpecialSocket
+    nodeType: 3
+    position: {x: -50.4, y: -65}
+  - id: MidBottom_to_MidBottomSpecial_1_SpecialSocket_effect1
+    nodeType: 2
+    position: {x: -12.6, y: -113.75}
+  - id: MidBottom_to_MidBottomSpecial_1_SpecialSocket_effect2
+    nodeType: 2
+    position: {x: -25.2, y: -97.5}
+  - id: MidBottom_to_MidBottomSpecial_1_SpecialSocket_effect3
+    nodeType: 2
+    position: {x: -37.800003, y: -81.25}
+  - id: MidBottomSpecial_2_SpecialSocket
+    nodeType: 3
+    position: {x: 50.4, y: -65}
+  - id: MidBottom_to_MidBottomSpecial_2_SpecialSocket_effect1
+    nodeType: 2
+    position: {x: 12.6, y: -113.75}
+  - id: MidBottom_to_MidBottomSpecial_2_SpecialSocket_effect2
+    nodeType: 2
+    position: {x: 25.2, y: -97.5}
+  - id: MidBottom_to_MidBottomSpecial_2_SpecialSocket_effect3
+    nodeType: 2
+    position: {x: 37.800003, y: -81.25}
+  edges:
+  - fromNodeId: Anchor
+    toNodeId: Anchor_to_Anchor_BottomLeft_Section1_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: Anchor_to_Anchor_BottomLeft_Section1_Socket_effect1
+    toNodeId: Anchor_to_Anchor_BottomLeft_Section1_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: Anchor_to_Anchor_BottomLeft_Section1_Socket_effect2
+    toNodeId: Anchor_to_Anchor_BottomLeft_Section1_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: Anchor_to_Anchor_BottomLeft_Section1_Socket_effect3
+    toNodeId: Anchor_BottomLeft_Section1_Socket
+    bidirectional: 1
+  - fromNodeId: Anchor_BottomLeft_Section1_Socket
+    toNodeId: Anchor_BottomLeft_Section1_Socket_to_BottomLeft_effect1
+    bidirectional: 1
+  - fromNodeId: Anchor_BottomLeft_Section1_Socket_to_BottomLeft_effect1
+    toNodeId: Anchor_BottomLeft_Section1_Socket_to_BottomLeft_effect2
+    bidirectional: 1
+  - fromNodeId: Anchor_BottomLeft_Section1_Socket_to_BottomLeft_effect2
+    toNodeId: Anchor_BottomLeft_Section1_Socket_to_BottomLeft_effect3
+    bidirectional: 1
+  - fromNodeId: Anchor_BottomLeft_Section1_Socket_to_BottomLeft_effect3
+    toNodeId: BottomLeft
+    bidirectional: 1
+  - fromNodeId: Anchor
+    toNodeId: Anchor_to_Anchor_MidBottom_Section1_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: Anchor_to_Anchor_MidBottom_Section1_Socket_effect1
+    toNodeId: Anchor_to_Anchor_MidBottom_Section1_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: Anchor_to_Anchor_MidBottom_Section1_Socket_effect2
+    toNodeId: Anchor_to_Anchor_MidBottom_Section1_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: Anchor_to_Anchor_MidBottom_Section1_Socket_effect3
+    toNodeId: Anchor_MidBottom_Section1_Socket
+    bidirectional: 1
+  - fromNodeId: Anchor_MidBottom_Section1_Socket
+    toNodeId: Anchor_MidBottom_Section1_Socket_to_MidBottom_effect1
+    bidirectional: 1
+  - fromNodeId: Anchor_MidBottom_Section1_Socket_to_MidBottom_effect1
+    toNodeId: Anchor_MidBottom_Section1_Socket_to_MidBottom_effect2
+    bidirectional: 1
+  - fromNodeId: Anchor_MidBottom_Section1_Socket_to_MidBottom_effect2
+    toNodeId: Anchor_MidBottom_Section1_Socket_to_MidBottom_effect3
+    bidirectional: 1
+  - fromNodeId: Anchor_MidBottom_Section1_Socket_to_MidBottom_effect3
+    toNodeId: MidBottom
+    bidirectional: 1
+  - fromNodeId: Anchor
+    toNodeId: Anchor_to_Anchor_BottomRight_Section1_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: Anchor_to_Anchor_BottomRight_Section1_Socket_effect1
+    toNodeId: Anchor_to_Anchor_BottomRight_Section1_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: Anchor_to_Anchor_BottomRight_Section1_Socket_effect2
+    toNodeId: Anchor_to_Anchor_BottomRight_Section1_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: Anchor_to_Anchor_BottomRight_Section1_Socket_effect3
+    toNodeId: Anchor_BottomRight_Section1_Socket
+    bidirectional: 1
+  - fromNodeId: Anchor_BottomRight_Section1_Socket
+    toNodeId: Anchor_BottomRight_Section1_Socket_to_BottomRight_effect1
+    bidirectional: 1
+  - fromNodeId: Anchor_BottomRight_Section1_Socket_to_BottomRight_effect1
+    toNodeId: Anchor_BottomRight_Section1_Socket_to_BottomRight_effect2
+    bidirectional: 1
+  - fromNodeId: Anchor_BottomRight_Section1_Socket_to_BottomRight_effect2
+    toNodeId: Anchor_BottomRight_Section1_Socket_to_BottomRight_effect3
+    bidirectional: 1
+  - fromNodeId: Anchor_BottomRight_Section1_Socket_to_BottomRight_effect3
+    toNodeId: BottomRight
+    bidirectional: 1
+  - fromNodeId: TopLeft
+    toNodeId: TopLeft_to_TopLeft_MidTop_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: TopLeft_to_TopLeft_MidTop_Socket_effect1
+    toNodeId: TopLeft_to_TopLeft_MidTop_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: TopLeft_to_TopLeft_MidTop_Socket_effect2
+    toNodeId: TopLeft_to_TopLeft_MidTop_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: TopLeft_to_TopLeft_MidTop_Socket_effect3
+    toNodeId: TopLeft_MidTop_Socket
+    bidirectional: 1
+  - fromNodeId: TopLeft_MidTop_Socket
+    toNodeId: TopLeft_MidTop_Socket_to_MidTop_effect1
+    bidirectional: 1
+  - fromNodeId: TopLeft_MidTop_Socket_to_MidTop_effect1
+    toNodeId: TopLeft_MidTop_Socket_to_MidTop_effect2
+    bidirectional: 1
+  - fromNodeId: TopLeft_MidTop_Socket_to_MidTop_effect2
+    toNodeId: TopLeft_MidTop_Socket_to_MidTop_effect3
+    bidirectional: 1
+  - fromNodeId: TopLeft_MidTop_Socket_to_MidTop_effect3
+    toNodeId: MidTop
+    bidirectional: 1
+  - fromNodeId: MidTop
+    toNodeId: MidTop_to_MidTop_TopRight_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: MidTop_to_MidTop_TopRight_Socket_effect1
+    toNodeId: MidTop_to_MidTop_TopRight_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: MidTop_to_MidTop_TopRight_Socket_effect2
+    toNodeId: MidTop_to_MidTop_TopRight_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: MidTop_to_MidTop_TopRight_Socket_effect3
+    toNodeId: MidTop_TopRight_Socket
+    bidirectional: 1
+  - fromNodeId: MidTop_TopRight_Socket
+    toNodeId: MidTop_TopRight_Socket_to_TopRight_effect1
+    bidirectional: 1
+  - fromNodeId: MidTop_TopRight_Socket_to_TopRight_effect1
+    toNodeId: MidTop_TopRight_Socket_to_TopRight_effect2
+    bidirectional: 1
+  - fromNodeId: MidTop_TopRight_Socket_to_TopRight_effect2
+    toNodeId: MidTop_TopRight_Socket_to_TopRight_effect3
+    bidirectional: 1
+  - fromNodeId: MidTop_TopRight_Socket_to_TopRight_effect3
+    toNodeId: TopRight
+    bidirectional: 1
+  - fromNodeId: BottomLeft
+    toNodeId: BottomLeft_to_BottomLeft_MidBottom_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: BottomLeft_to_BottomLeft_MidBottom_Socket_effect1
+    toNodeId: BottomLeft_to_BottomLeft_MidBottom_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: BottomLeft_to_BottomLeft_MidBottom_Socket_effect2
+    toNodeId: BottomLeft_to_BottomLeft_MidBottom_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: BottomLeft_to_BottomLeft_MidBottom_Socket_effect3
+    toNodeId: BottomLeft_MidBottom_Socket
+    bidirectional: 1
+  - fromNodeId: BottomLeft_MidBottom_Socket
+    toNodeId: BottomLeft_MidBottom_Socket_to_MidBottom_effect1
+    bidirectional: 1
+  - fromNodeId: BottomLeft_MidBottom_Socket_to_MidBottom_effect1
+    toNodeId: BottomLeft_MidBottom_Socket_to_MidBottom_effect2
+    bidirectional: 1
+  - fromNodeId: BottomLeft_MidBottom_Socket_to_MidBottom_effect2
+    toNodeId: BottomLeft_MidBottom_Socket_to_MidBottom_effect3
+    bidirectional: 1
+  - fromNodeId: BottomLeft_MidBottom_Socket_to_MidBottom_effect3
+    toNodeId: MidBottom
+    bidirectional: 1
+  - fromNodeId: MidBottom
+    toNodeId: MidBottom_to_MidBottom_BottomRight_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: MidBottom_to_MidBottom_BottomRight_Socket_effect1
+    toNodeId: MidBottom_to_MidBottom_BottomRight_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: MidBottom_to_MidBottom_BottomRight_Socket_effect2
+    toNodeId: MidBottom_to_MidBottom_BottomRight_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: MidBottom_to_MidBottom_BottomRight_Socket_effect3
+    toNodeId: MidBottom_BottomRight_Socket
+    bidirectional: 1
+  - fromNodeId: MidBottom_BottomRight_Socket
+    toNodeId: MidBottom_BottomRight_Socket_to_BottomRight_effect1
+    bidirectional: 1
+  - fromNodeId: MidBottom_BottomRight_Socket_to_BottomRight_effect1
+    toNodeId: MidBottom_BottomRight_Socket_to_BottomRight_effect2
+    bidirectional: 1
+  - fromNodeId: MidBottom_BottomRight_Socket_to_BottomRight_effect2
+    toNodeId: MidBottom_BottomRight_Socket_to_BottomRight_effect3
+    bidirectional: 1
+  - fromNodeId: MidBottom_BottomRight_Socket_to_BottomRight_effect3
+    toNodeId: BottomRight
+    bidirectional: 1
+  - fromNodeId: TopLeft
+    toNodeId: TopLeft_to_TopLeft_MidLeft_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: TopLeft_to_TopLeft_MidLeft_Socket_effect1
+    toNodeId: TopLeft_to_TopLeft_MidLeft_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: TopLeft_to_TopLeft_MidLeft_Socket_effect2
+    toNodeId: TopLeft_to_TopLeft_MidLeft_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: TopLeft_to_TopLeft_MidLeft_Socket_effect3
+    toNodeId: TopLeft_MidLeft_Socket
+    bidirectional: 1
+  - fromNodeId: TopLeft_MidLeft_Socket
+    toNodeId: TopLeft_MidLeft_Socket_to_MidLeft_effect1
+    bidirectional: 1
+  - fromNodeId: TopLeft_MidLeft_Socket_to_MidLeft_effect1
+    toNodeId: TopLeft_MidLeft_Socket_to_MidLeft_effect2
+    bidirectional: 1
+  - fromNodeId: TopLeft_MidLeft_Socket_to_MidLeft_effect2
+    toNodeId: TopLeft_MidLeft_Socket_to_MidLeft_effect3
+    bidirectional: 1
+  - fromNodeId: TopLeft_MidLeft_Socket_to_MidLeft_effect3
+    toNodeId: MidLeft
+    bidirectional: 1
+  - fromNodeId: MidLeft
+    toNodeId: MidLeft_to_MidLeft_BottomLeft_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: MidLeft_to_MidLeft_BottomLeft_Socket_effect1
+    toNodeId: MidLeft_to_MidLeft_BottomLeft_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: MidLeft_to_MidLeft_BottomLeft_Socket_effect2
+    toNodeId: MidLeft_to_MidLeft_BottomLeft_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: MidLeft_to_MidLeft_BottomLeft_Socket_effect3
+    toNodeId: MidLeft_BottomLeft_Socket
+    bidirectional: 1
+  - fromNodeId: MidLeft_BottomLeft_Socket
+    toNodeId: MidLeft_BottomLeft_Socket_to_BottomLeft_effect1
+    bidirectional: 1
+  - fromNodeId: MidLeft_BottomLeft_Socket_to_BottomLeft_effect1
+    toNodeId: MidLeft_BottomLeft_Socket_to_BottomLeft_effect2
+    bidirectional: 1
+  - fromNodeId: MidLeft_BottomLeft_Socket_to_BottomLeft_effect2
+    toNodeId: MidLeft_BottomLeft_Socket_to_BottomLeft_effect3
+    bidirectional: 1
+  - fromNodeId: MidLeft_BottomLeft_Socket_to_BottomLeft_effect3
+    toNodeId: BottomLeft
+    bidirectional: 1
+  - fromNodeId: TopRight
+    toNodeId: TopRight_to_TopRight_MidRight_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: TopRight_to_TopRight_MidRight_Socket_effect1
+    toNodeId: TopRight_to_TopRight_MidRight_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: TopRight_to_TopRight_MidRight_Socket_effect2
+    toNodeId: TopRight_to_TopRight_MidRight_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: TopRight_to_TopRight_MidRight_Socket_effect3
+    toNodeId: TopRight_MidRight_Socket
+    bidirectional: 1
+  - fromNodeId: TopRight_MidRight_Socket
+    toNodeId: TopRight_MidRight_Socket_to_MidRight_effect1
+    bidirectional: 1
+  - fromNodeId: TopRight_MidRight_Socket_to_MidRight_effect1
+    toNodeId: TopRight_MidRight_Socket_to_MidRight_effect2
+    bidirectional: 1
+  - fromNodeId: TopRight_MidRight_Socket_to_MidRight_effect2
+    toNodeId: TopRight_MidRight_Socket_to_MidRight_effect3
+    bidirectional: 1
+  - fromNodeId: TopRight_MidRight_Socket_to_MidRight_effect3
+    toNodeId: MidRight
+    bidirectional: 1
+  - fromNodeId: MidRight
+    toNodeId: MidRight_to_MidRight_BottomRight_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: MidRight_to_MidRight_BottomRight_Socket_effect1
+    toNodeId: MidRight_to_MidRight_BottomRight_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: MidRight_to_MidRight_BottomRight_Socket_effect2
+    toNodeId: MidRight_to_MidRight_BottomRight_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: MidRight_to_MidRight_BottomRight_Socket_effect3
+    toNodeId: MidRight_BottomRight_Socket
+    bidirectional: 1
+  - fromNodeId: MidRight_BottomRight_Socket
+    toNodeId: MidRight_BottomRight_Socket_to_BottomRight_effect1
+    bidirectional: 1
+  - fromNodeId: MidRight_BottomRight_Socket_to_BottomRight_effect1
+    toNodeId: MidRight_BottomRight_Socket_to_BottomRight_effect2
+    bidirectional: 1
+  - fromNodeId: MidRight_BottomRight_Socket_to_BottomRight_effect2
+    toNodeId: MidRight_BottomRight_Socket_to_BottomRight_effect3
+    bidirectional: 1
+  - fromNodeId: MidRight_BottomRight_Socket_to_BottomRight_effect3
+    toNodeId: BottomRight
+    bidirectional: 1
+  - fromNodeId: Center
+    toNodeId: Center_to_Center_TopLeft_Section1_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_TopLeft_Section1_Socket_effect1
+    toNodeId: Center_to_Center_TopLeft_Section1_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_TopLeft_Section1_Socket_effect2
+    toNodeId: Center_to_Center_TopLeft_Section1_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_TopLeft_Section1_Socket_effect3
+    toNodeId: Center_TopLeft_Section1_Socket
+    bidirectional: 1
+  - fromNodeId: Center_TopLeft_Section1_Socket
+    toNodeId: Center_TopLeft_Section1_Socket_to_TopLeft_effect1
+    bidirectional: 1
+  - fromNodeId: Center_TopLeft_Section1_Socket_to_TopLeft_effect1
+    toNodeId: Center_TopLeft_Section1_Socket_to_TopLeft_effect2
+    bidirectional: 1
+  - fromNodeId: Center_TopLeft_Section1_Socket_to_TopLeft_effect2
+    toNodeId: Center_TopLeft_Section1_Socket_to_TopLeft_effect3
+    bidirectional: 1
+  - fromNodeId: Center_TopLeft_Section1_Socket_to_TopLeft_effect3
+    toNodeId: TopLeft
+    bidirectional: 1
+  - fromNodeId: Center
+    toNodeId: Center_to_Center_TopRight_Section1_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_TopRight_Section1_Socket_effect1
+    toNodeId: Center_to_Center_TopRight_Section1_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_TopRight_Section1_Socket_effect2
+    toNodeId: Center_to_Center_TopRight_Section1_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_TopRight_Section1_Socket_effect3
+    toNodeId: Center_TopRight_Section1_Socket
+    bidirectional: 1
+  - fromNodeId: Center_TopRight_Section1_Socket
+    toNodeId: Center_TopRight_Section1_Socket_to_TopRight_effect1
+    bidirectional: 1
+  - fromNodeId: Center_TopRight_Section1_Socket_to_TopRight_effect1
+    toNodeId: Center_TopRight_Section1_Socket_to_TopRight_effect2
+    bidirectional: 1
+  - fromNodeId: Center_TopRight_Section1_Socket_to_TopRight_effect2
+    toNodeId: Center_TopRight_Section1_Socket_to_TopRight_effect3
+    bidirectional: 1
+  - fromNodeId: Center_TopRight_Section1_Socket_to_TopRight_effect3
+    toNodeId: TopRight
+    bidirectional: 1
+  - fromNodeId: Center
+    toNodeId: Center_to_Center_MidRight_Section1_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_MidRight_Section1_Socket_effect1
+    toNodeId: Center_to_Center_MidRight_Section1_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_MidRight_Section1_Socket_effect2
+    toNodeId: Center_to_Center_MidRight_Section1_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_MidRight_Section1_Socket_effect3
+    toNodeId: Center_MidRight_Section1_Socket
+    bidirectional: 1
+  - fromNodeId: Center_MidRight_Section1_Socket
+    toNodeId: Center_MidRight_Section1_Socket_to_MidRight_effect1
+    bidirectional: 1
+  - fromNodeId: Center_MidRight_Section1_Socket_to_MidRight_effect1
+    toNodeId: Center_MidRight_Section1_Socket_to_MidRight_effect2
+    bidirectional: 1
+  - fromNodeId: Center_MidRight_Section1_Socket_to_MidRight_effect2
+    toNodeId: Center_MidRight_Section1_Socket_to_MidRight_effect3
+    bidirectional: 1
+  - fromNodeId: Center_MidRight_Section1_Socket_to_MidRight_effect3
+    toNodeId: MidRight
+    bidirectional: 1
+  - fromNodeId: Center
+    toNodeId: Center_to_Center_BottomRight_Section1_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_BottomRight_Section1_Socket_effect1
+    toNodeId: Center_to_Center_BottomRight_Section1_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_BottomRight_Section1_Socket_effect2
+    toNodeId: Center_to_Center_BottomRight_Section1_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_BottomRight_Section1_Socket_effect3
+    toNodeId: Center_BottomRight_Section1_Socket
+    bidirectional: 1
+  - fromNodeId: Center_BottomRight_Section1_Socket
+    toNodeId: Center_BottomRight_Section1_Socket_to_BottomRight_effect1
+    bidirectional: 1
+  - fromNodeId: Center_BottomRight_Section1_Socket_to_BottomRight_effect1
+    toNodeId: Center_BottomRight_Section1_Socket_to_BottomRight_effect2
+    bidirectional: 1
+  - fromNodeId: Center_BottomRight_Section1_Socket_to_BottomRight_effect2
+    toNodeId: Center_BottomRight_Section1_Socket_to_BottomRight_effect3
+    bidirectional: 1
+  - fromNodeId: Center_BottomRight_Section1_Socket_to_BottomRight_effect3
+    toNodeId: BottomRight
+    bidirectional: 1
+  - fromNodeId: Center
+    toNodeId: Center_to_Center_BottomLeft_Section1_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_BottomLeft_Section1_Socket_effect1
+    toNodeId: Center_to_Center_BottomLeft_Section1_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_BottomLeft_Section1_Socket_effect2
+    toNodeId: Center_to_Center_BottomLeft_Section1_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_BottomLeft_Section1_Socket_effect3
+    toNodeId: Center_BottomLeft_Section1_Socket
+    bidirectional: 1
+  - fromNodeId: Center_BottomLeft_Section1_Socket
+    toNodeId: Center_BottomLeft_Section1_Socket_to_BottomLeft_effect1
+    bidirectional: 1
+  - fromNodeId: Center_BottomLeft_Section1_Socket_to_BottomLeft_effect1
+    toNodeId: Center_BottomLeft_Section1_Socket_to_BottomLeft_effect2
+    bidirectional: 1
+  - fromNodeId: Center_BottomLeft_Section1_Socket_to_BottomLeft_effect2
+    toNodeId: Center_BottomLeft_Section1_Socket_to_BottomLeft_effect3
+    bidirectional: 1
+  - fromNodeId: Center_BottomLeft_Section1_Socket_to_BottomLeft_effect3
+    toNodeId: BottomLeft
+    bidirectional: 1
+  - fromNodeId: Center
+    toNodeId: Center_to_Center_MidLeft_Section1_Socket_effect1
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_MidLeft_Section1_Socket_effect1
+    toNodeId: Center_to_Center_MidLeft_Section1_Socket_effect2
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_MidLeft_Section1_Socket_effect2
+    toNodeId: Center_to_Center_MidLeft_Section1_Socket_effect3
+    bidirectional: 1
+  - fromNodeId: Center_to_Center_MidLeft_Section1_Socket_effect3
+    toNodeId: Center_MidLeft_Section1_Socket
+    bidirectional: 1
+  - fromNodeId: Center_MidLeft_Section1_Socket
+    toNodeId: Center_MidLeft_Section1_Socket_to_MidLeft_effect1
+    bidirectional: 1
+  - fromNodeId: Center_MidLeft_Section1_Socket_to_MidLeft_effect1
+    toNodeId: Center_MidLeft_Section1_Socket_to_MidLeft_effect2
+    bidirectional: 1
+  - fromNodeId: Center_MidLeft_Section1_Socket_to_MidLeft_effect2
+    toNodeId: Center_MidLeft_Section1_Socket_to_MidLeft_effect3
+    bidirectional: 1
+  - fromNodeId: Center_MidLeft_Section1_Socket_to_MidLeft_effect3
+    toNodeId: MidLeft
+    bidirectional: 1
+  - fromNodeId: MidTop
+    toNodeId: MidTop_to_MidTopSpecial_1_SpecialSocket_effect1
+    bidirectional: 1
+  - fromNodeId: MidTop_to_MidTopSpecial_1_SpecialSocket_effect1
+    toNodeId: MidTop_to_MidTopSpecial_1_SpecialSocket_effect2
+    bidirectional: 1
+  - fromNodeId: MidTop_to_MidTopSpecial_1_SpecialSocket_effect2
+    toNodeId: MidTop_to_MidTopSpecial_1_SpecialSocket_effect3
+    bidirectional: 1
+  - fromNodeId: MidTop_to_MidTopSpecial_1_SpecialSocket_effect3
+    toNodeId: MidTopSpecial_1_SpecialSocket
+    bidirectional: 1
+  - fromNodeId: MidTop
+    toNodeId: MidTop_to_MidTopSpecial_2_SpecialSocket_effect1
+    bidirectional: 1
+  - fromNodeId: MidTop_to_MidTopSpecial_2_SpecialSocket_effect1
+    toNodeId: MidTop_to_MidTopSpecial_2_SpecialSocket_effect2
+    bidirectional: 1
+  - fromNodeId: MidTop_to_MidTopSpecial_2_SpecialSocket_effect2
+    toNodeId: MidTop_to_MidTopSpecial_2_SpecialSocket_effect3
+    bidirectional: 1
+  - fromNodeId: MidTop_to_MidTopSpecial_2_SpecialSocket_effect3
+    toNodeId: MidTopSpecial_2_SpecialSocket
+    bidirectional: 1
+  - fromNodeId: MidBottom
+    toNodeId: MidBottom_to_MidBottomSpecial_1_SpecialSocket_effect1
+    bidirectional: 1
+  - fromNodeId: MidBottom_to_MidBottomSpecial_1_SpecialSocket_effect1
+    toNodeId: MidBottom_to_MidBottomSpecial_1_SpecialSocket_effect2
+    bidirectional: 1
+  - fromNodeId: MidBottom_to_MidBottomSpecial_1_SpecialSocket_effect2
+    toNodeId: MidBottom_to_MidBottomSpecial_1_SpecialSocket_effect3
+    bidirectional: 1
+  - fromNodeId: MidBottom_to_MidBottomSpecial_1_SpecialSocket_effect3
+    toNodeId: MidBottomSpecial_1_SpecialSocket
+    bidirectional: 1
+  - fromNodeId: MidBottom
+    toNodeId: MidBottom_to_MidBottomSpecial_2_SpecialSocket_effect1
+    bidirectional: 1
+  - fromNodeId: MidBottom_to_MidBottomSpecial_2_SpecialSocket_effect1
+    toNodeId: MidBottom_to_MidBottomSpecial_2_SpecialSocket_effect2
+    bidirectional: 1
+  - fromNodeId: MidBottom_to_MidBottomSpecial_2_SpecialSocket_effect2
+    toNodeId: MidBottom_to_MidBottomSpecial_2_SpecialSocket_effect3
+    bidirectional: 1
+  - fromNodeId: MidBottom_to_MidBottomSpecial_2_SpecialSocket_effect3
+    toNodeId: MidBottomSpecial_2_SpecialSocket
+    bidirectional: 1
+
+
+
+
+
+
+
+
+
+
+

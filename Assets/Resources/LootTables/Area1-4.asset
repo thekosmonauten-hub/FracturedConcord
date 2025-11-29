@@ -134,4 +134,11 @@ MonoBehaviour:
     dropChance: 0.07
     minQuantity: 1
     maxQuantity: 3
+  effigyDrops:
+  - effigyBlueprint: {fileID: 0}
+    minAreaLevel: 0
+    maxAreaLevel: 0
+    dropChanceAtMinLevel: 0
+    dropChanceAtMaxLevel: 0
+    maxQuantity: 0
   enableDebugLogs: 0

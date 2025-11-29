@@ -1,10 +1,15 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
+/// <summary>
+/// Refactored EncounterManager - coordinates encounter system components.
+/// Separated concerns into focused managers for better maintainability.
+/// </summary>
 public partial class EncounterManager : MonoBehaviour
 {
     private static EncounterManager _instance;
@@ -20,8 +25,13 @@ public partial class EncounterManager : MonoBehaviour
                     var go = new GameObject("EncounterManager");
                     _instance = go.AddComponent<EncounterManager>();
                     DontDestroyOnLoad(go);
-                    _instance.InitializeEncounters();
                 }
+            }
+            // Ensure system is initialized if it exists but wasn't initialized
+            if (_instance != null && !_instance.isInitialized)
+            {
+                Debug.LogWarning("[EncounterManager] Instance exists but not initialized. Initializing now...");
+                _instance.InitializeSystem();
             }
             return _instance;
         }
@@ -31,47 +41,9 @@ public partial class EncounterManager : MonoBehaviour
     [Tooltip("Optional: assign an EnemyDatabase prefab or scene object to ensure it exists before encounters run.")]
     public EnemyDatabase enemyDatabaseRef;
 
-    private void LoadActFromResources(string path, List<EncounterData> target, bool autoUnlockFirst)
-    {
-        if (string.IsNullOrEmpty(path) || target == null) return;
-        var assets = Resources.LoadAll<EncounterDataAsset>(path);
-        if (assets != null && assets.Length > 0)
-        {
-            foreach (var asset in assets)
-            {
-                if (asset == null) continue;
-                var data = new EncounterData(asset.encounterID, asset.encounterName, asset.sceneName)
-                {
-                    areaLevel = asset.areaLevel,
-                    totalWaves = Mathf.Max(1, asset.totalWaves),
-                    maxEnemiesPerWave = Mathf.Max(1, asset.maxEnemiesPerWave),
-                    randomizeEnemyCount = asset.randomizeEnemyCount,
-                    uniqueEnemy = asset.uniqueEnemy,
-                    lootTable = asset.lootTable
-                };
-                target.Add(data);
-            }
-            target.Sort((a, b) => a.encounterID.CompareTo(b.encounterID));
-            if (autoUnlockFirst && target.Count > 0)
-            {
-                target[0].isUnlocked = true;
-            }
-            Debug.Log($"[EncounterManager] Loaded {target.Count} encounters from Resources/{path}: " + string.Join(", ", target.ConvertAll(e => e.encounterID.ToString()).ToArray()));
-        }
-        else
-        {
-            Debug.Log($"[EncounterManager] No encounters found at Resources/{path}");
-        }
-    }
-
-    [Header("Encounter Data by Act")]
-    public List<EncounterData> act1Encounters = new List<EncounterData>();
-    public List<EncounterData> act2Encounters = new List<EncounterData>();
-    public List<EncounterData> act3Encounters = new List<EncounterData>();
-    public List<EncounterData> act4Encounters = new List<EncounterData>();
-
     [Header("Resources Loading (per Act)")]
-    [Tooltip("Load EncounterDataAsset ScriptableObjects from Resources paths")] public bool loadFromResources = true;
+    [Tooltip("Load EncounterDataAsset ScriptableObjects from Resources paths")]
+    public bool loadFromResources = true;
     public string act1ResourcesPath = "Encounters/Act1";
     public string act2ResourcesPath = "Encounters/Act2";
     public string act3ResourcesPath = "Encounters/Act3";
@@ -79,34 +51,495 @@ public partial class EncounterManager : MonoBehaviour
     
     [Header("Current Encounter")]
     public int currentEncounterID = 0;
+
+    // Component managers
+    private EncounterGraphBuilder graphBuilder;
+    private EncounterStateManager stateManager;
+    private EncounterProgressionManager progressionManager;
+    
+    // Encounter data storage
+    private Dictionary<int, EncounterData> allEncounters = new Dictionary<int, EncounterData>();
+    private Dictionary<int, List<EncounterData>> encountersByAct = new Dictionary<int, List<EncounterData>>();
+    
+    // Track initialization state
+    private bool isInitialized = false;
+    public bool IsInitialized => isInitialized;
+    
+    // Legacy support (for backwards compatibility)
+    [Header("Legacy Support (Editor Only)")]
+    public List<EncounterData> act1Encounters = new List<EncounterData>();
+    public List<EncounterData> act2Encounters = new List<EncounterData>();
+    public List<EncounterData> act3Encounters = new List<EncounterData>();
+    public List<EncounterData> act4Encounters = new List<EncounterData>();
     
     private void Awake()
     {
-        // Singleton pattern - only one instance should exist
+        // Singleton pattern
         if (_instance == null)
         {
             _instance = this;
             DontDestroyOnLoad(gameObject);
-            EnsureEnemyDatabase();
-            // Restore pending encounter id if any (ensures continuity across scene reloads)
-            int pendingId = PlayerPrefs.GetInt("PendingEncounterID", 0);
-            InitializeEncounters();
-            if (currentEncounterID == 0 && pendingId > 0)
-            {
-                currentEncounterID = pendingId;
-                PlayerPrefs.SetInt("PendingEncounterID", 0);
-                PlayerPrefs.Save();
-                Debug.Log($"[EncounterDebug] Restored pending encounter id {currentEncounterID} on Awake.");
-            }
+            InitializeSystem();
         }
         else if (_instance != this)
         {
             Destroy(gameObject);
         }
     }
-    
-    private void EnsureEnemyDatabase()
+
+    private void OnDestroy()
     {
+        if (_instance == this)
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+    }
+    
+    /// <summary>
+    /// Initialize the encounter system.
+    /// </summary>
+    private void InitializeSystem()
+    {
+        EnsureEnemyDatabase();
+        
+        // Initialize component managers
+        graphBuilder = new EncounterGraphBuilder();
+        stateManager = new EncounterStateManager(graphBuilder);
+        progressionManager = new EncounterProgressionManager(graphBuilder, stateManager);
+        
+        // Load encounters
+        LoadEncounters();
+        
+        // Build graph
+        BuildEncounterGraph();
+        
+        // Apply character progression (this ensures encounter 1 is unlocked)
+        ApplyCharacterProgression();
+        
+        // Double-check: Ensure encounter 1 is unlocked after progression is applied
+        var encounter1Prog = progressionManager.GetProgression(1);
+        Debug.Log($"[EncounterManager] After ApplyCharacterProgression, encounter 1 progression: {(encounter1Prog != null ? $"Unlocked={encounter1Prog.isUnlocked}, Completed={encounter1Prog.isCompleted}" : "NULL")}");
+        
+        if (encounter1Prog == null || !encounter1Prog.isUnlocked)
+        {
+            Debug.LogWarning($"[EncounterManager] Encounter 1 was {(encounter1Prog == null ? "MISSING" : "LOCKED")} after progression! Force-unlocking...");
+            progressionManager.MarkUnlocked(1);
+            
+            // Verify again
+            encounter1Prog = progressionManager.GetProgression(1);
+            Debug.Log($"[EncounterManager] After force-unlock, encounter 1: {(encounter1Prog != null ? $"Unlocked={encounter1Prog.isUnlocked}" : "STILL NULL!")}");
+        }
+        
+        // Final verification
+        bool isUnlocked = IsEncounterUnlocked(1);
+        Debug.Log($"[EncounterManager] Final check - IsEncounterUnlocked(1): {isUnlocked}");
+        
+        // Restore pending encounter ID
+        int pendingId = PlayerPrefs.GetInt("PendingEncounterID", 0);
+        if (currentEncounterID == 0 && pendingId > 0)
+        {
+            currentEncounterID = pendingId;
+            PlayerPrefs.SetInt("PendingEncounterID", 0);
+            PlayerPrefs.Save();
+            Debug.Log($"[EncounterManager] Restored pending encounter ID {currentEncounterID}");
+        }
+        
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        
+        isInitialized = true;
+        EncounterEvents.InvokeSystemInitialized();
+        Debug.Log($"[EncounterManager] System initialized - Encounter 1 is always available. Loaded {allEncounters.Count} encounters.");
+    }
+    
+    /// <summary>
+    /// Load encounters from Resources or use fallback data.
+    /// </summary>
+    private void LoadEncounters()
+        {
+        allEncounters.Clear();
+        encountersByAct.Clear();
+        
+        if (loadFromResources)
+        {
+            // Load from Resources using EncounterDataLoader
+            encountersByAct = EncounterDataLoader.LoadAllEncounters(
+                act1ResourcesPath,
+                act2ResourcesPath,
+                act3ResourcesPath,
+                act4ResourcesPath
+            );
+            
+            // Build unified lookup
+            foreach (var actEncounters in encountersByAct.Values)
+            {
+                foreach (var encounter in actEncounters)
+                {
+                    if (encounter != null && encounter.encounterID > 0)
+            {
+                        allEncounters[encounter.encounterID] = encounter;
+                    }
+                }
+            }
+            
+            // Update legacy lists for editor compatibility
+            act1Encounters = encountersByAct.ContainsKey(1) ? encountersByAct[1] : new List<EncounterData>();
+            act2Encounters = encountersByAct.ContainsKey(2) ? encountersByAct[2] : new List<EncounterData>();
+            act3Encounters = encountersByAct.ContainsKey(3) ? encountersByAct[3] : new List<EncounterData>();
+            act4Encounters = encountersByAct.ContainsKey(4) ? encountersByAct[4] : new List<EncounterData>();
+            
+            // Validate loaded data
+            ValidateEncounters();
+            
+            EncounterEvents.InvokeDataLoaded();
+            }
+            else
+            {
+            // Fallback hardcoded defaults
+            CreateFallbackEncounters();
+            }
+        }
+    
+    /// <summary>
+    /// Create fallback encounters if Resources loading fails.
+    /// </summary>
+    private void CreateFallbackEncounters()
+    {
+        var fallback1 = new EncounterData(1, "Where Night First Fell", "CombatScene");
+        fallback1.isUnlocked = true;
+        var fallback2 = new EncounterData(2, "The Wretched Shore", "CombatScene") { isUnlocked = false };
+        var fallback3 = new EncounterData(3, "Tidal Island", "CombatScene") { isUnlocked = false };
+        
+        act1Encounters = new List<EncounterData> { fallback1, fallback2, fallback3 };
+        encountersByAct[1] = act1Encounters;
+        
+        foreach (var encounter in act1Encounters)
+    {
+            allEncounters[encounter.encounterID] = encounter;
+        }
+        
+        Debug.LogWarning("[EncounterManager] Using fallback encounters. Check Resources paths.");
+    }
+    
+    /// <summary>
+    /// Validate loaded encounters.
+    /// </summary>
+    private void ValidateEncounters()
+    {
+        var allEncounterList = allEncounters.Values.ToList();
+        var validationResult = EncounterValidator.ValidateEncounters(allEncounterList);
+        
+        if (!validationResult.IsValid)
+        {
+            Debug.LogError($"[EncounterManager] Encounter validation failed:\n{validationResult}");
+        }
+        else if (validationResult.warnings.Count > 0)
+        {
+            Debug.LogWarning($"[EncounterManager] Encounter validation warnings:\n{validationResult}");
+        }
+        else
+        {
+            Debug.Log("[EncounterManager] All encounters validated successfully.");
+        }
+    }
+    
+    /// <summary>
+    /// Build the encounter graph.
+    /// </summary>
+    private void BuildEncounterGraph()
+    {
+        graphBuilder.BuildGraph(allEncounters.Values);
+        EncounterEvents.InvokeGraphBuilt();
+        Debug.Log($"[EncounterManager] Graph built with {allEncounters.Count} encounters");
+                }
+    
+    /// <summary>
+    /// Apply character progression to the encounter system.
+    /// </summary>
+    public void ApplyCharacterProgression()
+    {
+        var character = CharacterManager.Instance != null ? CharacterManager.Instance.GetCurrentCharacter() : null;
+        Debug.Log($"[EncounterManager] ApplyCharacterProgression - Character: {(character != null ? character.characterName : "NULL")}");
+        
+        Dictionary<int, EncounterProgressionData> characterProgression = new Dictionary<int, EncounterProgressionData>();
+        
+        if (character != null)
+        {
+            Debug.Log($"[EncounterManager] Character has completedEncounterIDs: {(character.completedEncounterIDs != null ? string.Join(", ", character.completedEncounterIDs) : "NULL")}");
+            Debug.Log($"[EncounterManager] Character has unlockedEncounterIDs: {(character.unlockedEncounterIDs != null ? string.Join(", ", character.unlockedEncounterIDs) : "NULL")}");
+            
+            // Convert character's progression lists to EncounterProgressionData
+            if (character.completedEncounterIDs != null)
+            {
+                foreach (var id in character.completedEncounterIDs)
+                {
+                    var progData = new EncounterProgressionData(id);
+                    progData.isCompleted = true;
+                    progData.completionCount = 1; // Legacy: assume 1 completion
+                    characterProgression[id] = progData;
+                    Debug.Log($"[EncounterManager] Added completed encounter {id} to progression");
+                }
+            }
+            
+            if (character.unlockedEncounterIDs != null)
+            {
+                foreach (var id in character.unlockedEncounterIDs)
+                {
+                    if (!characterProgression.TryGetValue(id, out var progData))
+                    {
+                        progData = new EncounterProgressionData(id);
+                        characterProgression[id] = progData;
+                    }
+                    progData.isUnlocked = true;
+                    Debug.Log($"[EncounterManager] Added unlocked encounter {id} to progression");
+                }
+            }
+        }
+        
+        // Ensure encounter 1 is always unlocked, regardless of character data
+        if (!characterProgression.ContainsKey(1))
+        {
+            var encounter1Prog = new EncounterProgressionData(1);
+            encounter1Prog.MarkUnlocked();
+            characterProgression[1] = encounter1Prog;
+            Debug.Log($"[EncounterManager] Added encounter 1 to progression (was missing) - Unlocked: {encounter1Prog.isUnlocked}");
+        }
+        else if (!characterProgression[1].isUnlocked)
+        {
+            characterProgression[1].MarkUnlocked();
+            Debug.Log($"[EncounterManager] Force-unlocked encounter 1 (was locked in character data)");
+        }
+        else
+        {
+            Debug.Log($"[EncounterManager] Encounter 1 already in progression and unlocked");
+        }
+        
+        // Load progression into progression manager
+        progressionManager.LoadProgression(characterProgression);
+        
+        // Verify encounter 1 after loading
+        var verifyProg = progressionManager.GetProgression(1);
+        Debug.Log($"[EncounterManager] After LoadProgression, encounter 1 progression: {(verifyProg != null ? $"Unlocked={verifyProg.isUnlocked}, Completed={verifyProg.isCompleted}" : "NULL")}");
+        
+        EncounterEvents.InvokeProgressionApplied();
+        Debug.Log($"[EncounterManager] Applied progression for {(character != null ? character.characterName : "no character")}. Encounter 1 is always unlocked.");
+    }
+    
+    /// <summary>
+    /// Start an encounter.
+    /// </summary>
+    public void StartEncounter(int encounterID)
+    {
+        // Ensure system is initialized before starting encounter
+        if (!isInitialized)
+        {
+            Debug.LogWarning("[EncounterManager] System not initialized when StartEncounter called. Initializing now...");
+            InitializeSystem();
+        }
+        
+        EncounterData encounter = GetEncounterByID(encounterID);
+        if (encounter == null)
+        {
+            Debug.LogError($"[EncounterManager] Encounter ID {encounterID} not found. Total encounters loaded: {allEncounters.Count}");
+            Debug.LogError($"[EncounterManager] Available encounter IDs: {string.Join(", ", allEncounters.Keys)}");
+            return;
+        }
+        
+        if (!IsEncounterUnlocked(encounterID))
+        {
+            Debug.LogWarning($"[EncounterManager] Encounter {encounterID} is locked.");
+            return;
+        }
+        
+        currentEncounterID = encounterID;
+        
+        // Mark as attempted
+        progressionManager.MarkAttempted(encounterID);
+        
+        // Mark as entered
+        var character = CharacterManager.Instance != null ? CharacterManager.Instance.GetCurrentCharacter() : null;
+        if (character != null)
+        {
+            character.MarkEncounterEntered(encounterID);
+            CharacterManager.Instance.SaveCharacter();
+        }
+        
+        EncounterEvents.InvokeEncounterEntered(encounterID);
+        
+        // Persist encounter ID for scene transition
+        PlayerPrefs.SetInt("PendingEncounterID", encounterID);
+        PlayerPrefs.Save();
+        
+        Debug.Log($"[EncounterManager] Starting encounter {encounterID}: {encounter.encounterName}");
+        SceneManager.LoadScene(encounter.sceneName);
+    }
+    
+    /// <summary>
+    /// Complete the current encounter.
+    /// </summary>
+    public void CompleteCurrentEncounter(float completionTime = 0f, int score = 0)
+    {
+        if (currentEncounterID == 0)
+        {
+            Debug.LogWarning("[EncounterManager] No current encounter to complete.");
+            return;
+        }
+        
+        EncounterData encounter = GetEncounterByID(currentEncounterID);
+        if (encounter == null)
+        {
+            Debug.LogWarning($"[EncounterManager] Current encounter {currentEncounterID} not found.");
+            return;
+        }
+        
+        // Mark as completed in progression manager
+        progressionManager.MarkCompleted(currentEncounterID, completionTime, score);
+        
+        // Update character
+        var character = CharacterManager.Instance != null ? CharacterManager.Instance.GetCurrentCharacter() : null;
+        if (character != null)
+        {
+            character.MarkEncounterCompleted(currentEncounterID);
+            
+            // Sync progression back to character (for backwards compatibility)
+            var progData = progressionManager.GetProgression(currentEncounterID);
+            if (progData != null && progData.isUnlocked)
+            {
+                character.MarkEncounterUnlocked(currentEncounterID);
+            }
+            
+            CharacterManager.Instance.SaveCharacter();
+        }
+        
+        Debug.Log($"[EncounterManager] Completed encounter {currentEncounterID}: {encounter.encounterName}");
+    }
+    
+    /// <summary>
+    /// Get encounter by ID.
+    /// </summary>
+    public EncounterData GetEncounterByID(int encounterID)
+    {
+        // Ensure system is initialized before getting encounter
+        if (!isInitialized)
+        {
+            Debug.LogWarning("[EncounterManager] System not initialized when GetEncounterByID called. Initializing now...");
+            InitializeSystem();
+        }
+        
+        if (allEncounters.TryGetValue(encounterID, out var encounter))
+        {
+            return encounter;
+        }
+        return null;
+    }
+    
+    /// <summary>
+    /// Get current encounter.
+    /// </summary>
+    public EncounterData GetCurrentEncounter()
+    {
+        return GetEncounterByID(currentEncounterID);
+    }
+    
+    /// <summary>
+    /// Get current area level.
+    /// </summary>
+    public int GetCurrentAreaLevel()
+    {
+        var enc = GetCurrentEncounter();
+        return enc != null ? enc.areaLevel : 1;
+    }
+
+    /// <summary>
+    /// Check if an encounter is unlocked.
+    /// </summary>
+    public bool IsEncounterUnlocked(int encounterID)
+    {
+        // Encounter 1 is always unlocked
+        if (encounterID == 1)
+        {
+            Debug.Log($"[EncounterManager] IsEncounterUnlocked({encounterID}) - Encounter 1, returning TRUE (always unlocked)");
+            return true;
+        }
+        
+        bool result = progressionManager != null ? progressionManager.IsUnlocked(encounterID) : false;
+        Debug.Log($"[EncounterManager] IsEncounterUnlocked({encounterID}) - ProgressionManager result: {result}");
+        return result;
+    }
+    
+    /// <summary>
+    /// Check if an encounter is completed.
+    /// </summary>
+    public bool IsEncounterCompleted(int encounterID)
+    {
+        return progressionManager.IsCompleted(encounterID);
+    }
+    
+    /// <summary>
+    /// Get prerequisites for an encounter.
+    /// </summary>
+    public IReadOnlyList<int> GetPrerequisitesForEncounter(int encounterID)
+    {
+        return graphBuilder.GetPrerequisites(encounterID);
+    }
+    
+    /// <summary>
+    /// Get all encounter nodes (for UI).
+    /// </summary>
+    public IReadOnlyDictionary<int, EncounterData> GetEncounterNodes()
+    {
+        return allEncounters;
+    }
+    
+    /// <summary>
+    /// Get progression data for an encounter.
+    /// </summary>
+    public EncounterProgressionData GetProgression(int encounterID)
+    {
+        return progressionManager.GetProgression(encounterID);
+                        }
+    
+    /// <summary>
+    /// Return to main UI.
+    /// </summary>
+    public void ReturnToMainUI()
+    {
+        SceneManager.LoadScene("MainGameUI");
+    }
+
+    /// <summary>
+    /// Initialize encounter graph (public API for external initialization).
+    /// </summary>
+    public void InitializeEncounterGraph()
+    {
+        Debug.Log("[EncounterManager] InitializeEncounterGraph called");
+        LoadEncounters();
+        BuildEncounterGraph();
+        ApplyCharacterProgression();
+        isInitialized = true;
+        Debug.Log($"[EncounterManager] Encounter graph initialized. {allEncounters.Count} encounters loaded.");
+    }
+
+    /// <summary>
+    /// Handle scene loaded event.
+    /// </summary>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "MainGameUI")
+        {
+            Debug.Log("[EncounterManager] Scene loaded: MainGameUI. Refreshing encounter system.");
+            // Re-initialize the graph (this will reload encounters and apply progression)
+            InitializeEncounterGraph();
+            // Mark as initialized after refresh
+            isInitialized = true;
+            Debug.Log($"[EncounterManager] Graph refreshed. {allEncounters.Count} encounters available.");
+        }
+    }
+
+    /// <summary>
+    /// Ensure EnemyDatabase exists.
+    /// </summary>
+    private void EnsureEnemyDatabase()
+        {
         if (EnemyDatabase.Instance == null)
         {
             if (enemyDatabaseRef != null)
@@ -122,100 +555,20 @@ public partial class EncounterManager : MonoBehaviour
                 DontDestroyOnLoad(go);
             }
         }
-        // Reload to ensure content is available when entering from gameplay flow
+        
         if (EnemyDatabase.Instance != null && (EnemyDatabase.Instance.allEnemies == null || EnemyDatabase.Instance.allEnemies.Count == 0))
         {
             EnemyDatabase.Instance.ReloadDatabase();
         }
     }
-
-    private void InitializeEncounters()
-    {
-        act1Encounters.Clear();
-        act2Encounters.Clear();
-        act3Encounters.Clear();
-        act4Encounters.Clear();
-
-        if (loadFromResources)
-        {
-            LoadActFromResources(act1ResourcesPath, act1Encounters, autoUnlockFirst: true);
-            LoadActFromResources(act2ResourcesPath, act2Encounters, autoUnlockFirst: false);
-            LoadActFromResources(act3ResourcesPath, act3Encounters, autoUnlockFirst: false);
-            LoadActFromResources(act4ResourcesPath, act4Encounters, autoUnlockFirst: false);
-
-            if (act1Encounters.Count + act2Encounters.Count + act3Encounters.Count + act4Encounters.Count > 0)
-                return;
-        }
-
-        // Fallback hardcoded defaults for Act 1 only if no assets found
-        act1Encounters.Add(new EncounterData(1, "Where Night First Fell", "CombatScene"));
-        act1Encounters.Add(new EncounterData(2, "The Wretched Shore", "CombatScene"));
-        act1Encounters.Add(new EncounterData(3, "Tidal Island", "CombatScene"));
-    }
     
-    public void StartEncounter(int encounterID)
-    {
-        EncounterData encounter = GetEncounterByID(encounterID);
-        if (encounter == null)
-        {
-            Debug.LogWarning($"[EncounterManager] Encounter ID {encounterID} not found in any act.");
-            return;
-        }
-        if (!encounter.isUnlocked)
-        {
-            Debug.LogWarning($"[EncounterManager] Encounter {encounterID} is locked.");
-            return;
-        }
-        currentEncounterID = encounterID;
-        // Persist encounter id so a newly created EncounterManager in the next scene can restore it
-        PlayerPrefs.SetInt("PendingEncounterID", encounterID);
-        PlayerPrefs.Save();
-        Debug.Log($"[EncounterDebug] [EncounterManager] Loading scene '{encounter.sceneName}' for encounter {encounterID}");
-        SceneManager.LoadScene(encounter.sceneName);
-    }
+    // Legacy event for backwards compatibility
+    public event System.Action EncounterGraphChanged;
     
-    public EncounterData GetEncounterByID(int encounterID)
-    {
-        // Search all acts for robustness
-        EncounterData encounter = act1Encounters.Find(e => e.encounterID == encounterID);
-        if (encounter != null) return encounter;
-        encounter = act2Encounters.Find(e => e.encounterID == encounterID);
-        if (encounter != null) return encounter;
-        encounter = act3Encounters.Find(e => e.encounterID == encounterID);
-        if (encounter != null) return encounter;
-        encounter = act4Encounters.Find(e => e.encounterID == encounterID);
-        return encounter;
-    }
-    
-    public EncounterData GetCurrentEncounter()
-    {
-        return GetEncounterByID(currentEncounterID);
-    }
-    
-    public int GetCurrentAreaLevel()
-    {
-        var enc = GetCurrentEncounter();
-        return enc != null ? enc.areaLevel : 1;
-    }
-    
-    public void CompleteCurrentEncounter()
-    {
-        EncounterData encounter = GetCurrentEncounter();
-        if (encounter != null)
-        {
-            encounter.isCompleted = true;
-            // Unlock next encounter if it exists
-            EncounterData nextEncounter = GetEncounterByID(currentEncounterID + 1);
-            if (nextEncounter != null)
-            {
-                nextEncounter.isUnlocked = true;
-            }
-        }
-    }
-    
-    public void ReturnToMainUI()
-    {
-        SceneManager.LoadScene("MainGameUI");
+    private void RaiseEncounterGraphChanged()
+                        {
+        EncounterGraphChanged?.Invoke();
+        EncounterEvents.InvokeGraphBuilt();
     }
 }
 
@@ -227,30 +580,39 @@ public partial class EncounterManager
     {
         Undo.RecordObject(this, "Import Encounters From Resources");
 
-        act1Encounters.Clear();
-        act2Encounters.Clear();
-        act3Encounters.Clear();
-        act4Encounters.Clear();
-
-        LoadActFromResources(act1ResourcesPath, act1Encounters, autoUnlockFirst: true);
-        LoadActFromResources(act2ResourcesPath, act2Encounters, autoUnlockFirst: false);
-        LoadActFromResources(act3ResourcesPath, act3Encounters, autoUnlockFirst: false);
-        LoadActFromResources(act4ResourcesPath, act4Encounters, autoUnlockFirst: false);
-
+        LoadEncounters();
+        BuildEncounterGraph();
+        
         EditorUtility.SetDirty(this);
-        Debug.Log("[EncounterManager] Imported encounters from Resources into serialized lists.");
+        Debug.Log("[EncounterManager] Imported encounters from Resources.");
+    }
+    
+    [ContextMenu("Encounters/Validate Encounters")]
+    private void Editor_ValidateEncounters()
+    {
+        var allEncounterList = allEncounters.Values.ToList();
+        var result = EncounterValidator.ValidateEncounters(allEncounterList);
+        
+        if (result.IsValid)
+            {
+            EditorUtility.DisplayDialog("Validation Result", $"Validation passed!\n\n{result}", "OK");
+            }
+        else
+        {
+            EditorUtility.DisplayDialog("Validation Result", $"Validation failed!\n\n{result}", "OK");
+        }
     }
 
-    [ContextMenu("Encounters/Clear Imported Lists")] 
-    private void Editor_ClearImportedLists()
+    [ContextMenu("Encounters/Reset Progression")]
+    private void Editor_ResetProgression()
     {
-        Undo.RecordObject(this, "Clear Imported Encounter Lists");
-        act1Encounters.Clear();
-        act2Encounters.Clear();
-        act3Encounters.Clear();
-        act4Encounters.Clear();
-        EditorUtility.SetDirty(this);
-        Debug.Log("[EncounterManager] Cleared serialized encounter lists.");
+        if (EditorUtility.DisplayDialog("Reset Progression", "This will reset all encounter progression. Continue?", "Yes", "No"))
+        {
+            progressionManager?.Clear();
+            stateManager?.Clear();
+            ApplyCharacterProgression();
+            Debug.Log("[EncounterManager] Progression reset.");
+        }
     }
 }
 #endif

@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: Archives-Wanderer
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: Archives-Wanderer
+  description: Carries the last pages of a treatise that was never finished. The
+    pages burn from the edges inward. Sometimes stops fighting to jot invisible notes
+    in the air.
+  enemySprite: {fileID: -308792225305690742, guid: a8a170fb3012ede459e33940a7d37555, type: 3}
+  tier: 1
+  rarity: 0
+  category: 2
+  minHealth: 50
+  maxHealth: 70
+  baseDamage: 8
+  baseArmor: 0
+  criticalChance: 0.05
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 100
+  evasionRating: 0
+  physicalResistance: 0
+  fireResistance: 0
+  coldResistance: 0
+  lightningResistance: 0
+  chaosResistance: 0
+  displayScale: 1
+  basePanelHeight: 280
+  enableEnergy: 0
+  baseMaxEnergy: 100
+  energyRegenPerTurn: 10
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  aiPattern: 0
+  attackPreference: 0.7
+  specialAbilities: []
+  abilities:
+  - {fileID: 11400000, guid: d0c3798d3c96bf542813a1010e3e64b6, type: 2}
+  - {fileID: 11400000, guid: c0a551bc390f998419cd7a5f7ca749eb, type: 2}
+  - {fileID: 11400000, guid: d503b8fcd8fef5e4f80e4b32c6085108, type: 2}
+  summonPool: []
+  spiritTags: 
+  guaranteedSpiritDrop: 0
+  minGoldDrop: 14
+  maxGoldDrop: 22
+  experienceReward: 10
+  cardDropChance: 0.2
+  initialAgitateStacks: 0
+  initialToleranceStacks: 0
+  initialPotentialStacks: 0
+  excludeFromRandom: 1
+  healthBarColor: {r: 1, g: 0, b: 0, a: 1}
+  animatorController: {fileID: 0}

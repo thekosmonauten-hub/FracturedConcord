@@ -81,8 +81,29 @@ public class CombatCardAdapter : MonoBehaviour
             UpdateCardVisualsDirectly(card, character);
         }
         
-        // Map Additional Effect (Combo Description) onto prefab if present
-        UpdateAdditionalEffectText(card?.comboDescription);
+        // Map Additional Effect (Combo Description, Discarded Effect, etc.) onto prefab if present
+        List<string> additionalEffects = new List<string>();
+        
+        // Add combo description if present
+        if (!string.IsNullOrWhiteSpace(card?.comboDescription))
+        {
+            additionalEffects.Add(card.comboDescription);
+        }
+        
+        // Add discarded effect from source CardData if present
+        if (card?.sourceCardData != null && !string.IsNullOrWhiteSpace(card.sourceCardData.ifDiscardedEffect))
+        {
+            additionalEffects.Add(card.sourceCardData.ifDiscardedEffect);
+        }
+        
+        // Add dual wield effect from source CardData if present
+        if (card?.sourceCardData != null && !string.IsNullOrWhiteSpace(card.sourceCardData.dualWieldEffect))
+        {
+            additionalEffects.Add(card.sourceCardData.dualWieldEffect);
+        }
+        
+        string combinedText = string.Join("\n", additionalEffects);
+        UpdateAdditionalEffectText(combinedText);
         
         // Update category icon
         UpdateCategoryIcon(cardData);
@@ -100,22 +121,55 @@ public class CombatCardAdapter : MonoBehaviour
             deckBuilderCard.Initialize(cardData, null);
         }
         
-        // If this is an extended card, set additional effect text
+        // Build additional effect text from combo, momentum, and discarded effects
+        List<string> additionalEffects = new List<string>();
+        
+        // If this is an extended card, get dynamic descriptions
         if (cardData is CardDataExtended ext)
         {
-            // Try dynamic combo description with current character if available
+            // Try dynamic descriptions with current character if available
             var ch = CharacterManager.Instance != null && CharacterManager.Instance.HasCharacter() ? CharacterManager.Instance.GetCurrentCharacter() : null;
-            string dyn = ext.GetDynamicComboDescription(ch);
-            string comboText = string.IsNullOrEmpty(dyn) ? ext.comboDescription : dyn;
+            string dynCombo = ext.GetDynamicComboDescription(ch);
+            // NOTE: Momentum effects are now shown in hover tooltip, not on the card description
+            // string dynMomentum = ext.GetDynamicMomentumDescription(ch);
             
-            Debug.Log($"[CombatCardAdapter] Card '{cardData.cardName}' combo description: '{comboText}' (dynamic: '{dyn}', static: '{ext.comboDescription}')");
-            UpdateAdditionalEffectText(comboText);
+            if (!string.IsNullOrWhiteSpace(dynCombo))
+                additionalEffects.Add(dynCombo);
+            // Momentum effects removed from card description - shown in tooltip instead
+            // if (!string.IsNullOrWhiteSpace(dynMomentum))
+            //     additionalEffects.Add(dynMomentum);
+            
+            // Fallback to static descriptions if dynamic are empty
+            if (additionalEffects.Count == 0)
+            {
+                if (!string.IsNullOrWhiteSpace(ext.comboDescription))
+                    additionalEffects.Add(ext.comboDescription);
+                // Momentum effects removed from card description - shown in tooltip instead
+                // if (!string.IsNullOrWhiteSpace(ext.momentumEffectDescription))
+                //     additionalEffects.Add(ext.momentumEffectDescription);
+            }
         }
         else
         {
-            Debug.Log($"[CombatCardAdapter] Card '{cardData.cardName}' is not CardDataExtended, clearing additional effect text");
-            UpdateAdditionalEffectText("");
+            // Regular CardData doesn't have comboDescription (only CardDataExtended does)
+            // No additional effects to add for base CardData
         }
+        
+        // Add discarded effect if present (works for both CardData and CardDataExtended)
+        if (!string.IsNullOrWhiteSpace(cardData.ifDiscardedEffect))
+        {
+            additionalEffects.Add(cardData.ifDiscardedEffect);
+        }
+        
+        // Add dual wield effect if present
+        if (!string.IsNullOrWhiteSpace(cardData.dualWieldEffect))
+        {
+            additionalEffects.Add(cardData.dualWieldEffect);
+        }
+        
+        string combinedText = string.Join("\n", additionalEffects);
+        Debug.Log($"[CombatCardAdapter] Card '{cardData.cardName}' additional effects: '{combinedText}' (discarded: '{cardData.ifDiscardedEffect}')");
+        UpdateAdditionalEffectText(combinedText);
         
         // Update category icon
         UpdateCategoryIcon(cardData);
@@ -145,9 +199,31 @@ public class CombatCardAdapter : MonoBehaviour
             Debug.LogError($"[CardDataExtended] DeckBuilderCardUI component not found!");
         }
         
-        // Map Additional Effect (Combo Description)
+        // Map Additional Effect (Combo Description only - Momentum Effects shown in tooltip)
         string dynCombo = cardData.GetDynamicComboDescription(character);
-        UpdateAdditionalEffectText(string.IsNullOrEmpty(dynCombo) ? cardData.comboDescription : dynCombo);
+        // NOTE: Momentum effects are now shown in hover tooltip, not on the card description
+        // string dynMomentum = cardData.GetDynamicMomentumDescription(character);
+        
+        // Combine combo descriptions (momentum moved to tooltip)
+        List<string> additionalEffects = new List<string>();
+        if (!string.IsNullOrWhiteSpace(dynCombo))
+            additionalEffects.Add(dynCombo);
+        // Momentum effects removed from card description - shown in tooltip instead
+        // if (!string.IsNullOrWhiteSpace(dynMomentum))
+        //     additionalEffects.Add(dynMomentum);
+        
+        // Fallback to static descriptions if dynamic are empty
+        if (additionalEffects.Count == 0)
+        {
+            if (!string.IsNullOrWhiteSpace(cardData.comboDescription))
+                additionalEffects.Add(cardData.comboDescription);
+            // Momentum effects removed from card description - shown in tooltip instead
+            // if (cardData is CardDataExtended ext && !string.IsNullOrWhiteSpace(ext.momentumEffectDescription))
+            //     additionalEffects.Add(ext.momentumEffectDescription);
+        }
+        
+        string combinedText = string.Join("\n", additionalEffects);
+        UpdateAdditionalEffectText(combinedText);
         
         // Update category icon
         UpdateCategoryIcon(cardData);
@@ -192,6 +268,15 @@ public class CombatCardAdapter : MonoBehaviour
         cardData.damage = Mathf.RoundToInt(card.baseDamage);
         cardData.block = Mathf.RoundToInt(card.baseGuard);
         
+        // Copy special effects from source CardData if available
+        if (card.sourceCardData != null)
+        {
+            cardData.ifDiscardedEffect = card.sourceCardData.ifDiscardedEffect;
+            cardData.dualWieldEffect = card.sourceCardData.dualWieldEffect;
+            cardData.isDiscardCard = card.sourceCardData.isDiscardCard;
+            cardData.isDualWield = card.sourceCardData.isDualWield;
+        }
+        
         // Calculate total values if character available
         if (character != null)
         {
@@ -231,7 +316,15 @@ public class CombatCardAdapter : MonoBehaviour
             nameText.text = card.cardName;
         
         if (costText != null)
-            costText.text = card.manaCost.ToString();
+        {
+            // Calculate display cost (includes momentum-based cost reductions)
+            int displayCost = card.manaCost;
+            if (card.sourceCardData is CardDataExtended extendedCard && ownerCharacter != null)
+            {
+                displayCost = CombatDeckManager.GetDisplayCost(extendedCard, card.manaCost, ownerCharacter);
+            }
+            costText.text = displayCost.ToString();
+        }
         
         if (descText != null)
         {

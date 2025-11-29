@@ -9,6 +9,7 @@ public class CharacterSelectionUI : MonoBehaviour
     public ScrollRect characterScrollView;
     public Transform characterListContent; // The content area inside the ScrollView
     public GameObject characterButtonPrefab; // Prefab for individual character buttons
+    public GameObject emptyCharacterSlotPrefab; // Prefab for "New Character" slot at bottom
     public Button createNewCharacterButton;
     public Button backToMainMenuButton;
     
@@ -62,6 +63,9 @@ public class CharacterSelectionUI : MonoBehaviour
         {
             CreateCharacterButton(character);
         }
+
+        // Always append the empty slot at the bottom for new character creation
+        CreateEmptyCharacterSlot();
         
         // Update scroll view content size
         UpdateScrollViewSize();
@@ -96,6 +100,29 @@ public class CharacterSelectionUI : MonoBehaviour
         
         // Add click event
         characterButton.onClick.AddListener(() => OnCharacterSelected(character));
+    }
+
+    private void CreateEmptyCharacterSlot()
+    {
+        if (emptyCharacterSlotPrefab == null || characterListContent == null)
+        {
+            Debug.LogWarning("Empty character slot prefab or content area not assigned!");
+            return;
+        }
+
+        GameObject slotObj = Instantiate(emptyCharacterSlotPrefab, characterListContent);
+        slotObj.transform.SetAsLastSibling();
+
+        Button slotButton = slotObj.GetComponentInChildren<Button>();
+        if (slotButton != null)
+        {
+            slotButton.onClick.RemoveAllListeners();
+            slotButton.onClick.AddListener(OnCreateNewCharacter);
+        }
+        else
+        {
+            Debug.LogWarning("EmptyCharacterSlot prefab is missing a Button component; cannot hook up to character creation.");
+        }
     }
     
     private void SetupCharacterButton(Button button, CharacterData character)
@@ -215,6 +242,16 @@ public class CharacterData
     // Game State
     public string currentScene;
     public float lastPosX, lastPosY, lastPosZ;
+
+    // Progression
+    public List<int> completedEncounterIDs = new List<int>();
+    public List<int> unlockedEncounterIDs = new List<int>();
+    public List<int> enteredEncounterIDs = new List<int>(); // Tracks encounters that have been entered (not necessarily completed)
+    public List<string> completedQuestIDs = new List<string>();
+    public List<string> completedTutorialIDs = new List<string>(); // Tracks completed tutorials
+    
+    // Warrants
+    public List<WarrantInstanceData> ownedWarrants = new List<WarrantInstanceData>();
     
     public CharacterData(string name, string characterClass, int level, int act)
     {

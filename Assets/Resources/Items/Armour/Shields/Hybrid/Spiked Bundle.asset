@@ -16,42 +16,13 @@ MonoBehaviour:
   description: A shield providing defense.
   itemIcon: {fileID: 0}
   rarity: 0
-  requiredLevel: 0
+  requiredLevel: 5
   itemType: 1
   equipmentType: 4
   isStackable: 0
   maxStackSize: 1
   quality: 0
   implicitModifiers:
-  - name: Implicit
-    description: Requires Level 5, 11 Dex, 11 Int
-    affixType: 0
-    tier: 0
-    modifiers:
-    - statName: requiresLevel511Dex11Int
-      minValue: 1
-      maxValue: 1
-      modifierType: 0
-      damageType: 0
-      scope: 1
-      description: 
-      originalMinValue: 1
-      originalMaxValue: 1
-      isDualRange: 0
-      firstRangeMin: 0
-      firstRangeMax: 0
-      secondRangeMin: 0
-      secondRangeMax: 0
-      rolledFirstValue: 0
-      rolledSecondValue: 0
-    requiredTags: []
-    weight: 1000
-    handedness: 0
-    minValue: 0
-    maxValue: 0
-    hasRange: 0
-    rolledValue: 0
-    isRolled: 0
   - name: Implicit
     description: +3% chance to Suppress Spell Damage
     affixType: 0
@@ -74,8 +45,10 @@ MonoBehaviour:
       rolledFirstValue: 0
       rolledSecondValue: 0
     requiredTags: []
+    compatibleTags: []
     weight: 1000
     handedness: 0
+    minLevel: 0
     minValue: 0
     maxValue: 0
     hasRange: 0
@@ -99,7 +72,7 @@ MonoBehaviour:
   energyShield: 4
   ward: 0
   requiredStrength: 0
-  requiredDexterity: 0
-  requiredIntelligence: 0
+  requiredDexterity: 11
+  requiredIntelligence: 11
   movementSpeedPenalty: 0
   attackSpeedPenalty: 0

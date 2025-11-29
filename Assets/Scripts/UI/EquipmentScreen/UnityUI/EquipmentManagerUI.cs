@@ -252,8 +252,23 @@ namespace Dexiled.UI.EquipmentScreen
         /// </summary>
         private void OnSlotHovered(EquipmentType slotType, Vector2 position)
         {
-            Debug.Log($"[EquipmentManagerUI] Slot hovered: {slotType}");
-            // TODO: Implement tooltip display
+            if (ItemTooltipManager.Instance == null)
+                return;
+
+            if (!slotMap.TryGetValue(slotType, out var slot) || slot == null)
+            {
+                ItemTooltipManager.Instance.HideTooltip();
+                return;
+            }
+
+            ItemData equipped = slot.GetEquippedItem();
+            if (equipped == null)
+            {
+                ItemTooltipManager.Instance.HideTooltip();
+                return;
+            }
+
+            ItemTooltipManager.Instance.ShowEquipmentTooltip(equipped, position);
         }
 
         /// <summary>
@@ -357,7 +372,8 @@ namespace Dexiled.UI.EquipmentScreen
                 rarity = baseItem.GetCalculatedRarity(),
                 level = baseItem.requiredLevel,
                 itemSprite = baseItem.itemIcon,
-                requiredLevel = baseItem.requiredLevel
+                requiredLevel = baseItem.requiredLevel,
+                sourceItem = baseItem
             };
 
             // Convert weapon-specific properties

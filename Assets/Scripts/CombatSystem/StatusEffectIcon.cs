@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Dexiled.Data.Status;
 
 /// <summary>
 /// Visual representation of a status effect icon
@@ -17,8 +18,13 @@ public class StatusEffectIcon : MonoBehaviour
     public Color buffColor = Color.green;
     public Color debuffColor = Color.red;
     
+    [Header("Database (Optional)")]
+    [Tooltip("If assigned, will use StatusDatabase for sprites. Otherwise uses Resources.Load with iconName.")]
+    public StatusDatabase statusDatabase;
+    
     private StatusEffect statusEffect;
     private StatusEffectManager statusEffectManager;
+    private static StatusDatabase cachedStatusDatabase;
     
     
     /// <summary>
@@ -45,13 +51,14 @@ public class StatusEffectIcon : MonoBehaviour
     {
         if (statusEffect == null) return;
         
-        // Update icon sprite
+        // Update icon sprite (automatically uses positive/negative icons if available)
         if (iconImage != null)
         {
             Sprite iconSprite = LoadStatusEffectSprite(statusEffect.iconName);
             if (iconSprite != null)
             {
                 iconImage.sprite = iconSprite;
+                iconImage.color = Color.white; // Reset to white so sprite colors show through
             }
         }
         
@@ -92,21 +99,90 @@ public class StatusEffectIcon : MonoBehaviour
     
     /// <summary>
     /// Load sprite for status effect icon
+    /// Supports both StatusDatabase (preferred) and Resources.Load (fallback)
+    /// Automatically selects positive/negative icons based on magnitude when available
     /// </summary>
     private Sprite LoadStatusEffectSprite(string iconName)
     {
-        // Try to load from Resources folder
-        string spritePath = $"StatusEffectIcons/{iconName}";
-        Sprite sprite = Resources.Load<Sprite>(spritePath);
-        
-        if (sprite == null)
+        // Try StatusDatabase first (if available)
+        StatusDatabase db = GetStatusDatabase();
+        if (db != null && statusEffect != null)
         {
-            Debug.LogWarning($"Status effect sprite not found: {spritePath}");
-            // Return a default sprite or create a colored square
-            return CreateDefaultSprite(statusEffect.effectColor);
+            // Try to get sprite with magnitude consideration (for positive/negative icons)
+            Sprite sprite = db.GetStatusEffectSprite(statusEffect.effectType, statusEffect.magnitude);
+            if (sprite != null)
+            {
+                return sprite;
+            }
+            
+            // Fallback: Try to get sprite by iconName (for backward compatibility)
+            sprite = db.GetStatusEffectSpriteByName(iconName);
+            if (sprite != null)
+            {
+                return sprite;
+            }
         }
         
-        return sprite;
+        // Fallback: Try to load from Resources folder (works with sprite sheets if named correctly)
+        // For positive/negative icons, try to load based on magnitude
+        if (statusEffect != null && statusEffect.magnitude != 0f)
+        {
+            // Check if this effect type uses positive/negative icons
+            StatusEffectData effectData = db != null ? db.GetStatusEffect(statusEffect.effectType) : null;
+            if (effectData != null && effectData.usePositiveNegativeIcons)
+            {
+                // Try effect-specific positive/negative icons first
+                string magnitudeSuffix = statusEffect.magnitude > 0f ? "Positive" : "Negative";
+                string spritePath = $"StatusEffectIcons/{iconName}{magnitudeSuffix}";
+                Sprite spriteFromResources = Resources.Load<Sprite>(spritePath);
+                if (spriteFromResources != null)
+                {
+                    return spriteFromResources;
+                }
+                
+                // Try global positive/negative icons
+                string globalPath = statusEffect.magnitude > 0f ? "StatusEffectIcons/Positive" : "StatusEffectIcons/Negative";
+                Sprite globalSprite = Resources.Load<Sprite>(globalPath);
+                if (globalSprite != null)
+                {
+                    return globalSprite;
+                }
+            }
+        }
+        
+        // Standard Resources.Load fallback
+        string standardPath = $"StatusEffectIcons/{iconName}";
+        Sprite standardSprite = Resources.Load<Sprite>(standardPath);
+        if (standardSprite != null)
+        {
+            return standardSprite;
+        }
+        
+        // Last resort: Create default colored sprite
+        Debug.LogWarning($"Status effect sprite not found: {standardPath}. Using default colored sprite.");
+        return CreateDefaultSprite(statusEffect != null ? statusEffect.effectColor : Color.white);
+    }
+    
+    /// <summary>
+    /// Get StatusDatabase reference (cached for performance)
+    /// </summary>
+    private StatusDatabase GetStatusDatabase()
+    {
+        // Use instance reference first
+        if (statusDatabase != null)
+        {
+            return statusDatabase;
+        }
+        
+        // Use cached static reference
+        if (cachedStatusDatabase != null)
+        {
+            return cachedStatusDatabase;
+        }
+        
+        // Try to load from Resources
+        cachedStatusDatabase = Resources.Load<StatusDatabase>("StatusDatabase");
+        return cachedStatusDatabase;
     }
     
     /// <summary>
@@ -162,7 +238,7 @@ public class StatusEffectIcon : MonoBehaviour
         
         if (effect == null) return;
         
-        // Load and set the actual sprite
+        // Load and set the actual sprite (will automatically use positive/negative icons if available)
         if (iconImage != null)
         {
             Sprite iconSprite = LoadStatusEffectSprite(effect.iconName);
@@ -228,6 +304,16 @@ public class StatusEffectIcon : MonoBehaviour
         if (magnitudeText != null && magnitudeText.gameObject.activeInHierarchy)
         {
             magnitudeText.text = statusEffect.magnitude.ToString("F0");
+        }
+        
+        // Update icon sprite if magnitude changed (for positive/negative icons)
+        if (iconImage != null)
+        {
+            Sprite newSprite = LoadStatusEffectSprite(statusEffect.iconName);
+            if (newSprite != null && iconImage.sprite != newSprite)
+            {
+                iconImage.sprite = newSprite;
+            }
         }
     }
     

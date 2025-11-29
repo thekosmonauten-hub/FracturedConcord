@@ -11,6 +11,274 @@ A deckbuilder ARPG with Path of Exile influences, built in Unity.
 
 ---
 
+## Session 15: Spell Tag Focus Charges
+
+### Date: 2025-11-14
+### Goal: Ensure Spell-tagged cards fuel Focus charges even when their card type is Attack/Guard.
+
+### Key Decisions Made
+
+1. **Tag-First Routing for Focus Meter**
+   - Added an explicit Spell tag check inside `CombatDeckManager.ProcessSpeedMeters`.
+   - Rationale: Designers flag Spell cards via tags while reusing Attack card types for damage templating; the meter must follow the tag to avoid mixed signals.
+
+2. **Helper for Case-Insensitive Tag Lookups**
+   - Introduced `CardHasTag` utility plus a `SpellTagName` constant to avoid scattering string comparisons throughout combat systems.
+   - Rationale: Keeps future meter hooks (e.g., Momentum, Totem) consistent and reduces typo-related bugs.
+
+### Systems Updated
+
+1. `CombatDeckManager`
+   - Added `using System;`, `SpellTagName` constant, and `CardHasTag`.
+   - `ProcessSpeedMeters` now routes Spell-tagged cards to `AddFocusProgress()` regardless of card type before falling back to the existing Attack/Skill/Power logic.
+   - Prevents double dipping by returning early once a Spell tag is detected.
+
+2. Documentation
+   - Logged this change here so future developers understand why tag precedence matters for Speed Meter tuning.
+
+---
+
+## Session 16: Focus Effects + Card Pooling Fixes
+
+### Date: 2025-11-14
+### Goal: Make pooled card visuals stay clickable and let Focus charge bonuses affect AoE spells.
+
+### Key Decisions Made
+
+1. **Centralize Interaction State**
+   - Reused `SetCardInteractable` whenever a card is disabled/enabled instead of raw `Button`/`CanvasGroup` tweaks.
+   - Forcing the `Button` component to stay enabled prevents pooled cards from coming back with their `Button` script disabled (the "Button GameObject" issue after 8–10 draws).
+
+2. **Reset Hover Components When Reusing Cards**
+   - `CardRuntimeManager` now reassigns `CardHoverEffect.animationManager` and re-enables the component every time a pooled card is spawned.
+   - Ensures hover/tooltip behaviour survives the pooling lifecycle.
+
+3. **Apply Focus Modifiers to AoE Damage**
+   - Batched AoE damage now runs through `CombatDeckManager.ApplyDamageModifier`, so Focus «DoubleDamage» (and future global multipliers) affect spell nukes just like single-target attacks.
+
+### Systems Updated
+
+1. `CombatDeckManager`
+   - Replaced bespoke button/canvas disabling with a single `SetCardInteractable(cardObj, false)` call when a card starts its play animation.
+   - `SetCardInteractable` guarantees pooled buttons remain enabled while still toggling `interactable`/raycasts, eliminating permanently-disabled buttons on future draws.
+
+2. `CardRuntimeManager`
+   - All creation paths (`CreateCardFromData`, `CreateCardFromCardData`, `CreateCardFromCardDataExtended`) now re-enable `CardHoverEffect` and refresh its animation manager on spawn.
+
+3. `CardEffectProcessor`
+   - `ApplyAoECard` pipes its calculated damage through `CombatDeckManager.ApplyDamageModifier`, so Focus charges finally double AoE spell damage (and any future shared modifiers) before hitting each enemy.
+
+---
+
+## Session 17: Enemy Energy & Wave Preview
+
+### Date: 2025-11-14
+### Goal: Surface the enemy energy resource on HUD, hook Chill/Slow drains, and preview wave compression on encounter buttons.
+
+### Key Decisions Made
+
+1. **Data-Driven Enemy Energy**
+   - `EnemyData` exposes opt-in energy stats (max pool, regen, drain multipliers) so bosses/elites can toggle the system without per-enemy code.
+   - `Enemy` stores the pool, raises `OnEnergyChanged`, and exposes helpers for drains/regeneration.
+
+2. **UI Integration**
+   - `EnemyCombatDisplay` auto-creates a teal bar under each enemy, subscribes to the new energy event, and hides the bar when energy isn’t used.
+   - `StatusEffectManager` drains energy automatically whenever Chill or Slow is applied, so any future source of those ailments benefits without bespoke logic.
+
+3. **Encounter Preview**
+   - `EncounterButton` now renders a `WavePreview` label that shows `base → compressed` wave counts based on the character’s current movement-speed multiplier.
+   - Compression clamps at a minimum of one wave, so boss previews remain honest even with absurd run speed.
+
+### Systems Updated
+
+1. `Enemy`/`EnemyData`
+   - Added energy configuration, drain multipliers, and events.
+
+2. `EnemyCombatDisplay`
+   - Auto-builds the energy bar (fallback prefab) and subscribes/unsubscribes from energy changes alongside stack events.
+
+3. `StatusEffectManager`
+   - New Chill/Slow cases call `Enemy.ApplyEnergyDrainFromStatus`, keeping the logic close to where status effects are applied.
+
+4. `EncounterButton`
+   - Adds `wavePreviewLabel`, runtime creation helper, and `UpdateWavePreview()` so the main UI shows how movement speed compresses encounters.
+
+5. Documentation
+   - `COMBAT_SPEED_METERS.md` now reflects charge-consumption rules, energy UI, and wave preview behavior.
+
+---
+
+## Session 18: Warrant Board Loadouts
+
+### Date: 2025-11-14
+### Goal: Give players multiple warrant board "pages" with save/load helpers so they can swap layouts freely.
+
+### Key Decisions Made
+
+1. **Page-Based State Controller**
+   - Introduced `WarrantBoardStateController` to own a list of board pages (loadouts) and expose helpers for assigning/removing warrants per socket.
+   - Rationale: Keeps board state logic decoupled from the visual builder while enabling designers to add future UI flows (e.g., tabs, thumbnails) without reworking data.
+
+2. **Serializable Save Slots**
+   - Added `WarrantBoardSaveData` + JSON helpers so the entire set of pages can be stored in PlayerPrefs (or any persistence layer) with a single call.
+   - Rationale: Designers requested multi-page boards per character; having a ready-to-serialize structure keeps integration with the broader save system straightforward.
+
+3. **Socket Validation via Graph Definition**
+   - The controller inspects the assigned `WarrantBoardGraphDefinition` and only accepts assignments for `Socket` / `SpecialSocket` nodes.
+   - Rationale: Prevents mistakenly binding warrants to effect nodes or anchors, aligning with the "3-node influence" rule.
+
+### Systems Updated
+
+1. `WarrantBoardStateController`
+   - Fields for default page count, naming, and PlayerPrefs key.
+   - APIs: `EnsurePageCount`, `SetActivePage`, `TryAssignWarrant`, `TryRemoveWarrant`, `DuplicateActivePage`, `ToJson`, `LoadFromJson`, plus context-menu save/load.
+   - Nested serializable classes for page data and socket assignments.
+
+2. Documentation
+   - `MasterChecklist.md` now marks board geometry + multi-page state as complete to keep high-level tracking accurate.
+
+---
+
+## Session 19: Warrant Drag-and-Drop Prefabs
+
+### Date: 2025-11-15
+### Goal: Implement the prefab + scripting work outlined in `WarrantPrefabSetup.md` so sockets support Option 1 (CombatSceneManager-aligned) drag/drop with the existing `WarrantBoardStateController`.
+
+### Key Decisions Made
+
+1. **Dedicated Socket View**
+   - Authored `WarrantSocketView` (extends `WarrantNodeView`) to own highlight toggles, drag ghost spawning, and assignment calls into `WarrantBoardStateController`.
+   - Rationale: Keeps drag/drop logic localized to a reusable component that any board builder can spawn, mirroring the Option 1 integration pattern.
+
+2. **Payload Contract for Future Sources**
+   - Introduced `IWarrantDragPayload` so lockers, rewards, or sockets can exchange warrant IDs + icons without direct type checks.
+   - Rationale: Prevents tight coupling and makes it trivial for future inventory sources to participate in the same drag/drop flow.
+
+3. **Icon Lookup via ScriptableObject**
+   - Added `WarrantIconLibrary` to map warrant IDs to sprites; sockets render icons when present and fall back gracefully when definitions are missing.
+   - Rationale: Designers can curate libraries per scene/board without hardcoding resources in scripts.
+
+### Systems Updated
+
+1. `WarrantNode_Socket.prefab`
+   - Swapped to `WarrantSocketView`, added highlight/icon references, and bundled a `CanvasGroup` needed for drag transparency.
+
+2. `WarrantBoardGraphBuilder`
+   - New serialized references for `boardStateController`, `iconLibrary`, and a distinct special-socket color; sockets now receive dependencies immediately after instantiation.
+
+3. Documentation
+   - `WarrantPrefabSetup.md` captures the current prefab/script state plus icon-library guidance.
+   - `MasterChecklist.md` marks the prefab + drag/drop tasks complete.
+
+4. Shared Contracts
+   - `IWarrantDragPayload` defines the drag payload API.
+   - `WarrantIconLibrary` centralizes warrant→sprite lookups for any UI in the scene.
+
+---
+
+## Session 20: Warrant Locker Inventory & Free Swapping
+
+### Date: 2025-11-15
+### Goal: Implement a sliding locker panel with grid layout, filtering, and free swapping between locker and sockets.
+
+### Key Decisions Made
+
+1. **Sliding Panel Pattern**
+   - Authored `WarrantLockerPanelManager` following the `CharacterStatsPanelManager` pattern for consistency.
+   - Uses LeanTween for smooth slide animations from off-screen (configurable direction: left/right/top/bottom).
+   - Rationale: Reuses established UI patterns, keeps code maintainable, and provides smooth UX.
+
+2. **Grid-Based Inventory Display**
+   - Created `WarrantLockerGrid` using Unity's `GridLayoutGroup` for dynamic warrant item generation.
+   - `WarrantLockerItem` implements `IWarrantDragPayload` so locker items can be dragged directly into sockets.
+   - Rationale: Consistent with existing inventory grid patterns in the codebase, leverages Unity's built-in layout system.
+
+3. **Client-Side Filtering**
+   - `WarrantLockerFilterController` filters by rarity (toggle group) and modifiers (TMP_Dropdown).
+   - Auto-populates modifier dropdown from available warrants in inventory.
+   - Rationale: Fast, responsive filtering without server calls; modifier list is built dynamically from player's actual warrants.
+
+4. **Free Swapping Flow**
+   - Warrants can be dragged from locker → socket (assigns) or socket → locker (clears assignment).
+   - `WarrantLockerDropZone` handles returns from sockets; `WarrantSocketView.ClearAssignmentForLockerReturn()` clears socket state.
+   - Rationale: No consumption model - warrants are freely swappable, making experimentation easy for players.
+
+### Systems Updated
+
+1. **New Components**
+   - `WarrantLockerPanelManager`: Sliding panel animation and toggle management.
+   - `WarrantLockerItem`: Individual warrant item with drag/drop support.
+   - `WarrantLockerGrid`: Grid layout manager for warrant items.
+   - `WarrantLockerFilterController`: Rarity and modifier filtering.
+   - `WarrantLockerDropZone`: Drop zone for returning warrants from sockets.
+
+2. **WarrantSocketView**
+   - Added `ClearAssignmentForLockerReturn()` method for free swapping support.
+   - Sockets can now accept drops from locker items and return warrants to locker.
+
+3. **Documentation**
+   - `WarrantPrefabSetup.md` now includes complete locker panel setup guide with hierarchy and integration steps.
+   - `MasterChecklist.md` marks locker inventory task as complete.
+
+### Integration Notes
+
+- Locker panel prefab structure documented in `WarrantPrefabSetup.md` with full hierarchy.
+- Filter controller uses TMP_Dropdown (consistent with DeckBuilderUI pattern).
+- Rarity colors configurable per `WarrantLockerItem` instance.
+- Panel slides in from left by default (configurable in inspector).
+- Drop zone should cover entire locker panel area for easy dropping.
+
+---
+
+## Session 21: Warrant Tooltips & Effect Node Surfacing
+
+### Date: 2025-11-15
+### Goal: Hook warrant sockets/effect nodes into the shared tooltip stack so hovering any node reveals its active modifiers (supporting 1–8 affixes dynamically).
+
+### Key Decisions Made
+
+1. **Reuse ItemTooltipManager**
+   - Added warrant-aware overloads instead of inventing a parallel tooltip system, keeping Option 1 integrations consistent.
+   - Provides a fallback runtime tooltip if designers haven’t authored a bespoke prefab yet.
+
+2. **Data-Driven Tooltip Rendering**
+   - Authored `WarrantTooltipData`, `WarrantTooltipUtility`, and `WarrantTooltipView` to convert `WarrantDefinition` + modifiers into sections/lines.
+   - Supports any number of modifiers per section with automatic truncation + “…and more” messaging past eight entries.
+
+3. **Effect Nodes Gain Their Own View**
+   - Replaced the base `WarrantNodeView` on effect prefabs with `WarrantEffectView`.
+   - Effect nodes inspect runtime graph connections + `WarrantBoardStateController` assignments to aggregate nearby warrant definitions and display the combined impact.
+
+### Systems Updated
+
+1. `ItemTooltipManager`
+   - New `warrantTooltipPrefab` slot, runtime fallback factory, and public `ShowWarrantTooltip` APIs (definition/data + pointer overloads).
+   - All tooltip spawners now funnel through `HideTooltip()` before instantiating to prevent duplicates.
+
+2. `WarrantSocketView`
+   - Receives `ItemTooltipManager` + `WarrantLockerGrid` references from the graph builder.
+   - Hovering shows the assigned warrant’s modifiers; drag/drop/clear events auto-hide or refresh the tooltip to avoid stale ghosts.
+
+3. `WarrantEffectView`
+   - Extends `WarrantNodeView` and surfaces aggregated modifiers when hovering effect nodes.
+   - Uses the runtime graph binding plus locker definition lookup so tooltips keep working even after a warrant leaves the locker inventory.
+
+4. `WarrantBoardGraphBuilder`
+   - Binds each spawned node to its runtime graph entry and injects locker + tooltip references into sockets/effect nodes.
+   - Adds a serialized `tooltipManager` field; assign it in scenes alongside `boardStateController`, `lockerGrid`, and `iconLibrary`.
+
+5. `WarrantLockerGrid`
+   - Maintains a definition catalog/lookup so tooltips can resolve any warrant ID at runtime (even if it’s not currently listed in the locker UI).
+   - Provides helpers to remove consumed warrants and re-add them when sockets return items.
+
+### Integration Notes
+
+- `WarrantPrefabSetup.md` now documents the tooltip workflow, prefab expectations, and catalog requirements.
+- Designers can optionally supply a custom `warrantTooltipPrefab`; otherwise the runtime-generated view provides a functional baseline.
+- Make sure every scene wiring the board assigns the new `tooltipManager` field on `WarrantBoardGraphBuilder` to enable hover behavior.
+
+---
+
 ## Session 12: Channeling Mechanic Tracking
 
 ### Date: 2025-11-07

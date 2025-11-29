@@ -19,11 +19,44 @@ public class InventoryGridUI : MonoBehaviour
     public GameObject slotPrefab;
     public Transform gridContainer;
     
+    [Header("Character Inventory Binding")]
+    [SerializeField] private bool bindToCharacterInventory = true;
+    [SerializeField] private bool refreshOnEnable = true;
+    
     private List<InventorySlotUI> slots = new List<InventorySlotUI>();
+    private CharacterManager boundCharacterManager;
     
     void Start()
     {
         GenerateGrid();
+        if (bindToCharacterInventory && refreshOnEnable)
+        {
+            RefreshFromCharacterInventory();
+        }
+    }
+
+    private void OnEnable()
+    {
+        if (!bindToCharacterInventory)
+            return;
+
+        TryBindCharacterManager();
+        if (boundCharacterManager != null)
+        {
+            boundCharacterManager.OnItemAdded += HandleCharacterItemAdded;
+            if (refreshOnEnable)
+            {
+                RefreshFromCharacterInventory();
+            }
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (boundCharacterManager != null)
+        {
+            boundCharacterManager.OnItemAdded -= HandleCharacterItemAdded;
+        }
     }
     
     public void GenerateGrid()
@@ -104,6 +137,51 @@ public class InventoryGridUI : MonoBehaviour
         if (index >= 0 && index < slots.Count)
             return slots[index];
         return null;
+    }
+
+    public void RefreshFromCharacterInventory()
+    {
+        if (!bindToCharacterInventory)
+            return;
+
+        if (!TryBindCharacterManager())
+        {
+            Debug.LogWarning("[InventoryGridUI] CharacterManager not available; cannot refresh inventory grid.");
+            return;
+        }
+
+        List<BaseItem> items = boundCharacterManager.inventoryItems;
+
+        for (int i = 0; i < slots.Count; i++)
+        {
+            InventorySlotUI slot = slots[i];
+            if (slot == null)
+                continue;
+
+            if (items != null && i < items.Count && items[i] != null)
+            {
+                BaseItem item = items[i];
+                slot.SetOccupied(true, item.itemIcon, item.GetDisplayName());
+            }
+            else
+            {
+                slot.SetOccupied(false);
+            }
+        }
+    }
+
+    private bool TryBindCharacterManager()
+    {
+        if (boundCharacterManager != null)
+            return true;
+
+        boundCharacterManager = CharacterManager.Instance;
+        return boundCharacterManager != null;
+    }
+
+    private void HandleCharacterItemAdded(BaseItem _)
+    {
+        RefreshFromCharacterInventory();
     }
 }
 

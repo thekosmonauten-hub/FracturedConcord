@@ -30,9 +30,23 @@ public class CardDataExtended : CardData
     [Tooltip("Row scope for AoE targeting: BothRows (all) or SelectedRow (same row as target)")]
     public AoERowScope aoeRowScope = AoERowScope.BothRows;
     
+    [Header("Multi-Hit")]
+    [Tooltip("If enabled, this card will hit the same target multiple times")]
+    public bool isMultiHit = false;
+    [Tooltip("Number of times to hit the target (only used if isMultiHit is true)")]
+    public int hitCount = 2;
+    
     [Header("Attribute Scaling")]
     public AttributeScaling damageScaling = new AttributeScaling();
     public AttributeScaling guardScaling = new AttributeScaling();
+    [Tooltip("Scaling for temporary evasion granted by Skill cards")]
+    public AttributeScaling evasionScaling = new AttributeScaling();
+    
+    [Header("Evasion (Skill Cards)")]
+    [Tooltip("Base evasion amount granted (for Skill cards that grant evasion)")]
+    public float baseEvasion = 0f;
+    [Tooltip("Duration in turns for evasion buff (-1 = rest of combat)")]
+    public int evasionDuration = -1;
     
     [Header("Requirements")]
     public CardRequirements requirements = new CardRequirements();
@@ -49,6 +63,10 @@ public class CardDataExtended : CardData
     public string comboWith = "";
     [Tooltip("Combo description text shown in Additional Effects on combat card prefab")] 
     [TextArea(2,4)] public string comboDescription = "";
+    
+    [Header("Momentum Effects")]
+    [Tooltip("Momentum effect description shown in Additional Effects on combat card prefab (e.g., 'Gain 1 Momentum', 'If you have 3+ Momentum: This card costs 0')")]
+    [TextArea(2,4)] public string momentumEffectDescription = "";
     
     [Header("Combo Triggers")] 
     [Tooltip("Trigger combo after playing a card of this type (optional; overrides free text)")]
@@ -120,6 +138,13 @@ public class CardDataExtended : CardData
     
     [Header("Tags")]
     public List<string> tags = new List<string>();
+    
+    [Header("Delayed Action")]
+    [Tooltip("Number of turns to delay this card's execution (0 = play immediately). Used for Temporal Savant and similar effects.")]
+    [Min(0)]
+    public int delayTurns = 0;
+    [Tooltip("If true, card is delayed (can be set by ascendancy or card effect)")]
+    public bool isDelayed = false;
     
     [Header("Preparation System")]
     [Tooltip("Can this card be prepared for later unleashing?")]
@@ -197,16 +222,44 @@ public class CardDataExtended : CardData
         
         string dynamicDesc = description;
         
-        // Replace damage placeholders
-        if (damage > 0)
-        {
-            float totalDamage = damage;
-            totalDamage += damageScaling.CalculateScalingBonus(character);
-            totalDamage += GetWeaponScalingDamage(character);
-            
-            dynamicDesc = dynamicDesc.Replace("{damage}", totalDamage.ToString("F0"));
-            dynamicDesc = dynamicDesc.Replace("{baseDamage}", damage.ToString());
-        }
+		// Replace damage placeholders
+		if (damage > 0)
+		{
+			// Base + attribute scaling + weapon scaling
+			float baseWithScaling = damage;
+			baseWithScaling += damageScaling.CalculateScalingBonus(character);
+			baseWithScaling += GetWeaponScalingDamage(character);
+			
+			// Build a lightweight stats snapshot and damage context
+			var statsData = new CharacterStatsData(character);
+			// CardData.cardType is a string; runtime Card uses CardType enum.
+			// Treat ScriptableObject as an Attack and detect "Spell" based on tags.
+			bool hasSpellTag = tags != null && tags.Contains("Spell");
+			
+			var ctx = new DamageContext
+			{
+				damageType = primaryDamageType.ToString().ToLower(), // matches calculator expectations
+				isAttack = string.Equals(cardType, "Attack", System.StringComparison.OrdinalIgnoreCase),
+				isSpell = hasSpellTag,
+				isProjectile = scalesWithProjectileWeapon,
+				isArea = isAoE,
+				isMelee = scalesWithMeleeWeapon,
+				isRanged = scalesWithProjectileWeapon,
+				isDot = false,
+				weaponType = scalesWithMeleeWeapon ? "onehanded" : (scalesWithProjectileWeapon ? "bow" : (scalesWithSpellWeapon ? "wand" : "")),
+				targetChilled = false,
+				targetShocked = false,
+				targetIgnited = false,
+				targetIsElite = false
+			};
+			
+			// Compute final card damage using the unified helpers
+			var totals = StatAggregator.BuildTotals(statsData);
+			float finalDamage = CardDamageUtility.ComputeCardDamage(baseWithScaling, statsData, totals, ctx);
+			
+			dynamicDesc = dynamicDesc.Replace("{damage}", finalDamage.ToString("F0"));
+			dynamicDesc = dynamicDesc.Replace("{baseDamage}", damage.ToString());
+		}
         
         // Replace guard placeholders for any card that grants block
         if (block > 0)
@@ -297,6 +350,47 @@ public class CardDataExtended : CardData
                 dynamicDesc = dynamicDesc.Replace("{guardIntDivisor}", guardIntDivBonus.ToString("F0"));
             }
             
+            // Replace evasion placeholders (for Skill cards)
+            // Check both flat evasion and percentage-based evasion
+            bool hasEvasion = baseEvasion > 0 || evasionScaling.CalculateScalingBonus(character) > 0;
+            bool isPercentageEvasion = description.ToLower().Contains("% increased evasion");
+            
+            if (hasEvasion || isPercentageEvasion)
+            {
+                if (isPercentageEvasion)
+                {
+                    // For percentage-based evasion, extract from description
+                    var match = System.Text.RegularExpressions.Regex.Match(description, @"(\d+)%\s*increased\s*evasion", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    if (match.Success && float.TryParse(match.Groups[1].Value, out float percentage))
+                    {
+                        dynamicDesc = dynamicDesc.Replace("{evasion}", percentage.ToString("F0") + "%");
+                    }
+                }
+                else
+                {
+                    // Flat evasion: base + scaling
+                    float totalEvasion = baseEvasion + evasionScaling.CalculateScalingBonus(character);
+                    dynamicDesc = dynamicDesc.Replace("{evasion}", totalEvasion.ToString("F0"));
+                    dynamicDesc = dynamicDesc.Replace("{baseEvasion}", baseEvasion.ToString("F0"));
+                }
+                
+                // Evasion scaling placeholders
+                if (evasionScaling.dexterityScaling > 0)
+                {
+                    float evasionDexBonus = character.dexterity * evasionScaling.dexterityScaling;
+                    dynamicDesc = dynamicDesc.Replace("{evasionDexBonus}", evasionDexBonus.ToString("F0"));
+                }
+                if (evasionScaling.dexterityDivisor > 0)
+                {
+                    float evasionDexDivBonus = character.dexterity / evasionScaling.dexterityDivisor;
+                    dynamicDesc = dynamicDesc.Replace("{evasionDexDivisor}", evasionDexDivBonus.ToString("F0"));
+                    // Also support common pattern: (+Dex/2) -> shows the divisor bonus
+                    string dexDivPattern = "(+Dex/" + evasionScaling.dexterityDivisor + ")";
+                    string dexDivReplacement = "(+{evasionDexDivisor})";
+                    dynamicDesc = dynamicDesc.Replace(dexDivPattern, dexDivReplacement);
+                }
+            }
+            
             if (scalesWithMeleeWeapon)
             {
                 float weaponDamage = character.weapons.GetWeaponDamage(WeaponType.Melee);
@@ -322,6 +416,46 @@ public class CardDataExtended : CardData
         dynamicDesc = dynamicDesc.Replace("{aoeTargets}", (aoeTargets > 0 ? aoeTargets.ToString() : "1"));
         
         return dynamicDesc;
+    }
+    
+    /// <summary>
+    /// Get dynamic momentum effect description replacing placeholders
+    /// Supported placeholders:
+    /// {momentum} => current momentum value
+    /// {momentumGain} => momentum gained from this card
+    /// {momentumSpent} => momentum spent by this card
+    /// Also supports dynamic threshold checks
+    /// </summary>
+    public string GetDynamicMomentumDescription(Character character)
+    {
+        string desc = momentumEffectDescription ?? string.Empty;
+        if (string.IsNullOrEmpty(desc)) return desc;
+        
+        if (character != null)
+        {
+            int currentMomentum = character.GetMomentum();
+            desc = desc.Replace("{momentum}", currentMomentum.ToString());
+            
+            // Parse momentum gain from description if present
+            int momentumGain = MomentumEffectParser.ParseGainMomentum(desc);
+            if (momentumGain > 0)
+            {
+                desc = desc.Replace("{momentumGain}", momentumGain.ToString());
+            }
+            
+            // Parse momentum spent from description if present
+            int spendAmount = MomentumEffectParser.ParseSpendMomentum(desc);
+            if (spendAmount == -1) // Spend all
+            {
+                desc = desc.Replace("{momentumSpent}", currentMomentum.ToString());
+            }
+            else if (spendAmount > 0)
+            {
+                desc = desc.Replace("{momentumSpent}", Mathf.Min(spendAmount, currentMomentum).ToString());
+            }
+        }
+        
+        return desc;
     }
     
     /// <summary>
@@ -567,6 +701,8 @@ public class CardDataExtended : CardData
             manaCost = this.playCost,
             baseDamage = (float)this.damage,
             baseGuard = (float)this.block,
+            isMultiHit = this.isMultiHit,
+            hitCount = this.hitCount,
             primaryDamageType = this.primaryDamageType,
             cardArt = this.cardImage,
             cardArtName = this.cardName,
@@ -584,6 +720,7 @@ public class CardDataExtended : CardData
             effects = this.effects != null ? new List<CardEffect>(this.effects) : new List<CardEffect>(),
             comboWith = this.comboWith,
             comboDescription = this.comboDescription,
+            // Note: momentumEffectDescription is only in CardDataExtended, not in Card class
             comboEffect = this.comboEffect,
             comboHighlightType = this.comboHighlightType,
             comboAilmentId = this.comboAilment,

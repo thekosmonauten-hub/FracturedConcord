@@ -194,29 +194,8 @@ public class MainMenuController : MonoBehaviour
     void OnStartJourneyClicked()
     {
         Debug.Log("<color=cyan>━━━ [MainMenu] Start Journey Button CLICKED ━━━</color>");
-        
-        // Check if we have characters - if yes, open selection; if no, go to creation
-        if (characterSaveSystem != null)
-        {
-            var characters = characterSaveSystem.LoadCharacters();
-            Debug.Log($"[MainMenu] Found {characters.Count} saved characters");
-            
-            if (characters.Count > 0)
-            {
-                Debug.Log("[MainMenu] Characters exist - opening character selection panel");
-                ToggleCharacterPanel(); // Open character selection
-            }
-            else
-            {
-                Debug.Log("[MainMenu] No characters found - navigating to character creation");
-                GoToCharacterCreation(); // Go directly to character creation
-            }
-        }
-        else
-        {
-            Debug.LogError("[MainMenu] CharacterSaveSystem is NULL! Navigating to character creation.");
-            GoToCharacterCreation();
-        }
+        Debug.Log("[MainMenu] Start Journey launches character creation.");
+        GoToCharacterCreation();
     }
 
     void OnSettingsClicked()

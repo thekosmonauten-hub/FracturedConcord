@@ -119,6 +119,23 @@ public class DeckManager : MonoBehaviour
         activeDeck = deck;
         OnDeckLoaded?.Invoke(activeDeck);
         Debug.Log($"Active deck set to: {deck.deckName}");
+
+        // Sync active deck back to character data for persistence
+        var character = CharacterManager.Instance != null ? CharacterManager.Instance.GetCurrentCharacter() : null;
+        if (character != null)
+        {
+            if (character.deckData == null)
+            {
+                character.deckData = new CharacterDeckData();
+            }
+            if (!character.deckData.savedDeckNames.Contains(deck.deckName))
+            {
+                character.deckData.AddDeck(deck.deckName);
+            }
+            character.deckData.SetActiveDeck(deck.deckName);
+            character.currentDeck = ConvertPresetToLegacyDeck(deck);
+            CharacterManager.Instance.SaveCharacter();
+        }
     }
     
     /// <summary>
@@ -173,6 +190,36 @@ public class DeckManager : MonoBehaviour
         }
         
         return cards;
+    }
+
+    /// <summary>
+    /// Convert a DeckPreset into the legacy Deck representation for Character.currentDeck.
+    /// </summary>
+    private Deck ConvertPresetToLegacyDeck(DeckPreset preset)
+    {
+        if (preset == null) return null;
+
+        Deck legacyDeck = new Deck
+        {
+            deckName = preset.deckName,
+            description = preset.description,
+            characterClass = preset.characterClass
+        };
+
+        foreach (DeckCardEntry entry in preset.GetCardEntries())
+        {
+            for (int i = 0; i < entry.quantity; i++)
+            {
+                Card card = ConvertCardDataToCard(entry.cardData);
+                if (card != null)
+                {
+                    ApplyDeckEntryMetadata(card, entry);
+                    legacyDeck.AddCard(card);
+                }
+            }
+        }
+
+        return legacyDeck;
     }
     #endregion
     

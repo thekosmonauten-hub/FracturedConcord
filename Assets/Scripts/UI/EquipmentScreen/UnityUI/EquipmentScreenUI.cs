@@ -132,8 +132,20 @@ public class EquipmentScreenUI : MonoBehaviour
     
     void ShowEquipmentTooltip(EquipmentType slotType, Vector2 position)
     {
-        Debug.Log($"[EquipmentScreenUI] Show tooltip for: {slotType}");
-        // TODO: Show tooltip for equipped item
+        if (ItemTooltipManager.Instance == null)
+            return;
+
+        if (!slotMap.TryGetValue(slotType, out var slot) || slot == null)
+            return;
+
+        ItemData equipped = slot.GetEquippedItem();
+        if (equipped == null)
+        {
+            ItemTooltipManager.Instance.HideTooltip();
+            return;
+        }
+
+        ItemTooltipManager.Instance.ShowEquipmentTooltip(equipped, position);
     }
     
     void OnReturnButtonClicked()

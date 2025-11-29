@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9be3bb50a3980b47ab1e7fc8419be94, type: 3}
+  m_Name: 5.TheSplinteredBridge
+  m_EditorClassIdentifier: Assembly-CSharp::EncounterDataAsset
+  encounterID: 5
+  encounterName: The Splintered Bridge
+  sceneName: CombatScene
+  actNumber: 1
+  encounterSprite: {fileID: 4130640169021434097, guid: 71d71a15e6151ca41b37e55557e4d8a3, type: 3}
+  prerequisiteEncounters:
+  - {fileID: 11400000, guid: 3ea091bfa48a0d743a13bea3a2a732d4, type: 2}
+  areaLevel: 7
+  totalWaves: 5
+  maxEnemiesPerWave: 3
+  randomizeEnemyCount: 1
+  uniqueEnemy: {fileID: 0}
+  lootTable: {fileID: 0}
+  areaLootTable: {fileID: 11400000, guid: 71fa0aa49a604424d80f723da5fd4de3, type: 2}

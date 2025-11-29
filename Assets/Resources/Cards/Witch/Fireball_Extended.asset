@@ -47,10 +47,16 @@ MonoBehaviour:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 1
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -89,7 +95,6 @@ MonoBehaviour:
   channelingGuardIncreasedPercent: 0
   channelingGuardMorePercent: 0
   tags:
-  - Attack
   - Fire
   - Spell
   canPrepare: 0

@@ -24,6 +24,20 @@ public enum EffigySizeTier
     Large       // 5-6 cells - Multi-affix, powerful or unique effects
 }
 
+public enum EffigyShapeCategory
+{
+    Unknown,
+    Cross,
+    LShape,
+    Line,
+    SShape,
+    Single,
+    Square,
+    SmallL,
+    TShape,
+    ZShape
+}
+
 /// <summary>
 /// Effigy data - puzzle pieces with shapes that fit into a 6x4 grid
 /// Similar to Last Epoch's Idols or Path of Exile's Cluster Jewels
@@ -32,7 +46,7 @@ public enum EffigySizeTier
 public class Effigy : BaseItem
 {
     [Header("Basic Information")]
-    public new string effigyName = "New Effigy";
+    public string effigyName = "New Effigy"; // Note: This is separate from BaseItem.itemName
     public Sprite icon;
     
     // Note: description and requiredLevel are inherited from BaseItem
@@ -55,10 +69,11 @@ public class Effigy : BaseItem
     [Tooltip("Shape mask: true = occupied cell, false = empty cell. Row-major order.")]
     public bool[] shapeMask;
     
-    [Header("Modifiers")]
-    [Tooltip("Generated affixes based on element, size, and rarity")]
-    public List<Affix> modifiers = new List<Affix>();
+    [Header("Presentation")]
+    [Tooltip("Optional player-facing name (e.g., Shape alias). Falls back to effigyName when empty.")]
+    public string displayAlias = string.Empty;
     
+    public const int ExplicitAffixTarget = 4;
     // Note: Requirements (requiredLevel) are inherited from BaseItem
     // Use base.requiredLevel field, no duplicate needed
     
@@ -112,19 +127,9 @@ public class Effigy : BaseItem
     /// </summary>
     public int GetMaxAffixSlots()
     {
-        switch (rarity)
-        {
-            case ItemRarity.Normal:
-                return 1;
-            case ItemRarity.Magic:
-                return 2;
-            case ItemRarity.Rare:
-                return 3;
-            case ItemRarity.Unique:
-                return -1; // Fixed affixes for Unique
-            default:
-                return 1;
-        }
+        if (isUnique)
+            return -1;
+        return ExplicitAffixTarget;
     }
     
     /// <summary>
@@ -195,10 +200,69 @@ public class Effigy : BaseItem
         UpdateSizeTier();
         
         // Sync itemName with effigyName for BaseItem compatibility
-        if (!string.IsNullOrEmpty(effigyName))
+        if (!string.IsNullOrEmpty(displayAlias))
+        {
+            itemName = displayAlias;
+        }
+        else if (!string.IsNullOrEmpty(effigyName))
         {
             itemName = effigyName;
         }
+    }
+
+    public override bool CanAddPrefix()
+    {
+        return prefixes.Count + suffixes.Count < 4;
+    }
+
+    public override bool CanAddSuffix()
+    {
+        return prefixes.Count + suffixes.Count < 4;
+    }
+
+    public override ItemRarity GetCalculatedRarity()
+    {
+        if (isUnique)
+            return ItemRarity.Unique;
+
+        int totalAffixes = prefixes.Count + suffixes.Count;
+
+        if (totalAffixes == 0)
+            return ItemRarity.Normal;
+        if (totalAffixes <= 2)
+            return ItemRarity.Magic;
+        return ItemRarity.Rare;
+    }
+
+    public EffigyShapeCategory GetShapeCategory()
+    {
+        string reference = !string.IsNullOrEmpty(displayAlias) ? displayAlias : effigyName;
+        if (string.IsNullOrEmpty(reference))
+            reference = name;
+
+        string token = reference.Replace("_", string.Empty).Replace(" ", string.Empty);
+        string lower = token.ToLowerInvariant();
+
+        if (lower.Contains("cross"))
+            return EffigyShapeCategory.Cross;
+        if (lower.Contains("square") || lower.StartsWith("sq"))
+            return EffigyShapeCategory.Square;
+        if (lower.Contains("smalll"))
+            return EffigyShapeCategory.SmallL;
+        if (lower.Contains("line"))
+            return EffigyShapeCategory.Line;
+        if (lower.Contains("single") || lower.Contains("solo"))
+            return EffigyShapeCategory.Single;
+        if (lower.StartsWith("t"))
+            return EffigyShapeCategory.TShape;
+        if (lower.StartsWith("z"))
+            return EffigyShapeCategory.ZShape;
+        if (lower.StartsWith("s"))
+            return EffigyShapeCategory.SShape;
+        if (lower.StartsWith("l"))
+            return EffigyShapeCategory.LShape;
+
+        return EffigyShapeCategory.Unknown;
     }
 }
 

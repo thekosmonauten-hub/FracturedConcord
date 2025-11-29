@@ -17,6 +17,10 @@ public class EnemySpawner : MonoBehaviour
     [Tooltip("Spawn positions for enemies (left to right)")]
     public Transform[] spawnPoints;
     
+    [Header("Boss Spawn")]
+    [Tooltip("Optional override transform where unique bosses should spawn")]
+    public Transform bossSpawnPoint;
+    
     [Header("Pooling Settings")]
     [Tooltip("Enable object pooling for better performance")]
     public bool usePooling = true;
@@ -119,8 +123,15 @@ public class EnemySpawner : MonoBehaviour
         enemyDisplay.transform.localScale = Vector3.one;
         enemyDisplay.transform.localRotation = Quaternion.identity; // Reset rotation
         
-        // Setup enemy data
-        Enemy enemy = enemyData.CreateEnemy();
+        // Get area level for scaling (from EncounterManager or maze context)
+        int areaLevel = GetAreaLevel();
+        
+        // Roll rarity for all enemies (Normal, Magic, or Rare)
+        // Unique enemies are typically scripted/bosses and set manually
+        EnemyRarity rolledRarity = RollRarityForEncounter();
+        Enemy enemy = enemyData.CreateEnemyWithRarity(rolledRarity, areaLevel);
+        Debug.Log($"[EnemySpawner] Spawned {enemyData.enemyName} with rarity {rolledRarity} (Area Level {areaLevel})");
+        
         enemyDisplay.SetEnemy(enemy, enemyData);
         
         // Activate and track
@@ -333,6 +344,114 @@ public class EnemySpawner : MonoBehaviour
             });
         
         Debug.Log($"[EnemySpawner] Started sweep-in animation for {enemyDisplay.name} from {startPosition} to {finalPosition}");
+    }
+
+    public void SpawnEnemyWithAnimationAtIndex(EnemyData enemyData, int spawnIndex, float delay = 0f)
+    {
+        if (enemyData == null) return;
+        if (!IsSpawnPointAvailable(spawnIndex)) return;
+        StartCoroutine(SpawnEnemyWithDelay(enemyData, spawnIndex, Mathf.Max(0f, delay)));
+    }
+    
+    public int GetBossSpawnIndex()
+    {
+        if (bossSpawnPoint == null)
+        {
+            return spawnPoints != null && spawnPoints.Length > 0 ? spawnPoints.Length - 1 : 0;
+        }
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            if (spawnPoints[i] == bossSpawnPoint)
+            {
+                return i;
+            }
+        }
+        return spawnPoints != null && spawnPoints.Length > 0 ? spawnPoints.Length - 1 : 0;
+    }
+    
+    /// <summary>
+    /// Checks if this is maze combat (has maze context).
+    /// </summary>
+    private bool IsMazeCombat()
+    {
+        string mazeContext = PlayerPrefs.GetString("MazeCombatContext", "");
+        return !string.IsNullOrEmpty(mazeContext);
+    }
+    
+    /// <summary>
+    /// Gets the area level for enemy scaling (from EncounterManager or maze context).
+    /// </summary>
+    private int GetAreaLevel()
+    {
+        // Check if this is maze combat
+        if (IsMazeCombat() && Dexiled.MazeSystem.MazeRunManager.Instance != null)
+        {
+            var run = Dexiled.MazeSystem.MazeRunManager.Instance.GetCurrentRun();
+            if (run != null)
+            {
+                // Use floor number as area level for maze combat
+                return run.currentFloor;
+            }
+        }
+        
+        // Check EncounterManager for regular encounters
+        if (EncounterManager.Instance != null)
+        {
+            var encounter = EncounterManager.Instance.GetCurrentEncounter();
+            if (encounter != null)
+            {
+                return Mathf.Max(1, encounter.areaLevel);
+            }
+        }
+        
+        // Default fallback
+        return 1;
+    }
+    
+    /// <summary>
+    /// Roll rarity for any encounter (Normal, Magic, or Rare).
+    /// Unique enemies are typically scripted and set manually.
+    /// </summary>
+    private EnemyRarity RollRarityForEncounter()
+    {
+        // Check if this is maze combat
+        bool isMazeCombat = IsMazeCombat();
+        
+        if (isMazeCombat)
+        {
+            int areaLevel = GetAreaLevel();
+            return RollRarityForMaze(areaLevel);
+        }
+        else
+        {
+            // For regular combat, use EnemyDatabase rarity weights
+            if (EnemyDatabase.Instance != null)
+            {
+                return EnemyDatabase.Instance.RollRarity(false); // Don't allow Unique for random spawns
+            }
+            return EnemyRarity.Normal; // Fallback
+        }
+    }
+    
+    /// <summary>
+    /// Rolls enemy rarity for maze combat based on floor tier.
+    /// Uses MazeConfig rarity weights if available, otherwise uses default EnemyDatabase weights.
+    /// </summary>
+    private EnemyRarity RollRarityForMaze(int floorNumber)
+    {
+        if (Dexiled.MazeSystem.MazeRunManager.Instance == null)
+        {
+            return EnemyDatabase.Instance != null ? EnemyDatabase.Instance.RollRarity(false) : EnemyRarity.Normal;
+        }
+        
+        var mazeConfig = Dexiled.MazeSystem.MazeRunManager.Instance.mazeConfig;
+        if (mazeConfig == null)
+        {
+            return EnemyDatabase.Instance != null ? EnemyDatabase.Instance.RollRarity(false) : EnemyRarity.Normal;
+        }
+        
+        // Use MazeConfig's rarity weights for this floor
+        return mazeConfig.RollRarityForFloor(floorNumber);
     }
 }
 

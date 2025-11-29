@@ -98,6 +98,10 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler,
     public void OnPointerExit(PointerEventData eventData)
     {
         UpdateVisual(); // Restore original color
+        if (ItemTooltipManager.Instance != null)
+        {
+            ItemTooltipManager.Instance.HideTooltip();
+        }
     }
 }
 

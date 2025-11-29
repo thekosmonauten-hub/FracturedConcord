@@ -10,7 +10,9 @@ public enum RewardType
     Currency,
     Item,
     Experience,
-    Card
+    Card,
+    Effigy,
+    Warrant
 }
 
 /// <summary>
@@ -27,12 +29,20 @@ public class LootReward
     
     // Item reward
     public ItemData itemData;
+    public BaseItem itemInstance;
+
+    // Effigy reward
+    public Effigy effigyInstance;
     
     // Experience reward
     public int experienceAmount;
     
     // Card reward (future)
     public string cardName;
+    
+    // Warrant reward
+    public WarrantDefinition warrantBlueprint; // The blueprint to roll from
+    public WarrantDefinition warrantInstance; // The rolled instance (set after rolling)
     
     // Display info
     public string GetDisplayName()
@@ -43,10 +53,20 @@ public class LootReward
                 return $"{currencyAmount}x {currencyType}";
             case RewardType.Item:
                 return itemData != null ? itemData.itemName : "Unknown Item";
+            case RewardType.Effigy:
+                if (effigyInstance == null) return "Unknown Effigy";
+                string alias = string.IsNullOrEmpty(effigyInstance.displayAlias) ? effigyInstance.effigyName : effigyInstance.displayAlias;
+                return $"{effigyInstance.GetRarityName()} {alias}";
             case RewardType.Experience:
                 return $"{experienceAmount} Experience";
             case RewardType.Card:
                 return cardName;
+            case RewardType.Warrant:
+                if (warrantInstance != null)
+                    return $"Warrant: {warrantInstance.displayName}";
+                if (warrantBlueprint != null)
+                    return $"Warrant Blueprint: {warrantBlueprint.displayName}";
+                return "Warrant";
             default:
                 return "Unknown Reward";
         }
@@ -66,11 +86,19 @@ public class LootReward
                 return null;
             case RewardType.Item:
                 return itemData?.itemSprite;
+            case RewardType.Effigy:
+                return effigyInstance != null ? effigyInstance.icon : null;
             case RewardType.Experience:
                 // TODO: Add experience icon
                 return null;
             case RewardType.Card:
                 // TODO: Add card icon
+                return null;
+            case RewardType.Warrant:
+                if (warrantInstance != null)
+                    return warrantInstance.icon;
+                if (warrantBlueprint != null)
+                    return warrantBlueprint.icon;
                 return null;
             default:
                 return null;
@@ -120,15 +148,112 @@ public class LootDropResult
     
     public void AddItem(ItemData itemData)
     {
+        AddItem(itemData, null);
+    }
+
+    public void AddItem(ItemData itemData, BaseItem baseItem)
+    {
         rewards.Add(new LootReward
         {
             rewardType = RewardType.Item,
-            itemData = itemData
+            itemData = itemData,
+            itemInstance = baseItem
+        });
+    }
+    
+    public void AddEffigy(Effigy effigy)
+    {
+        if (effigy == null)
+            return;
+        
+        rewards.Add(new LootReward
+        {
+            rewardType = RewardType.Effigy,
+            effigyInstance = effigy
+        });
+    }
+    
+    public void AddWarrant(WarrantDefinition blueprint)
+    {
+        if (blueprint == null)
+            return;
+        
+        rewards.Add(new LootReward
+        {
+            rewardType = RewardType.Warrant,
+            warrantBlueprint = blueprint
         });
     }
     
     public int GetRewardCount()
     {
         return rewards.Count;
+    }
+    
+    /// <summary>
+    /// Apply quantity multiplier to all currency and item rewards
+    /// Multiplies currency amounts and duplicates items
+    /// </summary>
+    public void ApplyQuantityMultiplier(float multiplier)
+    {
+        if (multiplier <= 1f) return; // No change if multiplier is 1 or less
+        
+        List<LootReward> newRewards = new List<LootReward>();
+        
+        foreach (var reward in rewards)
+        {
+            if (reward.rewardType == RewardType.Currency)
+            {
+                // Multiply currency amounts
+                int newAmount = Mathf.RoundToInt(reward.currencyAmount * multiplier);
+                if (newAmount > 0)
+                {
+                    newRewards.Add(new LootReward
+                    {
+                        rewardType = RewardType.Currency,
+                        currencyType = reward.currencyType,
+                        currencyAmount = newAmount
+                    });
+                }
+            }
+            else if (reward.rewardType == RewardType.Item)
+            {
+                // Duplicate items based on multiplier (round up for partial multipliers)
+                int itemCount = Mathf.CeilToInt(multiplier);
+                for (int i = 0; i < itemCount; i++)
+                {
+                    newRewards.Add(new LootReward
+                    {
+                        rewardType = RewardType.Item,
+                        itemData = reward.itemData,
+                        itemInstance = reward.itemInstance
+                    });
+                }
+            }
+            else
+            {
+                // Other reward types are not multiplied (Experience, Cards, etc.)
+                newRewards.Add(reward);
+            }
+        }
+        
+        rewards = newRewards;
+        
+        Debug.Log($"[LootDropResult] Applied quantity multiplier {multiplier:F2}x: {rewards.Count} rewards");
+    }
+    
+    /// <summary>
+    /// Apply rarity multiplier to item rewards
+    /// This affects the chance of higher rarity items, not the items themselves
+    /// Note: This is typically applied during item generation, not after
+    /// </summary>
+    public void ApplyRarityMultiplier(float multiplier)
+    {
+        if (multiplier <= 1f) return; // No change if multiplier is 1 or less
+        
+        // Rarity multiplier is typically applied during item generation
+        // This method is here for consistency, but the actual application
+        // should happen in the loot generation system
+        Debug.Log($"[LootDropResult] Rarity multiplier {multiplier:F2}x noted (applied during generation)");
     }
 }

@@ -49,7 +49,7 @@ public class EnemyVisibilityTester : EditorWindow
     
     private void ForceEnemiesToCenter()
     {
-        var displays = GameObject.FindObjectsOfType<EnemyCombatDisplay>();
+        var displays = GameObject.FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
         
         if (displays.Length == 0)
         {
@@ -87,7 +87,7 @@ public class EnemyVisibilityTester : EditorWindow
     
     private void SetTestSprites()
     {
-        var displays = GameObject.FindObjectsOfType<EnemyCombatDisplay>();
+        var displays = GameObject.FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
         
         if (displays.Length == 0)
         {
@@ -128,7 +128,7 @@ public class EnemyVisibilityTester : EditorWindow
     
     private void MakeEnemiesBrightRed()
     {
-        var displays = GameObject.FindObjectsOfType<EnemyCombatDisplay>();
+        var displays = GameObject.FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
         
         if (displays.Length == 0)
         {
@@ -161,7 +161,7 @@ public class EnemyVisibilityTester : EditorWindow
     
     private void ResetPositions()
     {
-        var displays = GameObject.FindObjectsOfType<EnemyCombatDisplay>();
+        var displays = GameObject.FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
         
         if (displays.Length == 0)
         {

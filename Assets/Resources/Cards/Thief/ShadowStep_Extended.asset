@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: ShadowStep_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Shadow Step
+  groupKey: Shadow_Step
   cardType: Guard
   playCost: 1
-  description: 'Gain 6 Guard (+Dex/6). Dual: Gain 6 Guard (+Dex/6) and 250(+Dex*2)
-    evasion. Prepare: Gain +2 (+Dex/2) Guard and 1 temporary Dexterity.'
+  description: 'Gain {guard} guard.\nPrepare: Gain +2 (+Dex/2) Guard and 1 temporary
+    Dexterity.'
   rarity: 0
   element: 0
   category: 3
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 3420552030053380335, guid: 1349acf4dec7fb24a9737e1951d1c089, type: 3}
+  cardThumbnail: {fileID: 8504572382271070437, guid: 01e9659ca4d89b441be40951f15a1968, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -29,7 +32,10 @@ MonoBehaviour:
   isDiscardCard: 0
   isDualWield: 0
   ifDiscardedEffect: 
-  dualWieldEffect: 
+  dualWieldEffect: Gain 6 Guard (+Dex/6) and 250(+Dex*2) evasion
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 0
@@ -38,14 +44,31 @@ MonoBehaviour:
   isAoE: 0
   aoeTargets: 1
   aoeRowScope: 0
+  isMultiHit: 0
+  hitCount: 1
   damageScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
   guardScaling:
-    strengthScaling: 0.5
+    strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 6
+    intelligenceDivisor: 0
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 2
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -53,9 +76,10 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
-  enableCombo: 1
+  enableCombo: 0
   comboWith: 
-  comboDescription: 
+  comboDescription: Gain {ComboGuard} and 250(+Dex*2) evasion
+  momentumEffectDescription: 
   comboWithCardType: 0
   comboAttackIncrease: 0
   comboGuardIncrease: 0
@@ -76,6 +100,21 @@ MonoBehaviour:
   comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Guard
   - Basic
+  delayTurns: 0
+  isDelayed: 0
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 

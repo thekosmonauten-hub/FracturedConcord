@@ -35,10 +35,10 @@ RectTransform:
   - {fileID: 6173156668430186385}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.03, y: 0.6636156}
-  m_AnchorMax: {x: 0.106000006, y: 0.808}
-  m_AnchoredPosition: {x: -0.5, y: -0.5}
-  m_SizeDelta: {x: 0.9900999, y: 0.81760025}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -184.9524, y: -300}
+  m_SizeDelta: {x: -1569.9048, y: -826.3352}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3372216513865658752
 CanvasRenderer:
@@ -146,10 +146,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eec810fbe25c89c4894b79436ad6d048, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EncounterButton
+  encounterAsset: {fileID: 0}
   encounterID: 1
   encounterName: Where Night First Fell
-  button: {fileID: 0}
+  autoSyncEncounterData: 1
+  requireUnlockedEncounter: 1
+  requireSelectedCharacter: 1
+  requireActiveDeck: 1
+  button: {fileID: 2336486153724940155}
   buttonText: {fileID: 0}
+  buttonTextTMP: {fileID: 2819205534499544818}
+  statusLabel: {fileID: 0}
+  lockedOverlay: {fileID: 0}
+  lockIcon: {fileID: 0}
+  onEncounterStarted:
+    m_PersistentCalls:
+      m_Calls: []
   verboseDebug: 1
 --- !u!1 &8005770360910712839
 GameObject:
@@ -183,10 +195,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6077865047895670028}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: 29}
+  m_SizeDelta: {x: 529.8094, y: 53.581}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4797506084813206816
 CanvasRenderer:
@@ -216,7 +228,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: Where Night First Fell
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -225,8 +237,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4280729303
-  m_fontColor: {r: 0.84313726, g: 0.74509805, b: 0.14901961, a: 1}
+    rgba: 4284547071
+  m_fontColor: {r: 1, g: 1, b: 0.376, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -243,10 +255,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 47.95
   m_fontSizeBase: 24
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0

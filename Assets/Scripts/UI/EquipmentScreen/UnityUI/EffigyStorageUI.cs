@@ -139,22 +139,41 @@ public class EffigyStorageUI : MonoBehaviour
     /// </summary>
     void LoadEffigiesFromResources()
     {
-        Effigy[] allEffigies = Resources.LoadAll<Effigy>("Items/Effigies");
-        
         storedEffigies.Clear();
         
-        if (allEffigies.Length == 0)
+        CharacterManager characterManager = CharacterManager.Instance;
+        Character character = characterManager != null && characterManager.HasCharacter()
+            ? characterManager.GetCurrentCharacter()
+            : null;
+        
+        if (character != null && character.ownedEffigies != null && character.ownedEffigies.Count > 0)
         {
-            Debug.LogWarning("[EffigyStorageUI] No effigies found in Resources/Items/Effigies - grid will be empty");
-            return;
+            storedEffigies.AddRange(character.ownedEffigies);
+            Debug.Log($"[EffigyStorageUI] Loaded {storedEffigies.Count} effigies from character inventory");
+        }
+        else
+        {
+            Effigy[] allEffigies = Resources.LoadAll<Effigy>("Items/Effigies");
+            if (allEffigies.Length == 0)
+            {
+                Debug.LogWarning("[EffigyStorageUI] No effigies found in Resources/Items/Effigies - grid will be empty");
+                PopulateGrid();
+                return;
+            }
+            
+            AffixDatabase database = AffixDatabase.Instance;
+            foreach (Effigy effigyBlueprint in allEffigies)
+            {
+                Effigy runtimeEffigy = EffigyFactory.CreateInstance(effigyBlueprint, database);
+                if (runtimeEffigy != null)
+                {
+                    storedEffigies.Add(runtimeEffigy);
+                }
+            }
+            
+            Debug.Log($"[EffigyStorageUI] Loaded {storedEffigies.Count} fallback effigies from Resources");
         }
         
-        foreach (Effigy effigy in allEffigies)
-        {
-            storedEffigies.Add(effigy);
-        }
-        
-        Debug.Log($"[EffigyStorageUI] Loaded {storedEffigies.Count} effigies from Resources");
         PopulateGrid();
     }
     
@@ -186,6 +205,17 @@ public class EffigyStorageUI : MonoBehaviour
         if (!storedEffigies.Contains(effigy))
         {
             storedEffigies.Add(effigy);
+            
+            CharacterManager characterManager = CharacterManager.Instance;
+            if (characterManager != null && characterManager.HasCharacter())
+            {
+                var owned = characterManager.GetCurrentCharacter().ownedEffigies;
+                if (owned != null && !owned.Contains(effigy))
+                {
+                    owned.Add(effigy);
+                }
+            }
+            
             PopulateGrid();
             Debug.Log($"[EffigyStorageUI] Added effigy: {effigy.effigyName}");
         }
@@ -233,12 +263,13 @@ public class EffigyStorageUI : MonoBehaviour
 /// Individual cell in the effigy storage grid
 /// Displays effigy or remains empty - always visible
 /// </summary>
-public class EffigyStorageSlotUI : MonoBehaviour, IPointerDownHandler
+public class EffigyStorageSlotUI : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
     private Effigy storedEffigy = null;
     private Image backgroundImage;
-    private Image iconImage;
     private TextMeshProUGUI nameLabel;
+    private RectTransform previewRoot;
+    private readonly List<GameObject> previewCells = new List<GameObject>();
     private EffigyGridUI targetGrid;
     private int cellX;
     private int cellY;
@@ -269,25 +300,7 @@ public class EffigyStorageSlotUI : MonoBehaviour, IPointerDownHandler
             Color elementColor = effigy.GetElementColor();
             backgroundImage.color = elementColor * 0.6f;
             
-            // Create or update icon
-            if (iconImage == null)
-            {
-                GameObject iconObj = new GameObject("Icon");
-                iconObj.transform.SetParent(transform, false);
-                
-                RectTransform iconRect = iconObj.AddComponent<RectTransform>();
-                iconRect.anchorMin = Vector2.zero;
-                iconRect.anchorMax = Vector2.one;
-                iconRect.offsetMin = new Vector2(5, 15);
-                iconRect.offsetMax = new Vector2(-5, -5);
-                
-                iconImage = iconObj.AddComponent<Image>();
-                iconImage.preserveAspect = true;
-            }
-            
-            if (effigy.icon != null)
-                iconImage.sprite = effigy.icon;
-            iconImage.enabled = true;
+            RenderPreview(effigy);
             
             // Create or update name label
             if (nameLabel == null)
@@ -317,8 +330,7 @@ public class EffigyStorageSlotUI : MonoBehaviour, IPointerDownHandler
             // Clear effigy visual (show empty cell)
             backgroundImage.color = emptyColor;
             
-            if (iconImage != null)
-                iconImage.enabled = false;
+            ClearPreview();
             
             if (nameLabel != null)
                 nameLabel.enabled = false;
@@ -328,6 +340,133 @@ public class EffigyStorageSlotUI : MonoBehaviour, IPointerDownHandler
     public void ClearCell()
     {
         SetEffigy(null);
+    }
+    
+    void RenderPreview(Effigy effigy)
+    {
+        if (previewRoot == null)
+        {
+            GameObject previewObj = new GameObject("Preview");
+            previewObj.transform.SetParent(transform, false);
+            previewRoot = previewObj.AddComponent<RectTransform>();
+            previewRoot.anchorMin = new Vector2(0.5f, 0.5f);
+            previewRoot.anchorMax = new Vector2(0.5f, 0.5f);
+            previewRoot.pivot = new Vector2(0.5f, 0.5f);
+        }
+        
+        ClearPreview();
+        previewRoot.gameObject.SetActive(true);
+        
+        RectTransform slotRect = transform as RectTransform;
+        if (slotRect == null)
+            return;
+        
+        float padding = 6f;
+        float labelReserve = 18f;
+        float spacing = 2f;
+        
+        float availableWidth = Mathf.Max(0f, slotRect.rect.width - padding * 2f);
+        float availableHeight = Mathf.Max(0f, slotRect.rect.height - padding * 2f - labelReserve);
+        
+        int shapeWidth = Mathf.Max(1, effigy.shapeWidth);
+        int shapeHeight = Mathf.Max(1, effigy.shapeHeight);
+        
+        float cellWidth = (availableWidth - spacing * (shapeWidth - 1)) / shapeWidth;
+        float cellHeight = (availableHeight - spacing * (shapeHeight - 1)) / shapeHeight;
+        float miniCellSize = Mathf.Max(0f, Mathf.Min(cellWidth, cellHeight));
+        
+        float totalWidth = shapeWidth * miniCellSize + Mathf.Max(0, shapeWidth - 1) * spacing;
+        float totalHeight = shapeHeight * miniCellSize + Mathf.Max(0, shapeHeight - 1) * spacing;
+        
+        previewRoot.sizeDelta = new Vector2(totalWidth, totalHeight);
+        previewRoot.anchoredPosition = new Vector2(0f, labelReserve * 0.5f);
+        
+        Sprite[] spriteSet = EffigySpriteSet.GetSprites(effigy.effigyName);
+        Color elementColor = effigy.GetElementColor();
+        float rarityBrightness = GetRarityBrightness(effigy.rarity);
+        Color borderColor = GetRarityColor(effigy.rarity);
+        
+        List<Vector2Int> occupiedCells = effigy.GetOccupiedCells();
+        int spriteIndex = 0;
+        
+        foreach (Vector2Int cell in occupiedCells)
+        {
+            GameObject cellObj = new GameObject($"PreviewCell_{cell.x}_{cell.y}");
+            cellObj.transform.SetParent(previewRoot, false);
+            previewCells.Add(cellObj);
+            
+            RectTransform cellRect = cellObj.AddComponent<RectTransform>();
+            cellRect.anchorMin = new Vector2(0, 1);
+            cellRect.anchorMax = new Vector2(0, 1);
+            cellRect.pivot = new Vector2(0, 1);
+            
+            float localX = cell.x * (miniCellSize + spacing);
+            float localY = cell.y * (miniCellSize + spacing);
+            cellRect.anchoredPosition = new Vector2(localX, -localY);
+            cellRect.sizeDelta = new Vector2(miniCellSize, miniCellSize);
+            
+            Image cellImage = cellObj.AddComponent<Image>();
+            cellImage.preserveAspect = false;
+            cellImage.raycastTarget = false;
+            
+            Sprite selectedSprite = spriteSet != null && spriteIndex < spriteSet.Length ? spriteSet[spriteIndex] : effigy.icon;
+            if (selectedSprite != null)
+            {
+                cellImage.sprite = selectedSprite;
+                cellImage.color = Color.white;
+            }
+            else
+            {
+                cellImage.color = elementColor * rarityBrightness;
+            }
+            
+            Outline outline = cellObj.AddComponent<Outline>();
+            outline.effectColor = borderColor;
+            outline.effectDistance = new Vector2(2f, -2f);
+            
+            spriteIndex++;
+        }
+    }
+    
+    void ClearPreview()
+    {
+        foreach (var cell in previewCells)
+        {
+            if (cell != null)
+            {
+                Destroy(cell);
+            }
+        }
+        previewCells.Clear();
+        
+        if (previewRoot != null)
+        {
+            previewRoot.gameObject.SetActive(false);
+        }
+    }
+    
+    float GetRarityBrightness(ItemRarity rarity)
+    {
+        switch (rarity)
+        {
+            case ItemRarity.Normal: return 0.7f;
+            case ItemRarity.Magic: return 0.85f;
+            case ItemRarity.Rare: return 1.0f;
+            case ItemRarity.Unique: return 1.1f;
+            default: return 0.8f;
+        }
+    }
+    
+    Color GetRarityColor(ItemRarity rarity)
+    {
+        switch (rarity)
+        {
+            case ItemRarity.Normal: return new Color(0.5f, 0.5f, 0.5f);
+            case ItemRarity.Magic: return new Color(0.2f, 0.6f, 1f);
+            case ItemRarity.Rare: return new Color(1f, 0.8f, 0.2f);
+            case ItemRarity.Unique: return new Color(1f, 0.6f, 0.2f);
+            default: return Color.white;
+        }
     }
     
     /// <summary>
@@ -342,10 +481,8 @@ public class EffigyStorageSlotUI : MonoBehaviour, IPointerDownHandler
             backgroundImage.color = currentColor;
         }
         
-        if (iconImage != null)
-        {
-            iconImage.enabled = !isDragging;
-        }
+        if (previewRoot != null)
+            previewRoot.gameObject.SetActive(!isDragging);
         
         if (nameLabel != null)
         {
@@ -363,6 +500,22 @@ public class EffigyStorageSlotUI : MonoBehaviour, IPointerDownHandler
             SetDragging(true); // Dim the slot while dragging
             targetGrid.StartDragFromStorage(storedEffigy, this, storage);
             Debug.Log($"[EffigyStorageSlotUI] Started dragging {storedEffigy.effigyName} from storage");
+        }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (storedEffigy != null && ItemTooltipManager.Instance != null)
+        {
+            ItemTooltipManager.Instance.ShowEffigyTooltip(storedEffigy, eventData.position);
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (ItemTooltipManager.Instance != null)
+        {
+            ItemTooltipManager.Instance.HideTooltip();
         }
     }
 }

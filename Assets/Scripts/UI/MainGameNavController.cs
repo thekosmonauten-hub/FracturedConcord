@@ -11,13 +11,16 @@ public class MainGameNavController : MonoBehaviour
 	[Header("Optional direct references (UGUI Buttons)")]
 	public Button CharacterStatsButton;
 	public Button EquipmentButton;
-	public Button PassiveTreeButton;
+	// PassiveTreeButton removed - PassiveTree system is legacy
 	public Button DeckManagerButton;
+	public Button WarrantsTreeButton;
+	public Button CampButton;
 
 	[Header("Scene Names")]
 	public string equipmentSceneName = "EquipmentScreen_New";
-	public string passiveTreeSceneName = "PassiveTreeScene";
+	// passiveTreeSceneName removed - PassiveTree system is legacy
 	public string deckBuilderSceneName = "DeckBuilderScene";
+	public string warrantTreeSceneName = "WarrantTree";
 
 	[Header("UI")]
 	public UIManager uiManager; // for CharacterStats toggle
@@ -35,6 +38,8 @@ public class MainGameNavController : MonoBehaviour
 	{
 		FindButtonsIfMissing();
 		WireHandlers();
+		// Update CampButton availability when scene loads
+		UpdateCampButtonAvailability();
 	}
 
 	private void FindButtonsIfMissing()
@@ -49,15 +54,21 @@ public class MainGameNavController : MonoBehaviour
 			var go = GameObject.Find("EquipmentButton");
 			if (go != null) EquipmentButton = go.GetComponent<Button>();
 		}
-		if (PassiveTreeButton == null)
-		{
-			var go = GameObject.Find("PassiveTreeButton");
-			if (go != null) PassiveTreeButton = go.GetComponent<Button>();
-		}
+		// PassiveTreeButton finding removed - PassiveTree system is legacy
 		if (DeckManagerButton == null)
 		{
 			var go = GameObject.Find("DeckManagerButton");
 			if (go != null) DeckManagerButton = go.GetComponent<Button>();
+		}
+		if (WarrantsTreeButton == null)
+		{
+			var go = GameObject.Find("WarrantsTreeButton");
+			if (go != null) WarrantsTreeButton = go.GetComponent<Button>();
+		}
+		if (CampButton == null)
+		{
+			var go = GameObject.Find("CampButton");
+			if (go != null) CampButton = go.GetComponent<Button>();
 		}
 	}
 
@@ -73,15 +84,22 @@ public class MainGameNavController : MonoBehaviour
 			EquipmentButton.onClick.RemoveAllListeners();
 			EquipmentButton.onClick.AddListener(() => LoadSceneSafe(equipmentSceneName));
 		}
-		if (PassiveTreeButton != null)
-		{
-			PassiveTreeButton.onClick.RemoveAllListeners();
-			PassiveTreeButton.onClick.AddListener(() => LoadSceneSafe(passiveTreeSceneName));
-		}
+		// PassiveTreeButton wiring removed - PassiveTree system is legacy
 		if (DeckManagerButton != null)
 		{
 			DeckManagerButton.onClick.RemoveAllListeners();
 			DeckManagerButton.onClick.AddListener(() => LoadSceneSafe(deckBuilderSceneName));
+		}
+		if (WarrantsTreeButton != null)
+		{
+			WarrantsTreeButton.onClick.RemoveAllListeners();
+			WarrantsTreeButton.onClick.AddListener(() => LoadSceneSafe(warrantTreeSceneName));
+		}
+		if (CampButton != null)
+		{
+			CampButton.onClick.RemoveAllListeners();
+			CampButton.onClick.AddListener(OnCampButtonClicked);
+			UpdateCampButtonAvailability();
 		}
 	}
 
@@ -95,6 +113,28 @@ public class MainGameNavController : MonoBehaviour
 		{
 			Debug.LogWarning("MainGameNavController: UIManager not found to toggle CharacterStatsPanel.");
 		}
+	}
+
+	private void OnCampButtonClicked()
+	{
+		// Camp button functionality - can be extended later
+		Debug.Log("CampButton clicked - Camp functionality to be implemented");
+	}
+
+	private void UpdateCampButtonAvailability()
+	{
+		if (CampButton == null) return;
+
+		// Check if Encounter 2 (Camp Concordia) has been entered
+		bool campAvailable = false;
+		var character = CharacterManager.Instance != null ? CharacterManager.Instance.GetCurrentCharacter() : null;
+		if (character != null)
+		{
+			campAvailable = character.HasEnteredEncounter(2); // Encounter 2 is Camp Concordia
+		}
+
+		CampButton.interactable = campAvailable;
+		CampButton.gameObject.SetActive(campAvailable);
 	}
 
 	private void LoadSceneSafe(string sceneName)

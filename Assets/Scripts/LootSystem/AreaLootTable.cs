@@ -83,6 +83,10 @@ public class AreaLootTable : ScriptableObject
         new CurrencyDropWeight { currencyType = CurrencyType.EtchingSeal, dropChance = 0.07f }
     };
 
+    [Header("Effigy Drops")]
+    [Tooltip("Optional effigy drops evaluated against area level")]
+    public EffigyDropWeight[] effigyDrops = new EffigyDropWeight[0];
+
     [Header("Debug")]
     [Tooltip("Show debug logs when generating loot")]
     public bool enableDebugLogs = false;
@@ -526,6 +530,14 @@ public class AreaLootTable : ScriptableObject
     /// </summary>
     public List<LootReward> GenerateAllLoot(int maxItems = 3)
     {
+        return GenerateAllLoot(areaLevel, maxItems);
+    }
+
+    /// <summary>
+    /// Generate combined loot (items + currencies + effigies) for a specific area level
+    /// </summary>
+    public List<LootReward> GenerateAllLoot(int currentAreaLevel, int maxItems = 3)
+    {
         List<LootReward> allRewards = new List<LootReward>();
         
         // Generate item drops
@@ -534,10 +546,12 @@ public class AreaLootTable : ScriptableObject
         {
             if (item != null)
             {
+                ItemData itemData = ConvertBaseItemToItemData(item);
                 LootReward itemReward = new LootReward
                 {
                     rewardType = RewardType.Item,
-                    itemData = ConvertBaseItemToItemData(item)
+                    itemData = itemData,
+                    itemInstance = item
                 };
                 allRewards.Add(itemReward);
             }
@@ -546,13 +560,55 @@ public class AreaLootTable : ScriptableObject
         // Generate currency drops
         List<LootReward> currencies = GenerateCurrencyDrops();
         allRewards.AddRange(currencies);
+
+        // Generate effigy drops
+        List<LootReward> effigyRewards = GenerateEffigyDrops(currentAreaLevel);
+        allRewards.AddRange(effigyRewards);
         
         if (enableDebugLogs && allRewards.Count > 0)
         {
-            Debug.Log($"[AreaLoot] Generated {allRewards.Count} total rewards ({items.Count} items, {currencies.Count} currencies)");
+            Debug.Log($"[AreaLoot] Generated {allRewards.Count} total rewards ({items.Count} items, {currencies.Count} currencies, {effigyRewards.Count} effigies)");
         }
         
         return allRewards;
+    }
+
+    private List<LootReward> GenerateEffigyDrops(int currentAreaLevel)
+    {
+        List<LootReward> effigyRewards = new List<LootReward>();
+
+        if (effigyDrops == null || effigyDrops.Length == 0)
+            return effigyRewards;
+
+        foreach (var drop in effigyDrops)
+        {
+            if (drop == null || drop.effigyBlueprint == null)
+                continue;
+
+            float chance = drop.GetDropChance(currentAreaLevel);
+            if (chance <= 0f)
+                continue;
+
+            // Supports dropping multiple if desired
+            int rolls = Mathf.Max(1, drop.maxQuantity);
+            for (int r = 0; r < rolls; r++)
+            {
+                if (Random.Range(0f, 1f) <= chance)
+                {
+                    Effigy instance = EffigyFactory.CreateInstance(drop.effigyBlueprint, AffixDatabase.Instance);
+                    if (instance != null)
+                    {
+                        effigyRewards.Add(new LootReward
+                        {
+                            rewardType = RewardType.Effigy,
+                            effigyInstance = instance
+                        });
+                    }
+                }
+            }
+        }
+
+        return effigyRewards;
     }
     
     /// <summary>
@@ -570,7 +626,8 @@ public class AreaLootTable : ScriptableObject
             rarity = baseItem.GetCalculatedRarity(),
             level = baseItem.requiredLevel,
             itemSprite = baseItem.itemIcon,
-            requiredLevel = baseItem.requiredLevel
+            requiredLevel = baseItem.requiredLevel,
+            sourceItem = baseItem
         };
         
         // Convert weapon-specific properties
@@ -643,4 +700,43 @@ public class CurrencyDropWeight
     public int minQuantity = 1;
     [Tooltip("Maximum quantity to drop")]
     public int maxQuantity = 1;
+}
+
+[System.Serializable]
+public class EffigyDropWeight
+{
+    [Tooltip("Effigy blueprint to roll when this drop succeeds")]
+    public Effigy effigyBlueprint;
+
+    [Tooltip("Lowest area level this drop can appear")]
+    public int minAreaLevel = 1;
+
+    [Tooltip("Highest area level this drop can appear")]
+    public int maxAreaLevel = 100;
+
+    [Tooltip("Drop chance when the area level equals minAreaLevel (0.0 - 1.0)")]
+    [Range(0f, 1f)]
+    public float dropChanceAtMinLevel = 0f;
+
+    [Tooltip("Drop chance when the area level equals maxAreaLevel (0.0 - 1.0)")]
+    [Range(0f, 1f)]
+    public float dropChanceAtMaxLevel = 0.05f;
+
+    [Tooltip("Number of times to roll this effigy when the drop chance succeeds")]
+    public int maxQuantity = 1;
+
+    public float GetDropChance(int areaLevel)
+    {
+        if (effigyBlueprint == null)
+            return 0f;
+
+        if (areaLevel < minAreaLevel || areaLevel > maxAreaLevel)
+            return 0f;
+
+        if (Mathf.Approximately(minAreaLevel, maxAreaLevel))
+            return dropChanceAtMaxLevel;
+
+        float t = Mathf.InverseLerp(minAreaLevel, maxAreaLevel, areaLevel);
+        return Mathf.Lerp(dropChanceAtMinLevel, dropChanceAtMaxLevel, t);
+    }
 }

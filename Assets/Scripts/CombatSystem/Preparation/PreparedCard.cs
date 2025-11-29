@@ -58,8 +58,32 @@ public class PreparedCard
         maxTurns = card.maxPrepTurns > 0 ? card.maxPrepTurns : 3;
         multiplierPerTurn = card.multiplierPerTurn > 0 ? card.multiplierPerTurn : 0.5f;
         
-        // Store initial values
-        storedBaseDamage = card.damage;
+        // Store initial values - apply delay bonus if card is delayed
+        float baseValue = card.damage;
+        bool isDelayed = IsCardDelayed(card, player);
+        
+        if (isDelayed)
+        {
+            // Apply delay bonus BEFORE preparation multipliers
+            // Attack cards: +25% damage
+            // Guard cards: +30% guard (stored as damage for guard cards)
+            CardType cardTypeEnum = card.GetCardTypeEnum();
+            
+            if (cardTypeEnum == CardType.Attack || (cardTypeEnum == CardType.Skill && card.damage > 0))
+            {
+                baseValue *= 1.25f; // +25% for delayed attacks
+                Debug.Log($"<color=cyan>[Preparation+Delay] Attack card gets +25% base damage: {card.damage} → {baseValue:F1}</color>");
+            }
+            else if (cardTypeEnum == CardType.Guard || (cardTypeEnum == CardType.Skill && card.block > 0))
+            {
+                // For guard cards, we store guard as "damage" for calculation purposes
+                // But the actual guard value will be calculated separately
+                baseValue *= 1.30f; // +30% for delayed guard
+                Debug.Log($"<color=cyan>[Preparation+Delay] Guard card gets +30% base guard: {card.damage} → {baseValue:F1}</color>");
+            }
+        }
+        
+        storedBaseDamage = baseValue;
         storedSpellPower = player.intelligence * 0.1f; // Spell power from INT
         
         // Store current stats for scaling calculations
@@ -70,7 +94,39 @@ public class PreparedCard
         // Determine unleash condition
         unleashCondition = ParseUnleashCondition(card.unleashCondition);
         
-        Debug.Log($"<color=cyan>[Preparation] Created PreparedCard: {card.cardName} | Max Turns: {maxTurns} | Multiplier/Turn: {multiplierPerTurn}</color>");
+        string delayInfo = isDelayed ? " (Delayed: +25%/+30% applied to base)" : "";
+        Debug.Log($"<color=cyan>[Preparation] Created PreparedCard: {card.cardName} | Max Turns: {maxTurns} | Multiplier/Turn: {multiplierPerTurn} | Base: {storedBaseDamage:F1}{delayInfo}</color>");
+    }
+    
+    /// <summary>
+    /// Check if a card is delayed (has delay turns or is marked as delayed)
+    /// </summary>
+    private bool IsCardDelayed(CardDataExtended card, Character player)
+    {
+        if (card == null) return false;
+        
+        // Check card's delayTurns property
+        if (card.delayTurns > 0)
+        {
+            return true;
+        }
+        
+        // Check if card has "Delayed" tag
+        if (card.tags != null && card.tags.Contains("Delayed"))
+        {
+            return true;
+        }
+        
+        // Check if card is marked as delayed (set by ascendancy or effect)
+        if (card.isDelayed)
+        {
+            return true;
+        }
+        
+        // TODO: Check ascendancy effects (Temporal Savant)
+        // This would check if player has Temporal Savant ascendancy and apply delay
+        
+        return false;
     }
     
     /// <summary>
@@ -159,8 +215,33 @@ public class PreparedCard
     /// </summary>
     public float CalculateUnleashDamage()
     {
-        // Base damage * (1 + currentMultiplier) + flat bonuses - decay penalty
         float baseDamage = storedBaseDamage;
+        
+        // Check for preparation bonus (e.g., Twin Strike: "deal 7 damage (+Dex/2)" instead of base 5 + Dex/4)
+        if (PreparationBonusParser.HasPreparationBonus(sourceCard.description))
+        {
+            var (prepBaseDamage, prepDexDivisor) = PreparationBonusParser.ParsePreparationDamage(sourceCard.description);
+            
+            if (prepBaseDamage > 0f)
+            {
+                // Use preparation bonus damage instead of stored base damage
+                baseDamage = prepBaseDamage;
+                
+                // Add dexterity scaling if specified
+                if (prepDexDivisor > 0f && owner != null)
+                {
+                    float dexBonus = owner.dexterity / prepDexDivisor;
+                    baseDamage += dexBonus;
+                    Debug.Log($"<color=cyan>[Preparation Bonus] {sourceCard.cardName} uses preparation damage: {prepBaseDamage} + Dex/{prepDexDivisor} = {baseDamage:F1}</color>");
+                }
+                else
+                {
+                    Debug.Log($"<color=cyan>[Preparation Bonus] {sourceCard.cardName} uses preparation damage: {prepBaseDamage}</color>");
+                }
+            }
+        }
+        
+        // Base damage * (1 + currentMultiplier) + flat bonuses - decay penalty
         float multipliedDamage = baseDamage * (1f + currentMultiplier);
         float totalDamage = multipliedDamage + flatStrengthBonus;
         
@@ -176,12 +257,65 @@ public class PreparedCard
     }
     
     /// <summary>
+    /// Get current calculated damage value (for UI display)
+    /// Rounds up as per user's example
+    /// </summary>
+    public int GetCurrentDamage()
+    {
+        float damage = CalculateUnleashDamage();
+        return Mathf.CeilToInt(damage); // Round up
+    }
+    
+    /// <summary>
+    /// Get current calculated guard value (for UI display)
+    /// For guard cards, calculates guard amount with preparation multiplier
+    /// </summary>
+    public int GetCurrentGuard()
+    {
+        if (sourceCard == null) return 0;
+        
+        // Check if this is a guard card
+        CardType cardTypeEnum = sourceCard.GetCardTypeEnum();
+        if (cardTypeEnum == CardType.Guard || (cardTypeEnum == CardType.Skill && sourceCard.block > 0))
+        {
+            // Calculate guard with preparation multiplier
+            float baseGuard = storedBaseDamage; // Guard is stored as damage for calculation
+            float multipliedGuard = baseGuard * (1f + currentMultiplier);
+            float totalGuard = multipliedGuard + flatStrengthBonus;
+            
+            // Apply decay penalty if any
+            if (decayAmount > 0f)
+            {
+                totalGuard *= (1f - decayAmount);
+            }
+            
+            return Mathf.CeilToInt(totalGuard); // Round up
+        }
+        
+        return 0;
+    }
+    
+    /// <summary>
+    /// Get a temporary CardDataExtended with updated values for UI display
+    /// This allows the card UI to show the current prepared values
+    /// </summary>
+    public CardDataExtended GetDisplayCardData()
+    {
+        if (sourceCard == null) return null;
+        
+        // Create a copy for display (we'll modify the damage/block values)
+        // Note: We can't modify ScriptableObjects directly, so we'll need to pass this info differently
+        // For now, return the original and let the UI component handle the display
+        return sourceCard;
+    }
+    
+    /// <summary>
     /// Calculate energy cost to manually unleash this card
-    /// Base energy + 1 per turn prepared
+    /// Uses the base card cost (preparation doesn't increase cost)
     /// </summary>
     public int CalculateManualUnleashCost()
     {
-        return sourceCard.playCost + turnsPrepared;
+        return sourceCard.playCost; // Base cost only - preparation doesn't increase cost
     }
     
     /// <summary>

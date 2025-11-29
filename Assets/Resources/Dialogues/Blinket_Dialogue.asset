@@ -1,0 +1,459 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff574ec1f450374d9b49a019c8f812d, type: 3}
+  m_Name: Blinket_Dialogue
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  dialogueId: blinket_vendor
+  dialogueName: Blinket the Bargain-Bound
+  npcId: blinket
+  defaultSpeakerPortrait: {fileID: 7094107197349703013, guid: 260a01dddd4dd6048bee437df0f5341c, type: 3}
+  startNodeId: greeting
+  nodes:
+  - nodeId: greeting
+    speakerName: Blinket
+    paragraphs:
+    - "Ah! Customer! Or victim! Or\u2026 hm. No, customer. Yes. Blinket decides customer
+      today."
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Who are you?
+      targetNodeId: who_are_you
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: What is this place?
+      targetNodeId: what_is_place
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: "Why does your bag keep\u2026 twitching?"
+      targetNodeId: bag_twitching
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: Let me see what you're selling.
+      targetNodeId: open_shop
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: Goodbye.
+      targetNodeId: goodbye
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: who_are_you
+    speakerName: Blinket
+    paragraphs:
+    - Blinket, at your service! Purveyor of rare oddities, risky bargains, and whatever
+      reality hasn't swallowed yet today.
+    - Blinket collects things that fall out of the Maze's cracks! Sometimes they
+      fall through him first, but Blinket doesn't complain. Much.
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: "Are you\u2026 from the Maze?"
+      targetNodeId: from_maze
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: "You seem\u2026 nervous."
+      targetNodeId: nervous
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: Show me your wares.
+      targetNodeId: open_shop
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: from_maze
+    speakerName: Blinket
+    paragraphs:
+    - Oh no! Blinket would never live in there. Laws bend too much. Ankles break
+      too easy. Blinket prefers the outside where sanity only occasionally slips
+      away.
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Show me your wares.
+      targetNodeId: open_shop
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: Goodbye.
+      targetNodeId: goodbye
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: nervous
+    speakerName: Blinket
+    paragraphs:
+    - Nervous? No no no. Blinket is cautiously optimistic. Many things want to eat
+      Blinket, but Blinket has learned to wriggle just right.
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Show me your wares.
+      targetNodeId: open_shop
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: Goodbye.
+      targetNodeId: goodbye
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: what_is_place
+    speakerName: Blinket
+    paragraphs:
+    - This? This is Blinket's Ever-Shifting Emporium! A shop so dependable it only
+      disappears twice a day! Sometimes more. Inventory restocks whenever reality
+      sneezes. Blinket hates when it sneezes upwards.
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Restocks? Without you doing anything?
+      targetNodeId: restocks
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: Is it safe to shop here?
+      targetNodeId: is_safe
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: Can I just see what you're selling?
+      targetNodeId: open_shop
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: restocks
+    speakerName: Blinket
+    paragraphs:
+    - Oh yes! Blinket is blessed and cursed. Mostly cursed. The Laws near the Maze
+      twist, tangle, knot! Items vanish, multiply, melt, or turn into coupons for
+      things that don't exist. Blinket makes do.
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Show me your wares.
+      targetNodeId: open_shop
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: Goodbye.
+      targetNodeId: goodbye
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: is_safe
+    speakerName: Blinket
+    paragraphs:
+    - For Blinket? No.
+    - "For you? \u2026Probably. Blinket recommends you don't sniff anything, though."
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Show me your wares.
+      targetNodeId: open_shop
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: Goodbye.
+      targetNodeId: goodbye
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: bag_twitching
+    speakerName: Blinket
+    paragraphs:
+    - "Ah! That means the merchandise is fresh. Or alive. Or angry. Hard to say!
+      Blinket doesn't open the bag unless a customer is looking\u2014very important
+      safety rule."
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices:
+    - choiceText: Show me your wares.
+      targetNodeId: open_shop
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    - choiceText: Goodbye.
+      targetNodeId: goodbye
+      condition:
+        conditionType: 0
+        conditionValue: 
+        intValue: 0
+      action:
+        actionType: 0
+        actionValue: 
+        intValue: 0
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: open_shop
+    speakerName: Blinket
+    paragraphs:
+    - Of course! Step right up. Browse quickly before the stock remembers it can
+      leave!
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices: []
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions:
+    - actionType: 5
+      actionValue: MazeVendor
+      intValue: 0
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0
+  - nodeId: goodbye
+    speakerName: Blinket
+    paragraphs:
+    - Blinket bids you farewell! Try not to die! Blinket's best customers are the
+      ones who keep coming back.
+    dialogueText: 
+    speakerPortrait: {fileID: 0}
+    choices: []
+    onEnterAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onEnterActions: []
+    onExitAction:
+      actionType: 0
+      actionValue: 
+      intValue: 0
+    onExitActions: []
+    condition:
+      conditionType: 0
+      conditionValue: 
+      intValue: 0

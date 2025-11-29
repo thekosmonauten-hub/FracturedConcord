@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 043567f87a1ba80429d5d7adcf27d312, type: 3}
+  m_Name: Standard
+  m_EditorClassIdentifier: Assembly-CSharp::Dexiled.MazeSystem.MazeDifficultyConfig
+  difficultyName: Broken Mandate
+  description: The simplest fractures are the most treacherous.
+  difficultyIcon: {fileID: -997650035692225810, guid: 788c677b1ad206946b73efcd3b7ff50f, type: 3}
+  mazeConfig: {fileID: 11400000, guid: a7d801176e0c6c24fa165cb453c49e14, type: 2}
+  enemyLevelMultiplier: 1
+  experienceMultiplier: 1
+  lootMultiplier: 1
+  currencyMultiplier: 1
+  requiredLevel: 33
+  entryCost: 0
+  entryCurrencyType: 0
+  firstClearAttunementPoints: 2
+  firstClearCurrencyBonus: 0
+  firstClearCurrencyType: 0
+  difficultyColor: {r: 0.6226415, g: 0.47872907, b: 0.47872907, a: 1}
+  isRecommended: 0

@@ -1,0 +1,150 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e192023a20c44c84e8436dcbcdce9133, type: 3}
+  m_Name: warrant_tutorial
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialData
+  tutorialId: warrant_tutorial
+  tutorialName: Warrant Tutorial
+  steps:
+  - stepId: transition_scene
+    tutorialText: Let me show you how to use these fragments of intact law.
+    targetObjectPath: 
+    targetObjectPaths: []
+    highlightColor: {r: 0, g: 0, b: 0, a: 0}
+    usePulseAnimation: 1
+    completionType: 1
+    clickTargetPath: 
+    waitTime: 6
+    conditionName: 
+    onStartAction:
+      actionType: 7
+      actionValue: transition_to_warrant_tree
+      floatValue: 0
+    onCompleteAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+  - stepId: highlight_locker
+    tutorialText: This is your Warrant Locker. I've given you 3 baseline warrants
+      to start with.
+    targetObjectPath: WarrantLockerToggleButton
+    targetObjectPaths: []
+    highlightColor: {r: 0.8113208, g: 0.6558652, b: 0.14159843, a: 0}
+    usePulseAnimation: 1
+    completionType: 0
+    clickTargetPath: WarrantLockerToggleButton
+    waitTime: 0
+    conditionName: 
+    onStartAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+    onCompleteAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+  - stepId: highlight_socket_1
+    tutorialText: This is a Warrant Socket. Drag a warrant from your locker to socket
+      it here.
+    targetObjectPath: WarrantNodeView:Anchor
+    targetObjectPaths: []
+    highlightColor: {r: 0.9622642, g: 0.7317027, b: 0.19517623, a: 0}
+    usePulseAnimation: 1
+    completionType: 3
+    clickTargetPath: WarrantNodeView:Anchor
+    waitTime: 2
+    conditionName: 
+    onStartAction:
+      actionType: 7
+      actionValue: transition_to_warrant_tree
+      floatValue: 0
+    onCompleteAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+  - stepId: highlight_socket_2
+    tutorialText: You will find these sockets scattered throughout your law.
+    targetObjectPath: 
+    targetObjectPaths:
+    - WarrantNodeView:Anchor_MidBottom_Section1_Socket
+    - WarrantNodeView:Anchor_BottomLeft_Section1_Socket
+    - WarrantNodeView:Anchor_BottomRight_Section1_Socket
+    highlightColor: {r: 0.9622642, g: 0.7317027, b: 0.19517623, a: 0}
+    usePulseAnimation: 1
+    completionType: 3
+    clickTargetPath: WarrantNodeView:Anchor_MidBottom_Section1_Socket
+    waitTime: 2
+    conditionName: 
+    onStartAction:
+      actionType: 7
+      actionValue: transition_to_warrant_tree
+      floatValue: 0
+    onCompleteAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+  - stepId: warrant_effect_2
+    tutorialText: The effect of this warrant will come in two. The Law inscribed
+      in it will be self contained, but the effects will spill into the 3 adjacent
+      motes, in all directions.
+    targetObjectPath: 
+    targetObjectPaths:
+    - WarrantNodeView:Anchor_to_Anchor_MidBottom_Section1_Socket_effect1
+    - 'WarrantNodeView:Anchor_to_Anchor_MidBottom_Section1_Socket_effect2 '
+    - WarrantNodeView:Anchor_to_Anchor_MidBottom_Section1_Socket_effect3
+    - WarrantNodeView:Anchor_to_Anchor_BottomLeft_Section1_Socket_effect1
+    - WarrantNodeView:Anchor_to_Anchor_BottomLeft_Section1_Socket_effect2
+    - WarrantNodeView:Anchor_to_Anchor_BottomLeft_Section1_Socket_effect3
+    - WarrantNodeView:Anchor_to_Anchor_BottomRight_Section1_Socket_effect1
+    - WarrantNodeView:Anchor_to_Anchor_BottomRight_Section1_Socket_effect2
+    - WarrantNodeView:Anchor_to_Anchor_BottomRight_Section1_Socket_effect3
+    highlightColor: {r: 0.8396226, g: 0.5856401, b: 0.051486313, a: 0}
+    usePulseAnimation: 1
+    completionType: 3
+    clickTargetPath: 
+    waitTime: 0
+    conditionName: 
+    onStartAction:
+      actionType: 7
+      actionValue: transition_to_warrant_tree
+      floatValue: 0
+    onCompleteAction:
+      actionType: 0
+      actionValue: 
+      floatValue: 0
+  - stepId: warrant_complete
+    tutorialText: There's almost endless possibilities here, once you find new Warrants,
+      make sure to circle back here to see if you could have use for the Law inscribed
+      onto it.
+    targetObjectPath: 
+    targetObjectPaths: []
+    highlightColor: {r: 0, g: 0, b: 0, a: 0}
+    usePulseAnimation: 1
+    completionType: 1
+    clickTargetPath: 
+    waitTime: 3
+    conditionName: 
+    onStartAction:
+      actionType: 5
+      actionValue: TownScene
+      floatValue: 1
+    onCompleteAction:
+      actionType: 6
+      actionValue: peacekeeper_joreg
+      floatValue: 0
+  canSkip: 1
+  autoStart: 1
+  targetScene: WarrantTree
+  onTutorialComplete:
+    actionType: 0
+    actionValue: 
+    floatValue: 0

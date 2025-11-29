@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0cad68394b043c48932ab93d06dc5ff, type: 3}
+  m_Name: Final Annotation_Damage
+  m_EditorClassIdentifier: Assembly-CSharp::DamageEffect
+  damageType: 5
+  flatDamage: 20
+  percentOfMaxHp: 0.1
+  includeCasterWhenTargetingAllies: 0

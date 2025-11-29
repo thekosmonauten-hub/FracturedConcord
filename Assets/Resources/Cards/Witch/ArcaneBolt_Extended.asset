@@ -95,7 +95,6 @@ MonoBehaviour:
   channelingGuardIncreasedPercent: 0
   channelingGuardMorePercent: 0
   tags:
-  - Attack
   - Lightning
   - Spell
   canPrepare: 0

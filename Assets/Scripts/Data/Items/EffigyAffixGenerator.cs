@@ -1,249 +1,296 @@
-using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 /// <summary>
-/// Generates affixes for Effigies based on their element, size tier, and rarity
+/// Generates rolled effigy affixes using the shared AffixDatabase
 /// </summary>
 public static class EffigyAffixGenerator
 {
-    /// <summary>
-    /// Generate affixes for an Effigy based on its properties
-    /// </summary>
-    public static List<Affix> GenerateAffixes(Effigy effigy, AffixDatabase affixDatabase)
+    private const float EffigyScalingFactor = 0.1f;
+    private const int ExplicitAffixCount = Effigy.ExplicitAffixTarget;
+    private static readonly ItemType[] SourceItemTypes = { ItemType.Weapon, ItemType.Armour, ItemType.Accessory };
+
+    public static void RollAffixes(Effigy effigy, AffixDatabase database, ItemRarity? forcedRarity = null, int? seed = null)
     {
-        if (effigy == null || affixDatabase == null)
+        if (effigy == null)
         {
-            Debug.LogWarning("[EffigyAffixGenerator] Cannot generate affixes - effigy or database is null");
-            return new List<Affix>();
+            Debug.LogWarning("[EffigyAffixGenerator] Effigy is null. No affixes rolled.");
+            return;
         }
-        
-        List<Affix> generatedAffixes = new List<Affix>();
-        
-        // Unique effigies have fixed affixes (no generation)
-        if (effigy.rarity == ItemRarity.Unique)
+
+        if (database == null)
         {
-            return effigy.modifiers; // Return existing fixed affixes
+            Debug.LogWarning("[EffigyAffixGenerator] Affix database is null. No affixes rolled.");
+            return;
         }
-        
-        // Get available affix pools for this element
-        var affixPool = GetAffixPoolForElement(effigy.element, effigy.sizeTier);
-        
-        // Determine how many affixes to generate based on rarity
-        int affixCount = GetAffixCountForRarity(effigy.rarity, effigy.sizeTier);
-        
-        // Generate prefixes
-        int prefixCount = Mathf.Min(affixCount / 2 + (affixCount % 2), affixPool.prefixes.Count);
-        for (int i = 0; i < prefixCount; i++)
+
+        if (effigy.isUnique)
         {
-            var prefix = GetRandomAffixFromList(affixPool.prefixes);
-            if (prefix != null)
-            {
-                // Create a rolled copy of the affix
-                Affix rolledAffix = prefix.GenerateRolledAffix();
-                generatedAffixes.Add(rolledAffix);
-            }
+            // Unique effigies rely on predefined modifiers.
+            return;
         }
-        
-        // Generate suffixes
-        int suffixCount = affixCount - prefixCount;
-        suffixCount = Mathf.Min(suffixCount, affixPool.suffixes.Count);
-        for (int i = 0; i < suffixCount; i++)
+
+        effigy.ClearAffixes();
+
+        System.Random rng = seed.HasValue ? new System.Random(seed.Value) : new System.Random();
+
+        ItemRarity targetRarity = forcedRarity ?? ItemRarity.Rare;
+        int targetAffixCount = ExplicitAffixCount;
+
+        var prefixesPool = BuildPrefixPool(database);
+        var suffixesPool = BuildSuffixPool(database);
+
+        if (prefixesPool.Count == 0 && suffixesPool.Count == 0)
         {
-            var suffix = GetRandomAffixFromList(affixPool.suffixes);
-            if (suffix != null)
-            {
-                // Create a rolled copy of the affix
-                Affix rolledAffix = suffix.GenerateRolledAffix();
-                generatedAffixes.Add(rolledAffix);
-            }
+            Debug.LogWarning("[EffigyAffixGenerator] No affixes available in database.");
+            return;
         }
-        
-        return generatedAffixes;
+
+        (int prefixCount, int suffixCount) = AllocatePrefixSuffixCounts(targetAffixCount, rng, prefixesPool.Count, suffixesPool.Count);
+
+        List<Affix> rolledPrefixes = RollAffixesFromPool(prefixesPool, prefixCount, rng);
+        List<Affix> rolledSuffixes = RollAffixesFromPool(suffixesPool, suffixCount, rng);
+
+        int totalRolled = rolledPrefixes.Count + rolledSuffixes.Count;
+        if (totalRolled < targetAffixCount)
+        {
+            FillRemainingAffixes(prefixesPool, suffixesPool, rolledPrefixes, rolledSuffixes, targetAffixCount - totalRolled, rng);
+        }
+
+        // Ensure we do not exceed the target count
+        TrimToTargetCount(rolledPrefixes, rolledSuffixes, targetAffixCount);
+
+        ApplyScalingAndGlobalScope(rolledPrefixes);
+        ApplyScalingAndGlobalScope(rolledSuffixes);
+
+        effigy.prefixes.AddRange(rolledPrefixes.Take(targetAffixCount));
+        int remainingSlots = Mathf.Max(0, targetAffixCount - effigy.prefixes.Count);
+        if (remainingSlots > 0)
+        {
+            effigy.suffixes.AddRange(rolledSuffixes.Take(remainingSlots));
+        }
+        else
+        {
+            // If prefixes already filled all slots, ensure suffixes remain empty for consistency
+            effigy.suffixes.Clear();
+        }
+
+        effigy.rarity = effigy.isUnique ? effigy.GetCalculatedRarity() : ItemRarity.Rare;
     }
-    
-    /// <summary>
-    /// Get the number of affixes to generate based on rarity and size
-    /// </summary>
-    private static int GetAffixCountForRarity(ItemRarity rarity, EffigySizeTier sizeTier)
+
+    private static (int prefix, int suffix) AllocatePrefixSuffixCounts(int total, System.Random rng, int availablePrefixes, int availableSuffixes)
     {
-        int baseCount = 0;
-        
-        switch (rarity)
+        if (total == 0)
+            return (0, 0);
+
+        int prefixCount = rng.Next(0, total + 1);
+        int suffixCount = total - prefixCount;
+
+        prefixCount = Mathf.Min(prefixCount, availablePrefixes);
+        suffixCount = Mathf.Min(suffixCount, availableSuffixes);
+
+        while (prefixCount + suffixCount < total)
         {
-            case ItemRarity.Normal:
-                baseCount = 1;
-                break;
-            case ItemRarity.Magic:
-                baseCount = Random.Range(1, 3); // 1-2
-                break;
-            case ItemRarity.Rare:
-                baseCount = Random.Range(2, 4); // 2-3
+            if (prefixCount < availablePrefixes)
+                prefixCount++;
+            else if (suffixCount < availableSuffixes)
+                suffixCount++;
+            else
                 break;
         }
-        
-        // Size tier bonus
-        if (sizeTier == EffigySizeTier.Large && rarity >= ItemRarity.Magic)
-        {
-            baseCount += 1; // Large effigies can have one extra affix
-        }
-        
-        return baseCount;
+
+        return (prefixCount, suffixCount);
     }
-    
-    /// <summary>
-    /// Affix pool structure for an element
-    /// </summary>
-    private class ElementAffixPool
+
+    private static List<Affix> BuildPrefixPool(AffixDatabase database)
     {
-        public List<Affix> prefixes = new List<Affix>();
-        public List<Affix> suffixes = new List<Affix>();
-    }
-    
-    /// <summary>
-    /// Get affix pools for a specific element (simplified - should query AffixDatabase)
-    /// </summary>
-    private static ElementAffixPool GetAffixPoolForElement(EffigyElement element, EffigySizeTier sizeTier)
-    {
-        ElementAffixPool pool = new ElementAffixPool();
-        
-        // TODO: This should query the AffixDatabase for element-specific affixes
-        // For now, return placeholder affixes based on element theme
-        
-        switch (element)
-        {
-            case EffigyElement.Fire:
-                pool.prefixes.Add(CreateFirePrefix());
-                pool.suffixes.Add(CreateFireSuffix());
-                break;
-            case EffigyElement.Cold:
-                pool.prefixes.Add(CreateColdPrefix());
-                pool.suffixes.Add(CreateColdSuffix());
-                break;
-            case EffigyElement.Lightning:
-                pool.prefixes.Add(CreateLightningPrefix());
-                pool.suffixes.Add(CreateLightningSuffix());
-                break;
-            case EffigyElement.Physical:
-                pool.prefixes.Add(CreatePhysicalPrefix());
-                pool.suffixes.Add(CreatePhysicalSuffix());
-                break;
-            case EffigyElement.Chaos:
-                pool.prefixes.Add(CreateChaosPrefix());
-                pool.suffixes.Add(CreateChaosSuffix());
-                break;
-        }
-        
+        List<Affix> pool = new List<Affix>();
+
+        pool.AddRange(database.weaponPrefixCategories.SelectMany(c => c.GetAllAffixes()));
+        pool.AddRange(database.armourPrefixCategories.SelectMany(c => c.GetAllAffixes()));
+        pool.AddRange(database.jewelleryPrefixCategories.SelectMany(c => c.GetAllAffixes()));
+
         return pool;
     }
-    
-    private static Affix GetRandomAffixFromList(List<Affix> affixes)
+
+    private static List<Affix> BuildSuffixPool(AffixDatabase database)
     {
-        if (affixes == null || affixes.Count == 0)
+        List<Affix> pool = new List<Affix>();
+
+        pool.AddRange(database.weaponSuffixCategories.SelectMany(c => c.GetAllAffixes()));
+        pool.AddRange(database.armourSuffixCategories.SelectMany(c => c.GetAllAffixes()));
+        pool.AddRange(database.jewellerySuffixCategories.SelectMany(c => c.GetAllAffixes()));
+
+        return pool;
+    }
+
+    private static List<Affix> RollAffixesFromPool(List<Affix> pool, int count, System.Random rng)
+    {
+        List<Affix> rolled = new List<Affix>();
+        if (count <= 0 || pool.Count == 0)
+            return rolled;
+
+        for (int i = 0; i < count; i++)
+        {
+            Affix template = WeightedRandomPick(pool, rng);
+            if (template == null)
+                break;
+
+            Affix rolledAffix = template.GenerateRolledAffix(rng.Next());
+            rolled.Add(rolledAffix);
+        }
+
+        return rolled;
+    }
+
+    private static Affix WeightedRandomPick(List<Affix> pool, System.Random rng)
+    {
+        if (pool == null || pool.Count == 0)
             return null;
-        
-        return affixes[Random.Range(0, affixes.Count)];
-    }
-    
-    // Placeholder affix creators - these should query the actual AffixDatabase
-    private static Affix CreateFirePrefix()
-    {
-        return new Affix("Burning", "+15-24% increased Fire Damage", AffixType.Prefix, AffixTier.Tier5)
+
+        float totalWeight = pool.Sum(a => a.weight);
+        if (totalWeight <= 0f)
+            return pool[rng.Next(pool.Count)];
+
+        double roll = rng.NextDouble() * totalWeight;
+        double cumulative = 0;
+
+        foreach (var affix in pool)
         {
-            minValue = 15,
-            maxValue = 24,
-            hasRange = true
-        };
+            cumulative += affix.weight;
+            if (roll <= cumulative)
+                return affix;
+        }
+
+        return pool.Last();
     }
-    
-    private static Affix CreateFireSuffix()
+
+    private static void FillRemainingAffixes(
+        List<Affix> prefixPool,
+        List<Affix> suffixPool,
+        List<Affix> rolledPrefixes,
+        List<Affix> rolledSuffixes,
+        int remaining,
+        System.Random rng)
     {
-        return new Affix("of Ignition", "5-10% chance to Ignite on hit", AffixType.Suffix, AffixTier.Tier5)
+        if (remaining <= 0)
+            return;
+
+        List<Affix> combinedPool = new List<Affix>();
+        if (prefixPool != null) combinedPool.AddRange(prefixPool);
+        if (suffixPool != null) combinedPool.AddRange(suffixPool);
+
+        while (remaining > 0 && combinedPool.Count > 0)
         {
-            minValue = 5,
-            maxValue = 10,
-            hasRange = true
-        };
+            Affix template = WeightedRandomPick(combinedPool, rng);
+            if (template == null)
+                break;
+
+            Affix rolled = template.GenerateRolledAffix(rng.Next());
+            if (template.affixType == AffixType.Prefix)
+            {
+                rolledPrefixes.Add(rolled);
+            }
+            else
+            {
+                rolledSuffixes.Add(rolled);
+            }
+
+            remaining--;
+        }
     }
-    
-    private static Affix CreateColdPrefix()
+
+    private static void TrimToTargetCount(List<Affix> prefixes, List<Affix> suffixes, int targetCount)
     {
-        return new Affix("Frozen", "+20-30% increased Energy Shield", AffixType.Prefix, AffixTier.Tier5)
+        int total = prefixes.Count + suffixes.Count;
+        if (total <= targetCount)
+            return;
+
+        // Prioritize removing extras from the larger group while keeping balance
+        while (total > targetCount && (prefixes.Count > 0 || suffixes.Count > 0))
         {
-            minValue = 20,
-            maxValue = 30,
-            hasRange = true
-        };
+            if (prefixes.Count > suffixes.Count && prefixes.Count > 0)
+            {
+                prefixes.RemoveAt(prefixes.Count - 1);
+            }
+            else if (suffixes.Count > 0)
+            {
+                suffixes.RemoveAt(suffixes.Count - 1);
+            }
+            else if (prefixes.Count > 0)
+            {
+                prefixes.RemoveAt(prefixes.Count - 1);
+            }
+
+            total = prefixes.Count + suffixes.Count;
+        }
     }
-    
-    private static Affix CreateColdSuffix()
+
+    private static void ApplyScalingAndGlobalScope(List<Affix> affixes)
     {
-        return new Affix("of Freezing", "+20-30% increased Freeze Duration", AffixType.Suffix, AffixTier.Tier5)
+        foreach (var affix in affixes)
         {
-            minValue = 20,
-            maxValue = 30,
-            hasRange = true
-        };
+            if (affix == null)
+                continue;
+
+            affix.minValue = Mathf.RoundToInt(affix.minValue * EffigyScalingFactor);
+            affix.maxValue = Mathf.RoundToInt(affix.maxValue * EffigyScalingFactor);
+            affix.rolledValue = Mathf.RoundToInt(affix.rolledValue * EffigyScalingFactor);
+
+            foreach (var modifier in affix.modifiers)
+            {
+                if (modifier == null)
+                    continue;
+
+                modifier.scope = ModifierScope.Global;
+
+                modifier.minValue = RoundToTwoDecimals(modifier.minValue * EffigyScalingFactor);
+                modifier.maxValue = RoundToTwoDecimals(modifier.maxValue * EffigyScalingFactor);
+                modifier.originalMinValue = RoundToTwoDecimals(modifier.originalMinValue * EffigyScalingFactor);
+                modifier.originalMaxValue = RoundToTwoDecimals(modifier.originalMaxValue * EffigyScalingFactor);
+
+                if (modifier.isDualRange)
+                {
+                    modifier.firstRangeMin = RoundToTwoDecimals(modifier.firstRangeMin * EffigyScalingFactor);
+                    modifier.firstRangeMax = RoundToTwoDecimals(modifier.firstRangeMax * EffigyScalingFactor);
+                    modifier.secondRangeMin = RoundToTwoDecimals(modifier.secondRangeMin * EffigyScalingFactor);
+                    modifier.secondRangeMax = RoundToTwoDecimals(modifier.secondRangeMax * EffigyScalingFactor);
+                    modifier.rolledFirstValue = RoundToTwoDecimals(modifier.rolledFirstValue * EffigyScalingFactor);
+                    modifier.rolledSecondValue = RoundToTwoDecimals(modifier.rolledSecondValue * EffigyScalingFactor);
+                }
+
+                modifier.description = BuildModifierDescription(modifier);
+            }
+
+            affix.description = BuildAffixDescription(affix);
+        }
     }
-    
-    private static Affix CreateLightningPrefix()
+
+    private static float RoundToTwoDecimals(float value)
     {
-        return new Affix("Crackling", "+10-15% increased Critical Strike Chance", AffixType.Prefix, AffixTier.Tier5)
-        {
-            minValue = 10,
-            maxValue = 15,
-            hasRange = true
-        };
+        return (float)Math.Round(value, 2, MidpointRounding.AwayFromZero);
     }
-    
-    private static Affix CreateLightningSuffix()
+
+    private static string BuildModifierDescription(AffixModifier modifier)
     {
-        return new Affix("of Shocking", "+20-30% increased Shock Effect", AffixType.Suffix, AffixTier.Tier5)
+        if (modifier.isDualRange)
         {
-            minValue = 20,
-            maxValue = 30,
-            hasRange = true
-        };
+            return $"{modifier.statName}: +{modifier.rolledFirstValue:0.##} to +{modifier.rolledSecondValue:0.##}";
+        }
+
+        float displayValue = modifier.minValue != 0 ? modifier.minValue : modifier.maxValue;
+        string sign = displayValue >= 0 ? "+" : "";
+        return $"{modifier.statName}: {sign}{displayValue:0.##}";
     }
-    
-    private static Affix CreatePhysicalPrefix()
+
+    private static string BuildAffixDescription(Affix affix)
     {
-        return new Affix("Stalwart", "+15-25% increased Armor", AffixType.Prefix, AffixTier.Tier5)
-        {
-            minValue = 15,
-            maxValue = 25,
-            hasRange = true
-        };
-    }
-    
-    private static Affix CreatePhysicalSuffix()
-    {
-        return new Affix("of Endurance", "+10-20% increased maximum Life", AffixType.Suffix, AffixTier.Tier5)
-        {
-            minValue = 10,
-            maxValue = 20,
-            hasRange = true
-        };
-    }
-    
-    private static Affix CreateChaosPrefix()
-    {
-        return new Affix("Corrupting", "+12-20% increased Chaos Damage", AffixType.Prefix, AffixTier.Tier5)
-        {
-            minValue = 12,
-            maxValue = 20,
-            hasRange = true
-        };
-    }
-    
-    private static Affix CreateChaosSuffix()
-    {
-        return new Affix("of Decay", "+15-25% increased Damage over Time Multiplier", AffixType.Suffix, AffixTier.Tier5)
-        {
-            minValue = 15,
-            maxValue = 25,
-            hasRange = true
-        };
+        if (affix.modifiers == null || affix.modifiers.Count == 0)
+            return affix.description;
+
+        return string.Join("\n", affix.modifiers.Select(m => m.description));
     }
 }
 

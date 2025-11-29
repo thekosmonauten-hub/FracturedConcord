@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: Runeseal Remnant
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: Runeseal Remnant
+  description: A floating seal-wheel with rotating rings of copper and gold. If you
+    freeze the animation, you can see half-faded imprints of ancient Sealwright hands.
+  enemySprite: {fileID: 6382105998930754508, guid: 9abce69d632248d46bfc634cfcb5778c, type: 3}
+  tier: 0
+  rarity: 0
+  category: 4
+  minHealth: 35
+  maxHealth: 50
+  baseDamage: 5
+  baseArmor: 0
+  criticalChance: 0.05
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 100
+  evasionRating: 0
+  physicalResistance: 0
+  fireResistance: 0
+  coldResistance: 0
+  lightningResistance: 0
+  chaosResistance: 0
+  displayScale: 1
+  basePanelHeight: 280
+  enableEnergy: 0
+  baseMaxEnergy: 100
+  energyRegenPerTurn: 10
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  aiPattern: 0
+  attackPreference: 0.4
+  specialAbilities: []
+  abilities:
+  - {fileID: 11400000, guid: 4907736192606b04ca7ce2da97a29a1f, type: 2}
+  - {fileID: 11400000, guid: 3db35b1961cc15a42a3b7ff1cefbfbb0, type: 2}
+  - {fileID: 11400000, guid: f4474225c9936f14e94153f592ae2dae, type: 2}
+  summonPool: []
+  spiritTags: 
+  guaranteedSpiritDrop: 0
+  minGoldDrop: 9
+  maxGoldDrop: 16
+  experienceReward: 10
+  cardDropChance: 0.12
+  initialAgitateStacks: 0
+  initialToleranceStacks: 0
+  initialPotentialStacks: 0
+  excludeFromRandom: 1
+  healthBarColor: {r: 1, g: 0, b: 0, a: 1}
+  animatorController: {fileID: 0}

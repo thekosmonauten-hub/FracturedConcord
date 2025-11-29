@@ -98,6 +98,7 @@ public class EffigyGridUI : MonoBehaviour
                     cellUI.cellY = y;
                     cellUI.OnCellMouseDown += OnCellMouseDown;
                     cellUI.OnCellMouseEnter += OnCellMouseEnter;
+                    cellUI.OnCellMouseExit += OnCellMouseExit;
                     cellUI.OnCellMouseUp += OnCellMouseUp;
                     
                     gridCells.Add(cellUI);
@@ -186,11 +187,10 @@ public class EffigyGridUI : MonoBehaviour
         canvasGroup.alpha = 0.8f;
         canvasGroup.blocksRaycasts = false; // Allow mouse to pass through to grid
         
-        // Create visual for each occupied cell
+        Sprite[] spriteSet = EffigySpriteSet.GetSprites(effigy.effigyName);
+        int spriteIndex = 0;
         Color elementColor = effigy.GetElementColor();
         Color borderColor = GetRarityColor(effigy.rarity);
-        
-        bool isFirstOccupiedCell = true;
         
         for (int y = 0; y < height; y++)
         {
@@ -204,48 +204,39 @@ public class EffigyGridUI : MonoBehaviour
                 cellObj.transform.SetParent(dragVisual.transform, false);
                 
                 RectTransform cellRect = cellObj.AddComponent<RectTransform>();
-                
-                // Position relative to drag visual container
                 float localX = x * (cellSize + cellSpacing);
                 float localY = -y * (cellSize + cellSpacing);
-                
                 cellRect.anchorMin = new Vector2(0, 1);
                 cellRect.anchorMax = new Vector2(0, 1);
                 cellRect.pivot = new Vector2(0, 1);
                 cellRect.anchoredPosition = new Vector2(localX, localY);
                 cellRect.sizeDelta = new Vector2(cellSize, cellSize);
                 
-                // Background
                 Image cellImage = cellObj.AddComponent<Image>();
-                cellImage.color = elementColor * 0.8f;
+                cellImage.preserveAspect = false;
+                cellImage.raycastTarget = false;
                 
-                // Border
+                Sprite selectedSprite = spriteSet != null && spriteIndex < spriteSet.Length ? spriteSet[spriteIndex] : effigy.icon;
+                if (selectedSprite != null)
+                {
+                    cellImage.sprite = selectedSprite;
+                    cellImage.color = Color.white;
+                }
+                else
+                {
+                    float rarityBrightness = GetRarityBrightness(effigy.rarity);
+                    cellImage.color = elementColor * rarityBrightness;
+                }
+                
                 Outline outline = cellObj.AddComponent<Outline>();
                 outline.effectColor = borderColor;
-                outline.effectDistance = new Vector2(2, 2);
+                outline.effectDistance = new Vector2(2f, -2f);
                 
-                // Icon (on first occupied cell only)
-                if (isFirstOccupiedCell && effigy.icon != null)
-                {
-                    GameObject iconObj = new GameObject("Icon");
-                    iconObj.transform.SetParent(cellObj.transform, false);
-                    
-                    RectTransform iconRect = iconObj.AddComponent<RectTransform>();
-                    iconRect.anchorMin = Vector2.zero;
-                    iconRect.anchorMax = Vector2.one;
-                    iconRect.offsetMin = new Vector2(5, 5);
-                    iconRect.offsetMax = new Vector2(-5, -5);
-                    
-                    Image iconImage = iconObj.AddComponent<Image>();
-                    iconImage.sprite = effigy.icon;
-                    iconImage.preserveAspect = true;
-                    
-                    isFirstOccupiedCell = false;
-                }
+                spriteIndex++;
             }
         }
         
-        Debug.Log($"[EffigyGridUI] Created drag visual for {effigy.effigyName} - Center: {centerOffset}, Pivot: {dragRect.pivot}, Occupied cells: {occupiedCount}");
+        Debug.Log($"[EffigyGridUI] Created drag visual for {effigy.effigyName} - Center: {centerOffset}, Pivot: {dragRect.pivot}, Occupied cells: {occupiedCount}, Size: {dragRect.sizeDelta}");
     }
     
     void LateUpdate()
@@ -378,6 +369,28 @@ public class EffigyGridUI : MonoBehaviour
         {
             currentHoveredCell = new Vector2Int(x, y);
             PreviewPlacement(draggedEffigy, x, y);
+            return;
+        }
+
+        Effigy effigy = placedEffigies != null ? placedEffigies[y, x] : null;
+        if (effigy != null && ItemTooltipManager.Instance != null)
+        {
+            ItemTooltipManager.Instance.ShowEffigyTooltip(effigy, Input.mousePosition);
+        }
+        else if (ItemTooltipManager.Instance != null)
+        {
+            ItemTooltipManager.Instance.HideTooltip();
+        }
+    }
+
+    void OnCellMouseExit(int x, int y)
+    {
+        if (draggedEffigy != null)
+            return;
+
+        if (ItemTooltipManager.Instance != null)
+        {
+            ItemTooltipManager.Instance.HideTooltip();
         }
     }
     
@@ -543,11 +556,14 @@ public class EffigyGridUI : MonoBehaviour
         }
         
         // Remove visuals
-        if (effigyVisuals.ContainsKey(effigy))
+        if (effigyVisuals.TryGetValue(effigy, out List<GameObject> visuals))
         {
-            foreach (var visual in effigyVisuals[effigy])
+            foreach (var visual in visuals)
             {
-                Destroy(visual);
+                if (visual != null)
+                {
+                    Destroy(visual);
+                }
             }
             effigyVisuals.Remove(effigy);
         }
@@ -588,20 +604,27 @@ public class EffigyGridUI : MonoBehaviour
     void CreateEffigyVisual(Effigy effigy, int gridX, int gridY)
     {
         List<Vector2Int> occupiedCells = effigy.GetOccupiedCells();
+        Sprite[] spriteSet = EffigySpriteSet.GetSprites(effigy.effigyName);
+        Color elementColor = effigy.GetElementColor();
+        float rarityBrightness = GetRarityBrightness(effigy.rarity);
+        Color borderColor = GetRarityColor(effigy.rarity);
+        
         List<GameObject> visuals = new List<GameObject>();
+        int spriteIndex = 0;
         
         foreach (Vector2Int cell in occupiedCells)
         {
             int worldX = gridX + cell.x;
             int worldY = gridY + cell.y;
             
+            if (worldX < 0 || worldX >= GRID_WIDTH || worldY < 0 || worldY >= GRID_HEIGHT)
+                continue;
+            
             int cellIndex = worldY * GRID_WIDTH + worldX;
             if (cellIndex < 0 || cellIndex >= gridCells.Count)
                 continue;
             
             EffigyGridCellUI cellUI = gridCells[cellIndex];
-            
-            // Create visual GameObject
             GameObject effigyVisual = new GameObject($"Effigy_{effigy.effigyName}_{cell.x}_{cell.y}");
             effigyVisual.transform.SetParent(cellUI.transform, false);
             
@@ -612,14 +635,26 @@ public class EffigyGridUI : MonoBehaviour
             rt.offsetMax = Vector2.zero;
             
             Image img = effigyVisual.AddComponent<Image>();
-            Color elementColor = effigy.GetElementColor();
-            float rarityBrightness = GetRarityBrightness(effigy.rarity);
-            img.color = elementColor * rarityBrightness;
+            img.preserveAspect = false;
+            img.raycastTarget = false;
             
-            if (effigy.icon != null)
-                img.sprite = effigy.icon;
+            Sprite selectedSprite = spriteSet != null && spriteIndex < spriteSet.Length ? spriteSet[spriteIndex] : effigy.icon;
+            if (selectedSprite != null)
+            {
+                img.sprite = selectedSprite;
+                img.color = Color.white;
+            }
+            else
+            {
+                img.color = elementColor * rarityBrightness;
+            }
+            
+            Outline outline = effigyVisual.AddComponent<Outline>();
+            outline.effectColor = borderColor;
+            outline.effectDistance = new Vector2(2f, -2f);
             
             visuals.Add(effigyVisual);
+            spriteIndex++;
         }
         
         if (visuals.Count > 0)

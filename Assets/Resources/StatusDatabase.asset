@@ -1,0 +1,303 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afd3bcb4583a7794fada37ffcbee3556, type: 3}
+  m_Name: StatusDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::Dexiled.Data.Status.StatusDatabase
+  globalPositiveIcon: {fileID: 8273082078994442743, guid: 45fe60566c73a534b8761e28e6313160, type: 3}
+  globalNegativeIcon: {fileID: -1851632909905232416, guid: b3fdd5550c04e7d4f98d2cb2a74493bc, type: 3}
+  statusEffects:
+  - effectType: 0
+    effectName: Poison
+    description: 'Deals chaos damage over time. 30% of (physical + chaos) damage
+      per turn. Stacks independently. Base duration: 2 turns.'
+    iconSprite: {fileID: -4111035403230253928, guid: e3c8a6ca6ec27014ebc4835011b7feaf, type: 3}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 0, g: 0.8, b: 0, a: 1}
+    isDebuff: 1
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 0
+    defaultDuration: 2
+    tickInterval: 1
+    damageType: 5
+    tooltipDescription: Poison causes the affected target to take chaos damage over
+      time, at 30% of the combined physical and chaos damage of the hit that applied
+      it per turn. Poison can stack multiple times on a single target.
+  - effectType: 1
+    effectName: Ignite
+    description: 'Deals fire damage over time. 90% of fire damage per turn. Base
+      duration: 4 turns.'
+    iconSprite: {fileID: 3398297918749642800, guid: e21a2e3bbbf072f4cb2812145bd935fd, type: 3}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 1, g: 0, b: 0, a: 1}
+    isDebuff: 1
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 0
+    defaultDuration: 4
+    tickInterval: 1
+    damageType: 2
+    tooltipDescription: Ignite causes the affected target to burn for 90% of the
+      fire damage of the hit that applied it per turn. The base duration is 4 turns.
+  - effectType: 2
+    effectName: Bleeding
+    description: 'Deals physical damage over time. 70% of physical damage per turn.
+      Only one instance can be active. Base duration: 5 turns.'
+    iconSprite: {fileID: 822830534566981770, guid: e21a2e3bbbf072f4cb2812145bd935fd, type: 3}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 0.7, g: 0, b: 0, a: 1}
+    isDebuff: 1
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 0
+    defaultDuration: 5
+    tickInterval: 1
+    damageType: 1
+    tooltipDescription: Bleeding can only be inflicted by physical damage from attacks.
+      Bleeding enemies take physical damage over time, at 70% of the physical damage
+      of the hit that inflicted bleeding per turn, only one instance of bleeding
+      can be active at once, but if a higher bleed is applied, the duration refreshes
+      and the new bleed is applied. The base duration is 5 turns.
+  - effectType: 3
+    effectName: Chaos DoT
+    description: Deals chaos damage over time. Different from Poison, but both scale
+      with Chaos damage.
+    iconSprite: {fileID: -78283147804427985, guid: 26ade82d8114c7c44ae2dc79b8eb5b1f, type: 3}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 0.5, g: 0.2, b: 0.6, a: 1}
+    isDebuff: 1
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 0
+    defaultDuration: 3
+    tickInterval: 1
+    damageType: 5
+    tooltipDescription: Chaos damage over time effect is applied by Chaos cards that
+      specifically say they deal Chaos damage over time. This is different from Poison
+      damage, but both scale with Chaos damage.
+  - effectType: 4
+    effectName: Chilled
+    description: 'Slows energy gain up to 30% based on cold damage. Base duration:
+      2 turns.'
+    iconSprite: {fileID: 8221625099071553489, guid: 26ade82d8114c7c44ae2dc79b8eb5b1f, type: 3}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 0.6, g: 0.9, b: 1, a: 1}
+    isDebuff: 1
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 0
+    defaultDuration: 2
+    tickInterval: 0
+    damageType: 3
+    tooltipDescription: Cold damage always inflicts chill. Chill slows all energy
+      gain of the affected target up to 30%, based on the cold damage of the hit.
+      The base duration is 2 turns.
+  - effectType: 5
+    effectName: Frozen
+    description: 'Prevents actions. Duration: 1-2 turns based on cold damage as percentage
+      of max HP (2 turns if >= 10% of max HP).'
+    iconSprite: {fileID: -2865105013298268812, guid: 26ade82d8114c7c44ae2dc79b8eb5b1f, type: 3}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 0, g: 1, b: 1, a: 1}
+    isDebuff: 1
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 0
+    defaultDuration: 1
+    tickInterval: 0
+    damageType: 3
+    tooltipDescription: Freeze prevents the affected target from taking actions for
+      a duration based on the cold damage of the hit. The base minimum duration is
+      1 Turn and the base maximum duration is 2 Turns.
+  - effectType: 31
+    effectName: Shocked
+    description: 'Increases damage taken up to 50% based on lightning damage. Base
+      duration: 2 turns.'
+    iconSprite: {fileID: 6047039682886232392, guid: 4866300abd3c52449930e1139f1bb04a, type: 3}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 1, g: 0.8, b: 0.2, a: 1}
+    isDebuff: 1
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 0
+    defaultDuration: 2
+    tickInterval: 0
+    damageType: 4
+    tooltipDescription: Shock causes the affected target to take up to 50% increased
+      damage from all sources, based on the lightning damage of the hit. The base
+      duration is 2 turns.
+  - effectType: 32
+    effectName: Stagger
+    description: 'Cannot act for the duration. Base duration: 1 turn.'
+    iconSprite: {fileID: 0}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    isDebuff: 1
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 0
+    defaultDuration: 1
+    tickInterval: 0
+    damageType: 1
+    tooltipDescription: Stunned target cannot act for the duration of the stun, base
+      duration is 1 turn.
+  - effectType: 7
+    effectName: Vulnerability
+    description: Target takes 20% more damage for the next instance of damage. Consumed
+      after one damage instance.
+    iconSprite: {fileID: -4076882013537720491, guid: 26ade82d8114c7c44ae2dc79b8eb5b1f, type: 3}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 1, g: 0, b: 1, a: 1}
+    isDebuff: 1
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 0
+    defaultDuration: 1
+    tickInterval: 0
+    damageType: 1
+    tooltipDescription: Target affected by Vulnerability takes 20% more damage for
+      the next instance of damage.
+  - effectType: 11
+    effectName: Crumble
+    description: Stores X% amount of Physical damage taken as a debuff. When the
+      crumble debuff runs out, take that amount of damage.
+    iconSprite: {fileID: 7337821072437656610, guid: 4866300abd3c52449930e1139f1bb04a, type: 3}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 0.6, g: 0.5, b: 0.8, a: 1}
+    isDebuff: 1
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 0
+    defaultDuration: 5
+    tickInterval: 0
+    damageType: 1
+    tooltipDescription: Store X% amount of Physical damage taken as a debuff, when
+      the crumble debuff runs out, take that amount of damage.
+  - effectType: 16
+    effectName: Bolster
+    description: Each instance reduces damage taken by 2% up to 20% at 10 stacks.
+    iconSprite: {fileID: 2472100461831232158, guid: 26ade82d8114c7c44ae2dc79b8eb5b1f, type: 3}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 0.4, g: 0.8, b: 0.6, a: 1}
+    isDebuff: 0
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 1
+    defaultDuration: 3
+    tickInterval: 0
+    damageType: 1
+    tooltipDescription: Each instance of Bolster reduces the damage taken by 2% up
+      to 20% at 10 stacks.
+  - effectType: 12
+    effectName: TempStrength
+    description: Increases or decreases the Strength stat for a duration or rest
+      of combat.
+    iconSprite: {fileID: -3660445793292762471, guid: e3c8a6ca6ec27014ebc4835011b7feaf, type: 3}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 1, g: 0, b: 0, a: 1}
+    isDebuff: 0
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 1
+    defaultDuration: 3
+    tickInterval: 0
+    damageType: 1
+    tooltipDescription: Increased or decreases the Strength stat for a duration or
+      rest of combat.
+  - effectType: 13
+    effectName: TempDexterity
+    description: Increases or decreases the Dexterity stat for a duration or rest
+      of combat.
+    iconSprite: {fileID: -7734031666375071155, guid: 26ade82d8114c7c44ae2dc79b8eb5b1f, type: 3}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 0, g: 1, b: 0, a: 1}
+    isDebuff: 0
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 1
+    defaultDuration: 3
+    tickInterval: 0
+    damageType: 1
+    tooltipDescription: Increased or decreases the Dexterity stat for a duration
+      or rest of combat.
+  - effectType: 14
+    effectName: TempIntelligence
+    description: Increases or decreases the Intelligence stat for a duration or rest
+      of combat.
+    iconSprite: {fileID: 4618382711158860359, guid: e3c8a6ca6ec27014ebc4835011b7feaf, type: 3}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 0, g: 0, b: 1, a: 1}
+    isDebuff: 0
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 1
+    defaultDuration: 3
+    tickInterval: 0
+    damageType: 1
+    tooltipDescription: Increased or decreases the Intelligence stat for a duration
+      or rest of combat.
+  - effectType: 15
+    effectName: Shielded
+    description: Absorbs damage before health is reduced.
+    iconSprite: {fileID: 0}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 0.5, g: 0.8, b: 1, a: 1}
+    isDebuff: 0
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 10
+    defaultDuration: 3
+    tickInterval: 0
+    damageType: 1
+    tooltipDescription: Shield absorbs damage before health is reduced.
+  - effectType: 23
+    effectName: TempMaxMana
+    description: Temporarily increases maximum mana.
+    iconSprite: {fileID: 0}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 0.3, g: 0.6, b: 1, a: 1}
+    isDebuff: 0
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 1
+    defaultDuration: 3
+    tickInterval: 0
+    damageType: 1
+    tooltipDescription: Temporarily increases maximum mana.
+  - effectType: 24
+    effectName: TempEvasion
+    description: Temporarily increases evasion.
+    iconSprite: {fileID: -849391964, guid: 4866300abd3c52449930e1139f1bb04a, type: 3}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 0.3, g: 0.85, b: 0.6, a: 1}
+    isDebuff: 0
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 10
+    defaultDuration: 3
+    tickInterval: 0
+    damageType: 1
+    tooltipDescription: Temporarily increases evasion.
+  - effectType: 25
+    effectName: SpellPower
+    description: Increases spell damage multiplier.
+    iconSprite: {fileID: 0}
+    positiveIconSprite: {fileID: 0}
+    negativeIconSprite: {fileID: 0}
+    effectColor: {r: 0.8, g: 0.4, b: 1, a: 1}
+    isDebuff: 0
+    usePositiveNegativeIcons: 0
+    defaultMagnitude: 1
+    defaultDuration: 3
+    tickInterval: 0
+    damageType: 1
+    tooltipDescription: Increases spell damage multiplier.

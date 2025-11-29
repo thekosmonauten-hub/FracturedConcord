@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1ffbae39ef12324e9b8497e56f1b9be, type: 3}
+  m_Name: NotSoGenericWarrant_1
+  m_EditorClassIdentifier: Assembly-CSharp::WarrantDefinition
+  warrantId: NotSoGenericWarrant_1
+  displayName: NotSoGenericWarrant_1
+  icon: {fileID: 7745481161560701832, guid: c80cc579a7c04b44fa74fbd076c5f1c9, type: 3}
+  rarity: 2
+  isKeystone: 0
+  isBlueprint: 0
+  rangeDirection: -1
+  rangeDepth: 3
+  affectDiagonals: 1
+  modifiers:
+  - modifierId: IncreasedPhysicalDamage
+    displayName: Increased Physical Damage
+    operation: 0
+    value: 10
+    description: 10% increased Physical damage.
+  - modifierId: IncreasedMaxHealth
+    displayName: Increased Max Health
+    operation: 0
+    value: 3
+    description: 3% increased Max health
+  - modifierId: guardEffectiveness
+    displayName: Guard effectiveness
+    operation: 0
+    value: 10
+    description: 10% Guard effectiveness
+  - modifierId: increasedCriticalStrikeChance
+    displayName: Increased Critical Strike Chance
+    operation: 0
+    value: 12
+    description: '12% increased Critical strike chance with Swords
+
+'
+  notable: {fileID: 0}
+  notableId: courage

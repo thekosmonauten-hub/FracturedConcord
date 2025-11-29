@@ -35,7 +35,7 @@ public class EnemyDisplayDebugger : EditorWindow
     
     private void CheckAllDisplays()
     {
-        var displays = GameObject.FindObjectsOfType<EnemyCombatDisplay>();
+        var displays = GameObject.FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
         
         if (displays.Length == 0)
         {
@@ -94,7 +94,7 @@ public class EnemyDisplayDebugger : EditorWindow
     
     private void FixAllPortraits()
     {
-        var displays = GameObject.FindObjectsOfType<EnemyCombatDisplay>();
+        var displays = GameObject.FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
         
         if (displays.Length == 0)
         {

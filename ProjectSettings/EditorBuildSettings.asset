@@ -24,17 +24,20 @@ EditorBuildSettings:
     path: Assets/Scenes/EquipmentScreen.unity
     guid: 1bceebbf13c1bac49a4b2a81e3d1c0f6
   - enabled: 1
-    path: Assets/Scenes/PassiveTreeScene.unity
-    guid: e9eefd33137f4a64a951e664444d8045
-  - enabled: 1
     path: Assets/Scenes/DeckBuilderScene.unity
     guid: 0ef602fdf1674254e84c0d514e8f512f
-  - enabled: 0
-    path: Assets/Scenes/EquipmentScreen_New.unity
-    guid: 8d2d28aed67386c44b9b5acb63930e70
   - enabled: 1
     path: Assets/Scenes/CharacterDisplayUI.unity
     guid: ae0471f8c6aa4e94c924eba533a32c1f
+  - enabled: 1
+    path: Assets/Scenes/TownScene.unity
+    guid: e84ce2660c3bc5640869375be9641804
+  - enabled: 1
+    path: Assets/Scenes/WarrantTree.unity
+    guid: 985653dae47d78d41875756ba06d9805
+  - enabled: 1
+    path: Assets/Scenes/MazeScene.unity
+    guid: e8de687cbe7b85243876a8d27204679f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

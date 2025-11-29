@@ -30,6 +30,23 @@ public class CharacterStatsData
     public float accuracy;
     public float evasionIncreased;
     
+    [Header("Critical Strike Modifiers (Increased %)")]
+    public float increasedCriticalStrikeChance = 0f;
+    public float increasedCriticalStrikeMultiplier = 0f;
+    public float increasedCriticalChanceWithDaggers = 0f;
+    public float increasedCriticalChanceWithSwords = 0f;
+    public float increasedCriticalMultiplierWithDaggers = 0f;
+    public float increasedCriticalMultiplierWithSwords = 0f;
+    public float increasedCriticalChanceWithColdSkills = 0f;
+    public float increasedCriticalChanceWithLightningCards = 0f;
+    public float increasedCriticalChanceVsFullLife = 0f;
+    public float increasedCriticalChanceVsCursed = 0f;
+    public float increasedCriticalChanceWithProjectileCards = 0f;
+    public float increasedCriticalChanceWithPreparedCards = 0f;
+    public float increasedSpellCriticalChance = 0f;
+    public float increasedSpellCriticalMultiplier = 0f;
+    public float increasedCriticalDamageMultiplier = 0f;
+    
     [Header("Damage Modifiers")]
     public float increasedPhysicalDamage;
     public float increasedFireDamage;
@@ -82,6 +99,11 @@ public class CharacterStatsData
     public float elementalResistance;
     public float allResistance;
     
+    [Header("Resistance Modifiers (Increased %)")]
+    public float physicalResistanceIncreased = 0f;
+    public float allElementalResistancesIncreased = 0f; // Applies to fire/cold/lightning simultaneously
+    public float fireResistancePenetration = 0f; // % penetration of fire resistance (damage calc modifier)
+    
     [Header("Defense Stats")]
     public int armour;
     public float evasion;
@@ -90,6 +112,19 @@ public class CharacterStatsData
     public float dodgeChance;
     public float spellDodgeChance;
     public float spellBlockChance;
+    
+    [Header("Block & Dodge Modifiers (Increased %)")]
+    public float blockChanceIncreased = 0f;
+    public float blockEffectivenessIncreased = 0f;
+    public float dodgeChanceIncreased = 0f;
+    public float criticalStrikeAvoidance = 0f; // % chance to avoid critical strikes
+    public float debuffExpirationRateIncreased = 0f; // % faster debuff expiration
+	
+	[Header("Defense % Increased")]
+	public float maxHealthIncreased; // % increased Max Health
+	public float maxManaIncreased; // % increased Max Mana
+	public float energyShieldIncreased; // % increased Energy Shield
+	public float armourIncreased; // % increased Armour
     
     [Header("Ailments")]
     // Non-damaging ailments chance
@@ -109,15 +144,57 @@ public class CharacterStatsData
     public float increasedFreezeMagnitude;
     public float increasedBleedMagnitude;
     public float increasedPoisonMagnitude;
+	public float increasedDamageOverTime; // % increased DoT
+	public float increasedPoisonDamage; // % increased Poison Damage
+	public float increasedPoisonDuration; // % increased Poison Duration
+	
+	[Header("Ailment & Status Effect Modifiers")]
+	public float ailmentDurationIncreased = 0f; // % increased ailment duration (generic)
+	public float ailmentApplicationChanceIncreased = 0f; // % increased chance to apply ailments
+	public float slowChance = 0f; // Chance to slow enemies
+	public float freezeChance = 0f; // Chance to freeze enemies (separate from chanceToFreeze for consistency)
+	public float curseApplicationChance = 0f; // Chance to apply curses
+	public float curseDurationIncreased = 0f; // % increased curse duration
+	public float curseEffectivenessIncreased = 0f; // % increased curse effect
+	public float randomAilmentChance = 0f; // Chance to apply random ailment
+	public float chillEffectivenessIncreased = 0f; // % increased chill effectiveness
+	public float shockEffectivenessIncreased = 0f; // % increased shock effectiveness
+	
+	[Header("Situational Damage")]
+	public float increasedDamageVsChilled;
+	public float increasedDamageVsShocked;
+	public float increasedDamageVsIgnited;
+	
+	[Header("Conditional Damage Modifiers (Increased %)")]
+	public float increasedDamageVsCursed = 0f;
+	public float increasedDamageVsBlocked = 0f;
+	public float increasedDamageVsSlowed = 0f;
+	public float increasedDamageWhileInShadow = 0f;
+	public float increasedDamageOnCriticalStrikes = 0f;
+	public float increasedDamageAfterDiscard = 0f; // Temporary damage boost after discarding
+	public float increasedDamageWhenBelowLifeThreshold = 0f; // Conditional damage (threshold-based)
+	public float increasedDamageVsRareAndUnique = 0f; // % increased damage vs elite enemies
+	public float increasedDamageWithConsecutiveAttacks = 0f; // Scaling damage with combo
+	public float increasedDamageOnEveryNthAttack = 0f; // Conditional damage (e.g., every 3rd attack)
+	public float increasedDamageVsMarked = 0f; // % increased damage vs marked enemies
     
     [Header("Recovery Stats")]
     public float lifeRegeneration;
     public float energyShieldRegeneration;
     public float manaRegeneration;
     public float relianceRegeneration;
-    public float lifeLeech;
-    public float manaLeech;
+    public float lifeSteal; // Renamed from lifeLeech for consistency
+    public float manaSteal; // Renamed from manaLeech for consistency
     public float energyShieldLeech;
+    
+    [Header("Recovery Modifiers (Increased %)")]
+    public float lifeRegenerationIncreased = 0f;
+    public float lifeRecoveryRateIncreased = 0f;
+    public float manaRegenerationIncreased = 0f;
+    public float lifeStealOnHitIncreased = 0f; // % increased life steal
+    public float manaLeechChance = 0f; // Chance to leech mana on hit
+    public float lifeOnKill = 0f; // Flat or % life gained on kill
+    public float lifeCostEfficiencyIncreased = 0f; // % increased life cost efficiency (reduces life costs)
     
     [Header("Combat Mechanics")]
     public float attackSpeed;
@@ -128,6 +205,20 @@ public class CharacterStatsData
     public float areaOfEffect;
     public float skillEffectDuration;
     public float statusEffectDuration;
+    
+    [Header("Movement & Mobility (Increased %)")]
+    public float movementSpeedIncreased = 0f;
+    
+    [Header("Stun & Crowd Control")]
+    public float stunDurationIncreased = 0f; // % increased stun duration on enemies
+    public float staggerEffectivenessIncreased = 0f; // % increased stagger effectiveness
+    public float increasedDamageToStaggered = 0f; // % increased damage to staggered enemies
+    public float reducedEnemyStaggerThreshold = 0f; // % reduced enemy stagger threshold (effectively increases stagger damage)
+    public float increasedStaggerDuration = 0f; // Flat addition to stagger stun duration (in turns, base is 1 turn)
+	
+	[Header("Charge/Resource Gains")]
+	public float aggressionGainIncreased;
+	public float focusGainIncreased;
     
     [Header("Card System Stats")]
     public int cardsDrawnPerTurn;
@@ -140,6 +231,48 @@ public class CharacterStatsData
     public float cardUpgradeChance;
     public float discardPower; // Added: Discard power stat
     public float manaPerTurn; // Added: Mana per turn stat
+    
+    [Header("Card System Modifiers (Increased %)")]
+    public float cardDrawChanceIncreased = 0f;
+    public int handSizeIncreased = 0; // Flat increase to hand size
+    public float manaCostEfficiencyIncreased = 0f; // % reduced mana costs
+    public float manaRefundChance = 0f; // Chance to refund mana on card play
+    public float cardCycleSpeedIncreased = 0f; // % increased card cycle/draw speed
+    public float preparedCardEffectivenessIncreased = 0f; // % increased effect of prepared cards
+    public int discardCostReduction = 0; // Flat reduction to discard costs
+    public float discardPowerIncreased = 0f; // % increased discard effect
+    public float delayedCardEffectivenessIncreased = 0f; // % increased delayed card effect
+    public float skillCardEffectivenessIncreased = 0f; // % increased skill card effect
+    public float spellPowerIncreased = 0f; // % increased spell power/effectiveness
+    public float echoCardEffectivenessIncreased = 0f; // % increased echo card effectiveness
+    public float chainChance = 0f; // Chance for spells to chain
+    public float spellEffectVsAilmentIncreased = 0f; // % increased spell effect vs any ailment
+	
+	[Header("Weapon/Type Damage Modifiers")]
+	public float increasedAxeDamage;
+	public float increasedBowDamage;
+	public float increasedMaceDamage;
+	public float increasedSwordDamage;
+	public float increasedWandDamage;
+	public float increasedDaggerDamage; // Added: Dagger damage
+	public float increasedOneHandedDamage;
+	public float increasedTwoHandedDamage;
+	
+	[Header("Guard/Defense Utilities")]
+	public float guardEffectiveness = 0f; // Base stat: additive to Guard provided by cards
+	public float guardEffectivenessIncreased = 0f; // % increased to guardEffectiveness stat
+	public float guardRetentionIncreased = 0f; // % more guard retained next turn
+	public float damageReductionWhileGuarding = 0f; // % damage reduction when guarding
+	public float guardBreakChance = 0f; // Chance to break enemy guard
+	public float lessDamageFromElites;
+	public float statusAvoidance;
+	
+	[Header("Damage Reduction & Mitigation (Less/Multiplicative)")]
+	public float damageReductionIncreased = 0f; // Generic % damage reduction (less damage taken)
+	public float damageReductionFromSpells = 0f; // % reduced damage from spells
+	public float damageReductionWhenStunned = 0f; // Conditional damage reduction
+	public float physicalDamageReductionIncreased = 0f; // % increased physical damage reduction
+	public float physicalReductionIncreased = 0f; // % increased physical reduction (shorthand)
     
     // Passive Tree Stats removed - passive tree system deleted
     
@@ -191,8 +324,31 @@ public class CharacterStatsData
         accuracy = 100f;
         evasion = 0f;
         evasionIncreased = 0f;
+        
+        // Initialize critical strike modifiers
+        increasedCriticalStrikeChance = 0f;
+        increasedCriticalStrikeMultiplier = 0f;
+        increasedCriticalChanceWithDaggers = 0f;
+        increasedCriticalChanceWithSwords = 0f;
+        increasedCriticalMultiplierWithDaggers = 0f;
+        increasedCriticalMultiplierWithSwords = 0f;
+        increasedCriticalChanceWithColdSkills = 0f;
+        increasedCriticalChanceWithLightningCards = 0f;
+        increasedCriticalChanceVsFullLife = 0f;
+        increasedCriticalChanceVsCursed = 0f;
+        increasedCriticalChanceWithProjectileCards = 0f;
+        increasedCriticalChanceWithPreparedCards = 0f;
+        increasedSpellCriticalChance = 0f;
+        increasedSpellCriticalMultiplier = 0f;
+        increasedCriticalDamageMultiplier = 0f;
+        
         blockChance = 0f;
         dodgeChance = 0f;
+        blockChanceIncreased = 0f;
+        blockEffectivenessIncreased = 0f;
+        dodgeChanceIncreased = 0f;
+        criticalStrikeAvoidance = 0f;
+        debuffExpirationRateIncreased = 0f;
         
         // Initialize all damage modifiers to 0
         increasedPhysicalDamage = 0f;
@@ -216,6 +372,9 @@ public class CharacterStatsData
         chaosResistance = 0f;
         elementalResistance = 0f;
         allResistance = 0f;
+        physicalResistanceIncreased = 0f;
+        allElementalResistancesIncreased = 0f;
+        fireResistancePenetration = 0f;
         
         // Initialize other stats
         armour = 0;
@@ -225,6 +384,10 @@ public class CharacterStatsData
         dodgeChance = 0f;
         spellDodgeChance = 0f;
         spellBlockChance = 0f;
+		maxHealthIncreased = 0f;
+		maxManaIncreased = 0f;
+		energyShieldIncreased = 0f;
+		armourIncreased = 0f;
         
         // Initialize ailment stats
         chanceToShock = 0f;
@@ -239,23 +402,59 @@ public class CharacterStatsData
         increasedFreezeMagnitude = 0f;
         increasedBleedMagnitude = 0f;
         increasedPoisonMagnitude = 0f;
+		increasedDamageOverTime = 0f;
+		increasedPoisonDamage = 0f;
+		increasedPoisonDuration = 0f;
+		increasedDamageVsChilled = 0f;
+		increasedDamageVsShocked = 0f;
+		increasedDamageVsIgnited = 0f;
+		ailmentDurationIncreased = 0f;
+		ailmentApplicationChanceIncreased = 0f;
+		slowChance = 0f;
+		freezeChance = 0f;
+		curseApplicationChance = 0f;
+		curseDurationIncreased = 0f;
+		curseEffectivenessIncreased = 0f;
+		randomAilmentChance = 0f;
+		chillEffectivenessIncreased = 0f;
+		shockEffectivenessIncreased = 0f;
+		increasedDamageVsCursed = 0f;
+		increasedDamageVsBlocked = 0f;
+		increasedDamageVsSlowed = 0f;
+		increasedDamageWhileInShadow = 0f;
+		increasedDamageOnCriticalStrikes = 0f;
+		increasedDamageAfterDiscard = 0f;
+		increasedDamageWhenBelowLifeThreshold = 0f;
+		increasedDamageVsRareAndUnique = 0f;
+		increasedDamageWithConsecutiveAttacks = 0f;
+		increasedDamageOnEveryNthAttack = 0f;
         
         lifeRegeneration = 0f;
         energyShieldRegeneration = 0f;
         manaRegeneration = 3f;
         relianceRegeneration = 0f;
-        lifeLeech = 0f;
-        manaLeech = 0f;
+        lifeSteal = 0f; // Renamed from lifeLeech
+        manaSteal = 0f; // Renamed from manaLeech
         energyShieldLeech = 0f;
+        lifeRegenerationIncreased = 0f;
+        lifeRecoveryRateIncreased = 0f;
+        manaRegenerationIncreased = 0f;
+        lifeStealOnHitIncreased = 0f;
+        manaLeechChance = 0f;
+        lifeOnKill = 0f;
+        lifeCostEfficiencyIncreased = 0f;
         
         attackSpeed = 1f;
         castSpeed = 1f;
         movementSpeed = 1f;
+        movementSpeedIncreased = 0f;
         attackRange = 1f;
         projectileSpeed = 1f;
         areaOfEffect = 1f;
         skillEffectDuration = 1f;
         statusEffectDuration = 1f;
+		aggressionGainIncreased = 0f;
+		focusGainIncreased = 0f;
         
         cardsDrawnPerTurn = 1;
         cardsDrawnPerWave = 1;
@@ -266,8 +465,52 @@ public class CharacterStatsData
         cardRetentionChance = 0f;
         cardUpgradeChance = 0f;
         discardPower = 0f;
-        manaPerTurn = 3f; 
+        manaPerTurn = 3f;
+        cardDrawChanceIncreased = 0f;
+        handSizeIncreased = 0;
+        manaCostEfficiencyIncreased = 0f;
+        manaRefundChance = 0f;
+        cardCycleSpeedIncreased = 0f;
+        preparedCardEffectivenessIncreased = 0f;
+        discardCostReduction = 0;
+        discardPowerIncreased = 0f;
+        delayedCardEffectivenessIncreased = 0f;
+        skillCardEffectivenessIncreased = 0f;
+        spellPowerIncreased = 0f;
+        echoCardEffectivenessIncreased = 0f; 
         
+		// Weapon/Type Damage Modifiers
+		increasedAxeDamage = 0f;
+		increasedBowDamage = 0f;
+		increasedMaceDamage = 0f;
+		increasedSwordDamage = 0f;
+		increasedWandDamage = 0f;
+		increasedDaggerDamage = 0f;
+		increasedOneHandedDamage = 0f;
+		increasedTwoHandedDamage = 0f;
+		
+		// Guard/Defense Utilities
+		guardEffectiveness = 0f;
+		guardEffectivenessIncreased = 0f;
+		guardRetentionIncreased = 0f;
+		damageReductionWhileGuarding = 0f;
+		guardBreakChance = 0f;
+		lessDamageFromElites = 0f;
+		statusAvoidance = 0f;
+		damageReductionIncreased = 0f;
+		damageReductionFromSpells = 0f;
+		damageReductionWhenStunned = 0f;
+		physicalDamageReductionIncreased = 0f;
+		physicalReductionIncreased = 0f;
+		stunDurationIncreased = 0f;
+		staggerEffectivenessIncreased = 0f;
+		increasedDamageToStaggered = 0f;
+		reducedEnemyStaggerThreshold = 0f;
+		increasedStaggerDuration = 0f;
+		increasedDamageVsMarked = 0f;
+		chainChance = 0f;
+		spellEffectVsAilmentIncreased = 0f;
+		
         
     }
     
@@ -375,6 +618,10 @@ public class CharacterStatsData
             case "evasionincreased": return evasionIncreased;
             case "blockchance": return blockChance;
             case "dodgechance": return dodgeChance;
+			case "maxhealthincreased": return maxHealthIncreased;
+			case "maxmanaincreased": return maxManaIncreased;
+			case "energyshieldincreased": return energyShieldIncreased;
+			case "armourincreased": return armourIncreased;
             
             // Damage modifiers
             case "increasedphysicaldamage": return increasedPhysicalDamage;
@@ -424,14 +671,45 @@ public class CharacterStatsData
             case "increasedfreezemagnitude": return increasedFreezeMagnitude;
             case "increasedbleedmagnitude": return increasedBleedMagnitude;
             case "increasedpoisonmagnitude": return increasedPoisonMagnitude;
+			case "increaseddamageovertime": return increasedDamageOverTime;
+			case "increasedpoisondamage": return increasedPoisonDamage;
+			case "increasedpoisonduration": return increasedPoisonDuration;
+			case "increaseddamagevschilled": return increasedDamageVsChilled;
+			case "increaseddamagevsshocked": return increasedDamageVsShocked;
+			case "increaseddamagevsignited": return increasedDamageVsIgnited;
+			case "increaseddamagevscursed": return increasedDamageVsCursed;
+			case "increaseddamagevsblocked": return increasedDamageVsBlocked;
+			case "increaseddamagevsslowed": return increasedDamageVsSlowed;
+			case "increaseddamagewhileinshadow": return increasedDamageWhileInShadow;
+			case "increaseddamageoncriticalstrikes": return increasedDamageOnCriticalStrikes;
+			case "increaseddamageafterdiscard": return increasedDamageAfterDiscard;
+			case "increaseddamagewhenbelowlifethreshold": return increasedDamageWhenBelowLifeThreshold;
+			case "increaseddamagevsrareandunique": return increasedDamageVsRareAndUnique;
+			case "increaseddamagewithconsecutiveattacks": return increasedDamageWithConsecutiveAttacks;
+			case "increaseddamageoneverynthattack": return increasedDamageOnEveryNthAttack;
+			case "increaseddamagevsmarked": return increasedDamageVsMarked;
+			
+			// Ailment & Status Effect Modifiers
+			case "ailmentdurationincreased": return ailmentDurationIncreased;
+			case "ailmentapplicationchanceincreased": return ailmentApplicationChanceIncreased;
+			case "slowchance": return slowChance;
+			case "freezechance": return freezeChance;
+			case "curseapplicationchance": return curseApplicationChance;
+			case "cursedurationincreased": return curseDurationIncreased;
+			case "curseeffectivenessincreased": return curseEffectivenessIncreased;
+			case "randomailmentchance": return randomAilmentChance;
+			case "chilleffectivenessincreased": return chillEffectivenessIncreased;
+			case "shockeffectivenessincreased": return shockEffectivenessIncreased;
             
             // Recovery stats
             case "liferegeneration": return lifeRegeneration;
             case "energyshieldregeneration": return energyShieldRegeneration;
             case "manaregeneration": return manaRegeneration;
             case "relianceregeneration": return relianceRegeneration;
-            case "lifeleech": return lifeLeech;
-            case "manaleech": return manaLeech;
+            case "lifesteal": return lifeSteal;
+            case "manasteal": return manaSteal;
+            case "lifeleech": return lifeSteal; // Legacy support
+            case "manaleech": return manaSteal; // Legacy support
             case "energyshieldleech": return energyShieldLeech;
             
             // Combat mechanics
@@ -443,6 +721,8 @@ public class CharacterStatsData
             case "areaofeffect": return areaOfEffect;
             case "skilleffectduration": return skillEffectDuration;
             case "statuseffectduration": return statusEffectDuration;
+			case "aggressiongainincreased": return aggressionGainIncreased;
+			case "focusgainincreased": return focusGainIncreased;
             
             // Card system stats
             case "cardsdrawnperturn": return cardsDrawnPerTurn;
@@ -453,7 +733,97 @@ public class CharacterStatsData
             case "cardretentionchance": return cardRetentionChance;
             case "cardupgradechance": return cardUpgradeChance;
             
+            // Card System Modifiers
+            case "carddrawchanceincreased": return cardDrawChanceIncreased;
+            case "handsizeincreased": return handSizeIncreased;
+            case "manacostefficiencyincreased": return manaCostEfficiencyIncreased;
+            case "manarefundchance": return manaRefundChance;
+            case "cardcyclespeedincreased": return cardCycleSpeedIncreased;
+            case "preparedcardeffectivenessincreased": return preparedCardEffectivenessIncreased;
+            case "discardcostreduction": return discardCostReduction;
+            case "discardpowerincreased": return discardPowerIncreased;
+            case "delayedcardeffectivenessincreased": return delayedCardEffectivenessIncreased;
+            case "skillcardeffectivenessincreased": return skillCardEffectivenessIncreased;
+			case "spellpowerincreased": return spellPowerIncreased;
+			case "echocardeffectivenessincreased": return echoCardEffectivenessIncreased;
+			case "chainchance": return chainChance;
+			case "spelleffectvsailmentincreased": return spellEffectVsAilmentIncreased;
+            
             // Passive tree stats removed - passive tree system deleted
+			
+			// Critical Strike Modifiers
+			case "increasedcriticalstrikechance": return increasedCriticalStrikeChance;
+			case "increasedcriticalstrikemultiplier": return increasedCriticalStrikeMultiplier;
+			case "increasedcriticalchancewithdaggers": return increasedCriticalChanceWithDaggers;
+			case "increasedcriticalchancewithswords": return increasedCriticalChanceWithSwords;
+			case "increasedcriticalmultiplierwithdaggers": return increasedCriticalMultiplierWithDaggers;
+			case "increasedcriticalmultiplierwithswords": return increasedCriticalMultiplierWithSwords;
+			case "increasedcriticalchancewithcoldskills": return increasedCriticalChanceWithColdSkills;
+			case "increasedcriticalchancewithlightningcards": return increasedCriticalChanceWithLightningCards;
+			case "increasedcriticalchancevsfulllife": return increasedCriticalChanceVsFullLife;
+			case "increasedcriticalchancevscursed": return increasedCriticalChanceVsCursed;
+			case "increasedcriticalchancewithprojectilecards": return increasedCriticalChanceWithProjectileCards;
+			case "increasedcriticalchancewithpreparedcards": return increasedCriticalChanceWithPreparedCards;
+			case "increasedspellcriticalchance": return increasedSpellCriticalChance;
+			case "increasedspellcriticalmultiplier": return increasedSpellCriticalMultiplier;
+			case "increasedcriticaldamagemultiplier": return increasedCriticalDamageMultiplier;
+			
+			// Recovery Modifiers
+			case "liferegenerationincreased": return lifeRegenerationIncreased;
+			case "liferecoveryrateincreased": return lifeRecoveryRateIncreased;
+			case "manaregenerationincreased": return manaRegenerationIncreased;
+			case "lifestealonhitincreased": return lifeStealOnHitIncreased;
+			case "manaleechchance": return manaLeechChance;
+			case "lifeonkill": return lifeOnKill;
+			case "lifecostefficiencyincreased": return lifeCostEfficiencyIncreased;
+			
+			// Block & Dodge Modifiers
+			case "blockchanceincreased": return blockChanceIncreased;
+			case "blockeffectivenessincreased": return blockEffectivenessIncreased;
+			case "dodgechanceincreased": return dodgeChanceIncreased;
+			case "criticalstrikeavoidance": return criticalStrikeAvoidance;
+			case "debuffexpirationrateincreased": return debuffExpirationRateIncreased;
+			
+			// Resistance Modifiers
+			case "physicalresistanceincreased": return physicalResistanceIncreased;
+			case "allelementalresistancesincreased": return allElementalResistancesIncreased;
+			case "fireresistancepenetration": return fireResistancePenetration;
+			
+			// Movement & Mobility
+			case "movementspeedincreased": return movementSpeedIncreased;
+			
+			// Weapon/Type Damage Modifiers
+			case "increasedaxedamage": return increasedAxeDamage;
+			case "increasedbowdamage": return increasedBowDamage;
+			case "increasedmacedamage": return increasedMaceDamage;
+			case "increasedsworddamage": return increasedSwordDamage;
+			case "increasedwanddamage": return increasedWandDamage;
+			case "increaseddaggerdamage": return increasedDaggerDamage;
+			case "increasedonehandeddamage": return increasedOneHandedDamage;
+			case "increasedtwohandeddamage": return increasedTwoHandedDamage;
+			
+			// Guard/Defense Utilities
+			case "guardeffectiveness": return guardEffectiveness;
+			case "guardeffectivenessincreased": return guardEffectivenessIncreased;
+			case "guardretentionincreased": return guardRetentionIncreased;
+			case "damagereductionwhileguarding": return damageReductionWhileGuarding;
+			case "guardbreakchance": return guardBreakChance;
+			case "lessdamagefromelites": return lessDamageFromElites;
+			case "statusavoidance": return statusAvoidance;
+			
+			// Damage Reduction & Mitigation
+			case "damagereductionincreased": return damageReductionIncreased;
+			case "damagereductionfromspells": return damageReductionFromSpells;
+			case "damagereductionwhenstunned": return damageReductionWhenStunned;
+			case "physicaldamagereductionincreased": return physicalDamageReductionIncreased;
+			case "physicalreductionincreased": return physicalReductionIncreased;
+			
+			// Stun & Crowd Control
+			case "stundurationincreased": return stunDurationIncreased;
+			case "staggereffectivenessincreased": return staggerEffectivenessIncreased;
+			case "increaseddamagetostaggered": return increasedDamageToStaggered;
+			case "reducedenemystaggerthreshold": return reducedEnemyStaggerThreshold;
+			case "increasedstaggerduration": return increasedStaggerDuration;
             
             // Check equipment stats
             case var s when equipmentStats.ContainsKey(s): return equipmentStats[s];
@@ -492,6 +862,10 @@ public class CharacterStatsData
             case "accuracy": accuracy = value; break;
             case "evasion": evasion = value; break;
             case "evasionincreased": evasionIncreased = value; break;
+			case "maxhealthincreased": maxHealthIncreased = value; break;
+			case "maxmanaincreased": maxManaIncreased = value; break;
+			case "energyshieldincreased": energyShieldIncreased = value; break;
+			case "armourincreased": armourIncreased = value; break;
             case "increasedphysicaldamage": increasedPhysicalDamage = value; break;
             case "increasedfiredamage": increasedFireDamage = value; break;
             case "increasedcolddamage": increasedColdDamage = value; break;
@@ -535,13 +909,44 @@ public class CharacterStatsData
             case "increasedfreezemagnitude": increasedFreezeMagnitude = value; break;
             case "increasedbleedmagnitude": increasedBleedMagnitude = value; break;
             case "increasedpoisonmagnitude": increasedPoisonMagnitude = value; break;
+			case "increaseddamageovertime": increasedDamageOverTime = value; break;
+			case "increasedpoisondamage": increasedPoisonDamage = value; break;
+			case "increasedpoisonduration": increasedPoisonDuration = value; break;
+			case "increaseddamagevschilled": increasedDamageVsChilled = value; break;
+			case "increaseddamagevsshocked": increasedDamageVsShocked = value; break;
+			case "increaseddamagevsignited": increasedDamageVsIgnited = value; break;
+			case "increaseddamagevscursed": increasedDamageVsCursed = value; break;
+			case "increaseddamagevsblocked": increasedDamageVsBlocked = value; break;
+			case "increaseddamagevsslowed": increasedDamageVsSlowed = value; break;
+			case "increaseddamagewhileinshadow": increasedDamageWhileInShadow = value; break;
+			case "increaseddamageoncriticalstrikes": increasedDamageOnCriticalStrikes = value; break;
+			case "increaseddamageafterdiscard": increasedDamageAfterDiscard = value; break;
+			case "increaseddamagewhenbelowlifethreshold": increasedDamageWhenBelowLifeThreshold = value; break;
+			case "increaseddamagevsrareandunique": increasedDamageVsRareAndUnique = value; break;
+			case "increaseddamagewithconsecutiveattacks": increasedDamageWithConsecutiveAttacks = value; break;
+			case "increaseddamageoneverynthattack": increasedDamageOnEveryNthAttack = value; break;
+			case "increaseddamagevsmarked": increasedDamageVsMarked = value; break;
+			
+			// Ailment & Status Effect Modifiers
+			case "ailmentdurationincreased": ailmentDurationIncreased = value; break;
+			case "ailmentapplicationchanceincreased": ailmentApplicationChanceIncreased = value; break;
+			case "slowchance": slowChance = value; break;
+			case "freezechance": freezeChance = value; break;
+			case "curseapplicationchance": curseApplicationChance = value; break;
+			case "cursedurationincreased": curseDurationIncreased = value; break;
+			case "curseeffectivenessincreased": curseEffectivenessIncreased = value; break;
+			case "randomailmentchance": randomAilmentChance = value; break;
+			case "chilleffectivenessincreased": chillEffectivenessIncreased = value; break;
+			case "shockeffectivenessincreased": shockEffectivenessIncreased = value; break;
             
             case "liferegeneration": lifeRegeneration = value; break;
             case "energyshieldregeneration": energyShieldRegeneration = value; break;
             case "manaregeneration": manaRegeneration = value; break;
             case "relianceregeneration": relianceRegeneration = value; break;
-            case "lifeleech": lifeLeech = value; break;
-            case "manaleech": manaLeech = value; break;
+            case "lifesteal": lifeSteal = value; break;
+            case "manasteal": manaSteal = value; break;
+            case "lifeleech": lifeSteal = value; break; // Legacy support
+            case "manaleech": manaSteal = value; break; // Legacy support
             case "energyshieldleech": energyShieldLeech = value; break;
             case "attackspeed": attackSpeed = value; break;
             case "castspeed": castSpeed = value; break;
@@ -551,6 +956,8 @@ public class CharacterStatsData
             case "areaofeffect": areaOfEffect = value; break;
             case "skilleffectduration": skillEffectDuration = value; break;
             case "statuseffectduration": statusEffectDuration = value; break;
+			case "aggressiongainincreased": aggressionGainIncreased = value; break;
+			case "focusgainincreased": focusGainIncreased = value; break;
             case "cardsdrawnperturn": cardsDrawnPerTurn = Mathf.RoundToInt(value); break;
             case "maxhandsize": maxHandSize = Mathf.RoundToInt(value); break;
             case "discardpilesize": discardPileSize = Mathf.RoundToInt(value); break;
@@ -558,7 +965,98 @@ public class CharacterStatsData
             case "carddrawchance": cardDrawChance = value; break;
             case "cardretentionchance": cardRetentionChance = value; break;
             case "cardupgradechance": cardUpgradeChance = value; break;
+            
+            // Card System Modifiers
+            case "carddrawchanceincreased": cardDrawChanceIncreased = value; break;
+            case "handsizeincreased": handSizeIncreased = Mathf.RoundToInt(value); break;
+            case "manacostefficiencyincreased": manaCostEfficiencyIncreased = value; break;
+            case "manarefundchance": manaRefundChance = value; break;
+            case "cardcyclespeedincreased": cardCycleSpeedIncreased = value; break;
+            case "preparedcardeffectivenessincreased": preparedCardEffectivenessIncreased = value; break;
+            case "discardcostreduction": discardCostReduction = Mathf.RoundToInt(value); break;
+            case "discardpowerincreased": discardPowerIncreased = value; break;
+            case "delayedcardeffectivenessincreased": delayedCardEffectivenessIncreased = value; break;
+            case "skillcardeffectivenessincreased": skillCardEffectivenessIncreased = value; break;
+			case "spellpowerincreased": spellPowerIncreased = value; break;
+			case "echocardeffectivenessincreased": echoCardEffectivenessIncreased = value; break;
+			case "chainchance": chainChance = value; break;
+			case "spelleffectvsailmentincreased": spellEffectVsAilmentIncreased = value; break;
+            
             // Passive tree points removed - passive tree system deleted
+			
+			// Critical Strike Modifiers
+			case "increasedcriticalstrikechance": increasedCriticalStrikeChance = value; break;
+			case "increasedcriticalstrikemultiplier": increasedCriticalStrikeMultiplier = value; break;
+			case "increasedcriticalchancewithdaggers": increasedCriticalChanceWithDaggers = value; break;
+			case "increasedcriticalchancewithswords": increasedCriticalChanceWithSwords = value; break;
+			case "increasedcriticalmultiplierwithdaggers": increasedCriticalMultiplierWithDaggers = value; break;
+			case "increasedcriticalmultiplierwithswords": increasedCriticalMultiplierWithSwords = value; break;
+			case "increasedcriticalchancewithcoldskills": increasedCriticalChanceWithColdSkills = value; break;
+			case "increasedcriticalchancewithlightningcards": increasedCriticalChanceWithLightningCards = value; break;
+			case "increasedcriticalchancevsfulllife": increasedCriticalChanceVsFullLife = value; break;
+			case "increasedcriticalchancevscursed": increasedCriticalChanceVsCursed = value; break;
+			case "increasedcriticalchancewithprojectilecards": increasedCriticalChanceWithProjectileCards = value; break;
+			case "increasedcriticalchancewithpreparedcards": increasedCriticalChanceWithPreparedCards = value; break;
+			case "increasedspellcriticalchance": increasedSpellCriticalChance = value; break;
+			case "increasedspellcriticalmultiplier": increasedSpellCriticalMultiplier = value; break;
+			case "increasedcriticaldamagemultiplier": increasedCriticalDamageMultiplier = value; break;
+			
+			// Recovery Modifiers
+			case "liferegenerationincreased": lifeRegenerationIncreased = value; break;
+			case "liferecoveryrateincreased": lifeRecoveryRateIncreased = value; break;
+			case "manaregenerationincreased": manaRegenerationIncreased = value; break;
+			case "lifestealonhitincreased": lifeStealOnHitIncreased = value; break;
+			case "manaleechchance": manaLeechChance = value; break;
+			case "lifeonkill": lifeOnKill = value; break;
+			case "lifecostefficiencyincreased": lifeCostEfficiencyIncreased = value; break;
+			
+			// Block & Dodge Modifiers
+			case "blockchanceincreased": blockChanceIncreased = value; break;
+			case "blockeffectivenessincreased": blockEffectivenessIncreased = value; break;
+			case "dodgechanceincreased": dodgeChanceIncreased = value; break;
+			case "criticalstrikeavoidance": criticalStrikeAvoidance = value; break;
+			case "debuffexpirationrateincreased": debuffExpirationRateIncreased = value; break;
+			
+			// Resistance Modifiers
+			case "physicalresistanceincreased": physicalResistanceIncreased = value; break;
+			case "allelementalresistancesincreased": allElementalResistancesIncreased = value; break;
+			case "fireresistancepenetration": fireResistancePenetration = value; break;
+			
+			// Movement & Mobility
+			case "movementspeedincreased": movementSpeedIncreased = value; break;
+			
+			// Weapon/Type Damage Modifiers
+			case "increasedaxedamage": increasedAxeDamage = value; break;
+			case "increasedbowdamage": increasedBowDamage = value; break;
+			case "increasedmacedamage": increasedMaceDamage = value; break;
+			case "increasedsworddamage": increasedSwordDamage = value; break;
+			case "increasedwanddamage": increasedWandDamage = value; break;
+			case "increaseddaggerdamage": increasedDaggerDamage = value; break;
+			case "increasedonehandeddamage": increasedOneHandedDamage = value; break;
+			case "increasedtwohandeddamage": increasedTwoHandedDamage = value; break;
+			
+			// Guard/Defense Utilities
+			case "guardeffectiveness": guardEffectiveness = value; break;
+			case "guardeffectivenessincreased": guardEffectivenessIncreased = value; break;
+			case "guardretentionincreased": guardRetentionIncreased = value; break;
+			case "damagereductionwhileguarding": damageReductionWhileGuarding = value; break;
+			case "guardbreakchance": guardBreakChance = value; break;
+			case "lessdamagefromelites": lessDamageFromElites = value; break;
+			case "statusavoidance": statusAvoidance = value; break;
+			
+			// Damage Reduction & Mitigation
+			case "damagereductionincreased": damageReductionIncreased = value; break;
+			case "damagereductionfromspells": damageReductionFromSpells = value; break;
+			case "damagereductionwhenstunned": damageReductionWhenStunned = value; break;
+			case "physicaldamagereductionincreased": physicalDamageReductionIncreased = value; break;
+			case "physicalreductionincreased": physicalReductionIncreased = value; break;
+			
+			// Stun & Crowd Control
+			case "stundurationincreased": stunDurationIncreased = value; break;
+			case "staggereffectivenessincreased": staggerEffectivenessIncreased = value; break;
+			case "increaseddamagetostaggered": increasedDamageToStaggered = value; break;
+			case "reducedenemystaggerthreshold": reducedEnemyStaggerThreshold = value; break;
+			case "increasedstaggerduration": increasedStaggerDuration = value; break;
             default:
                 // For custom stats, store in equipment stats
                 equipmentStats[statName] = value;
@@ -780,8 +1278,8 @@ public class CharacterStatsData
         clone.energyShieldRegeneration = this.energyShieldRegeneration;
         clone.manaRegeneration = this.manaRegeneration;
         clone.relianceRegeneration = this.relianceRegeneration;
-        clone.lifeLeech = this.lifeLeech;
-        clone.manaLeech = this.manaLeech;
+        clone.lifeSteal = this.lifeSteal;
+        clone.manaSteal = this.manaSteal;
         clone.energyShieldLeech = this.energyShieldLeech;
         
         clone.attackSpeed = this.attackSpeed;

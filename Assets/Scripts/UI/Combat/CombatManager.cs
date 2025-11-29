@@ -1,6 +1,8 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.Collections;
+using Dexiled.MazeSystem;
 
 public class CombatDisplayManager : MonoBehaviour
 {
@@ -44,12 +46,16 @@ public class CombatDisplayManager : MonoBehaviour
     [Header("Loot System")]
     [Tooltip("Loot table for this combat encounter")]
     public LootTable encounterLootTable;
+    [Tooltip("Optional AreaLootTable override for this combat encounter")]
+    public AreaLootTable encounterAreaLootTable;
     private LootDropResult pendingLoot;
     private List<EnemyData> defeatedEnemiesData = new List<EnemyData>();
+    private List<Enemy> defeatedEnemies = new List<Enemy>(); // Track actual Enemy instances for rarity modifiers
     
     [Header("Combat Effects")]
     private CombatEffectManager combatEffectManager;
     private FloatingDamageManager floatingDamageManager;
+    private CardEffectProcessor cardEffectProcessor;
     
 	// Combat events
     public System.Action<CombatState> OnCombatStateChanged;
@@ -83,6 +89,7 @@ public class CombatDisplayManager : MonoBehaviour
         characterManager = CharacterManager.Instance;
         combatUI = FindFirstObjectByType<AnimatedCombatUI>();
         floatingDamageManager = FindFirstObjectByType<FloatingDamageManager>();
+        cardEffectProcessor = CardEffectProcessor.Instance;
         
         if (floatingDamageManager == null)
         {
@@ -128,15 +135,37 @@ public class CombatDisplayManager : MonoBehaviour
         // Get combat effect manager
         combatEffectManager = CombatEffectManager.Instance;
         
+        // Check if this is a maze combat encounter
+        bool isMazeCombat = IsMazeCombat();
+        
         // Initialize waves and spawn first wave based on encounter if present; otherwise fall back
         if (totalWaves < 1) totalWaves = 1;
         var enc = EncounterManager.Instance != null ? EncounterManager.Instance.GetCurrentEncounter() : null;
+        
+        // Handle maze combat encounters
+        if (isMazeCombat)
+        {
+            Debug.Log("[EncounterDebug] CombatDisplayManager: Maze combat detected. Starting maze combat.");
+            autoStartCombat = false; // Disable auto-start for maze encounters
+            createTestEnemies = false; // Don't create test enemies for maze
+            
+            // Set up maze combat defaults
+            totalWaves = 1; // Maze combat is single wave
+            enemiesPerWave = maxEnemies; // Use max enemies setting
+            randomizeEnemyCount = true; // Randomize enemy count for maze
+            
+            // Start maze combat
+            StartFirstWave();
+            return; // Exit early after starting maze combat
+        }
+        
         if (enc != null)
         {
             totalWaves = Mathf.Max(1, enc.totalWaves);
             enemiesPerWave = Mathf.Max(1, enc.maxEnemiesPerWave);
             randomizeEnemyCount = enc.randomizeEnemyCount;
             encounterLootTable = enc.lootTable; // Set loot table from encounter
+            encounterAreaLootTable = enc.areaLootTable;
             Debug.Log($"[EncounterDebug] CombatDisplayManager: Starting encounter {enc.encounterID} '{enc.encounterName}' with {totalWaves} waves and {enemiesPerWave} enemies per wave (randomize: {randomizeEnemyCount}).");
             
             // Verify loot table configuration for this encounter's area level
@@ -162,6 +191,106 @@ public class CombatDisplayManager : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Checks if the current scene/encounter is a maze encounter (should not auto-start combat).
+    /// </summary>
+    private bool IsMazeEncounter()
+    {
+        // Check if current scene is MazeScene
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "MazeScene")
+        {
+            return true;
+        }
+        
+        // Check if encounter has sceneName = "MazeScene"
+        if (EncounterManager.Instance != null)
+        {
+            var encounter = EncounterManager.Instance.GetCurrentEncounter();
+            if (encounter != null && encounter.sceneName == "MazeScene")
+            {
+                return true;
+            }
+        }
+        
+        // Check if maze run is active
+        if (Dexiled.MazeSystem.MazeRunManager.Instance != null && 
+            Dexiled.MazeSystem.MazeRunManager.Instance.HasActiveRun())
+        {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
+    /// Checks if current combat is a maze combat (has maze context).
+    /// </summary>
+    private bool IsMazeCombat()
+    {
+        string mazeContext = PlayerPrefs.GetString("MazeCombatContext", "");
+        return !string.IsNullOrEmpty(mazeContext);
+    }
+    
+    /// <summary>
+    /// Gets enemies for maze combat using maze-specific enemy pools.
+    /// Falls back to regular EnemyDatabase if maze pools not available.
+    /// </summary>
+    private List<EnemyData> GetMazeEnemyEncounter(int enemyCount)
+    {
+        List<EnemyData> encounter = new List<EnemyData>();
+        
+        if (Dexiled.MazeSystem.MazeRunManager.Instance == null)
+        {
+            Debug.LogWarning("[CombatDisplayManager] MazeRunManager not found! Using regular enemy pools.");
+            return enemyDatabase != null ? enemyDatabase.GetRandomEncounter(enemyCount, EnemyTier.Normal) : encounter;
+        }
+        
+        var run = Dexiled.MazeSystem.MazeRunManager.Instance.GetCurrentRun();
+        if (run == null)
+        {
+            Debug.LogWarning("[CombatDisplayManager] No active maze run! Using regular enemy pools.");
+            return enemyDatabase != null ? enemyDatabase.GetRandomEncounter(enemyCount, EnemyTier.Normal) : encounter;
+        }
+        
+        // Get maze config for enemy pools
+        var mazeConfig = Dexiled.MazeSystem.MazeRunManager.Instance.mazeConfig;
+        if (mazeConfig == null)
+        {
+            Debug.LogWarning("[CombatDisplayManager] No maze config! Using regular enemy pools.");
+            return enemyDatabase != null ? enemyDatabase.GetRandomEncounter(enemyCount, EnemyTier.Normal) : encounter;
+        }
+        
+        // Get maze-specific enemy pool (all maze enemies)
+        var mazePool = mazeConfig.GetMazeEnemyPool();
+        
+        if (mazePool != null && mazePool.Count > 0)
+        {
+            // Use maze-specific enemy pool with rarity-based spawning
+            int tier = mazeConfig.GetTierForFloor(run.currentFloor);
+            Debug.Log($"[CombatDisplayManager] Using maze-specific enemy pool (Tier {tier}, {mazePool.Count} enemies available, rarity-based)");
+            
+            for (int i = 0; i < enemyCount; i++)
+            {
+                if (mazePool.Count > 0)
+                {
+                    // Select random enemy from pool (rarity will be rolled during spawning)
+                    EnemyData randomEnemy = mazePool[UnityEngine.Random.Range(0, mazePool.Count)];
+                    encounter.Add(randomEnemy);
+                    Debug.Log($"[CombatDisplayManager] Selected {randomEnemy.enemyName} for maze combat (rarity will be rolled on spawn)");
+                }
+            }
+        }
+        else
+        {
+            // Fallback to regular EnemyDatabase with tier based on floor
+            EnemyTier floorTier = mazeConfig.GetEnemyTierForFloor(run.currentFloor);
+            Debug.Log($"[CombatDisplayManager] No maze-specific pool for floor {run.currentFloor}. Using EnemyDatabase with tier {floorTier}.");
+            encounter = enemyDatabase != null ? enemyDatabase.GetRandomEncounter(enemyCount, floorTier) : encounter;
+        }
+        
+        return encounter;
+    }
+    
 	private void CreateTestEnemies()
     {
 		SpawnWaveInternal(testEnemyCount);
@@ -179,8 +308,9 @@ public class CombatDisplayManager : MonoBehaviour
 		}
 		activeEnemies.Clear();
 		defeatedEnemiesData.Clear(); // Clear defeated enemies for new combat
+		defeatedEnemies.Clear(); // Clear defeated enemy instances
 		// Randomize enemy count between 1 and max enemies per wave, or use exact count
-		int spawnCount = randomizeEnemyCount ? Random.Range(1, enemiesPerWave + 1) : enemiesPerWave;
+		int spawnCount = randomizeEnemyCount ? UnityEngine.Random.Range(1, enemiesPerWave + 1) : enemiesPerWave;
 		Debug.Log($"[EncounterDebug] Wave {currentWave}: Spawning {spawnCount} enemies (max: {enemiesPerWave}, randomized: {randomizeEnemyCount})");
 		SpawnWaveInternal(spawnCount);
 	}
@@ -244,7 +374,7 @@ public class CombatDisplayManager : MonoBehaviour
 		yield return new WaitForSeconds(0.3f);
 		
 		// Randomize enemy count between 1 and max enemies per wave, or use exact count
-		int spawnCount = randomizeEnemyCount ? Random.Range(1, enemiesPerWave + 1) : enemiesPerWave;
+		int spawnCount = randomizeEnemyCount ? UnityEngine.Random.Range(1, enemiesPerWave + 1) : enemiesPerWave;
 		Debug.Log($"[EncounterDebug] Wave {currentWave}: Spawning {spawnCount} enemies (max: {enemiesPerWave}, randomized: {randomizeEnemyCount})");
 		
 		// Spawn new enemies (indices reset to 0-N)
@@ -299,49 +429,141 @@ public class CombatDisplayManager : MonoBehaviour
 		if (enemyDatabase != null && enemyDatabase.allEnemies.Count > 0)
 		{
 		List<EnemyData> encounterData;
+		EnemyData bossData = null;
+		int bossSpawnIndex = -1;
 		// If this is the final wave and the encounter has a unique boss, force it here
 		var currentEncounter = EncounterManager.Instance != null ? EncounterManager.Instance.GetCurrentEncounter() : null;
 		bool isFinalWave = currentWave >= totalWaves;
-			
-		if (isFinalWave && currentEncounter != null && currentEncounter.uniqueEnemy != null)
-		{
-			encounterData = new List<EnemyData> { currentEncounter.uniqueEnemy };
-			// If boss has a summon pool, allow additional minions to co-spawn on final wave
-			if (currentEncounter.uniqueEnemy.summonPool != null && currentEncounter.uniqueEnemy.summonPool.Count > 0)
-			{
-					int remainingSlots = Mathf.Clamp(spawnCount - 1, 0, maxSpawns - 1);
-				for (int s = 0; s < remainingSlots; s++)
-				{
-					var pick = currentEncounter.uniqueEnemy.summonPool[Random.Range(0, currentEncounter.uniqueEnemy.summonPool.Count)];
-					encounterData.Add(pick);
-				}
-			}
-				spawnCount = Mathf.Min(encounterData.Count, maxSpawns);
-		}
-		else
-		{
-			encounterData = enemyDatabase.GetRandomEncounter(spawnCount, EnemyTier.Boss);
-		}
-			
-			if (encounterData == null || encounterData.Count == 0)
-			{
-				encounterData = new List<EnemyData>();
-				for (int i = 0; i < spawnCount; i++)
-				{
-					var any = enemyDatabase.GetRandomEnemy();
-					if (any != null) encounterData.Add(any);
-				}
-				Debug.LogWarning("[EncounterDebug] EnemyDatabase returned no encounter by tier. Falling back to any random enemies.");
-			}
-			
-			// Use the new animation system for spawning enemies
-			enemySpawner.SpawnEnemiesWithAnimation(encounterData);
-			
-			// Add enemies to active list after spawning (they'll be added individually in SpawnEnemy)
-			// We need to wait a frame for the coroutines to complete, then collect the active enemies
-			collectEnemiesCoroutine = StartCoroutine(CollectSpawnedEnemies(encounterData));
-			
-			Debug.Log($"[EncounterDebug] <color=green>✓ Wave {currentWave}/{totalWaves}: Started spawning {spawnCount} enemies (collecting via coroutine...)</color>");
+            
+        if (isFinalWave && currentEncounter != null && currentEncounter.uniqueEnemy != null)
+        {
+            encounterData = new List<EnemyData>();
+            bossData = currentEncounter.uniqueEnemy;
+            if (enemySpawner != null)
+            {
+                bossSpawnIndex = enemySpawner.GetBossSpawnIndex();
+            }
+            
+            // If boss has minions, add them up to spawnCount-1
+            if (currentEncounter.uniqueEnemy.summonPool != null && currentEncounter.uniqueEnemy.summonPool.Count > 0)
+            {
+                int maxMinionSlots = Mathf.Max(0, spawnCount - 1);
+                for (int s = 0; s < maxMinionSlots; s++)
+                {
+                    var pick = currentEncounter.uniqueEnemy.summonPool[UnityEngine.Random.Range(0, currentEncounter.uniqueEnemy.summonPool.Count)];
+                    encounterData.Add(pick);
+                }
+            }
+            
+            // Fill remaining slots with random enemies if under spawnCount-1
+            while (encounterData.Count < spawnCount - 1)
+            {
+                var any = enemyDatabase.GetRandomEnemy();
+                if (any != null)
+                    encounterData.Add(any);
+                else
+                    break;
+            }
+        }
+        else
+        {
+            // Check if this is maze combat - use maze-specific enemy pools if available
+            bool isMazeCombat = IsMazeCombat();
+            if (isMazeCombat)
+            {
+                encounterData = GetMazeEnemyEncounter(spawnCount);
+            }
+            else
+            {
+                // Regular encounter - check for encounter-specific enemy pool first
+                var currentEnc = EncounterManager.Instance != null ? EncounterManager.Instance.GetCurrentEncounter() : null;
+                
+                if (currentEnc != null && currentEnc.encounterEnemyPool != null && currentEnc.encounterEnemyPool.Count > 0)
+                {
+                    // Use encounter-specific enemy pool
+                    List<EnemyData> pool = new List<EnemyData>(currentEnc.encounterEnemyPool);
+                    
+                    if (!currentEnc.useExclusiveEnemyPool && enemyDatabase != null)
+                    {
+                        // Combine with EnemyDatabase (filtered by excludeFromRandom)
+                        EnemyTier maxTier = currentEnc.areaLevel > 4 ? EnemyTier.Elite : EnemyTier.Normal;
+                        var dbEnemies = enemyDatabase.GetFilteredEnemies(maxTier);
+                        if (dbEnemies != null && dbEnemies.Count > 0)
+                        {
+                            pool.AddRange(dbEnemies);
+                            Debug.Log($"[Encounter] Combined encounter pool ({currentEnc.encounterEnemyPool.Count}) with EnemyDatabase ({dbEnemies.Count} filtered enemies)");
+                        }
+                    }
+                    else if (currentEnc.useExclusiveEnemyPool)
+                    {
+                        Debug.Log($"[Encounter] Using exclusive encounter enemy pool: {pool.Count} enemies");
+                    }
+                    
+                    // Select random enemies from the pool
+                    encounterData = new List<EnemyData>();
+                    for (int i = 0; i < spawnCount && pool.Count > 0; i++)
+                    {
+                        int randomIndex = UnityEngine.Random.Range(0, pool.Count);
+                        encounterData.Add(pool[randomIndex]);
+                        // Optionally remove to avoid duplicates, or keep for multiple spawns
+                        // pool.RemoveAt(randomIndex);
+                    }
+                    
+                    Debug.Log($"[Encounter] Selected {encounterData.Count} enemies from pool of {pool.Count} available");
+                }
+                else
+                {
+                    // Fallback to EnemyDatabase (already filters excludeFromRandom)
+                    EnemyTier maxTier = currentEnc != null && currentEnc.areaLevel > 4 ? EnemyTier.Elite : EnemyTier.Normal;
+                    encounterData = enemyDatabase.GetRandomEncounter(spawnCount, maxTier);
+                }
+            }
+        }
+            
+            if (encounterData == null || encounterData.Count == 0)
+            {
+                encounterData = new List<EnemyData>();
+                for (int i = 0; i < spawnCount; i++)
+                {
+                    var any = enemyDatabase.GetRandomEnemy();
+                    if (any != null) encounterData.Add(any);
+                }
+                Debug.LogWarning("[EncounterDebug] EnemyDatabase returned no encounter by tier. Falling back to any random enemies.");
+            }
+
+            // Spawn boss first at the dedicated slot
+            if (bossData != null && enemySpawner != null)
+            {
+                if (bossSpawnIndex < 0 || bossSpawnIndex >= enemySpawner.GetMaxSpawnPoints())
+                {
+                    bossSpawnIndex = Mathf.Clamp(bossSpawnIndex, 0, enemySpawner.GetMaxSpawnPoints() - 1);
+                }
+                enemySpawner.SpawnEnemyWithAnimationAtIndex(bossData, bossSpawnIndex);
+            }
+            
+            // Spawn remaining enemies, skipping the boss slot if needed
+            if (enemySpawner != null)
+            {
+                if (bossData != null)
+                {
+                    List<EnemyData> minions = new List<EnemyData>(encounterData);
+                    if (minions.Count > 0)
+                    {
+                        int minionSpawns = enemySpawner.GetMaxSpawnPoints();
+                        Debug.Log($"[EncounterDebug] Spawning {minions.Count} minions alongside boss.");
+                        enemySpawner.SpawnEnemiesWithAnimation(minions);
+                    }
+                }
+                else if (encounterData.Count > 0)
+                {
+                    enemySpawner.SpawnEnemiesWithAnimation(encounterData);
+                }
+            }
+            
+            // Collect spawned enemies when animations finish
+            collectEnemiesCoroutine = StartCoroutine(CollectSpawnedEnemies(encounterData));
+            
+            Debug.Log($"[EncounterDebug] <color=green>✓ Wave {currentWave}/{totalWaves}: Started spawning {spawnCount} enemies (collecting via coroutine...)</color>");
 		}
 		else
 		{
@@ -398,40 +620,100 @@ public class CombatDisplayManager : MonoBehaviour
         currentState = CombatState.PlayerTurn;
         isPlayerTurn = true;
         
-        // Safety check: Clean up any stuck defeated enemies before player turn
-        CleanupDefeatedEnemies();
+        // Update prepared cards (increment charges and apply bonuses)
+        // This happens at the START of the player's turn so cards gain power
+        var prepManager = PreparationManager.Instance;
+        if (prepManager != null)
+        {
+            prepManager.OnTurnEnd(); // This increments charges for all prepared cards
+        }
         
-        // Additional safety: Force cleanup any enemies that should be dead
-        ForceCleanupDeadEnemies();
-        
-        // Advance status effects at the start of each turn
-        AdvanceAllStatusEffects();
-        
-        // Restore player resources
+        // Decay player stagger and momentum
         if (characterManager != null && characterManager.HasCharacter())
         {
-            Character character = characterManager.GetCurrentCharacter();
-            character.RestoreMana(character.manaRecoveryPerTurn);
-            
-            // Draw cards using CombatDeckManager (only if not the first turn)
-            CombatDeckManager deckManager = CombatDeckManager.Instance;
-            if (deckManager != null && currentTurn > 1)
+            Character player = characterManager.GetCurrentCharacter();
+            if (player != null)
             {
-                int cardsToDraw = character.cardsDrawnPerTurn;
-                Debug.Log($"<color=yellow>Drawing {cardsToDraw} cards for turn {currentTurn}...</color>");
-                deckManager.DrawCards(cardsToDraw);
-            }
-            else if (currentTurn == 1)
-            {
-                Debug.Log($"<color=green>Turn {currentTurn}: Skipping card draw (initial hand already drawn)</color>");
-            }
-            else
-            {
-                Debug.LogWarning("CombatDeckManager not found! Cannot draw cards automatically.");
+                player.DecayStagger();
+                // Momentum decay is now handled by StackSystem if configured
+                // Note: StackSystem doesn't have built-in decay, so momentum persists across turns unless explicitly cleared
+                // If decay is needed, it should be implemented via card effects or status effects that remove momentum stacks
+                
+                // Update player stagger display
+                if (playerDisplay != null)
+                {
+                    playerDisplay.UpdateStaggerDisplay();
+                }
             }
         }
         
-        // Update displays
+        // Decay enemy stagger
+        var activeDisplays = enemySpawner != null ? enemySpawner.GetActiveEnemies() : new List<EnemyCombatDisplay>();
+        foreach (var display in activeDisplays)
+        {
+            if (display != null)
+            {
+                Enemy enemy = display.GetEnemy();
+                if (enemy != null && enemy.IsAlive())
+                {
+                    enemy.DecayStagger();
+                    display.UpdateStaggerDisplay();
+                }
+            }
+        }
+        
+        CleanupDefeatedEnemies();
+        ForceCleanupDeadEnemies();
+        
+        AdvanceAllStatusEffects();
+        
+        // Restore player resources (guard + mana)
+        if (characterManager != null && characterManager.HasCharacter())
+        {
+            Character character = characterManager.GetCurrentCharacter();
+            if (character != null)
+            {
+                if (character.currentGuard > 0f)
+                {
+                    float retention = character.GetGuardPersistenceMultiplier();
+                    float decayedGuard = character.currentGuard * retention;
+                    if (!Mathf.Approximately(decayedGuard, character.currentGuard))
+                    {
+                        Debug.Log($"[Guard] Decaying guard from {character.currentGuard:F2} to {decayedGuard:F2} (retention {retention:P0}).");
+                        character.currentGuard = Mathf.Max(0f, decayedGuard);
+                    }
+                }
+
+                int manaRecovery = Mathf.Max(0, character.GetManaRecoveryPerTurn());
+                if (manaRecovery > 0)
+                {
+                    character.RestoreMana(manaRecovery);
+                }
+
+                if (playerDisplay != null)
+                {
+                    playerDisplay.UpdateGuardDisplay();
+                    playerDisplay.UpdateManaDisplay();
+                }
+
+                Debug.Log($"Player resources refreshed. Guard: {character.currentGuard}/{character.maxHealth}, Mana: {character.mana}/{character.maxMana} (+{manaRecovery}).");
+            }
+        }
+        
+        // Process delayed player cards that are ready to execute
+        ProcessDelayedPlayerCards();
+        
+        CombatDeckManager deckManager = CombatDeckManager.Instance;
+        Character currentCharacter = characterManager != null && characterManager.HasCharacter() ? characterManager.GetCurrentCharacter() : null;
+        if (deckManager != null && currentCharacter != null)
+        {
+            int cardsToDraw = Mathf.Max(0, currentCharacter.GetCardsDrawnPerTurn());
+            if (cardsToDraw > 0)
+            {
+                deckManager.DrawCards(cardsToDraw);
+            }
+        }
+        
         RefreshAllDisplays();
         
         OnCombatStateChanged?.Invoke(currentState);
@@ -446,23 +728,55 @@ public class CombatDisplayManager : MonoBehaviour
         currentState = CombatState.EnemyTurn;
         isPlayerTurn = false;
         
-        // Advance status effects at the start of each turn
         AdvanceAllStatusEffects();
         
-        // Update displays
+        // Regenerate enemy energy and decay guard/stagger at start of enemy turn
+        var activeDisplays = enemySpawner != null ? enemySpawner.GetActiveEnemies() : new List<EnemyCombatDisplay>();
+        foreach (var display in activeDisplays)
+        {
+            if (display != null)
+            {
+                Enemy enemy = display.GetEnemy();
+                if (enemy != null && enemy.IsAlive())
+                {
+                    // Regenerate energy
+                    if (enemy.usesEnergy)
+                    {
+                        enemy.RegenerateEnergy(enemy.energyRegenPerTurn);
+                    }
+                    
+                    // Decay guard
+                    enemy.DecayGuard();
+                    
+                    // Decay stagger
+                    enemy.DecayStagger();
+                    
+                    // Update display
+                    display.UpdateStaggerDisplay();
+                    
+                    // Process modifier turn-start effects (e.g., Grant Tolerance stacks)
+                    ModifierEffectHandler.ProcessOnTurnStartEffects(enemy, display);
+                }
+            }
+        }
+        
         RefreshAllDisplays();
+        
+        NotifyEnemyAbilityRunners(runner => runner.OnTurnStart());
         
         OnCombatStateChanged?.Invoke(currentState);
         OnTurnTypeChanged?.Invoke(isPlayerTurn);
         
         Debug.Log($"Enemy turn {currentTurn} started");
         
-        // Execute enemy actions
         StartCoroutine(ExecuteEnemyActions());
     }
     
     private IEnumerator ExecuteEnemyActions()
     {
+        // First, process any delayed actions that are ready
+        ProcessDelayedActions();
+        
         // Create a copy of active enemies to avoid modification during iteration
         List<Enemy> enemiesToAct = new List<Enemy>(activeEnemies);
         
@@ -491,7 +805,7 @@ public class CombatDisplayManager : MonoBehaviour
         
         Debug.Log($"[Enemy Turn] All enemy actions complete. Active enemies remaining: {activeEnemies.Count}");
         
-        // End enemy turn and start next player turn
+        NotifyEnemyAbilityRunners(runner => runner.OnTurnEnd());
         EndEnemyTurn();
     }
     
@@ -499,13 +813,97 @@ public class CombatDisplayManager : MonoBehaviour
     {
         Debug.Log($"{enemy.enemyName} is taking action...");
         
-        // Get the enemy display for animation
         var activeDisplays = enemySpawner != null ? enemySpawner.GetActiveEnemies() : new List<EnemyCombatDisplay>();
         EnemyCombatDisplay enemyDisplay = (enemyIndex >= 0 && enemyIndex < activeDisplays.Count) ? activeDisplays[enemyIndex] : null;
         
+        // Check if enemy is staggered (has Stun status effect)
+        bool isStaggered = false;
+        if (enemyDisplay != null)
+        {
+            var statusManager = enemyDisplay.GetStatusEffectManager();
+            if (statusManager != null)
+            {
+                isStaggered = statusManager.HasStatusEffect(StatusEffectType.Stun);
+            }
+        }
+        
+        if (isStaggered)
+        {
+            Debug.Log($"[Stagger] {enemy.enemyName} is staggered and cannot act this turn!");
+            // Still update intent for next turn
+            enemy.SetIntent();
+            if (enemyDisplay != null)
+            {
+                enemyDisplay.UpdateIntent();
+            }
+            yield break; // Skip this enemy's action
+        }
+        
+        // Check if this enemy should delay their action (Time-Lagged modifier)
+        int delayTurns = 0;
+        bool shouldDelay = ModifierEffectHandler.ShouldDelayAction(enemy, out delayTurns);
+        
+        if (shouldDelay && delayTurns > 0)
+        {
+            // Queue the action for later
+            DelayedAction delayedAction = new DelayedAction(enemy.currentIntent, enemy.intentDamage, delayTurns, enemy);
+            enemy.delayedActions.Add(delayedAction);
+            
+            // Apply damage bonus from delayed actions
+            float damageBonus = ModifierEffectHandler.GetDelayedActionDamageBonus(enemy);
+            if (damageBonus > 0f)
+            {
+                Debug.Log($"[Time-Lagged] {enemy.enemyName} has {enemy.delayedActions.Count} delayed action(s), gaining {damageBonus:F1}% damage bonus!");
+            }
+            
+            // Set new intent for next turn (they'll declare another action)
+            enemy.SetIntent();
+            if (enemyDisplay != null)
+            {
+                enemyDisplay.UpdateIntent();
+            }
+            
+            Debug.Log($"[Time-Lagged] {enemy.enemyName} queued {enemy.currentIntent} action for {delayTurns} turn(s) later");
+            yield break; // Don't execute this turn
+        }
+        
+        var abilityRunner = enemyDisplay != null ? enemyDisplay.GetAbilityRunner() : null;
+
+        if (abilityRunner != null && abilityRunner.HasQueuedAbility)
+        {
+            EnemyAbility executed = abilityRunner.ExecuteQueuedAbility();
+            if (executed != null && executed.consumesTurn)
+            {
+                int preview = abilityRunner != null ? abilityRunner.LastPreviewDamage : 0;
+                enemyDisplay?.ShowAbilityIntent(executed.displayName, preview > 0 ? preview : (int?)null);
+                yield return new WaitForSeconds(turnDelay);
+                enemy.SetIntent();
+                enemyDisplay?.UpdateIntent();
+                yield break;
+            }
+        }
+
         switch (enemy.currentIntent)
         {
             case EnemyIntent.Attack:
+                // Check energy cost for attack (5 energy)
+                const float attackEnergyCost = 5f;
+                if (enemy.usesEnergy && enemy.currentEnergy < attackEnergyCost)
+                {
+                    Debug.Log($"{enemy.enemyName} doesn't have enough energy to attack! ({enemy.currentEnergy:F1}/{attackEnergyCost} required)");
+                    break; // Skip attack if not enough energy
+                }
+                
+                // Consume energy for attack
+                if (enemy.usesEnergy)
+                {
+                    bool energyDrained = enemy.DrainEnergy(attackEnergyCost, "Attack");
+                    if (!energyDrained)
+                    {
+                        Debug.LogWarning($"{enemy.enemyName} failed to drain energy for attack!");
+                    }
+                }
+                
                 // Play attack animation
                 if (enemyDisplay != null)
                 {
@@ -513,12 +911,50 @@ public class CombatDisplayManager : MonoBehaviour
                     yield return new WaitForSeconds(0.3f); // Wait for animation to start
                 }
                 
+                abilityRunner?.OnAttack();
+                
                 // Attack the player
                 if (characterManager != null && characterManager.HasCharacter())
                 {
                     int damage = enemy.GetAttackDamage();
+                    Character player = characterManager.GetCurrentCharacter();
+                    
+                    // Process modifier on-hit effects (e.g., Shock on hit)
+                    ModifierEffectHandler.ProcessOnHitEffects(enemy, enemyDisplay, player, playerDisplay);
+                    
+                    // Apply stagger to player (if enemies can apply stagger)
+                    // Base stagger: 10% of damage dealt
+                    float staggerAmount = damage * 0.1f;
+                    float staggerEffectiveness = 1f;
+                    
+                    // Check if player has guard - reduce stagger effectiveness by 50% if guard is present
+                    if (player != null && player.currentGuard > 0f)
+                    {
+                        staggerEffectiveness *= 0.5f;
+                        Debug.Log($"[Stagger] Player has guard ({player.currentGuard:F1}), stagger effectiveness reduced to 50%");
+                    }
+                    
+                    // Apply stagger to player
+                    if (staggerAmount > 0f && player != null && player.staggerThreshold > 0f)
+                    {
+                        bool staggerThresholdReached = player.AddStagger(staggerAmount, staggerEffectiveness);
+                        
+                        if (staggerThresholdReached)
+                        {
+                            // Apply Stun status effect to player when stagger threshold is reached
+                            ApplyStaggerStunToPlayer(player);
+                            player.ResetStagger();
+                        }
+                        
+                        // Update player stagger display
+                        if (playerDisplay != null)
+                        {
+                            playerDisplay.UpdateStaggerDisplay();
+                        }
+                    }
+                    
                     characterManager.TakeDamage(damage);
-                    Debug.Log($"{enemy.enemyName} attacks for {damage} damage!");
+                    Debug.Log($"{enemy.enemyName} attacks for {damage} damage! (Energy: {enemy.currentEnergy:F1}/{enemy.maxEnergy:F1})");
                     
                     // Show floating damage on player
                     if (floatingDamageManager != null && playerDisplay != null)
@@ -529,8 +965,35 @@ public class CombatDisplayManager : MonoBehaviour
                 break;
                 
             case EnemyIntent.Defend:
-                // Enemy defends (could add block/armor system)
-                Debug.Log($"{enemy.enemyName} is defending!");
+                // Check energy cost for defend (15 energy)
+                const float defendEnergyCost = 15f;
+                if (enemy.usesEnergy && enemy.currentEnergy < defendEnergyCost)
+                {
+                    Debug.Log($"{enemy.enemyName} doesn't have enough energy to defend! ({enemy.currentEnergy:F1}/{defendEnergyCost} required)");
+                    break; // Skip defend if not enough energy
+                }
+                
+                // Consume energy for defend
+                if (enemy.usesEnergy)
+                {
+                    bool energyDrained = enemy.DrainEnergy(defendEnergyCost, "Defend");
+                    if (!energyDrained)
+                    {
+                        Debug.LogWarning($"{enemy.enemyName} failed to drain energy for defend!");
+                    }
+                }
+                
+                // Enemy gains guard when defending
+                // Guard amount: configurable percentage of max health (default 10%)
+                float guardAmount = enemy.maxHealth * enemy.defendGuardPercent;
+                enemy.AddGuard(guardAmount);
+                Debug.Log($"{enemy.enemyName} is defending and gains {guardAmount:F1} guard ({enemy.defendGuardPercent * 100f:F0}% of max health)! (Total guard: {enemy.currentGuard:F1}/{enemy.maxGuard:F1}, Energy: {enemy.currentEnergy:F1}/{enemy.maxEnergy:F1})");
+                
+                // Update enemy display to show guard if available
+                if (enemyDisplay != null)
+                {
+                    enemyDisplay.UpdateIntent();
+                }
                 break;
         }
         
@@ -544,6 +1007,160 @@ public class CombatDisplayManager : MonoBehaviour
         }
         
         yield return null;
+    }
+    
+    /// <summary>
+    /// Process delayed actions that are ready to execute
+    /// </summary>
+    private void ProcessDelayedActions()
+    {
+        var activeDisplays = enemySpawner != null ? enemySpawner.GetActiveEnemies() : new List<EnemyCombatDisplay>();
+        
+        foreach (var display in activeDisplays)
+        {
+            if (display == null) continue;
+            
+            Enemy enemy = display.GetEnemy();
+            if (enemy == null || !enemy.IsAlive() || enemy.delayedActions == null) continue;
+            
+            // Process delayed actions (in reverse to avoid index issues when removing)
+            for (int i = enemy.delayedActions.Count - 1; i >= 0; i--)
+            {
+                DelayedAction delayedAction = enemy.delayedActions[i];
+                if (delayedAction == null) continue;
+                
+                // Tick the action
+                if (delayedAction.Tick())
+                {
+                    // Action is ready to execute - queue it for execution this turn
+                    Debug.Log($"[DelayedAction] {enemy.enemyName}'s delayed {delayedAction.intent} is ready to execute!");
+                    
+                    // Execute immediately by temporarily setting intent
+                    EnemyIntent originalIntent = enemy.currentIntent;
+                    int originalDamage = enemy.intentDamage;
+                    
+                    enemy.currentIntent = delayedAction.intent;
+                    enemy.intentDamage = delayedAction.intentDamage;
+                    
+                    // Execute the action (will be handled in ExecuteEnemyActions loop)
+                    // We'll add it to a special queue for this turn
+                    StartCoroutine(ExecuteDelayedAction(delayedAction, enemy, display));
+                    
+                    // Remove from queue
+                    enemy.delayedActions.RemoveAt(i);
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Execute a delayed action
+    /// </summary>
+    private IEnumerator ExecuteDelayedAction(DelayedAction delayedAction, Enemy enemy, EnemyCombatDisplay enemyDisplay)
+    {
+        // Temporarily set enemy's intent to the delayed action's intent
+        EnemyIntent originalIntent = enemy.currentIntent;
+        int originalDamage = enemy.intentDamage;
+        
+        enemy.currentIntent = delayedAction.intent;
+        enemy.intentDamage = delayedAction.intentDamage;
+        
+        // Execute the action
+        int enemyIndex = GetEnemyIndex(enemy);
+        yield return StartCoroutine(ExecuteEnemyAction(enemy, enemyIndex));
+        
+        // Restore original intent (for next turn)
+        enemy.currentIntent = originalIntent;
+        enemy.intentDamage = originalDamage;
+    }
+    
+    /// <summary>
+    /// Get the index of an enemy in the active displays list
+    /// </summary>
+    private int GetEnemyIndex(Enemy enemy)
+    {
+        var activeDisplays = enemySpawner != null ? enemySpawner.GetActiveEnemies() : new List<EnemyCombatDisplay>();
+        for (int i = 0; i < activeDisplays.Count; i++)
+        {
+            if (activeDisplays[i] != null && activeDisplays[i].GetEnemy() == enemy)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+    /// <summary>
+    /// Process delayed player cards that are ready to execute
+    /// </summary>
+    private void ProcessDelayedPlayerCards()
+    {
+        if (characterManager == null || !characterManager.HasCharacter()) return;
+        
+        Character player = characterManager.GetCurrentCharacter();
+        if (player == null || player.delayedActions == null) return;
+        
+        CombatDeckManager deckManager = CombatDeckManager.Instance;
+        if (deckManager == null) return;
+        
+        // Process delayed actions (in reverse to avoid index issues when removing)
+        for (int i = player.delayedActions.Count - 1; i >= 0; i--)
+        {
+            DelayedAction delayedAction = player.delayedActions[i];
+            if (delayedAction == null || delayedAction.actionType != DelayedAction.ActionType.PlayerCard) continue;
+            
+            // Tick the action
+            if (delayedAction.Tick())
+            {
+                // Card is ready to execute
+                Debug.Log($"[DelayedCard] {delayedAction.delayedCard.cardName} is ready to execute!");
+                
+                // Execute the delayed card
+                ExecuteDelayedCard(delayedAction.delayedCard, delayedAction.targetEnemy, delayedAction.targetPosition, deckManager);
+                
+                // Remove from queue
+                player.delayedActions.RemoveAt(i);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Execute a delayed card
+    /// </summary>
+    private void ExecuteDelayedCard(CardDataExtended card, Enemy targetEnemy, Vector3 targetPosition, CombatDeckManager deckManager)
+    {
+        if (card == null || deckManager == null) return;
+        
+        Character player = characterManager != null && characterManager.HasCharacter() ? 
+            characterManager.GetCurrentCharacter() : null;
+        if (player == null) return;
+        
+        Debug.Log($"[DelayedCard] Executing delayed card: {card.cardName} (mana was already spent when queued)");
+        
+        // NOTE: Mana was already spent when the card was queued, so we don't spend it again here
+        
+        // Execute the card through CardEffectProcessor
+        if (cardEffectProcessor != null && targetEnemy != null)
+        {
+            // Convert to Card for CardEffectProcessor (temporary until CardEffectProcessor is updated)
+            #pragma warning disable CS0618
+            Card cardForProcessor = card.ToCard();
+            #pragma warning restore CS0618
+            
+            // Apply card effects with delayed bonus flag
+            cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, targetEnemy, player, targetPosition, isDelayed: true);
+            
+            Debug.Log($"[DelayedCard] {card.cardName} executed on {targetEnemy.enemyName} with delayed bonuses!");
+        }
+        else if (cardEffectProcessor != null)
+        {
+            // Card might not target an enemy (guard, heal, etc.)
+            // For now, we'll need to handle these cases separately
+            Debug.LogWarning($"[DelayedCard] {card.cardName} has no target enemy - may need special handling for non-damage cards");
+        }
+        
+        // Update UI (AnimatedCombatUI doesn't have UpdateCombatUI, so we skip this)
+        // UI will update automatically through other systems
     }
     
     private void EndEnemyTurn()
@@ -600,12 +1217,130 @@ public class CombatDisplayManager : MonoBehaviour
         
         Debug.Log($"<color=cyan>[PlayerAttackEnemy] Attacking display {enemyIndex}: {targetEnemy.enemyName} (HP: {targetEnemy.currentHealth}/{targetEnemy.maxHealth})</color>");
         
-        bool wasCritical = Random.Range(0f, 1f) < 0.1f; // 10% critical chance for demo
+        // Get player stats for stagger calculation
+        Character player = characterManager != null ? characterManager.GetCurrentCharacter() : null;
+        float staggerAmount = 0f;
+        float staggerEffectiveness = 1f;
+        
+        if (player != null)
+        {
+            // Calculate base stagger amount (can be modified by cards/weapons)
+            // For now, use a simple formula: 10% of damage dealt as stagger
+            staggerAmount = damage * 0.1f;
+            
+            // Apply stagger effectiveness from player stats
+            var statsData = new CharacterStatsData(player);
+            staggerEffectiveness = 1f + (statsData.staggerEffectivenessIncreased / 100f);
+            
+            // Apply reduced enemy stagger threshold (effectively increases stagger damage)
+            // If enemy threshold is reduced by 10%, stagger is 10% more effective
+            if (statsData.reducedEnemyStaggerThreshold > 0f)
+            {
+                float thresholdReductionMultiplier = 1f + (statsData.reducedEnemyStaggerThreshold / 100f);
+                staggerEffectiveness *= thresholdReductionMultiplier;
+                Debug.Log($"[Stagger] Reduced Enemy Stagger Threshold: {statsData.reducedEnemyStaggerThreshold:F1}% -> Stagger effectiveness multiplier: x{thresholdReductionMultiplier:F2}");
+            }
+        }
+        
+        // Check if enemy is already staggered (has Stun status) for damage multiplier
+        bool isStaggered = false;
+        if (targetDisplay != null)
+        {
+            var statusManager = targetDisplay.GetStatusEffectManager();
+            if (statusManager != null)
+            {
+                isStaggered = statusManager.HasStatusEffect(StatusEffectType.Stun);
+            }
+        }
+        
+        // Apply increased damage to staggered enemies
+        if (isStaggered && player != null)
+        {
+            var statsData = new CharacterStatsData(player);
+            // Apply increased damage to staggered enemies from player stats
+            float increasedDamagePercent = statsData.increasedDamageToStaggered;
+            float staggeredDamageMultiplier = 1f + (increasedDamagePercent / 100f);
+            damage *= staggeredDamageMultiplier;
+            Debug.Log($"[Stagger] {targetEnemy.enemyName} is staggered! Applying damage multiplier: x{staggeredDamageMultiplier:F2} (+{increasedDamagePercent:F1}% increased damage to staggered)");
+        }
+        
+        // Apply stagger to enemy
+        if (staggerAmount > 0f && targetEnemy.staggerThreshold > 0f)
+        {
+            // Check if enemy has guard - reduce stagger effectiveness by 50% if guard is present
+            bool hasGuard = targetEnemy.currentGuard > 0f;
+            
+            // Also check for Shield status effect as additional guard source
+            if (!hasGuard && targetDisplay != null)
+            {
+                var statusManager = targetDisplay.GetStatusEffectManager();
+                if (statusManager != null)
+                {
+                    hasGuard = statusManager.HasStatusEffect(StatusEffectType.Shield);
+                }
+            }
+            
+            // Apply half stagger effectiveness if target has guard
+            if (hasGuard)
+            {
+                float guardAmount = targetEnemy.currentGuard;
+                if (guardAmount <= 0f && targetDisplay != null)
+                {
+                    var statusManager = targetDisplay.GetStatusEffectManager();
+                    if (statusManager != null)
+                    {
+                        guardAmount = statusManager.GetTotalMagnitude(StatusEffectType.Shield);
+                    }
+                }
+                
+                if (guardAmount > 0f)
+                {
+                    staggerEffectiveness *= 0.5f;
+                    Debug.Log($"[Stagger] {targetEnemy.enemyName} has guard ({guardAmount:F1}), stagger effectiveness reduced to 50%");
+                }
+            }
+            
+            bool staggerThresholdReached = targetEnemy.AddStagger(staggerAmount, staggerEffectiveness);
+            
+            if (staggerThresholdReached)
+            {
+                // Apply Stun status effect when stagger threshold is reached
+                ApplyStaggerStun(targetDisplay, targetEnemy);
+                targetEnemy.ResetStagger(); // Reset stagger meter after applying stun
+            }
+            
+            // Update stagger display after applying stagger
+            if (targetDisplay != null)
+            {
+                targetDisplay.UpdateStaggerDisplay();
+            }
+        }
+        
+        // Apply charge modifiers: Always Crit
+        bool wasCritical = CombatDeckManager.ShouldAlwaysCrit() || UnityEngine.Random.Range(0f, 1f) < 0.1f; // 10% critical chance for demo, or forced by charge
             
             if (wasCritical)
             {
-                damage *= 1.5f; // Critical damage multiplier
+                // Check for modifier effects that reduce/no extra crit damage
+                float critDamageMultiplier = ModifierEffectHandler.GetCritDamageMultiplier(targetEnemy, wasCritical);
+                if (critDamageMultiplier < 1f)
+                {
+                    // Enemy has "No Extra Crit Damage" or "Reduced Crit Damage" modifier
+                    // Apply normal damage (1x) plus the reduction multiplier
+                    damage = damage * critDamageMultiplier;
+                    Debug.Log($"[Modifier] {targetEnemy.enemyName} has crit damage reduction! Damage multiplier: x{critDamageMultiplier:F2}");
+                }
+                else
+                {
+                    // Normal critical hit
+                    damage *= 1.5f; // Critical damage multiplier
+                }
             }
+            
+            // Apply charge modifiers: Ignore Guard/Armor (bypass Bolster reduction)
+            // We'll handle this by storing a flag and checking it in Enemy.TakeDamage
+            // For now, we'll apply the damage directly with a flag
+            bool ignoreGuardArmor = CombatDeckManager.ShouldIgnoreGuardArmor();
             
             // REMOVED: targetEnemy.TakeDamage(damage) - was causing double damage
             // The EnemyCombatDisplay.TakeDamage() below handles applying damage to the enemy
@@ -620,7 +1355,7 @@ public class CombatDisplayManager : MonoBehaviour
             // Update enemy display and apply damage
             if (enemyIndex < activeDisplays.Count)
             {
-                activeDisplays[enemyIndex].TakeDamage(damage);
+                activeDisplays[enemyIndex].TakeDamage(damage, ignoreGuardArmor);
                 activeDisplays[enemyIndex].PlayDamageAnimation();
                 
                 // Show floating damage number
@@ -645,6 +1380,7 @@ public class CombatDisplayManager : MonoBehaviour
 						if (disp != null)
 						{
 							EnemyData enemyData = disp.GetEnemyData();
+							Enemy enemy = disp.GetEnemy();
 							if (enemyData != null)
 							{
 								// Track for end-of-combat loot table
@@ -652,6 +1388,14 @@ public class CombatDisplayManager : MonoBehaviour
 								{
 									defeatedEnemiesData.Add(enemyData);
 								}
+								// Track Enemy instance for rarity modifiers
+								if (enemy != null && !defeatedEnemies.Contains(enemy))
+								{
+									defeatedEnemies.Add(enemy);
+								}
+								
+								// Award character experience for this kill
+								AwardExperienceForKill(enemyData);
 								
 								// Generate immediate loot drops
 								GenerateAndApplyImmediateLoot(enemyData);
@@ -659,39 +1403,65 @@ public class CombatDisplayManager : MonoBehaviour
 						}
 						
 						// Remove from active enemies IMMEDIATELY to prevent stuck enemies
-						OnEnemyDefeated?.Invoke(targetEnemy);
-						int idx = activeEnemies.IndexOf(targetEnemy);
-						if (idx >= 0) 
+						if (activeEnemies.Contains(targetEnemy) == false)
 						{
-							activeEnemies.RemoveAt(idx);
-							Debug.Log($"[Enemy Defeat] Removed {targetEnemy.enemyName} from active enemies. Remaining: {activeEnemies.Count}");
+							Debug.LogWarning($"[Enemy Defeat] {targetEnemy.enemyName} not found in active list. Rebuilding from spawner.");
+							RebuildActiveEnemiesFromSpawner();
 						}
-						
-						// Start fade-out animation and despawn after
-						System.Action despawnEnemy = () => {
-							DespawnEnemyAtIndex(enemyIndex);
-							Debug.Log($"[Enemy Defeat] Despawned enemy at index {enemyIndex}");
-							
-							// Check if wave is complete (only if not in AoE attack)
-							if (!isAoEAttackInProgress)
-							{
-								CheckWaveCompletion();
-							}
-						};
-						
-						if (disp != null && disp.gameObject.activeInHierarchy)
+
+						if (activeEnemies.Contains(targetEnemy))
 						{
-							// Start fade-out with safety timeout
-							disp.StartDeathFadeOut(despawnEnemy);
-							
-							// Safety fallback: Force despawn after 1 second if animation doesn't complete
-							StartCoroutine(ForceDespawnAfterDelay(enemyIndex, disp, 1.0f));
+							OnEnemyDefeated?.Invoke(targetEnemy);
+							int idx = activeEnemies.IndexOf(targetEnemy);
+							if (idx >= 0) 
+							{
+								activeEnemies.RemoveAt(idx);
+								Debug.Log($"[Enemy Defeat] Removed {targetEnemy.enemyName} from active enemies. Remaining: {activeEnemies.Count}");
+							}
+
+							System.Action despawnEnemy = () => {
+								disp?.NotifyAbilityRunnerDeath();
+								DespawnEnemyAtIndex(enemyIndex);
+								Debug.Log($"[Enemy Defeat] Despawned enemy at index {enemyIndex}");
+
+								if (!isAoEAttackInProgress)
+								{
+									CheckWaveCompletion();
+								}
+							};
+
+							if (disp != null && disp.gameObject.activeInHierarchy)
+							{
+								disp.StartDeathFadeOut(despawnEnemy);
+								StartCoroutine(ForceDespawnAfterDelay(enemyIndex, disp, 1.0f));
+							}
+							else
+							{
+								Debug.LogWarning($"[Enemy Defeat] Display null or inactive for {targetEnemy.enemyName}, despawning immediately");
+								despawnEnemy();
+							}
 						}
 						else
 						{
-							// No display or display inactive - despawn immediately
-							Debug.LogWarning($"[Enemy Defeat] Display null or inactive for {targetEnemy.enemyName}, despawning immediately");
-							despawnEnemy();
+							Debug.LogError($"[Enemy Defeat] Failed to locate {targetEnemy.enemyName} in active enemies even after rebuild.");
+							System.Action fallbackDespawn = () => {
+								disp?.NotifyAbilityRunnerDeath();
+								DespawnEnemyAtIndex(enemyIndex);
+								if (!isAoEAttackInProgress)
+								{
+									CheckWaveCompletion();
+								}
+							};
+
+							if (disp != null && disp.gameObject.activeInHierarchy)
+							{
+								disp.StartDeathFadeOut(fallbackDespawn);
+								StartCoroutine(ForceDespawnAfterDelay(enemyIndex, disp, 1.0f));
+							}
+							else
+							{
+								fallbackDespawn();
+							}
 						}
 					}
 					else
@@ -793,9 +1563,7 @@ public class CombatDisplayManager : MonoBehaviour
                             Debug.Log($"[Force Cleanup] Removed dead enemy from active list: {enemy.enemyName}");
                         }
                         
-                        // Force despawn the display
-                        display.gameObject.SetActive(false);
-                        Debug.Log($"[Force Cleanup] Force despawned dead enemy display at index {index}");
+                        DespawnEnemyAtIndex(index);
                     }
                 }
             }
@@ -871,8 +1639,13 @@ public class CombatDisplayManager : MonoBehaviour
         if (display != null && display.gameObject.activeInHierarchy)
         {
             Debug.LogWarning($"[Force Despawn] Enemy at index {enemyIndex} still active after {delay}s, forcing despawn");
-            display.gameObject.SetActive(false);
-            // Don't call CheckWaveCompletion again as despawnEnemy callback already did
+            display.NotifyAbilityRunnerDeath();
+            DespawnEnemyAtIndex(enemyIndex);
+            RebuildActiveEnemiesFromSpawner();
+            if (!isAoEAttackInProgress)
+            {
+                CheckWaveCompletion();
+            }
         }
     }
     
@@ -955,6 +1728,91 @@ public class CombatDisplayManager : MonoBehaviour
         Debug.Log($"<color=cyan>Advanced all status effects by one turn</color>");
     }
     
+    /// <summary>
+    /// Apply Stun status effect to enemy when stagger threshold is reached
+    /// </summary>
+    private void ApplyStaggerStun(EnemyCombatDisplay enemyDisplay, Enemy enemy)
+    {
+        if (enemyDisplay == null || enemy == null) return;
+        
+        var statusManager = enemyDisplay.GetStatusEffectManager();
+        if (statusManager == null)
+        {
+            Debug.LogWarning($"[Stagger] Cannot apply stun to {enemy.enemyName}: StatusEffectManager not found");
+            return;
+        }
+        
+        // Get player stats for stagger duration increase
+        Character player = characterManager != null ? characterManager.GetCurrentCharacter() : null;
+        int stunDuration = 1; // Base duration: 1 turn
+        
+        if (player != null)
+        {
+            var statsData = new CharacterStatsData(player);
+            // Apply increased stagger duration (flat addition in turns)
+            if (statsData.increasedStaggerDuration > 0f)
+            {
+                stunDuration = Mathf.RoundToInt(1 + statsData.increasedStaggerDuration);
+                Debug.Log($"[Stagger] Increased Stagger Duration: +{statsData.increasedStaggerDuration:F1} turns -> Total duration: {stunDuration} turns");
+            }
+        }
+        
+        // Create Stun status effect (duration = base 1 + increasedStaggerDuration)
+        StatusEffect stunEffect = new StatusEffect(
+            StatusEffectType.Stun,
+            "Staggered",
+            1f, // magnitude (not used for Stun)
+            stunDuration,  // duration: base 1 turn + increasedStaggerDuration
+            true // isDebuff
+        );
+        stunEffect.description = stunDuration > 1 ? $"Cannot act for {stunDuration} turns" : "Cannot act this turn";
+        
+        bool added = statusManager.AddStatusEffect(stunEffect);
+        if (added)
+        {
+            Debug.Log($"[Stagger] {enemy.enemyName} is now STUNNED for {stunDuration} turn{(stunDuration > 1 ? "s" : "")}!");
+        }
+        else
+        {
+            Debug.LogWarning($"[Stagger] Failed to apply Stun to {enemy.enemyName}");
+        }
+    }
+    
+    /// <summary>
+    /// Apply Stun status effect to player when stagger threshold is reached
+    /// </summary>
+    private void ApplyStaggerStunToPlayer(Character player)
+    {
+        if (player == null || playerDisplay == null) return;
+        
+        var statusManager = playerDisplay.GetStatusEffectManager();
+        if (statusManager == null)
+        {
+            Debug.LogWarning($"[Stagger] Cannot apply stun to {player.characterName}: StatusEffectManager not found");
+            return;
+        }
+        
+        // Create Stun status effect (duration 1 = skip next turn)
+        StatusEffect stunEffect = new StatusEffect(
+            StatusEffectType.Stun,
+            "Staggered",
+            1f, // magnitude (not used for Stun)
+            1,  // duration: 1 turn
+            true // isDebuff
+        );
+        stunEffect.description = "Cannot act this turn";
+        
+        bool added = statusManager.AddStatusEffect(stunEffect);
+        if (added)
+        {
+            Debug.Log($"[Stagger] {player.characterName} is now STUNNED for 1 turn!");
+        }
+        else
+        {
+            Debug.LogWarning($"[Stagger] Failed to apply Stun to {player.characterName}");
+        }
+    }
+    
     private void EndCombat(bool victory)
     {
         currentState = victory ? CombatState.Victory : CombatState.Defeat;
@@ -963,12 +1821,56 @@ public class CombatDisplayManager : MonoBehaviour
         {
             // Generate loot rewards
             GenerateLootRewards();
+            
+            // Check if this is a maze combat encounter
+            bool isMazeCombat = PlayerPrefs.HasKey("MazeCombatContext") || PlayerPrefs.HasKey("MazeRunId");
+            if (isMazeCombat && MazeRunManager.Instance != null)
+            {
+                Debug.Log("[CombatManager] Maze combat victory detected. Notifying MazeRunManager...");
+                MazeRunManager.Instance.OnCombatVictory();
+                // Note: MazeRunManager.OnCombatVictory() will handle scene transition, so we return early
+                OnCombatStateChanged?.Invoke(currentState);
+                OnCombatEnded?.Invoke();
+                return;
+            }
+        }
+        else
+        {
+            // Check if this is a maze combat encounter (defeat)
+            bool isMazeCombat = PlayerPrefs.HasKey("MazeCombatContext") || PlayerPrefs.HasKey("MazeRunId");
+            if (isMazeCombat && MazeRunManager.Instance != null)
+            {
+                Debug.Log("[CombatManager] Maze combat defeat detected. Notifying MazeRunManager...");
+                MazeRunManager.Instance.OnCombatDefeat();
+                // Note: MazeRunManager.OnCombatDefeat() will handle scene transition, so we return early
+                OnCombatStateChanged?.Invoke(currentState);
+                OnCombatEnded?.Invoke();
+                return;
+            }
         }
         
         OnCombatStateChanged?.Invoke(currentState);
         OnCombatEnded?.Invoke();
         
         Debug.Log($"Combat ended: {(victory ? "Victory!" : "Defeat!")}");
+        
+        // Show victory/defeat UI via CombatSceneManager
+        CombatSceneManager sceneManager = FindFirstObjectByType<CombatSceneManager>();
+        if (sceneManager != null)
+        {
+            if (victory)
+            {
+                sceneManager.CompleteEncounter();
+            }
+            else
+            {
+                sceneManager.FailEncounter();
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[CombatManager] CombatSceneManager not found! Victory/Defeat UI will not be displayed.");
+        }
     }
     
     private void GenerateLootRewards()
@@ -981,29 +1883,113 @@ public class CombatDisplayManager : MonoBehaviour
             areaLevel = currentEncounter.areaLevel;
         }
         
-        // Generate loot from loot table
         LootManager lootManager = LootManager.Instance;
-        if (lootManager != null)
+        LootDropResult lootResult = null;
+
+        if (encounterLootTable != null && lootManager == null)
         {
-            // Pass defeated enemies data to enable tag-based spirit drops
-            pendingLoot = lootManager.GenerateLoot(encounterLootTable, areaLevel, defeatedEnemiesData);
-            
-            if (pendingLoot != null && pendingLoot.rewards.Count > 0)
+            Debug.LogError("[Combat Victory] LootManager not found while attempting to evaluate encounter loot table.");
+        }
+
+        // Primary path: classic loot table
+        if (encounterLootTable != null && lootManager != null)
+        {
+            lootResult = lootManager.GenerateLoot(encounterLootTable, areaLevel, defeatedEnemiesData);
+        }
+        else
+        {
+            // Area loot table override or global area loot system fallback
+            List<LootReward> areaRewards = null;
+            int maxDrops = Mathf.Max(1, enemiesPerWave);
+
+            if (encounterAreaLootTable != null)
             {
-                Debug.Log($"[Combat Victory] Generated {pendingLoot.rewards.Count} rewards (from {defeatedEnemiesData.Count} defeated enemies):");
-                foreach (var reward in pendingLoot.rewards)
-                {
-                    Debug.Log($"  - {reward.GetDisplayName()}");
-                }
+                areaRewards = encounterAreaLootTable.GenerateAllLoot(areaLevel, maxDrops);
             }
-            else
+            else if (AreaLootManager.Instance != null)
             {
-                Debug.LogWarning("[Combat Victory] No loot generated!");
+                areaRewards = AreaLootManager.Instance.GenerateLootRewardsForArea(areaLevel, maxDrops);
+            }
+
+            if (areaRewards != null && areaRewards.Count > 0)
+            {
+                lootResult = BuildLootResultFromRewards(areaRewards);
+            }
+
+            // Add encounter-wide experience and spirit-tag currency when using area loot path
+            if (lootResult == null)
+            {
+                lootResult = new LootDropResult();
+            }
+
+            AddBaseEncounterExperience(lootResult, areaLevel);
+            AddSpiritDropsFromDefeatedEnemies(lootResult);
+        }
+
+        if (lootResult == null)
+        {
+            lootResult = new LootDropResult();
+        }
+
+        // Apply quantity and rarity multipliers from defeated enemies
+        ApplyEnemyLootMultipliers(lootResult);
+        
+        pendingLoot = lootResult;
+
+        if (pendingLoot != null && pendingLoot.rewards.Count > 0)
+        {
+            Debug.Log($"[Combat Victory] Generated {pendingLoot.rewards.Count} rewards (from {defeatedEnemiesData.Count} defeated enemies):");
+            foreach (var reward in pendingLoot.rewards)
+            {
+                Debug.Log($"  - {reward.GetDisplayName()}");
             }
         }
         else
         {
-            Debug.LogError("[Combat Victory] LootManager not found!");
+            Debug.LogWarning("[Combat Victory] No loot generated!");
+        }
+    }
+    
+    /// <summary>
+    /// Apply quantity and rarity multipliers from defeated enemies to loot rewards
+    /// </summary>
+    private void ApplyEnemyLootMultipliers(LootDropResult lootResult)
+    {
+        if (lootResult == null || defeatedEnemies == null || defeatedEnemies.Count == 0)
+            return;
+        
+        // Calculate average multipliers from all defeated enemies
+        float totalQuantityMultiplier = 1f;
+        float totalRarityMultiplier = 1f;
+        int enemyCount = 0;
+        
+        foreach (var enemy in defeatedEnemies)
+        {
+            if (enemy != null)
+            {
+                // Multiply (stack multiplicatively across enemies)
+                totalQuantityMultiplier *= enemy.quantityMultiplier;
+                totalRarityMultiplier *= enemy.rarityMultiplier;
+                enemyCount++;
+            }
+        }
+        
+        if (enemyCount > 0)
+        {
+            // Apply quantity multiplier to existing rewards
+            if (totalQuantityMultiplier > 1f)
+            {
+                lootResult.ApplyQuantityMultiplier(totalQuantityMultiplier);
+                Debug.Log($"[Loot] Applied quantity multiplier: {totalQuantityMultiplier:F2}x from {enemyCount} defeated enemy/enemies");
+            }
+            
+            // Note: Rarity multiplier is typically applied during item generation
+            // Store it for future use in item generation systems
+            if (totalRarityMultiplier > 1f)
+            {
+                lootResult.ApplyRarityMultiplier(totalRarityMultiplier);
+                Debug.Log($"[Loot] Applied rarity multiplier: {totalRarityMultiplier:F2}x from {enemyCount} defeated enemy/enemies");
+            }
         }
     }
     
@@ -1044,6 +2030,25 @@ public class CombatDisplayManager : MonoBehaviour
         if (lootDropper != null)
         {
             List<LootReward> drops = lootDropper.GenerateEnemyLoot(enemyData, areaLevel);
+			
+			if (drops == null)
+			{
+				drops = new List<LootReward>();
+			}
+
+			// Supplement with area loot drops if configured
+			if (encounterAreaLootTable != null)
+			{
+				var areaDrops = encounterAreaLootTable.GenerateAllLoot(areaLevel, 1);
+				if (areaDrops != null && areaDrops.Count > 0)
+				{
+					drops.AddRange(areaDrops);
+				}
+			}
+			else if (AreaLootManager.Instance != null)
+			{
+				AreaLootManager.Instance.AddAreaLootToEnemyDrops(enemyData, areaLevel, drops);
+			}
             
             if (drops != null && drops.Count > 0)
             {
@@ -1061,6 +2066,113 @@ public class CombatDisplayManager : MonoBehaviour
             }
         }
     }
+
+	private void AwardExperienceForKill(EnemyData enemyData)
+	{
+		if (enemyData == null)
+			return;
+
+		var characterMgr = CharacterManager.Instance;
+		if (characterMgr == null || !characterMgr.HasCharacter())
+			return;
+
+		int areaLevel = 1;
+		var currentEncounter = EncounterManager.Instance != null ? EncounterManager.Instance.GetCurrentEncounter() : null;
+		if (currentEncounter != null)
+		{
+			areaLevel = Mathf.Max(1, currentEncounter.areaLevel);
+		}
+
+		// Base XP pulls from enemy data, fallback scales modestly with area level
+		int baseXp = Mathf.Max(0, enemyData.experienceReward);
+		if (baseXp == 0)
+		{
+			baseXp = Mathf.RoundToInt(10f * (1f + 0.15f * (areaLevel - 1)));
+		}
+
+		if (baseXp <= 0)
+			return;
+
+		characterMgr.AddExperience(baseXp);
+		characterMgr.SaveCharacter();
+		Debug.Log($"[Combat XP] Awarded {baseXp} XP for defeating {enemyData.enemyName} (Area Lv {areaLevel}).");
+	}
+
+	private LootDropResult BuildLootResultFromRewards(List<LootReward> rewards)
+	{
+		LootDropResult result = new LootDropResult();
+		if (rewards == null)
+			return result;
+
+		foreach (var reward in rewards)
+		{
+			if (reward != null)
+			{
+				result.AddReward(reward);
+			}
+		}
+		return result;
+	}
+
+	private void AddBaseEncounterExperience(LootDropResult result, int areaLevel)
+	{
+		if (result == null)
+			return;
+
+		int experienceAmount = Mathf.RoundToInt(50f + 10f * (areaLevel - 1));
+		if (experienceAmount > 0)
+		{
+			result.AddExperience(experienceAmount);
+		}
+	}
+
+	private void AddSpiritDropsFromDefeatedEnemies(LootDropResult result)
+	{
+		if (result == null || defeatedEnemiesData == null || defeatedEnemiesData.Count == 0)
+			return;
+
+		foreach (var enemyData in defeatedEnemiesData)
+		{
+			if (enemyData == null || enemyData.spiritTags == null)
+				continue;
+
+			foreach (var tag in enemyData.spiritTags)
+			{
+				bool guaranteed = enemyData.guaranteedSpiritDrop;
+				bool shouldDrop = guaranteed || UnityEngine.Random.Range(0f, 100f) <= 3f;
+				if (shouldDrop)
+				{
+					var currencyType = GetSpiritCurrencyForTag(tag);
+					result.AddCurrency(currencyType, 1);
+				}
+			}
+		}
+	}
+
+	private Dexiled.Data.Items.CurrencyType GetSpiritCurrencyForTag(EnemySpiritTag tag)
+	{
+		switch (tag)
+		{
+			case EnemySpiritTag.Fire:
+				return Dexiled.Data.Items.CurrencyType.FireSpirit;
+			case EnemySpiritTag.Cold:
+				return Dexiled.Data.Items.CurrencyType.ColdSpirit;
+			case EnemySpiritTag.Lightning:
+				return Dexiled.Data.Items.CurrencyType.LightningSpirit;
+			case EnemySpiritTag.Chaos:
+				return Dexiled.Data.Items.CurrencyType.ChaosSpirit;
+			case EnemySpiritTag.Physical:
+				return Dexiled.Data.Items.CurrencyType.PhysicalSpirit;
+			case EnemySpiritTag.Life:
+				return Dexiled.Data.Items.CurrencyType.LifeSpirit;
+			case EnemySpiritTag.Defense:
+				return Dexiled.Data.Items.CurrencyType.DefenseSpirit;
+			case EnemySpiritTag.Crit:
+				return Dexiled.Data.Items.CurrencyType.CritSpirit;
+			default:
+				return Dexiled.Data.Items.CurrencyType.FireSpirit;
+		}
+	}
     
     private void RefreshAllDisplays()
     {
@@ -1080,6 +2192,29 @@ public class CombatDisplayManager : MonoBehaviour
             }
         }
     }
+
+    private void NotifyEnemyAbilityRunners(Action<EnemyAbilityRunner> notifyAction, bool requireAlive = true)
+    {
+        if (notifyAction == null || enemySpawner == null)
+            return;
+
+        var displays = enemySpawner.GetActiveEnemies();
+        foreach (var display in displays)
+        {
+            if (display == null)
+                continue;
+
+            var enemy = display.GetEnemy();
+            if (requireAlive && (enemy == null || enemy.currentHealth <= 0))
+                continue;
+
+            var runner = display.GetAbilityRunner();
+            if (runner != null)
+            {
+                notifyAction(runner);
+            }
+        }
+    }
     
     /// <summary>
     /// Despawn an enemy at a specific index (when defeated)
@@ -1088,12 +2223,32 @@ public class CombatDisplayManager : MonoBehaviour
     {
         if (enemySpawner == null) return;
         
-        // Find the enemy display at this index
         var activeDisplays = enemySpawner.GetActiveEnemies();
         if (enemyIndex >= 0 && enemyIndex < activeDisplays.Count)
         {
-            enemySpawner.DespawnEnemy(activeDisplays[enemyIndex]);
+            var display = activeDisplays[enemyIndex];
+            display?.NotifyAbilityRunnerDeath();
+            enemySpawner.DespawnEnemy(display);
             Debug.Log($"[Despawn] Despawned enemy at index {enemyIndex}");
+        }
+
+        RebuildActiveEnemiesFromSpawner();
+    }
+
+    private void RebuildActiveEnemiesFromSpawner()
+    {
+        if (enemySpawner == null)
+            return;
+
+        var activeDisplays = enemySpawner.GetActiveEnemies();
+        activeEnemies.Clear();
+        foreach (var display in activeDisplays)
+        {
+            var enemy = display?.GetEnemy();
+            if (enemy != null && enemy.currentHealth > 0)
+            {
+                activeEnemies.Add(enemy);
+            }
         }
     }
     

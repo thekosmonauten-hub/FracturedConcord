@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: Null-Geometry Hound
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: Null-Geometry Hound
+  description: "An angular beast of floating polyhedrons, like a wolf built from
+    broken geometry. Leaves no footprints\u2014its feet momentarily phase through
+    the floor."
+  enemySprite: {fileID: 6341095165808219103, guid: 55e1ca46059e2b84d86b0b1ccf7ab52d, type: 3}
+  tier: 0
+  rarity: 0
+  category: 0
+  minHealth: 30
+  maxHealth: 45
+  baseDamage: 10
+  baseArmor: 0
+  criticalChance: 0.05
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 100
+  evasionRating: 25
+  physicalResistance: 0
+  fireResistance: 0
+  coldResistance: 0
+  lightningResistance: 0
+  chaosResistance: 0
+  displayScale: 1
+  basePanelHeight: 280
+  enableEnergy: 0
+  baseMaxEnergy: 100
+  energyRegenPerTurn: 10
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  aiPattern: 0
+  attackPreference: 0.9
+  specialAbilities: []
+  abilities:
+  - {fileID: 11400000, guid: a5e4d40b3b851144bb87827bfcc26fcc, type: 2}
+  - {fileID: 11400000, guid: 9474a2c392f487542a236b5e58e81bd4, type: 2}
+  - {fileID: 11400000, guid: ccc8b007e773f2940855835d000dbf1d, type: 2}
+  summonPool: []
+  spiritTags: 
+  guaranteedSpiritDrop: 0
+  minGoldDrop: 7
+  maxGoldDrop: 14
+  experienceReward: 10
+  cardDropChance: 0.1
+  initialAgitateStacks: 0
+  initialToleranceStacks: 0
+  initialPotentialStacks: 0
+  excludeFromRandom: 1
+  healthBarColor: {r: 1, g: 0, b: 0, a: 1}
+  animatorController: {fileID: 0}

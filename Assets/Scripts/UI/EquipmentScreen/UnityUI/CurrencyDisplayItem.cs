@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using Dexiled.Data.Items;
@@ -9,7 +10,7 @@ namespace Dexiled.UI.EquipmentScreen
     /// Controls a single currency display item (prefab instance).
     /// Updates the icon sprite and quantity text based on CurrencyData.
     /// </summary>
-    public class CurrencyDisplayItem : MonoBehaviour
+    public class CurrencyDisplayItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         [Header("UI References")]
         [SerializeField] private Image currencyIcon;
@@ -97,6 +98,30 @@ namespace Dexiled.UI.EquipmentScreen
         public CurrencyData GetCurrencyData()
         {
             return currentCurrency;
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (currentCurrency == null || ItemTooltipManager.Instance == null)
+                return;
+
+            ItemTooltipManager.Instance.ShowCurrencyTooltipForPointer(currentCurrency, eventData);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if (ItemTooltipManager.Instance != null)
+            {
+                ItemTooltipManager.Instance.HideTooltip();
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (ItemTooltipManager.Instance != null)
+            {
+                ItemTooltipManager.Instance.HideTooltip();
+            }
         }
 
         #region Editor Setup Helper

@@ -582,6 +582,9 @@ PrefabInstance:
     - {fileID: 7540490631406082846, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7167695235861022892, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7524633107306354434}
     - targetCorrespondingSourceObject: {fileID: 5985191306933965573, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6216522523501683925}
@@ -597,6 +600,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+--- !u!1 &5224313578519651125 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7167695235861022892, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+  m_PrefabInstance: {fileID: 3168486101390748569}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7524633107306354434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5224313578519651125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a6e82ab837c1044e9ec51d22b57f983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CardHoverTooltip
+  enableTooltips: 1
+  anchorOffset: {x: -100, y: 0}
+  verticalSpacing: 6
+  tooltipEntryPrefab: {fileID: 0}
+  tooltipBackground: {r: 0.1, g: 0.1, b: 0.15, a: 0.95}
+  backgroundSprite: {fileID: 676176393910508485, guid: a3344cb0ed7a30b4098f02c9fe070ab9, type: 3}
+  borderColor: {r: 0.9339623, g: 0.6887238, b: 0.19824673, a: 1}
+  borderWidth: 2
+  cornerRadius: 8
+  tooltipText: {r: 0.8000001, g: 0.6, b: 0.20000002, a: 1}
+  tooltipFontSize: 10
+  fontStyle: 0
+  textOutlineColor: {r: 0, g: 0, b: 0, a: 0.8}
+  textOutlineWidth: 0
+  minWidth: 100
+  minHeight: 25
+  padding: {x: 12, y: 12, z: 8, w: 8}
+  iconTextSpacing: 10
+  entryIconSprite: {fileID: 0}
+  entryIconSize: {x: 24, y: 24}
+  enableShadow: 1
+  shadowColor: {r: 0, g: 0, b: 0, a: 0.5}
+  shadowOffset: {x: 2, y: -2}
+  shadowBlur: 4
 --- !u!1 &8716456056561498268 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5985191306933965573, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}

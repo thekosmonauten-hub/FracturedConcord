@@ -8,13 +8,9 @@ using UnityEditorInternal;
 public class ItemAffixEditor : Editor
 {
     private bool showAffixManagement = true;
-    private bool showImplicitModifiers = true;
-    private bool showPrefixes = true;
-    private bool showSuffixes = true;
     private bool showDescription = false; // Description is minimized by default
     
     // Affix selection state
-    private bool showAffixSelector = false;
     private string selectedCategory = "";
     private string selectedSubCategory = "";
     private AffixType selectedAffixType = AffixType.Prefix;

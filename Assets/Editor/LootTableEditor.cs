@@ -17,9 +17,6 @@ public class LootTableEditor : Editor
     private int selectedItemIndex = 0;
     private string[] itemNames = new string[0];
     private float itemDropChance = 30f;
-    private bool showWeapons = true;
-    private bool showArmor = true;
-    private bool showJewellery = true;
     
     private void OnEnable()
     {

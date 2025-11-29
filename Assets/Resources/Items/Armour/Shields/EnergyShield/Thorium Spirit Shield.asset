@@ -16,42 +16,13 @@ MonoBehaviour:
   description: A shield providing defense.
   itemIcon: {fileID: 0}
   rarity: 0
-  requiredLevel: 0
+  requiredLevel: 53
   itemType: 1
   equipmentType: 4
   isStackable: 0
   maxStackSize: 1
   quality: 0
-  implicitModifiers:
-  - name: Implicit
-    description: Requires Level 53, 128 Int
-    affixType: 0
-    tier: 0
-    modifiers:
-    - statName: requiresLevel53128Int
-      minValue: 1
-      maxValue: 1
-      modifierType: 0
-      damageType: 0
-      scope: 1
-      description: 
-      originalMinValue: 1
-      originalMaxValue: 1
-      isDualRange: 0
-      firstRangeMin: 0
-      firstRangeMax: 0
-      secondRangeMin: 0
-      secondRangeMax: 0
-      rolledFirstValue: 0
-      rolledSecondValue: 0
-    requiredTags: []
-    weight: 1000
-    handedness: 0
-    minValue: 0
-    maxValue: 0
-    hasRange: 0
-    rolledValue: 0
-    isRolled: 0
+  implicitModifiers: []
   prefixes: []
   suffixes: []
   isUnique: 0
@@ -69,6 +40,6 @@ MonoBehaviour:
   ward: 0
   requiredStrength: 0
   requiredDexterity: 0
-  requiredIntelligence: 0
+  requiredIntelligence: 128
   movementSpeedPenalty: 0
   attackSpeedPenalty: 0

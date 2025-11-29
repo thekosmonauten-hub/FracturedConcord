@@ -134,4 +134,5 @@ MonoBehaviour:
     dropChance: 0.07
     minQuantity: 1
     maxQuantity: 3
+  effigyDrops: []
   enableDebugLogs: 0

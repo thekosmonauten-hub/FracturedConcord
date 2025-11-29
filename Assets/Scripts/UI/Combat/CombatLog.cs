@@ -134,7 +134,7 @@ public class CombatLog : MonoBehaviour
         }
         
         // Auto-scroll to bottom
-        if (autoScroll && scrollView != null)
+        if (autoScroll && scrollView != null && scrollView.content != null)
         {
             Canvas.ForceUpdateCanvases();
             scrollView.verticalNormalizedPosition = 0f;

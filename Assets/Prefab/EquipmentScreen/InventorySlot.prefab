@@ -161,7 +161,7 @@ GameObject:
   - component: {fileID: 7100026592586089186}
   - component: {fileID: 8995819467937587641}
   - component: {fileID: 5276535147189642197}
-  - component: {fileID: 6169023155608968579}
+  - component: {fileID: 5784082671703908056}
   m_Layer: 5
   m_Name: InventorySlot
   m_TagString: Untagged
@@ -229,7 +229,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6169023155608968579
+--- !u!114 &5784082671703908056
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -241,7 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac9e0cbb8bff23b478b6dee2d4980961, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlotUI
-  background: {fileID: 5276535147189642197}
+  background: {fileID: 4936940047405086095}
   itemIcon: {fileID: 7372438516142373196}
   itemLabel: {fileID: 9204696279234240837}
   normalColor: {r: 0.12, g: 0.14, b: 0.16, a: 1}
@@ -264,7 +264,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &7716626285964474895
 RectTransform:
   m_ObjectHideFlags: 0
@@ -281,8 +281,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -0.0000038146973, y: -32.4}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 0.00000029802322, y: -20.2004}
+  m_SizeDelta: {x: 90.6847, y: 39.6314}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5771914446268147593
 CanvasRenderer:
@@ -312,7 +312,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Rusted Sword
+  m_text: Price
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 281592e96d06dd94589438599351dbb7, type: 2}
   m_sharedMaterial: {fileID: 4326722954951912636, guid: 281592e96d06dd94589438599351dbb7, type: 2}
@@ -377,7 +377,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 40.94342, y: 0, z: 41.9068, w: 21.675842}
+  m_margin: {x: -0.32586473, y: 0, z: -0.25974846, w: -0.08027458}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

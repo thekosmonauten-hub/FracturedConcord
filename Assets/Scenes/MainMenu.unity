@@ -1039,7 +1039,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &703568347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2208,6 +2208,12 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  curtainCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   transitionFrameSprite: {fileID: 0}
   backgroundSprite: {fileID: 0}
 --- !u!4 &1682370683
@@ -2423,6 +2429,11 @@ MonoBehaviour:
     accuracyRating: 0
     increasedEvasion: 0
     baseEvasionRating: 0
+    dodgeChance: 0
+    guardEffectivenessPercent: 0
+    buffDurationIncreasedPercent: 0
+    randomAilmentChancePercent: 0
+    increasedDamageAfterGuardPercent: 0
     attackSpeedIncreasedPercent: 0
     castSpeedIncreasedPercent: 0
     movementSpeedIncreasedPercent: 0
@@ -2457,6 +2468,7 @@ MonoBehaviour:
     currentScene: 
     isNewCharacter: 0
     inventory: []
+    ownedEffigies: []
     unlockedAbilities: []
     weapons:
       meleeWeapon:

@@ -100,6 +100,33 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
         }
     }
     
+    private void OnEnable()
+    {
+        // Subscribe to momentum changes to refresh card cost display
+        if (StackSystem.Instance != null)
+        {
+            StackSystem.Instance.OnStacksChanged += OnMomentumChanged;
+        }
+    }
+    
+    private void OnDisable()
+    {
+        // Unsubscribe from momentum changes
+        if (StackSystem.Instance != null)
+        {
+            StackSystem.Instance.OnStacksChanged -= OnMomentumChanged;
+        }
+    }
+    
+    private void OnMomentumChanged(StackType stackType, int value)
+    {
+        // Refresh card display when momentum changes (affects cost display)
+        if (stackType == StackType.Momentum && cardData != null)
+        {
+            UpdateDisplay();
+        }
+    }
+    
     /// <summary>
     /// Initialize the card UI with card data.
     /// </summary>
@@ -151,7 +178,13 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
         
         if (costText != null)
         {
-            costText.text = cardData.playCost.ToString();
+            // Calculate display cost (includes momentum-based cost reductions)
+            int displayCost = cardData.playCost;
+            if (cardData is CardDataExtended extendedCard)
+            {
+                displayCost = CombatDeckManager.GetDisplayCost(extendedCard, cardData.playCost, ownerCharacter);
+            }
+            costText.text = displayCost.ToString();
         }
         
         if (descriptionText != null)

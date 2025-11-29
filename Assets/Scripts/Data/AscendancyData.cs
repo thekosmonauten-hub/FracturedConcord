@@ -52,8 +52,11 @@ public class AscendancyData : ScriptableObject
     [Tooltip("Start node (auto-unlocked, center of tree)")]
     public AscendancyPassive startNode;
     
-    [Tooltip("Branches extending from the start node")]
+    [Tooltip("Branches extending from the start node (or from split nodes if sourceNodeName is set)")]
     public List<AscendancyBranch> branches = new List<AscendancyBranch>();
+    
+    [Tooltip("Split nodes: Nodes that spawn multiple branches. Key = node name, Value = list of branch names that spawn from it.")]
+    public List<AscendancySplitNode> splitNodes = new List<AscendancySplitNode>();
     
     [Tooltip("Use branches for tree layout (recommended over flat passive list)")]
     public bool useBranchSystem = true;
@@ -187,12 +190,56 @@ public class AscendancyData : ScriptableObject
         startNode.unlockedByDefault = true;
         startNode.requireAllPrerequisites = true;
         
-        // Generate each branch
+        // Generate branches in phases:
+        // Phase 1: Branches from start node (sourceNodeName empty or matches start)
+        // Phase 2: Branches from split nodes (sourceNodeName matches a split node)
+        
+        // Phase 1: Start node branches
         foreach (var branch in branches)
         {
-            if (branch != null)
+            if (branch != null && string.IsNullOrEmpty(branch.sourceNodeName))
             {
-                branch.GenerateBranchStructure(startNode.name, startNodePosition);
+                branch.GenerateBranchStructure(startNode.name, startNodePosition, this);
+            }
+        }
+        
+        // Phase 1.5: Handle merge nodes (nodes that are the target of multiple branches)
+        HandleMergeNodes();
+        
+        // Phase 2: Split node branches (generate after all nodes are positioned)
+        foreach (var splitNode in splitNodes)
+        {
+            if (splitNode == null || string.IsNullOrEmpty(splitNode.nodeName))
+                continue;
+                
+            AscendancyPassive splitPassive = FindPassiveByName(splitNode.nodeName);
+            if (splitPassive == null)
+            {
+                Debug.LogWarning($"[AscendancyData] Split node '{splitNode.nodeName}' not found!");
+                continue;
+            }
+            
+            // Generate branches that start from this split node
+            for (int i = 0; i < splitNode.branchNames.Count; i++)
+            {
+                string branchName = splitNode.branchNames[i];
+                var branch = branches.Find(b => b != null && b.branchName == branchName);
+                if (branch != null && branch.sourceNodeName == splitNode.nodeName)
+                {
+                    // Apply angle from split node if provided
+                    if (splitNode.branchAngles != null && i < splitNode.branchAngles.Count)
+                    {
+                        branch.branchAngle = splitNode.branchAngles[i];
+                    }
+                    else if (splitNode.branchNames.Count > 1)
+                    {
+                        // Auto-space branches evenly if no angles provided
+                        float angleStep = 360f / splitNode.branchNames.Count;
+                        branch.branchAngle = angleStep * i;
+                    }
+                    
+                    branch.GenerateBranchStructure(startNode.name, startNodePosition, this);
+                }
             }
         }
 
@@ -200,6 +247,79 @@ public class AscendancyData : ScriptableObject
         GenerateFloatingNodesStructure();
         
         Debug.Log($"[AscendancyData] Generated tree structure for {ascendancyName}: {branches.Count} branches, Start at {startNode.treePosition}");
+    }
+    
+    /// <summary>
+    /// Handle merge nodes: nodes that are the last node in multiple branches.
+    /// These nodes should have prerequisites from all incoming branches.
+    /// </summary>
+    void HandleMergeNodes()
+    {
+        if (branches == null) return;
+        
+        // Find all nodes that appear as the last node in multiple branches
+        Dictionary<string, List<string>> mergeNodePrerequisites = new Dictionary<string, List<string>>();
+        
+        foreach (var branch in branches)
+        {
+            if (branch == null || branch.branchNodes == null || branch.branchNodes.Count == 0)
+                continue;
+                
+            // Get the last node in this branch
+            AscendancyPassive lastNode = branch.branchNodes[branch.branchNodes.Count - 1];
+            if (lastNode == null) continue;
+            
+            // Get the second-to-last node (the prerequisite)
+            string prerequisiteName = null;
+            if (branch.branchNodes.Count > 1)
+            {
+                prerequisiteName = branch.branchNodes[branch.branchNodes.Count - 2].name;
+            }
+            else if (!string.IsNullOrEmpty(branch.sourceNodeName))
+            {
+                prerequisiteName = branch.sourceNodeName;
+            }
+            else
+            {
+                prerequisiteName = startNode.name;
+            }
+            
+            if (!string.IsNullOrEmpty(prerequisiteName))
+            {
+                if (!mergeNodePrerequisites.ContainsKey(lastNode.name))
+                {
+                    mergeNodePrerequisites[lastNode.name] = new List<string>();
+                }
+                
+                if (!mergeNodePrerequisites[lastNode.name].Contains(prerequisiteName))
+                {
+                    mergeNodePrerequisites[lastNode.name].Add(prerequisiteName);
+                }
+            }
+        }
+        
+        // Apply merge node prerequisites (nodes with multiple incoming branches)
+        foreach (var kvp in mergeNodePrerequisites)
+        {
+            if (kvp.Value.Count > 1) // Multiple branches merge into this node
+            {
+                AscendancyPassive mergeNode = FindPassiveByName(kvp.Key);
+                if (mergeNode != null)
+                {
+                    // Preserve existing prerequisites and add merge prerequisites
+                    foreach (string prereq in kvp.Value)
+                    {
+                        if (!mergeNode.prerequisitePassives.Contains(prereq))
+                        {
+                            mergeNode.prerequisitePassives.Add(prereq);
+                        }
+                    }
+                    mergeNode.requireAllPrerequisites = false; // Any prerequisite unlocks it
+                    
+                    Debug.Log($"[AscendancyData] Merge node '{mergeNode.name}' requires any of: {string.Join(", ", mergeNode.prerequisitePassives)}");
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -304,7 +424,7 @@ public class AscendancyData : ScriptableObject
         }
     }
 
-    AscendancyPassive FindPassiveByName(string nodeName)
+    public AscendancyPassive FindPassiveByName(string nodeName)
     {
         if (string.IsNullOrEmpty(nodeName))
             return null;
@@ -376,6 +496,49 @@ public class AscendancyData : ScriptableObject
         
         return string.Join(" • ", playstyleKeywords);
     }
+    
+    /// <summary>
+    /// Get all nodes in a specific group (for mutually exclusive node validation)
+    /// </summary>
+    public List<AscendancyPassive> GetNodesInGroup(string groupId)
+    {
+        if (string.IsNullOrEmpty(groupId))
+            return new List<AscendancyPassive>();
+        
+        List<AscendancyPassive> nodesInGroup = new List<AscendancyPassive>();
+        List<AscendancyPassive> allNodes = GetAllNodes();
+        
+        foreach (var node in allNodes)
+        {
+            if (node != null && !string.IsNullOrEmpty(node.nodeGroup) && node.nodeGroup == groupId)
+            {
+                nodesInGroup.Add(node);
+            }
+        }
+        
+        return nodesInGroup;
+    }
+    
+    /// <summary>
+    /// Check if any node in the same group is already unlocked
+    /// </summary>
+    public bool IsAnyNodeInGroupUnlocked(string groupId, CharacterAscendancyProgress progression)
+    {
+        if (string.IsNullOrEmpty(groupId) || progression == null)
+            return false;
+        
+        List<AscendancyPassive> nodesInGroup = GetNodesInGroup(groupId);
+        
+        foreach (var node in nodesInGroup)
+        {
+            if (progression.IsPassiveUnlocked(node.name))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }
 
 /// <summary>
@@ -428,6 +591,49 @@ public class AscendancyPassive
     
     [Tooltip("Position in the tree (for manual layout control)")]
     public Vector2 treePosition = Vector2.zero;
+    
+    [Header("Node Grouping (Mutually Exclusive)")]
+    [Tooltip("Group ID for mutually exclusive nodes. Nodes with the same group ID can only have ONE unlocked at a time. Leave empty for no grouping.")]
+    public string nodeGroup = "";
+    
+    [Header("Choice Node (Sub-Node Selection)")]
+    [Tooltip("If true, this is a choice node that displays sub-nodes in a circle around it. Clicking a sub-node applies its sprite to this main node.")]
+    public bool isChoiceNode = false;
+    
+    [Tooltip("List of sub-nodes that circle around this choice node. Each sub-node represents a different choice/option.")]
+    public List<AscendancySubNode> subNodes = new List<AscendancySubNode>();
+    
+    [Tooltip("Radius of the circle for sub-nodes (distance from main node center)")]
+    public float subNodeRadius = 100f;
+    
+    [Tooltip("Currently selected sub-node index (-1 = no selection, returns to sub-node display)")]
+    public int selectedSubNodeIndex = -1;
+}
+
+/// <summary>
+/// Represents a sub-node option for a choice node.
+/// Sub-nodes circle around the main choice node and can be selected.
+/// </summary>
+[System.Serializable]
+public class AscendancySubNode
+{
+    [Header("Sub-Node Info")]
+    [Tooltip("Name of this sub-node option")]
+    public string name = "";
+    
+    [Tooltip("Icon/sprite for this sub-node (applied to main node when selected)")]
+    public Sprite icon;
+    
+    [Tooltip("Description of what this choice does")]
+    [TextArea(2, 4)]
+    public string description = "";
+    
+    [Tooltip("Point cost to select this sub-node (typically 0, as main node cost covers it)")]
+    public int pointCost = 0;
+    
+    [Tooltip("Angle offset for positioning this sub-node around the main node (0-360 degrees)")]
+    [Range(0f, 360f)]
+    public float angleOffset = 0f;
 }
 
 [System.Serializable]
@@ -460,6 +666,24 @@ public class AscendancyFloatingNode
 
     [Tooltip("Override for node scale (0 = use node's value)")] 
     public float nodeScaleOverride = 0f;
+}
+
+/// <summary>
+/// Represents a node that splits into multiple branches.
+/// Use this to create structures like: Node -> Branch1, Branch2, Branch3
+/// </summary>
+[System.Serializable]
+public class AscendancySplitNode
+{
+    [Header("Split Node Info")]
+    [Tooltip("Name of the node that splits into multiple branches")]
+    public string nodeName = "";
+    
+    [Tooltip("List of branch names that spawn from this node. Each branch must have sourceNodeName matching this nodeName.")]
+    public List<string> branchNames = new List<string>();
+    
+    [Tooltip("Optional: Angles for each branch (if empty, uses branch's branchAngle). Useful for evenly spacing branches.")]
+    public List<float> branchAngles = new List<float>();
 }
 
 /// <summary>

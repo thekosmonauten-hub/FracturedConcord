@@ -13,15 +13,16 @@ MonoBehaviour:
   m_Name: DevastatingBlow_Extended
   m_EditorClassIdentifier: Assembly-CSharp::CardDataExtended
   cardName: Devastating Blow
+  groupKey: Devastating_Blow
   cardType: Attack
   playCost: 2
-  description: 'Deal 8 physical damage. Gain 2 Momentum. If you have 6+ Momentum:
-    This card costs 1 less. If you have 8+ Momentum: Deal damage to all enemies.
-    If you have 10 Momentum: Gain 1 Energy.'
+  description: Deal {damage} physical damage. Gain 2 Momentum.
   rarity: 0
   element: 4
   category: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: 5748426350350174988e5a110b6688d1, type: 3}
+  cardThumbnail: {fileID: 6260368091483526308, guid: 00d0497469795d34b884c57690aa5565, type: 3}
+  cardIcon: {fileID: 0}
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
@@ -31,6 +32,9 @@ MonoBehaviour:
   isDualWield: 0
   ifDiscardedEffect: 
   dualWieldEffect: 
+  embossingSlots: 1
+  cardLevel: 1
+  cardExperience: 0
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 1
@@ -38,25 +42,90 @@ MonoBehaviour:
   scalesWithSpellWeapon: 0
   isAoE: 0
   aoeTargets: 1
+  aoeRowScope: 0
+  isMultiHit: 0
+  hitCount: 2
   damageScaling:
-    strengthScaling: 1
+    strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 5
+    dexterityDivisor: 5
+    intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
     requiredIntelligence: 0
     requiredWeaponTypes: 
     requiredLevel: 1
-  effects: []
+  effects:
+  - effectType: 9
+    effectName: Gain Momentum
+    description: Gain 2 Momentum
+    value: 2
+    duration: 0
+    damageType: 0
+    targetsSelf: 0
+    targetsEnemy: 0
+    targetsAllEnemies: 0
+    targetsAll: 0
+    condition: 
+  enableCombo: 0
   comboWith: 
-  comboDescription: 
+  comboDescription: Momentum Effects
+  momentumEffectDescription: '\n6+ Momentum: This card costs 1 less.\n8+ Momentum:
+    Deal damage to all enemies.\n10 Momentum: Gain 1 Energy.'
+  comboWithCardType: 0
+  comboAttackIncrease: 0
+  comboGuardIncrease: 0
+  comboIsAoE: 0
+  comboManaRefund: 0
+  comboApplyAilment: 
+  comboBuffs: []
+  comboConsumeAilment: 0
+  comboConsumeAilmentId: 0
+  comboDrawCards: 0
+  comboAilment: 0
+  comboAilmentPortion: 0
+  comboAilmentDuration: 0
+  consumeAilment: 0
+  consumeAilmentId: 0
+  comboScaling: 0
+  comboScalingDivisor: 1
+  comboLogic: 0
   comboEffect: 
   comboHighlightType: type
+  channelingBonusEnabled: 0
+  channelingMinStacks: 2
+  channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Attack
   - Physical
+  delayTurns: 0
+  isDelayed: 0
+  canPrepare: 0
+  maxPrepTurns: 3
+  multiplierPerTurn: 0.5
+  unleashCondition: manual
+  unleashEffect: deal_stored_damage
+  prepareDescription: 
