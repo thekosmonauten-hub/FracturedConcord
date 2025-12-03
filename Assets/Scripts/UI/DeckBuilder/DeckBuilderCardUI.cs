@@ -169,6 +169,8 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
         }
 
         // Background remains styled by color/frames for collection grid; no sprite assignment here
+        // EXCEPTION: Check for Temporal tag and apply special background
+        UpdateTemporalCardVisual();
         
         // Update text elements
         if (cardNameText != null)
@@ -329,6 +331,79 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
         
         rarityFrame.color = RarityColorUtility.GetRarityFrameColor(cardData.rarity);
     }
+    
+    /// <summary>
+    /// Update visual for Temporal cards (Temporal Savant ascendancy).
+    /// Applies special background to cards marked with "Temporal" tag.
+    /// Uses the CardBackground GameObject to display the TemporalCard.png sprite.
+    /// </summary>
+    private void UpdateTemporalCardVisual()
+    {
+        if (cardData == null) return;
+        
+        // Check if card has Temporal tag
+        bool isTemporal = false;
+        if (cardData is CardDataExtended extended)
+        {
+            isTemporal = extended.tags != null && extended.tags.Contains("Temporal");
+        }
+        
+        if (!isTemporal)
+        {
+            // Reset background if card is not Temporal
+            if (cardBackground != null && cardBackground.sprite != null)
+            {
+                // Only reset if it was a temporal sprite (could check sprite name or store original)
+                // For now, we'll let the normal card display handle non-temporal cards
+            }
+            return;
+        }
+        
+        // Apply Temporal visual - use CardBackground GameObject
+        EnsureCardReferences();
+        
+        if (cardBackground == null)
+        {
+            Debug.LogWarning("[DeckBuilderCardUI] CardBackground GameObject not found - cannot apply Temporal card visual");
+            return;
+        }
+        
+        // Try to load the Temporal card sprite if not already in visual assets
+        Sprite temporalSprite = null;
+        if (cardVisualAssets != null && cardVisualAssets.temporalCard != null)
+        {
+            temporalSprite = cardVisualAssets.temporalCard;
+        }
+        else
+        {
+            // Fallback: Try to load directly from Resources
+            // Check Resources/CardArt/TemporalCard first (current location)
+            temporalSprite = Resources.Load<Sprite>("CardArt/TemporalCard");
+            if (temporalSprite == null)
+            {
+                // Try alternative paths
+                temporalSprite = Resources.Load<Sprite>("CardParts/TemporalCard");
+            }
+            if (temporalSprite == null)
+            {
+                temporalSprite = Resources.Load<Sprite>("Art/CardArt/CardParts/TemporalCard");
+            }
+        }
+        
+        if (temporalSprite != null)
+        {
+            // Apply temporal background to CardBackground
+            cardBackground.sprite = temporalSprite;
+            cardBackground.color = Color.white; // Use full color, no tint needed
+            Debug.Log($"[DeckBuilderCardUI] Applied Temporal card background to '{cardData.cardName}'");
+        }
+        else
+        {
+            // Fallback: Apply a color tint to indicate Temporal status
+            cardBackground.color = new Color(0.7f, 0.8f, 1f, 0.5f); // Cyan/blue tint for Temporal
+            Debug.LogWarning($"[DeckBuilderCardUI] TemporalCard sprite not found - using color tint fallback for '{cardData.cardName}'");
+        }
+    }
 
     private void EnsureCardReferences()
     {
@@ -362,6 +437,13 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
         if (cardVisualAssets == null)
         {
             cardVisualAssets = Resources.Load<CardVisualAssets>("CardVisualAssets");
+        }
+        
+        // Auto-find CardBackground if not assigned
+        if (cardBackground == null)
+        {
+            cardBackground = GetComponentsInChildren<Image>(true)
+                .FirstOrDefault(img => string.Equals(img.gameObject.name, "CardBackground", StringComparison.OrdinalIgnoreCase));
         }
 
         if (embossingSlotContainer == null)

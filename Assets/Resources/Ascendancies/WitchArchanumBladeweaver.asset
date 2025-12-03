@@ -103,7 +103,7 @@ MonoBehaviour:
         pointCost: 1
         angleOffset: 0
       subNodeRadius: 40
-      selectedSubNodeIndex: -1
+      selectedSubNodeIndex: 2
     - name: Flat Physical and Spell Power_2
       nodeType: 2
       description: +24% increased elemental damage with attacks.

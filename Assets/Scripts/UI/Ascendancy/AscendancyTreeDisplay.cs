@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using TMPro;
 
@@ -40,7 +41,9 @@ public class AscendancyTreeDisplay : MonoBehaviour
     [SerializeField] private AscendancyTooltipController tooltipController;
     [SerializeField] private bool enableTooltips = true;
     
-    // Public accessor for tooltip controller (used by SubNodeHoverHandler)
+    /// <summary>
+    /// Public accessor for tooltip controller
+    /// </summary>
     public AscendancyTooltipController TooltipController => tooltipController;
     
     [Header("Optional: Legacy Info Panel")]
@@ -59,9 +62,16 @@ public class AscendancyTreeDisplay : MonoBehaviour
     private AscendancyContainerController containerController;
     private List<AscendancyPassiveNode> spawnedNodes = new List<AscendancyPassiveNode>();
     private AscendancyPassiveNode selectedNode;
+    private bool allowPointAllocation = false;
     
     void Awake()
     {
+        // Ensure EventSystem exists (required for UI clicks)
+        EnsureEventSystem();
+        
+        // Auto-find references if not assigned
+        AutoFindReferences();
+        
         // Setup unlock button
         if (unlockButton != null)
         {
@@ -76,9 +86,223 @@ public class AscendancyTreeDisplay : MonoBehaviour
     }
     
     /// <summary>
+    /// Ensure EventSystem exists in the scene (required for UI button clicks)
+    /// </summary>
+    void EnsureEventSystem()
+    {
+        if (EventSystem.current == null)
+        {
+            GameObject eventSystemObj = new GameObject("EventSystem");
+            eventSystemObj.AddComponent<EventSystem>();
+            eventSystemObj.AddComponent<StandaloneInputModule>();
+            Debug.Log("[AscendancyTreeDisplay] Created EventSystem - required for UI clicks");
+        }
+    }
+    
+    /// <summary>
+    /// Auto-find UI references if not assigned in Inspector
+    /// </summary>
+    void AutoFindReferences()
+    {
+        // Find info panel - search for multiple common names
+        if (infoPanel == null)
+        {
+            // Search in children first
+            Transform[] allChildren = GetComponentsInChildren<Transform>(true);
+            foreach (Transform child in allChildren)
+            {
+                string name = child.gameObject.name;
+                if (name.Contains("InfoPanel", System.StringComparison.OrdinalIgnoreCase) ||
+                    name.Contains("NodeInfoPanel", System.StringComparison.OrdinalIgnoreCase) ||
+                    name.Contains("PassiveInfoPanel", System.StringComparison.OrdinalIgnoreCase) ||
+                    name.Equals("InfoPanel", System.StringComparison.OrdinalIgnoreCase) ||
+                    name.Equals("NodeInfoPanel", System.StringComparison.OrdinalIgnoreCase) ||
+                    name.Equals("PassiveInfoPanel", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    infoPanel = child.gameObject;
+                    Debug.Log($"[AscendancyTreeDisplay] Auto-found infoPanel: {infoPanel.name}");
+                    break;
+                }
+            }
+            
+            // If still not found, try direct Find
+            if (infoPanel == null)
+            {
+                Transform found = transform.Find("InfoPanel") ?? 
+                                transform.Find("NodeInfoPanel") ?? 
+                                transform.Find("PassiveInfoPanel") ??
+                                transform.Find("AscendancyInfoPanel");
+                if (found != null)
+                {
+                    infoPanel = found.gameObject;
+                    Debug.Log($"[AscendancyTreeDisplay] Auto-found infoPanel via Find: {infoPanel.name}");
+                }
+            }
+        }
+        
+        // Find text components within info panel
+        if (infoPanel != null)
+        {
+            // Find name text - search by multiple patterns
+            if (passiveNameText == null)
+            {
+                // Try exact name matches first
+                Transform nameText = infoPanel.transform.Find("NameText") ?? 
+                                    infoPanel.transform.Find("PassiveName") ??
+                                    infoPanel.transform.Find("Name") ??
+                                    infoPanel.transform.Find("NodeName");
+                if (nameText != null)
+                {
+                    passiveNameText = nameText.GetComponent<TextMeshProUGUI>();
+                }
+                
+                // If not found, search by name pattern
+                if (passiveNameText == null)
+                {
+                    TextMeshProUGUI[] texts = infoPanel.GetComponentsInChildren<TextMeshProUGUI>(true);
+                    foreach (var text in texts)
+                    {
+                        string name = text.gameObject.name;
+                        if (name.Contains("Name", System.StringComparison.OrdinalIgnoreCase) &&
+                            !name.Contains("Panel", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            passiveNameText = text;
+                            break;
+                        }
+                    }
+                }
+                
+                if (passiveNameText != null)
+                    Debug.Log($"[AscendancyTreeDisplay] Auto-found passiveNameText: {passiveNameText.name}");
+            }
+            
+            // Find description text
+            if (passiveDescriptionText == null)
+            {
+                // Try exact name matches first
+                Transform descText = infoPanel.transform.Find("DescriptionText") ?? 
+                                    infoPanel.transform.Find("Description") ??
+                                    infoPanel.transform.Find("Desc") ??
+                                    infoPanel.transform.Find("PassiveDescription");
+                if (descText != null)
+                {
+                    passiveDescriptionText = descText.GetComponent<TextMeshProUGUI>();
+                }
+                
+                // If not found, search by name pattern
+                if (passiveDescriptionText == null)
+                {
+                    TextMeshProUGUI[] texts = infoPanel.GetComponentsInChildren<TextMeshProUGUI>(true);
+                    foreach (var text in texts)
+                    {
+                        if (text != passiveNameText)
+                        {
+                            string name = text.gameObject.name;
+                            if (name.Contains("Description", System.StringComparison.OrdinalIgnoreCase) || 
+                                name.Contains("Desc", System.StringComparison.OrdinalIgnoreCase))
+                            {
+                                passiveDescriptionText = text;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if (passiveDescriptionText != null)
+                    Debug.Log($"[AscendancyTreeDisplay] Auto-found passiveDescriptionText: {passiveDescriptionText.name}");
+            }
+            
+            // Find cost text
+            if (passiveCostText == null)
+            {
+                // Try exact name matches first
+                Transform costText = infoPanel.transform.Find("CostText") ?? 
+                                    infoPanel.transform.Find("Cost") ??
+                                    infoPanel.transform.Find("PointCost") ??
+                                    infoPanel.transform.Find("PointsText");
+                if (costText != null)
+                {
+                    passiveCostText = costText.GetComponent<TextMeshProUGUI>();
+                }
+                
+                // If not found, search by name pattern
+                if (passiveCostText == null)
+                {
+                    TextMeshProUGUI[] texts = infoPanel.GetComponentsInChildren<TextMeshProUGUI>(true);
+                    foreach (var text in texts)
+                    {
+                        if (text != passiveNameText && text != passiveDescriptionText)
+                        {
+                            string name = text.gameObject.name;
+                            if (name.Contains("Cost", System.StringComparison.OrdinalIgnoreCase) || 
+                                name.Contains("Point", System.StringComparison.OrdinalIgnoreCase))
+                            {
+                                passiveCostText = text;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if (passiveCostText != null)
+                    Debug.Log($"[AscendancyTreeDisplay] Auto-found passiveCostText: {passiveCostText.name}");
+            }
+        }
+        
+        // Find unlock button - search for buttons with "Unlock" in name
+        if (unlockButton == null)
+        {
+            // Look in info panel first
+            if (infoPanel != null)
+            {
+                Button[] panelButtons = infoPanel.GetComponentsInChildren<Button>(true);
+                foreach (var btn in panelButtons)
+                {
+                    if (btn.gameObject.name.Contains("Unlock", System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        unlockButton = btn;
+                        break;
+                    }
+                }
+                
+                // If not found by name, just get first button in panel
+                if (unlockButton == null && panelButtons.Length > 0)
+                {
+                    unlockButton = panelButtons[0];
+                }
+            }
+            
+            // If not found, search in all children
+            if (unlockButton == null)
+            {
+                Button[] allButtons = GetComponentsInChildren<Button>(true);
+                foreach (var btn in allButtons)
+                {
+                    string name = btn.gameObject.name;
+                    if (name.Contains("Unlock", System.StringComparison.OrdinalIgnoreCase) || 
+                        name.Contains("unlock", System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        unlockButton = btn;
+                        break;
+                    }
+                }
+            }
+            
+            if (unlockButton != null)
+            {
+                Debug.Log($"[AscendancyTreeDisplay] Auto-found unlockButton: {unlockButton.name}");
+            }
+            else
+            {
+                Debug.LogWarning("[AscendancyTreeDisplay] Could not find unlock button! Unlocking will not work.");
+            }
+        }
+    }
+    
+    /// <summary>
     /// Initialize and display an Ascendancy tree
     /// </summary>
-    public void DisplayAscendancy(AscendancyData ascendancy, CharacterAscendancyProgress progress)
+    public void DisplayAscendancy(AscendancyData ascendancy, CharacterAscendancyProgress progress, bool allowAllocation = false)
     {
         if (ascendancy == null)
         {
@@ -88,6 +312,7 @@ public class AscendancyTreeDisplay : MonoBehaviour
         
         currentAscendancy = ascendancy;
         progression = progress ?? new CharacterAscendancyProgress();
+        allowPointAllocation = allowAllocation;
         
         // Clear existing display
         ClearDisplay();
@@ -226,11 +451,40 @@ public class AscendancyTreeDisplay : MonoBehaviour
             
             bool isUnlocked = passive.unlockedByDefault || 
                              (progression != null && progression.IsPassiveUnlocked(passive.name));
+            
+            // Check if available to unlock (only if allocation is allowed)
+            bool isAvailable = allowPointAllocation && CanUnlockPassive(passive);
+            
+            // Initialize node (this sets up button and image)
             node.Initialize(passive, currentAscendancy, isUnlocked);
             
-            // Check if available to unlock
-            bool isAvailable = CanUnlockPassive(passive);
+            // Set availability after initialization (this updates visual state)
             node.SetAvailable(isAvailable && !isUnlocked);
+            
+            // Force visual state update to ensure colors are correct
+            // The node should already be set up, but verify button and image are accessible
+            Button nodeButton = node.GetComponentInChildren<Button>(true);
+            Image nodeImage = node.GetComponentInChildren<Image>(true);
+            
+            if (nodeButton != null && nodeImage != null)
+            {
+                // Ensure image has raycastTarget
+                nodeImage.raycastTarget = true;
+                
+                // Set interactable based on allocation permission and state
+                bool shouldBeInteractable = allowPointAllocation && (isUnlocked || isAvailable);
+                nodeButton.interactable = shouldBeInteractable;
+                
+                // Update button's target graphic
+                nodeButton.targetGraphic = nodeImage;
+                
+                if (showDebugLogs)
+                    Debug.Log($"[AscendancyTreeDisplay] Node {passive.name}: Unlocked={isUnlocked}, Available={isAvailable}, Interactable={shouldBeInteractable}");
+            }
+            else
+            {
+                Debug.LogWarning($"[AscendancyTreeDisplay] Could not find Button or Image for node {passive.name}!");
+            }
             
             // Subscribe to events
             node.OnNodeClicked += OnNodeClicked;
@@ -239,10 +493,23 @@ public class AscendancyTreeDisplay : MonoBehaviour
             
             spawnedNodes.Add(node);
             
-            // Handle choice nodes: spawn sub-nodes in a circle around the main node
-            if (passive.isChoiceNode && passive.subNodes != null && passive.subNodes.Count > 0)
+            // If this is a choice node, spawn subnodes if available/unlocked and no selection made
+            if (passive.isChoiceNode && progression != null)
             {
-                SpawnChoiceNodeSubNodes(passive, node, parent);
+                int selectedIndex = progression.GetSelectedSubNodeIndex(passive.name);
+                if (selectedIndex < 0) // No selection yet
+                {
+                    // Spawn subnodes if node is available OR unlocked
+                    if (isAvailable || isUnlocked)
+                    {
+                        SpawnSubNodesForChoiceNode(node, passive);
+                    }
+                }
+                else
+                {
+                    // Subnode already selected - update choice node visual
+                    UpdateChoiceNodeVisual(node, passive, selectedIndex);
+                }
             }
         }
         
@@ -252,155 +519,11 @@ public class AscendancyTreeDisplay : MonoBehaviour
             DrawConnectionLines();
         }
         
+        // Update all nodes' availability after spawning (ensures prerequisites are checked correctly)
+        UpdateNodesAvailability();
+        
         if (showDebugLogs)
-            Debug.Log($"[AscendancyTreeDisplay] Spawned {spawnedNodes.Count} passive nodes");
-    }
-    
-    /// <summary>
-    /// Spawn sub-nodes in a circle around a choice node
-    /// </summary>
-    void SpawnChoiceNodeSubNodes(AscendancyPassive choiceNode, AscendancyPassiveNode mainNode, Transform parent)
-    {
-        if (choiceNode == null || mainNode == null || choiceNode.subNodes == null || choiceNode.subNodes.Count == 0)
-            return;
-        
-        // Check if a sub-node is already selected
-        int selectedIndex = -1;
-        if (progression != null)
-        {
-            selectedIndex = progression.GetSelectedSubNodeIndex(choiceNode.name);
-        }
-        
-        // If a sub-node is selected, apply its sprite to the main node and hide sub-nodes
-        if (selectedIndex >= 0 && selectedIndex < choiceNode.subNodes.Count)
-        {
-            var selectedSubNode = choiceNode.subNodes[selectedIndex];
-            if (selectedSubNode.icon != null)
-            {
-                // Apply selected sub-node's sprite to main node
-                var nodeImage = mainNode.GetComponentInChildren<UnityEngine.UI.Image>();
-                if (nodeImage != null)
-                {
-                    nodeImage.sprite = selectedSubNode.icon;
-                }
-            }
-            // Don't spawn sub-nodes if one is selected
-            return;
-        }
-        
-        // Spawn sub-nodes in a circle around the main node
-        RectTransform mainRect = mainNode.GetComponent<RectTransform>();
-        if (mainRect == null) return;
-        
-        Vector2 mainPosition = mainRect.anchoredPosition;
-        float radius = choiceNode.subNodeRadius > 0 ? choiceNode.subNodeRadius : 100f;
-        
-        // Calculate angle step for even distribution
-        float angleStep = 360f / choiceNode.subNodes.Count;
-        
-        for (int i = 0; i < choiceNode.subNodes.Count; i++)
-        {
-            var subNode = choiceNode.subNodes[i];
-            if (subNode == null) continue;
-            
-            // Calculate position in circle
-            float angle = subNode.angleOffset > 0 ? subNode.angleOffset : (angleStep * i);
-            float angleRad = angle * Mathf.Deg2Rad;
-            Vector2 offset = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad)) * radius;
-            Vector2 subNodePosition = mainPosition + offset;
-            
-            // Spawn sub-node
-            GameObject subNodeObj = Instantiate(nodePrefab, parent);
-            subNodeObj.name = $"SubNode_{choiceNode.name}_{i}_{subNode.name}";
-            
-            RectTransform subRect = subNodeObj.GetComponent<RectTransform>();
-            if (subRect == null)
-            {
-                subRect = subNodeObj.AddComponent<RectTransform>();
-                subRect.sizeDelta = new Vector2(60, 60); // Smaller than main node
-            }
-            
-            subRect.pivot = new Vector2(0.5f, 0.5f);
-            subRect.anchoredPosition = subNodePosition;
-            subRect.localScale = Vector3.one * 0.75f; // Smaller scale for sub-nodes
-            
-            // Set sub-node icon
-            var subNodeImage = subNodeObj.GetComponentInChildren<UnityEngine.UI.Image>();
-            if (subNodeImage != null && subNode.icon != null)
-            {
-                subNodeImage.sprite = subNode.icon;
-            }
-            
-            // Add click handler for sub-node selection
-            var subNodeButton = subNodeObj.GetComponentInChildren<UnityEngine.UI.Button>();
-            if (subNodeButton == null)
-            {
-                subNodeButton = subNodeObj.AddComponent<UnityEngine.UI.Button>();
-            }
-            
-            int subNodeIndex = i; // Capture for closure
-            subNodeButton.onClick.AddListener(() => OnSubNodeClicked(choiceNode, mainNode, subNodeIndex));
-            
-            // Add hover handlers for tooltip
-            var subNodeHoverHandler = subNodeObj.GetComponent<SubNodeHoverHandler>();
-            if (subNodeHoverHandler == null)
-            {
-                subNodeHoverHandler = subNodeObj.AddComponent<SubNodeHoverHandler>();
-            }
-            subNodeHoverHandler.Initialize(subNode, choiceNode.name, this);
-            
-            // Make sub-node slightly transparent to distinguish from main node
-            if (subNodeImage != null)
-            {
-                var color = subNodeImage.color;
-                color.a = 0.8f;
-                subNodeImage.color = color;
-            }
-        }
-    }
-    
-    /// <summary>
-    /// Show tooltip for a sub-node
-    /// </summary>
-    public void ShowSubNodeTooltip(AscendancySubNode subNode, string choiceNodeName, Vector2 position)
-    {
-        if (enableTooltips && tooltipController != null)
-        {
-            tooltipController.ShowSubNodeTooltip(subNode, choiceNodeName, position);
-        }
-    }
-    
-    /// <summary>
-    /// Handle sub-node click - select it and apply its sprite to main node
-    /// </summary>
-    void OnSubNodeClicked(AscendancyPassive choiceNode, AscendancyPassiveNode mainNode, int subNodeIndex)
-    {
-        if (choiceNode == null || mainNode == null || progression == null)
-            return;
-        
-        if (choiceNode.subNodes == null || subNodeIndex < 0 || subNodeIndex >= choiceNode.subNodes.Count)
-            return;
-        
-        var subNode = choiceNode.subNodes[subNodeIndex];
-        
-        // Select the sub-node
-        bool success = progression.SelectSubNode(choiceNode.name, subNodeIndex, currentAscendancy);
-        if (success)
-        {
-            // Apply sub-node's sprite to main node
-            var nodeImage = mainNode.GetComponentInChildren<UnityEngine.UI.Image>();
-            if (nodeImage != null && subNode.icon != null)
-            {
-                nodeImage.sprite = subNode.icon;
-            }
-            
-            // Hide all sub-nodes (they'll be hidden on next refresh)
-            // For now, just log - you might want to store sub-node references to hide them
-            Debug.Log($"[AscendancyTreeDisplay] Selected sub-node {subNodeIndex} ('{subNode.name}') for choice node '{choiceNode.name}'");
-            
-            // Refresh the display to hide sub-nodes
-            // You could also manually hide them here if you store references
-        }
+            Debug.Log($"[AscendancyTreeDisplay] Spawned {spawnedNodes.Count} passive nodes and updated availability");
     }
     
     /// <summary>
@@ -578,23 +701,71 @@ public class AscendancyTreeDisplay : MonoBehaviour
     }
     
     /// <summary>
+    /// Check if a prerequisite passive is unlocked (accounts for unlockedByDefault and choice node subnode selection)
+    /// </summary>
+    bool IsPrerequisiteUnlocked(string prereqName)
+    {
+        if (currentAscendancy == null) return false;
+        
+        // Find the prerequisite passive in the ascendancy data
+        AscendancyPassive prereqPassive = currentAscendancy.FindPassiveByName(prereqName);
+        if (prereqPassive == null) return false;
+        
+        // Check if it's unlocked by default (start nodes)
+        bool isUnlocked = prereqPassive.unlockedByDefault;
+        
+        // Check progression
+        if (!isUnlocked && progression != null)
+        {
+            isUnlocked = progression.IsPassiveUnlocked(prereqName);
+        }
+        
+        // If prerequisite is a choice node, it must have a selected subnode to be considered "complete"
+        if (isUnlocked && prereqPassive.isChoiceNode && progression != null)
+        {
+            int selectedIndex = progression.GetSelectedSubNodeIndex(prereqName);
+            if (selectedIndex < 0) // No subnode selected yet
+            {
+                if (showDebugLogs)
+                    Debug.Log($"[AscendancyTreeDisplay] Prerequisite choice node '{prereqName}' is unlocked but has no subnode selected - prerequisite not met");
+                return false; // Choice node is unlocked but no subnode selected - prerequisite not met
+            }
+            else
+            {
+                if (showDebugLogs)
+                    Debug.Log($"[AscendancyTreeDisplay] Prerequisite choice node '{prereqName}' is unlocked and has subnode {selectedIndex} selected - prerequisite met");
+            }
+        }
+        
+        return isUnlocked;
+    }
+    
+    /// <summary>
     /// Check if a passive can be unlocked
     /// </summary>
     bool CanUnlockPassive(AscendancyPassive passive)
     {
         if (progression == null) return false;
         if (progression.IsPassiveUnlocked(passive.name)) return false;
+        
+        // Check if already unlocked by default
+        if (passive.unlockedByDefault) return false;
+        
         if (progression.availableAscendancyPoints < passive.pointCost) return false;
         
-        // Check prerequisites
+        // Check prerequisites (accounting for unlockedByDefault)
         if (passive.prerequisitePassives != null && passive.prerequisitePassives.Count > 0)
         {
             if (passive.requireAllPrerequisites)
             {
                 foreach (string prereq in passive.prerequisitePassives)
                 {
-                    if (!progression.IsPassiveUnlocked(prereq))
+                    if (!IsPrerequisiteUnlocked(prereq))
+                    {
+                        if (showDebugLogs)
+                            Debug.Log($"[AscendancyTreeDisplay] Prerequisite '{prereq}' not unlocked for '{passive.name}'");
                         return false;
+                    }
                 }
             }
             else
@@ -602,7 +773,7 @@ public class AscendancyTreeDisplay : MonoBehaviour
                 bool anyUnlocked = false;
                 foreach (string prereq in passive.prerequisitePassives)
                 {
-                    if (progression.IsPassiveUnlocked(prereq))
+                    if (IsPrerequisiteUnlocked(prereq))
                     {
                         anyUnlocked = true;
                         break;
@@ -610,19 +781,16 @@ public class AscendancyTreeDisplay : MonoBehaviour
                 }
 
                 if (!anyUnlocked)
+                {
+                    if (showDebugLogs)
+                        Debug.Log($"[AscendancyTreeDisplay] No prerequisites unlocked for '{passive.name}'");
                     return false;
+                }
             }
         }
         
-        // Check node group (mutually exclusive nodes)
-        if (currentAscendancy != null && !string.IsNullOrEmpty(passive.nodeGroup))
-        {
-            if (currentAscendancy.IsAnyNodeInGroupUnlocked(passive.nodeGroup, progression))
-            {
-                return false; // Another node in this group is already unlocked
-            }
-        }
-        
+        if (showDebugLogs)
+            Debug.Log($"[AscendancyTreeDisplay] '{passive.name}' can be unlocked");
         return true;
     }
     
@@ -631,30 +799,71 @@ public class AscendancyTreeDisplay : MonoBehaviour
     /// </summary>
     void OnNodeClicked(AscendancyPassiveNode node)
     {
-        selectedNode = node;
+        if (node == null) return;
         
+        selectedNode = node;
         AscendancyPassive passive = node.GetPassiveData();
         
-        // Check if this is a choice node that needs sub-node selection
-        if (passive != null && passive.isChoiceNode && progression != null)
+        if (showDebugLogs)
+            Debug.Log($"[AscendancyTreeDisplay] Node clicked: {passive?.name ?? "NULL"} (Unlocked: {node.IsUnlocked()}, Available: {node.IsAvailable()}, AllowAllocation: {allowPointAllocation})");
+        
+        // If node is available and allocation is allowed, unlock it directly
+        if (allowPointAllocation && !node.IsUnlocked() && node.IsAvailable())
         {
-            // If choice node is unlocked but no sub-node selected, show sub-nodes
-            if (progression.IsPassiveUnlocked(passive.name))
+            // Attempt to unlock directly
+            if (progression != null && passive != null)
             {
-                int selectedIndex = progression.GetSelectedSubNodeIndex(passive.name);
-                if (selectedIndex < 0) // No selection yet
+                bool unlocked = progression.UnlockPassive(passive, currentAscendancy);
+                
+                if (unlocked)
                 {
-                    // Sub-nodes should already be visible, just show info
+                    // Update node visual
+                    node.SetUnlocked(true);
+                    node.SetAvailable(false);
+                    
+                    // If this is a choice node, spawn subnodes if not already selected
+                    if (passive.isChoiceNode)
+                    {
+                        int selectedIndex = progression.GetSelectedSubNodeIndex(passive.name);
+                        if (selectedIndex < 0) // No selection yet, spawn subnodes
+                        {
+                            SpawnSubNodesForChoiceNode(node, passive);
+                        }
+                    }
+                    
+                    // Update all other nodes' availability
+                    UpdateNodesAvailability();
+                    
+                    Debug.Log($"<color=green>[AscendancyTreeDisplay] ✓ Unlocked via click: {passive.name}</color>");
+                    
+                    // Still show info panel to confirm
                     ShowNodeInfo(node);
                     return;
+                }
+                else
+                {
+                    Debug.LogWarning($"[AscendancyTreeDisplay] Failed to unlock via click: {passive.name}");
                 }
             }
         }
         
-        ShowNodeInfo(node);
+        // If node is unlocked and is a choice node, check if subnodes need to be spawned
+        if (node.IsUnlocked() && passive != null && passive.isChoiceNode)
+        {
+            int selectedIndex = progression != null ? progression.GetSelectedSubNodeIndex(passive.name) : -1;
+            if (selectedIndex < 0) // No selection yet, spawn subnodes
+            {
+                // Check if subnodes already exist
+                SubNodeHoverHandler[] existingSubNodes = node.GetComponentsInChildren<SubNodeHoverHandler>(true);
+                if (existingSubNodes == null || existingSubNodes.Length == 0)
+                {
+                    SpawnSubNodesForChoiceNode(node, passive);
+                }
+            }
+        }
         
-        if (showDebugLogs)
-            Debug.Log($"[AscendancyTreeDisplay] Node clicked: {passive.name}");
+        // Default: Show node info
+        ShowNodeInfo(node);
     }
     
     /// <summary>
@@ -664,6 +873,15 @@ public class AscendancyTreeDisplay : MonoBehaviour
     {
         if (node == null) return;
         
+        // Check if we're hovering over a subnode - if so, don't show parent tooltip
+        // Subnodes will show their own tooltips via SubNodeHoverHandler
+        if (IsHoveringOverSubNode(node))
+        {
+            if (showDebugLogs)
+                Debug.Log("[AscendancyTreeDisplay] Hovering over subnode - skipping parent tooltip");
+            return;
+        }
+        
         AscendancyPassive passive = node.GetPassiveData();
         if (passive == null) return;
         
@@ -671,11 +889,65 @@ public class AscendancyTreeDisplay : MonoBehaviour
         if (enableTooltips && tooltipController != null)
         {
             Vector2 nodePosition = node.GetComponent<RectTransform>().anchoredPosition;
-            tooltipController.ShowTooltip(passive, nodePosition);
+            // Use effective description for tooltip
+            string effectiveDescription = node.GetEffectiveDescription();
+            if (!string.IsNullOrEmpty(effectiveDescription))
+            {
+                // Temporarily override description for tooltip
+                string originalDesc = passive.description;
+                passive.description = effectiveDescription;
+                tooltipController.ShowTooltip(passive, nodePosition);
+                passive.description = originalDesc; // Restore
+            }
+            else
+            {
+                tooltipController.ShowTooltip(passive, nodePosition);
+            }
         }
         
         if (showDebugLogs)
             Debug.Log($"[AscendancyTreeDisplay] Hovering: {passive.name}");
+    }
+    
+    /// <summary>
+    /// Check if the mouse is currently hovering over a subnode (prevents parent tooltip from showing)
+    /// </summary>
+    bool IsHoveringOverSubNode(AscendancyPassiveNode parentNode)
+    {
+        if (parentNode == null) return false;
+        
+        // Check if there are any active subnodes under this node
+        SubNodeHoverHandler[] subNodeHandlers = parentNode.GetComponentsInChildren<SubNodeHoverHandler>(false); // Only active ones
+        if (subNodeHandlers == null || subNodeHandlers.Length == 0) return false;
+        
+        // Check if mouse is over any subnode using EventSystem
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        {
+            PointerEventData pointerData = new PointerEventData(EventSystem.current);
+            pointerData.position = Input.mousePosition;
+            
+            var results = new System.Collections.Generic.List<RaycastResult>();
+            EventSystem.current.RaycastAll(pointerData, results);
+            
+            foreach (var result in results)
+            {
+                // Check if the hit object is a subnode
+                SubNodeHoverHandler hitSubNode = result.gameObject.GetComponent<SubNodeHoverHandler>();
+                if (hitSubNode != null)
+                {
+                    // Check if this subnode belongs to the parent node
+                    foreach (var handler in subNodeHandlers)
+                    {
+                        if (handler == hitSubNode)
+                        {
+                            return true; // Mouse is over a subnode
+                        }
+                    }
+                }
+            }
+        }
+        
+        return false;
     }
     
     /// <summary>
@@ -695,15 +967,43 @@ public class AscendancyTreeDisplay : MonoBehaviour
     /// </summary>
     void ShowNodeInfo(AscendancyPassiveNode node)
     {
-        if (infoPanel == null) return;
+        if (node == null)
+        {
+            Debug.LogWarning("[AscendancyTreeDisplay] Cannot show info for null node");
+            return;
+        }
+        
+        // Try to auto-find references if panel is null
+        if (infoPanel == null)
+        {
+            AutoFindReferences();
+        }
+        
+        if (infoPanel == null)
+        {
+            if (showDebugLogs)
+                Debug.LogWarning("[AscendancyTreeDisplay] InfoPanel is null - cannot show node info");
+            return;
+        }
         
         AscendancyPassive passive = node.GetPassiveData();
+        if (passive == null)
+        {
+            Debug.LogWarning("[AscendancyTreeDisplay] Node has no passive data");
+            return;
+        }
         
         if (passiveNameText != null)
             passiveNameText.text = passive.name;
         
         if (passiveDescriptionText != null)
-            passiveDescriptionText.text = passive.description;
+        {
+            // Use effective description (includes subnode override if selected)
+            string description = node.GetEffectiveDescription();
+            if (string.IsNullOrEmpty(description))
+                description = passive.description;
+            passiveDescriptionText.text = description;
+        }
         
         if (passiveCostText != null)
         {
@@ -722,10 +1022,15 @@ public class AscendancyTreeDisplay : MonoBehaviour
         // Update unlock button
         if (unlockButton != null)
         {
-            unlockButton.gameObject.SetActive(!node.IsUnlocked() && node.IsAvailable());
+            bool canUnlock = !node.IsUnlocked() && node.IsAvailable() && allowPointAllocation;
+            unlockButton.gameObject.SetActive(canUnlock);
+            unlockButton.interactable = canUnlock;
         }
         
         infoPanel.SetActive(true);
+        
+        if (showDebugLogs)
+            Debug.Log($"[AscendancyTreeDisplay] Showing info for: {passive.name}");
     }
     
     /// <summary>
@@ -746,6 +1051,16 @@ public class AscendancyTreeDisplay : MonoBehaviour
             selectedNode.SetUnlocked(true);
             selectedNode.SetAvailable(false);
             
+            // If this is a choice node, spawn subnodes if not already selected
+            if (passive.isChoiceNode)
+            {
+                int selectedIndex = progression.GetSelectedSubNodeIndex(passive.name);
+                if (selectedIndex < 0) // No selection yet, spawn subnodes
+                {
+                    SpawnSubNodesForChoiceNode(selectedNode, passive);
+                }
+            }
+            
             // Update all other nodes' availability
             UpdateNodesAvailability();
             
@@ -757,6 +1072,57 @@ public class AscendancyTreeDisplay : MonoBehaviour
         else
         {
             Debug.LogWarning($"[AscendancyTreeDisplay] Failed to unlock: {passive.name}");
+        }
+    }
+    
+    /// <summary>
+    /// Spawn subnodes around a choice node
+    /// </summary>
+    void SpawnSubNodesForChoiceNode(AscendancyPassiveNode choiceNode, AscendancyPassive choicePassive)
+    {
+        if (choiceNode == null || choicePassive == null || !choicePassive.isChoiceNode) return;
+        if (choicePassive.subNodes == null || choicePassive.subNodes.Count == 0) return;
+        
+        Transform parent = choiceNode.transform;
+        RectTransform choiceRect = choiceNode.GetComponent<RectTransform>();
+        if (choiceRect == null) return;
+        
+        float radius = choicePassive.subNodeRadius > 0 ? choicePassive.subNodeRadius : 100f;
+        int subNodeCount = choicePassive.subNodes.Count;
+        
+        for (int i = 0; i < subNodeCount; i++)
+        {
+            AscendancySubNode subNode = choicePassive.subNodes[i];
+            if (subNode == null) continue;
+            
+            // Calculate position around choice node
+            float angle = (360f / subNodeCount) * i + subNode.angleOffset;
+            float angleRad = angle * Mathf.Deg2Rad;
+            Vector2 offset = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad)) * radius;
+            
+            // Create subnode GameObject
+            GameObject subNodeObj = new GameObject($"SubNode_{subNode.name}");
+            subNodeObj.transform.SetParent(parent, false);
+            
+            RectTransform subRect = subNodeObj.AddComponent<RectTransform>();
+            subRect.anchoredPosition = offset;
+            subRect.sizeDelta = new Vector2(60, 60); // Smaller than main node
+            subRect.pivot = new Vector2(0.5f, 0.5f);
+            
+            // Add image for visual
+            Image subImage = subNodeObj.AddComponent<Image>();
+            if (subNode.icon != null)
+            {
+                subImage.sprite = subNode.icon;
+            }
+            subImage.raycastTarget = true;
+            
+            // Add SubNodeHoverHandler
+            SubNodeHoverHandler handler = subNodeObj.AddComponent<SubNodeHoverHandler>();
+            handler.Initialize(subNode, choicePassive.name, this, i);
+            
+            if (showDebugLogs)
+                Debug.Log($"[AscendancyTreeDisplay] Spawned subnode '{subNode.name}' at angle {angle}° for choice node '{choicePassive.name}'");
         }
     }
     
@@ -802,6 +1168,103 @@ public class AscendancyTreeDisplay : MonoBehaviour
         }
         
         selectedNode = null;
+    }
+    
+    /// <summary>
+    /// Show tooltip for a sub-node (used by SubNodeHoverHandler)
+    /// </summary>
+    public void ShowSubNodeTooltip(AscendancySubNode subNode, string choiceNodeName, Vector2 nodePosition)
+    {
+        if (tooltipController != null && enableTooltips)
+        {
+            tooltipController.ShowSubNodeTooltip(subNode, choiceNodeName, nodePosition);
+        }
+    }
+    
+    /// <summary>
+    /// Get progression (for SubNodeHoverHandler)
+    /// </summary>
+    public CharacterAscendancyProgress GetProgression()
+    {
+        return progression;
+    }
+    
+    /// <summary>
+    /// Get current ascendancy (for SubNodeHoverHandler)
+    /// </summary>
+    public AscendancyData GetCurrentAscendancy()
+    {
+        return currentAscendancy;
+    }
+    
+    /// <summary>
+    /// Update choice node visual to show selected subnode's icon and description
+    /// </summary>
+    void UpdateChoiceNodeVisual(AscendancyPassiveNode choiceNode, AscendancyPassive choicePassive, int selectedIndex)
+    {
+        if (choiceNode == null || choicePassive == null || !choicePassive.isChoiceNode) return;
+        if (choicePassive.subNodes == null || selectedIndex < 0 || selectedIndex >= choicePassive.subNodes.Count) return;
+        
+        AscendancySubNode selectedSubNode = choicePassive.subNodes[selectedIndex];
+        if (selectedSubNode == null) return;
+        
+        // Update icon
+        if (selectedSubNode.icon != null)
+        {
+            choiceNode.UpdateIcon(selectedSubNode.icon);
+        }
+        
+        // Update description override
+        if (!string.IsNullOrEmpty(selectedSubNode.description))
+        {
+            choiceNode.UpdateDescription(selectedSubNode.description);
+        }
+        
+        if (showDebugLogs)
+            Debug.Log($"[AscendancyTreeDisplay] Updated choice node '{choicePassive.name}' visual: icon={selectedSubNode.icon != null}, description={selectedSubNode.description}");
+    }
+    
+    /// <summary>
+    /// Refresh choice node display after subnode selection (hide subnodes, show selected)
+    /// </summary>
+    public void RefreshChoiceNodeDisplay(string choiceNodeName)
+    {
+        if (progression == null || currentAscendancy == null) return;
+        
+        // Find the choice node
+        var choiceNode = spawnedNodes.Find(n => n.GetPassiveData() != null && n.GetPassiveData().name == choiceNodeName);
+        if (choiceNode == null) return;
+        
+        AscendancyPassive passive = choiceNode.GetPassiveData();
+        if (passive == null || !passive.isChoiceNode) return;
+        
+        // Get selected subnode index
+        int selectedIndex = progression.GetSelectedSubNodeIndex(choiceNodeName);
+        
+        if (showDebugLogs)
+            Debug.Log($"[AscendancyTreeDisplay] Refreshing choice node '{choiceNodeName}' - selected index: {selectedIndex}");
+        
+        // Hide/show subnodes based on selection
+        Transform choiceNodeTransform = choiceNode.transform;
+        SubNodeHoverHandler[] subNodeHandlers = choiceNodeTransform.GetComponentsInChildren<SubNodeHoverHandler>(true);
+        
+        foreach (var handler in subNodeHandlers)
+        {
+            if (handler != null)
+            {
+                // Hide all subnodes if one is selected, or show all if none selected
+                handler.gameObject.SetActive(selectedIndex < 0); // Show if no selection, hide if selected
+            }
+        }
+        
+        // Update choice node visual to show selected subnode
+        if (selectedIndex >= 0)
+        {
+            UpdateChoiceNodeVisual(choiceNode, passive, selectedIndex);
+        }
+        
+        // Update availability of all nodes (since a prerequisite choice node now has a selected subnode)
+        UpdateNodesAvailability();
     }
     
     void OnDestroy()

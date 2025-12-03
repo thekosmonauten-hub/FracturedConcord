@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: BOSS_BridgeWardenRemnant
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: Bridge Warden Remnant
+  description: A spectral guardian bound to the splintered bridge, enforcing ancient
+    laws upon those who cross.
+  enemySprite: {fileID: 0}
+  tier: 2
+  rarity: 2
+  category: 3
+  minHealth: 275
+  maxHealth: 315
+  baseDamage: 17
+  baseArmor: 0
+  criticalChance: 0.07
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 104
+  evasionRating: 10
+  physicalResistance: 20
+  fireResistance: 10
+  coldResistance: 15
+  lightningResistance: 10
+  chaosResistance: 25
+  displayScale: 1.3
+  basePanelHeight: 345
+  enableEnergy: 1
+  baseMaxEnergy: 132
+  energyRegenPerTurn: 13
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  staggerThreshold: 138
+  staggerDecayPerTurn: 8
+  defendGuardPercent: 0.12
+  aiPattern: 3
+  attackPreference: 0.75
+  specialAbilities:
+  - Judgment Loop
+  - Crossing Denied
+  abilities: []
+  bossAbilities:
+  - 1
+  - 12
+  summonPool: []
+  spiritTags: []
+  guaranteedSpiritDrop: 0
+  minGoldDrop: 54
+  maxGoldDrop: 107
+  experienceReward: 132
+  cardDropChance: 0.31
+  initialAgitateStacks: 0
+  initialToleranceStacks: 0
+  initialPotentialStacks: 0
+  excludeFromRandom: 1
+  healthBarColor: {r: 0.5, g: 0.6, b: 0.7, a: 1}
+  animatorController: {fileID: 0}
+

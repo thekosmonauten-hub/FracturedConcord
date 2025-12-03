@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EncounterDataAsset
   encounterID: 2
   encounterName: Camp Concordia
-  sceneName: CombatScene
+  sceneName: TownScene
   actNumber: 1
   encounterSprite: {fileID: 6937817954938267909, guid: 203c0d8fca766de43aaf1a34938d4602, type: 3}
   prerequisiteEncounters:

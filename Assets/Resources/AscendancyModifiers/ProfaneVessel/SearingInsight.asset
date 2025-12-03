@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3c5e22f99b96e4abdd2010d5e84bb9, type: 3}
+  m_Name: SearingInsight
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyModifierDefinition
+  modifierId: SearingInsight
+  linkedPassiveName: Searing Insight
+  description: Whenever you play a Fire or Chaos card: Lose 2% of Max HP to gain +8% More Damage for 1 turn (stacks to 5).
+  effects:
+  - eventType: 3
+    conditions:
+    - conditionType: 6
+      parameterDict:
+        entries:
+        - key: cardType
+          value:
+            type: 0
+            stringValue: Spell
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+      invert: 0
+    - conditionType: 7
+      parameterDict:
+        entries:
+        - key: damageType
+          value:
+            type: 0
+            stringValue: Fire,Chaos
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+      invert: 0
+    actions:
+    - actionType: 21
+      parameterDict:
+        entries:
+        - key: percent
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: -0.02
+            boolValue: 0
+        - key: useMaxHP
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+      executionOrder: 0
+    - actionType: 0
+      parameterDict:
+        entries:
+        - key: stackType
+          value:
+            type: 0
+            stringValue: SearingInsightStacks
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: amount
+          value:
+            type: 1
+            stringValue: 
+            intValue: 1
+            floatValue: 0
+            boolValue: 0
+        - key: maxStacks
+          value:
+            type: 1
+            stringValue: 
+            intValue: 5
+            floatValue: 0
+            boolValue: 0
+      executionOrder: 1
+    priority: 0
+  variableKeys: []
+  variableValues: []
+  tags:
+  - offensive
+  - fire
+  - chaos
+  - selfDamage
+
+
+
+

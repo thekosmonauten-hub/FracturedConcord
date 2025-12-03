@@ -48,8 +48,9 @@ public class CharacterAscendancyProgress
     
     /// <summary>
     /// Choose an Ascendancy (can only be done once)
+    /// Automatically allocates the starter node if it has unlockedByDefault
     /// </summary>
-    public bool ChooseAscendancy(string ascendancyName)
+    public bool ChooseAscendancy(string ascendancyName, AscendancyData ascendancyData = null)
     {
         if (!string.IsNullOrEmpty(selectedAscendancy))
         {
@@ -62,6 +63,22 @@ public class CharacterAscendancyProgress
         signatureCardUnlocked = true; // Signature card unlocks immediately
         
         Debug.Log($"[AscendancyProgress] Chose Ascendancy: {ascendancyName}");
+        
+        // Auto-allocate starter node if it exists and has unlockedByDefault
+        if (ascendancyData != null)
+        {
+            AscendancyPassive startNode = ascendancyData.GetStartNode();
+            if (startNode != null && startNode.unlockedByDefault)
+            {
+                // Add starter node to unlocked passives (it's free, no point cost)
+                if (!unlockedPassives.Contains(startNode.name))
+                {
+                    unlockedPassives.Add(startNode.name);
+                    Debug.Log($"[AscendancyProgress] Auto-allocated starter node: {startNode.name}");
+                }
+            }
+        }
+        
         return true;
     }
     
@@ -100,14 +117,42 @@ public class CharacterAscendancyProgress
             return false;
         }
         
-        // Check prerequisites
+        // Check prerequisites (accounting for unlockedByDefault nodes and choice node subnode selection)
         if (passive.prerequisitePassives != null && passive.prerequisitePassives.Count > 0)
         {
             if (passive.requireAllPrerequisites)
             {
                 foreach (string prereq in passive.prerequisitePassives)
                 {
-                    if (!unlockedPassives.Contains(prereq))
+                    // Check if prerequisite is unlocked in progression OR is unlockedByDefault
+                    bool prereqUnlocked = unlockedPassives.Contains(prereq);
+                    
+                    // If not in progression, check if it's a start node with unlockedByDefault
+                    if (!prereqUnlocked && ascendancy != null)
+                    {
+                        AscendancyPassive prereqPassive = ascendancy.FindPassiveByName(prereq);
+                        if (prereqPassive != null && prereqPassive.unlockedByDefault)
+                        {
+                            prereqUnlocked = true;
+                        }
+                    }
+                    
+                    // If prerequisite is a choice node, it must have a selected subnode
+                    if (prereqUnlocked && ascendancy != null)
+                    {
+                        AscendancyPassive prereqPassive = ascendancy.FindPassiveByName(prereq);
+                        if (prereqPassive != null && prereqPassive.isChoiceNode)
+                        {
+                            int selectedIndex = GetSelectedSubNodeIndex(prereq);
+                            if (selectedIndex < 0) // No subnode selected
+                            {
+                                Debug.LogWarning($"[AscendancyProgress] Prerequisite choice node '{prereq}' is unlocked but has no subnode selected. Cannot unlock '{passive.name}' until a subnode is selected.");
+                                return false;
+                            }
+                        }
+                    }
+                    
+                    if (!prereqUnlocked)
                     {
                         Debug.LogWarning($"[AscendancyProgress] Missing prerequisite: {prereq}");
                         return false;
@@ -119,7 +164,35 @@ public class CharacterAscendancyProgress
                 bool anyUnlocked = false;
                 foreach (string prereq in passive.prerequisitePassives)
                 {
-                    if (unlockedPassives.Contains(prereq))
+                    // Check if prerequisite is unlocked in progression OR is unlockedByDefault
+                    bool prereqUnlocked = unlockedPassives.Contains(prereq);
+                    
+                    // If not in progression, check if it's a start node with unlockedByDefault
+                    if (!prereqUnlocked && ascendancy != null)
+                    {
+                        AscendancyPassive prereqPassive = ascendancy.FindPassiveByName(prereq);
+                        if (prereqPassive != null && prereqPassive.unlockedByDefault)
+                        {
+                            prereqUnlocked = true;
+                        }
+                    }
+                    
+                    // If prerequisite is a choice node, it must have a selected subnode
+                    if (prereqUnlocked && ascendancy != null)
+                    {
+                        AscendancyPassive prereqPassive = ascendancy.FindPassiveByName(prereq);
+                        if (prereqPassive != null && prereqPassive.isChoiceNode)
+                        {
+                            int selectedIndex = GetSelectedSubNodeIndex(prereq);
+                            if (selectedIndex < 0) // No subnode selected
+                            {
+                                // This prerequisite doesn't count as "unlocked" for choice nodes without selection
+                                prereqUnlocked = false;
+                            }
+                        }
+                    }
+                    
+                    if (prereqUnlocked)
                     {
                         anyUnlocked = true;
                         break;

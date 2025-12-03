@@ -14,7 +14,8 @@ public class AscendancyTooltipController : MonoBehaviour
     [SerializeField] private Transform tooltipContainer;
     
     [Header("Positioning")]
-    [SerializeField] private Vector2 tooltipOffset = new Vector2(100f, 0f); // Offset from node
+    [Tooltip("Offset from node position. X: right (positive) or left (negative), Y: up (positive) or down (negative)")]
+    [SerializeField] private Vector2 tooltipOffset = new Vector2(100f, 120f); // Offset from node (X: right, Y: up) - Increased Y to move tooltip higher
     [SerializeField] private bool followMouse = false;
     [SerializeField] private float followSpeed = 10f;
     

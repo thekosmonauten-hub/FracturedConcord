@@ -74,9 +74,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AscendancyTooltipController
   tooltipPrefab: {fileID: 7509454700641360998, guid: bf3e0274140464944836d95d14c45798, type: 3}
   tooltipContainer: {fileID: 369043581385087055}
-  tooltipOffset: {x: 0, y: 120}
+  tooltipOffset: {x: 0, y: 150}
   followMouse: 1
-  followSpeed: 10
+  followSpeed: 20
   cleanNodeNames: 1
   suffixPattern: _
   showDebugLogs: 0

@@ -77,6 +77,12 @@ public class CharacterStatsController : MonoBehaviour
     public TextMeshProUGUI DrawPerTurnText;
     public TextMeshProUGUI HandSizeText;
     
+    [Header("Ascendancy Button")]
+    [Tooltip("Button to open the Ascendancy panel")]
+    public Button openAscendancyButton;
+    [Tooltip("Reference to the AscendancyDisplayPanel (auto-found if not assigned)")]
+    public AscendancyDisplayPanel ascendancyDisplayPanel;
+    
     [Header("Colors")]
     public Color positiveStatColor = Color.green;
     public Color negativeStatColor = Color.red;
@@ -99,6 +105,12 @@ public class CharacterStatsController : MonoBehaviour
     private void OnDestroy()
     {
         UnsubscribeFromEvents();
+        
+        // Clean up button listener
+        if (openAscendancyButton != null)
+        {
+            openAscendancyButton.onClick.RemoveAllListeners();
+        }
     }
     
     private void InitializeUI()
@@ -108,6 +120,62 @@ public class CharacterStatsController : MonoBehaviour
         {
             experienceSlider.minValue = 0f;
             experienceSlider.maxValue = 1f;
+        }
+        
+        // Ensure this GameObject and its parents are enabled before searching for children
+        if (!gameObject.activeInHierarchy)
+        {
+            EnableGameObjectAndParents(gameObject);
+        }
+        
+        // Auto-find AscendancyDisplayPanel if not assigned
+        if (ascendancyDisplayPanel == null)
+        {
+            ascendancyDisplayPanel = FindFirstObjectByType<AscendancyDisplayPanel>();
+            if (ascendancyDisplayPanel == null)
+            {
+                Debug.LogWarning("[CharacterStatsController] AscendancyDisplayPanel not found. Ascendancy button will not work.");
+            }
+        }
+        
+        // Setup Ascendancy button
+        if (openAscendancyButton != null)
+        {
+            openAscendancyButton.onClick.RemoveAllListeners();
+            openAscendancyButton.onClick.AddListener(OnOpenAscendancyClicked);
+        }
+        else
+        {
+            // Try to auto-find the button (only works if panel is enabled)
+            if (gameObject.activeInHierarchy)
+            {
+                openAscendancyButton = GetComponentInChildren<Button>(true); // Include inactive children
+                if (openAscendancyButton != null && openAscendancyButton.gameObject.name.Contains("Ascendancy"))
+                {
+                    openAscendancyButton.onClick.RemoveAllListeners();
+                    openAscendancyButton.onClick.AddListener(OnOpenAscendancyClicked);
+                    Debug.Log("[CharacterStatsController] Auto-found Ascendancy button");
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Recursively enable a GameObject and all its parents
+    /// </summary>
+    private void EnableGameObjectAndParents(GameObject obj)
+    {
+        if (obj == null) return;
+        
+        // Enable this object
+        obj.SetActive(true);
+        
+        // Recursively enable parents
+        Transform parent = obj.transform.parent;
+        while (parent != null)
+        {
+            parent.gameObject.SetActive(true);
+            parent = parent.parent;
         }
     }
     
@@ -185,7 +253,49 @@ public class CharacterStatsController : MonoBehaviour
         currentStats = new CharacterStatsData(character);
         RefreshDisplay();
         
+        // Ensure button is set up now that panel is active
+        SetupAscendancyButton();
+        
         Debug.Log($"[CharacterStatsController] Updated stats for {character.characterName}");
+    }
+    
+    /// <summary>
+    /// Setup the Ascendancy button (called when panel becomes active)
+    /// </summary>
+    private void SetupAscendancyButton()
+    {
+        // Only setup if panel is now active and button wasn't found before
+        if (!gameObject.activeInHierarchy) return;
+        
+        // Auto-find AscendancyDisplayPanel if not assigned
+        if (ascendancyDisplayPanel == null)
+        {
+            ascendancyDisplayPanel = FindFirstObjectByType<AscendancyDisplayPanel>();
+        }
+        
+        // Setup Ascendancy button if not already set up
+        if (openAscendancyButton == null)
+        {
+            // Try to find the button now that panel is active
+            Button[] allButtons = GetComponentsInChildren<Button>(true);
+            foreach (Button btn in allButtons)
+            {
+                if (btn.gameObject.name.Contains("Ascendancy") || 
+                    btn.gameObject.name.Contains("ascendancy"))
+                {
+                    openAscendancyButton = btn;
+                    break;
+                }
+            }
+        }
+        
+        // Setup button listener if button was found
+        if (openAscendancyButton != null)
+        {
+            openAscendancyButton.onClick.RemoveAllListeners();
+            openAscendancyButton.onClick.AddListener(OnOpenAscendancyClicked);
+            Debug.Log("[CharacterStatsController] Ascendancy button set up");
+        }
     }
     
     public void RefreshDisplay()
@@ -394,6 +504,65 @@ public class CharacterStatsController : MonoBehaviour
         if (currentCharacter != null)
         {
             UpdateCharacterStats(currentCharacter);
+        }
+    }
+    
+    /// <summary>
+    /// Called when the Ascendancy button is clicked
+    /// </summary>
+    private void OnOpenAscendancyClicked()
+    {
+        if (currentCharacter == null)
+        {
+            currentCharacter = CharacterManager.Instance?.GetCurrentCharacter();
+            if (currentCharacter == null)
+            {
+                Debug.LogWarning("[CharacterStatsController] Cannot open Ascendancy panel - no character found");
+                return;
+            }
+        }
+        
+        // Ensure character has ascendancyProgress
+        if (currentCharacter.ascendancyProgress == null)
+        {
+            currentCharacter.ascendancyProgress = new CharacterAscendancyProgress();
+        }
+        
+        // Get AscendancyDatabase
+        var ascendancyDB = AscendancyDatabase.Instance;
+        if (ascendancyDB == null)
+        {
+            Debug.LogError("[CharacterStatsController] AscendancyDatabase not found!");
+            return;
+        }
+        
+        // Get the character's selected Ascendancy
+        string ascendancyName = currentCharacter.ascendancyProgress.selectedAscendancy;
+        if (string.IsNullOrEmpty(ascendancyName))
+        {
+            Debug.LogWarning("[CharacterStatsController] Character has no Ascendancy selected. Cannot open panel.");
+            return;
+        }
+        
+        // Get Ascendancy data
+        var ascendancy = ascendancyDB.GetAscendancy(ascendancyName);
+        if (ascendancy == null)
+        {
+            Debug.LogError($"[CharacterStatsController] Ascendancy '{ascendancyName}' not found in database!");
+            return;
+        }
+        
+        // Show the Ascendancy panel with point allocation enabled
+        if (ascendancyDisplayPanel != null)
+        {
+            // Show the panel with point allocation enabled (from stats panel, user can allocate points)
+            ascendancyDisplayPanel.ShowAscendancy(ascendancy, currentCharacter.ascendancyProgress, allowAllocation: true);
+            
+            Debug.Log($"[CharacterStatsController] Opened Ascendancy panel for {ascendancyName} with point allocation enabled");
+        }
+        else
+        {
+            Debug.LogError("[CharacterStatsController] AscendancyDisplayPanel not found! Cannot open Ascendancy panel.");
         }
     }
 }

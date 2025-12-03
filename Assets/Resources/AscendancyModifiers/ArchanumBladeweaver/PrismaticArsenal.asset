@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3c5e22f99b96e4abdd2010d5e84bb9, type: 3}
+  m_Name: PrismaticArsenal
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyModifierDefinition
+  modifierId: PrismaticArsenal
+  linkedPassiveName: Prismatic Arsenal
+  description: When you Attack after casting a Spell, convert 50% of your weapon damage to that spell's element.
+  effects:
+  - eventType: 4
+    conditions:
+    - conditionType: 6
+      parameterDict:
+        entries:
+        - key: cardType
+          value:
+            type: 0
+            stringValue: Attack
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+      invert: 0
+    - conditionType: 8
+      parameterDict:
+        entries:
+        - key: lastActionWasSpell
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+      invert: 0
+    actions:
+    - actionType: 10
+      parameterDict:
+        entries:
+        - key: convertPercent
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 50
+            boolValue: 0
+        - key: toLastSpellElement
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+      executionOrder: 0
+    priority: 0
+  variableKeys: []
+  variableValues: []
+  tags:
+  - offensive
+  - elemental
+  - conversion
+
+
+
+

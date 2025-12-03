@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3c5e22f99b96e4abdd2010d5e84bb9, type: 3}
+  m_Name: MartialRefrain
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyModifierDefinition
+  modifierId: MartialRefrain
+  linkedPassiveName: Martial Refrain
+  description: When Battle Rhythm resets, your first card next turn is duplicated at 50% effectiveness. If this card is an Attack, it gains +30% critical strike chance.
+  effects:
+  - eventType: 1
+    conditions:
+    - conditionType: 0
+      parameterDict:
+        entries:
+        - key: stackType
+          value:
+            type: 0
+            stringValue: BattleRhythmResetLastTurn
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+      invert: 0
+    actions:
+    - actionType: 18
+      parameterDict:
+        entries:
+        - key: duplicateFirstCard
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+        - key: effectivenessPercent
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 0.5
+            boolValue: 0
+        - key: attackCritBonus
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 30
+            boolValue: 0
+      executionOrder: 0
+    priority: 0
+  variableKeys: []
+  variableValues: []
+  tags:
+  - offensive
+  - cardDuplication
+  - battleRhythm
+
+
+
+

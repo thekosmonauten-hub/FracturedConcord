@@ -68,8 +68,25 @@ public static class EncounterDataLoader
             actNumber = asset.actNumber,
             encounterSprite = asset.encounterSprite,
             // Encounter 1 is always unlocked, regardless of prerequisites
-            isUnlocked = (asset.encounterID == 1) || !hasPrereqs
+            isUnlocked = (asset.encounterID == 1) || !hasPrereqs,
+            // Copy encounter-specific enemy pool
+            encounterEnemyPool = asset.encounterEnemyPool != null ? new List<EnemyData>(asset.encounterEnemyPool) : new List<EnemyData>(),
+            useExclusiveEnemyPool = asset.useExclusiveEnemyPool
         };
+        
+        // Debug logging for enemy pool
+        if (data.encounterEnemyPool != null && data.encounterEnemyPool.Count > 0)
+        {
+            Debug.Log($"[EncounterDataLoader] Encounter {data.encounterID} ({data.encounterName}) loaded with {data.encounterEnemyPool.Count} enemies in pool (Exclusive: {data.useExclusiveEnemyPool})");
+            foreach (var enemy in data.encounterEnemyPool)
+            {
+                Debug.Log($"  - {enemy.enemyName}");
+            }
+        }
+        else
+        {
+            Debug.Log($"[EncounterDataLoader] Encounter {data.encounterID} ({data.encounterName}) has NO enemy pool - will use EnemyDatabase");
+        }
         
         // Add prerequisites
         if (asset.prerequisiteEncounters != null)

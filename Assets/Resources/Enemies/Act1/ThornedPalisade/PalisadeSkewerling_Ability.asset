@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20b7052e25649f34abb17565072ac40b, type: 3}
+  m_Name: PalisadeSkewerling_Ability
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAbility
+  id: PalisadeSkewerling_Ability
+  displayName: Quick Stab
+  trigger: 1
+  cooldownTurns: 2
+  initialCooldown: 1
+  phaseThreshold: 0
+  consumesTurn: 0
+  target: 1
+  energyCost: 0
+  effects:
+  - {fileID: 6532744906034431107}
+--- !u!114 &6532744906034431107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0cad68394b043c48932ab93d06dc5ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DamageEffect
+  damageType: 1
+  flatDamage: 7
+  percentOfMaxHp: 0
+  includeCasterWhenTargetingAllies: 0

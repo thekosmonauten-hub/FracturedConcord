@@ -46,6 +46,9 @@ public class CardVisualizer : MonoBehaviour
     {
         if (currentCard == null) return;
         
+        // Check for Temporal tag and update background
+        UpdateTemporalCardVisual();
+        
         // Update texts
         if (cardNameText != null)
             cardNameText.text = currentCard.cardName;
@@ -126,6 +129,9 @@ public class CardVisualizer : MonoBehaviour
         
         // Update colors based on card type
         UpdateColors();
+        
+        // Check for Temporal tag and update background
+        UpdateTemporalCardVisual();
     }
     
     /// <summary>
@@ -136,7 +142,9 @@ public class CardVisualizer : MonoBehaviour
         Color backgroundColor = GetCardTypeColor(currentCard.cardType);
         Color borderColor = GetDamageTypeColor(currentCard.primaryDamageType);
         
-        if (cardBackground != null)
+        // Don't override background color if card is Temporal (will be set by UpdateTemporalCardVisual)
+        bool isTemporal = currentCard.tags != null && currentCard.tags.Contains("Temporal");
+        if (!isTemporal && cardBackground != null)
             cardBackground.color = backgroundColor;
         
         if (cardBorder != null)
@@ -184,6 +192,58 @@ public class CardVisualizer : MonoBehaviour
                 return new Color(0.8f, 0.2f, 0.8f, 1f); // Magenta
             default:
                 return Color.white;
+        }
+    }
+    
+    /// <summary>
+    /// Update visual for Temporal cards (Temporal Savant ascendancy).
+    /// Applies special background to cards marked with "Temporal" tag.
+    /// Uses the CardBackground GameObject to display the TemporalCard.png sprite.
+    /// </summary>
+    private void UpdateTemporalCardVisual()
+    {
+        if (currentCard == null || cardBackground == null) return;
+        
+        // Check if card has Temporal tag
+        bool isTemporal = currentCard.tags != null && currentCard.tags.Contains("Temporal");
+        
+        if (!isTemporal) return;
+        
+        // Try to load the Temporal card sprite
+        // Check Resources/CardArt/TemporalCard first (current location)
+        Sprite temporalSprite = Resources.Load<Sprite>("CardArt/TemporalCard");
+        if (temporalSprite == null)
+        {
+            // Try alternative paths
+            temporalSprite = Resources.Load<Sprite>("CardParts/TemporalCard");
+        }
+        if (temporalSprite == null)
+        {
+            temporalSprite = Resources.Load<Sprite>("Art/CardArt/CardParts/TemporalCard");
+        }
+        
+        // Also check CardVisualAssets if available
+        if (temporalSprite == null)
+        {
+            var visualAssets = Resources.Load<CardVisualAssets>("CardVisualAssets");
+            if (visualAssets != null && visualAssets.temporalCard != null)
+            {
+                temporalSprite = visualAssets.temporalCard;
+            }
+        }
+        
+        if (temporalSprite != null)
+        {
+            // Apply temporal background to CardBackground
+            cardBackground.sprite = temporalSprite;
+            cardBackground.color = Color.white; // Use full color, no tint needed
+            Debug.Log($"[CardVisualizer] Applied Temporal card background to '{currentCard.cardName}'");
+        }
+        else
+        {
+            // Fallback: Apply a color tint to indicate Temporal status
+            cardBackground.color = new Color(0.7f, 0.8f, 1f, 0.5f); // Cyan/blue tint for Temporal
+            Debug.LogWarning($"[CardVisualizer] TemporalCard sprite not found - using color tint fallback for '{currentCard.cardName}'");
         }
     }
     

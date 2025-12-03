@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20b7052e25649f34abb17565072ac40b, type: 3}
+  m_Name: OrchardWidow_MemorySap
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAbility
+  id: widow_memory_sap
+  displayName: Memory Sap
+  trigger: 1
+  cooldownTurns: 4
+  initialCooldown: 2
+  phaseThreshold: 0
+  consumesTurn: 0
+  target: 1
+  energyCost: 60
+  effects:
+  - {fileID: 8523041445148225630}
+--- !u!114 &8523041445148225630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExhaustCardEffect
+  cardsToExhaust: 1
+  exhaustFromHand: 1
+

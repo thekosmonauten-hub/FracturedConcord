@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: BOSS_OrchardBoundWidow
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: Orchard-Bound Widow
+  description: A massive spider-like creature bound to the corrupted orchard, weaving
+    webs of forgotten memories.
+  enemySprite: {fileID: 0}
+  tier: 2
+  rarity: 2
+  category: 0
+  minHealth: 240
+  maxHealth: 280
+  baseDamage: 16
+  baseArmor: 0
+  criticalChance: 0.07
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 102
+  evasionRating: 18
+  physicalResistance: 0
+  fireResistance: -15
+  coldResistance: 5
+  lightningResistance: 10
+  chaosResistance: 25
+  displayScale: 1.35
+  basePanelHeight: 355
+  enableEnergy: 1
+  baseMaxEnergy: 125
+  energyRegenPerTurn: 12
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  staggerThreshold: 120
+  staggerDecayPerTurn: 10
+  defendGuardPercent: 0.08
+  aiPattern: 4
+  attackPreference: 0.7
+  specialAbilities:
+  - Root Lash
+  - Memory Sap
+  abilities: []
+  bossAbilities: []
+  summonPool: []
+  spiritTags: []
+  guaranteedSpiritDrop: 0
+  minGoldDrop: 48
+  maxGoldDrop: 95
+  experienceReward: 120
+  cardDropChance: 0.28
+  initialAgitateStacks: 0
+  initialToleranceStacks: 0
+  initialPotentialStacks: 0
+  excludeFromRandom: 1
+  healthBarColor: {r: 0.5, g: 0.3, b: 0.6, a: 1}
+  animatorController: {fileID: 0}
+

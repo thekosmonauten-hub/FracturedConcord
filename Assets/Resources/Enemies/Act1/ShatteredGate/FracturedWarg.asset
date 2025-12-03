@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: FracturedWarg
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: Fractured Warg
+  description: A wolf-like beast with jagged shard growths around the jaw and shoulders.
+  enemySprite: {fileID: 0}
+  tier: 0
+  rarity: 0
+  category: 0
+  minHealth: 40
+  maxHealth: 50
+  baseDamage: 6
+  baseArmor: 0
+  criticalChance: 0.05
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 100
+  evasionRating: 0
+  physicalResistance: 0
+  fireResistance: 0
+  coldResistance: 0
+  lightningResistance: 0
+  chaosResistance: 0
+  displayScale: 1
+  basePanelHeight: 280
+  enableEnergy: 1
+  baseMaxEnergy: 100
+  energyRegenPerTurn: 10
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  staggerThreshold: 100
+  staggerDecayPerTurn: 0
+  defendGuardPercent: 0.1
+  aiPattern: 0
+  attackPreference: 0.75
+  specialAbilities: []
+  abilities:
+  - {fileID: 11400000, guid: bddf0b7c8205e4a418fd8c2d4f40c020, type: 2}
+  summonPool: []
+  spiritTags: 
+  guaranteedSpiritDrop: 0
+  minGoldDrop: 5
+  maxGoldDrop: 15
+  experienceReward: 10
+  cardDropChance: 0.1
+  initialAgitateStacks: 0
+  initialToleranceStacks: 0
+  initialPotentialStacks: 0
+  excludeFromRandom: 0
+  healthBarColor: {r: 1, g: 0, b: 0, a: 1}
+  animatorController: {fileID: 0}

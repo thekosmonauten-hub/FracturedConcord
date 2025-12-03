@@ -126,6 +126,55 @@ public class CardEffect
     }
     
     /// <summary>
+    /// Check if an ailment should be applied based on player's ailment chances
+    /// </summary>
+    private bool ShouldApplyAilment(StatusEffectType ailmentType, Character caster)
+    {
+        if (caster == null) return false;
+        
+        // Build stats snapshot to get ailment chances
+        var statsData = new CharacterStatsData(caster);
+        float ailmentChance = 0f;
+        
+        // Get the appropriate ailment chance based on type
+        switch (ailmentType)
+        {
+            case StatusEffectType.Bleed:
+                ailmentChance = statsData.chanceToBleed;
+                break;
+            case StatusEffectType.Poison:
+                ailmentChance = statsData.chanceToPoison;
+                break;
+            case StatusEffectType.Burn: // Ignite in stats, Burn in enum
+                ailmentChance = statsData.chanceToIgnite;
+                break;
+            case StatusEffectType.Shocked: // Shock in stats, Shocked in enum
+                ailmentChance = statsData.chanceToShock;
+                break;
+            case StatusEffectType.Chill:
+                ailmentChance = statsData.chanceToChill;
+                break;
+            case StatusEffectType.Freeze:
+                ailmentChance = statsData.chanceToFreeze;
+                break;
+            default:
+                // Non-ailment status effects (buffs, debuffs) always apply
+                return true;
+        }
+        
+        // Apply ailment application chance increased modifier
+        ailmentChance += statsData.ailmentApplicationChanceIncreased;
+        
+        // Roll chance (0-100)
+        float roll = UnityEngine.Random.Range(0f, 100f);
+        bool success = roll < ailmentChance;
+        
+        Debug.Log($"[Ailment Check] {ailmentType}: Chance={ailmentChance:F1}%, Roll={roll:F1}%, Result={(success ? "SUCCESS" : "FAILED")}");
+        
+        return success;
+    }
+    
+    /// <summary>
     /// Apply a status effect to a target
     /// </summary>
     private void ApplyStatusEffect(Character caster, Character target)
@@ -136,6 +185,13 @@ public class CardEffect
         StatusEffectType statusType = GetStatusEffectType(effectName);
         if (statusType != StatusEffectType.Poison || effectName.ToLower() == "poison") // Check for poison specifically
         {
+            // IMPORTANT: Card effects are GUARANTEED (100% chance)
+            // The ailment chance system only applies to:
+            // - On-hit weapon/gear procs
+            // - Automatic ailment application
+            // Cards that explicitly say "Apply X Poison" always work
+            // So we DON'T check ShouldApplyAilment for card-based effects
+            
             StatusEffect statusEffect = new StatusEffect(statusType, effectName, value, duration);
             
             // Find the target's StatusEffectManager

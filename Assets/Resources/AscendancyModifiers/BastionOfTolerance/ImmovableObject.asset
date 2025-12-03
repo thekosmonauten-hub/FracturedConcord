@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3c5e22f99b96e4abdd2010d5e84bb9, type: 3}
+  m_Name: ImmovableObject
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyModifierDefinition
+  modifierId: ImmovableObject
+  linkedPassiveName: Immovable Object
+  description: Gain Guard equal to 5% of Attributes and Armour when an attack hits for more than 10% of your Max life.
+  effects:
+  - eventType: 7
+    conditions:
+    - conditionType: 3
+      parameterDict:
+        entries:
+        - key: threshold
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 0.1
+            boolValue: 0
+        - key: checkType
+          value:
+            type: 0
+            stringValue: damagePercentOfMaxHP
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+      invert: 0
+    actions:
+    - actionType: 16
+      parameterDict:
+        entries:
+        - key: amount
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 0.05
+            boolValue: 0
+        - key: calculateFromAttributes
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+        - key: calculateFromArmour
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+      executionOrder: 0
+    priority: 0
+  variableKeys: []
+  variableValues: []
+  tags:
+  - defensive
+  - guard
+  - reactive
+

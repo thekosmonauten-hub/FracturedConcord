@@ -76,6 +76,10 @@ public class CombatDeckManager : MonoBehaviour
     
     // Divine Favor state (next card applies discarded effect)
     private bool nextCardAppliesDiscardedEffect = false;
+    
+    // Boss Ability System - track cards played this turn
+    private int cardsPlayedThisTurn = 0;
+    
     public ChannelingTracker.ChannelingState CurrentChannelingState => lastChannelingState;
     public SpeedMeterState CurrentSpeedMeterState => new SpeedMeterState
     {
@@ -147,6 +151,13 @@ public class CombatDeckManager : MonoBehaviour
         
         if (characterManager == null)
             characterManager = CharacterManager.Instance;
+        
+        // Initialize Ascendancy Modifier Event Processor
+        var modifierProcessor = AscendancyModifierEventProcessor.Instance;
+        if (modifierProcessor != null)
+        {
+            Debug.Log("[CombatDeckManager] Ascendancy Modifier Event Processor initialized");
+        }
         
         if (animationManager == null)
             animationManager = CombatAnimationManager.Instance;
@@ -326,24 +337,6 @@ public class CombatDeckManager : MonoBehaviour
         else
         {
             Debug.LogError($"<color=red>✗ Failed to load deck for {characterClass}!</color>");
-        }
-    }
-    
-    /// <summary>
-    /// Add a card to the discard pile (used for unleashed prepared cards)
-    /// </summary>
-    public void AddCardToDiscardPile(CardDataExtended card)
-    {
-        if (card != null)
-        {
-            discardPile.Add(card);
-            Debug.Log($"<color=cyan>[CombatDeckManager] Added {card.cardName} to discard pile (Total: {discardPile.Count})</color>");
-            
-            // Update discard count display if available
-            if (discardCountText != null)
-            {
-                discardCountText.text = discardPile.Count.ToString();
-            }
         }
     }
     
@@ -632,10 +625,50 @@ public class CombatDeckManager : MonoBehaviour
     }
     
     /// <summary>
+    /// Reset turn-based counters (called at start of player turn)
+    /// </summary>
+    public void ResetTurnCounters()
+    {
+        cardsPlayedThisTurn = 0;
+        Debug.Log($"<color=cyan>[CombatDeckManager] Turn counters reset</color>");
+    }
+    
+    /// <summary>
+    /// Get number of cards played this turn (for boss abilities)
+    /// </summary>
+    public int GetCardsPlayedThisTurn()
+    {
+        return cardsPlayedThisTurn;
+    }
+    
+    /// <summary>
     /// Draw a specific number of cards
     /// </summary>
     public void DrawCards(int count)
     {
+        // Check for DrawReduction status effect
+        var playerDisplay = UnityEngine.Object.FindFirstObjectByType<PlayerCombatDisplay>();
+        if (playerDisplay != null)
+        {
+            var statusManager = playerDisplay.GetStatusEffectManager();
+            if (statusManager != null)
+            {
+                float drawReduction = statusManager.GetTotalMagnitude(StatusEffectType.DrawReduction);
+                if (drawReduction > 0)
+                {
+                    int reduction = Mathf.FloorToInt(drawReduction);
+                    count = Mathf.Max(0, count - reduction);
+                    Debug.Log($"<color=yellow>[DrawReduction] Card draw reduced by {reduction}! Drawing {count} cards instead.</color>");
+                    
+                    var combatUI = UnityEngine.Object.FindFirstObjectByType<AnimatedCombatUI>();
+                    if (combatUI != null)
+                    {
+                        combatUI.LogMessage($"<color=grey>Draw Reduction!</color> Drawing {count} card(s) instead.");
+                    }
+                }
+            }
+        }
+        
         Debug.Log($"<color=yellow>=== DrawCards called: Drawing {count} cards ===</color>");
         Debug.Log($"Current state - Draw pile: {drawPile.Count}, Hand: {hand.Count}, Discard: {discardPile.Count}");
         
@@ -791,15 +824,6 @@ public class CombatDeckManager : MonoBehaviour
         CardDataExtended card = hand[handIndex]; // NOW USING CardDataExtended!
         GameObject cardObj = handVisuals[handIndex];
         
-        // Check if it's player's turn
-        var combatManager = FindFirstObjectByType<CombatDisplayManager>();
-        if (combatManager != null && !combatManager.isPlayerTurn)
-        {
-            Debug.Log($"<color=red>Cannot play {card.cardName}: Not player's turn!</color>");
-            AnimateInsufficientManaCard(cardObj);
-            return;
-        }
-        
         // Check if player has enough mana to play this card
         Character player = CharacterManager.Instance?.GetCurrentCharacter();
         if (player == null)
@@ -821,6 +845,30 @@ public class CombatDeckManager : MonoBehaviour
             // Flash the End Turn button to indicate player can't afford cards
             FlashEndTurnButton();
             return;
+        }
+        
+        // Check for Bind status effect (prevents Guard cards)
+        var playerDisplayForBind = UnityEngine.Object.FindFirstObjectByType<PlayerCombatDisplay>();
+        if (playerDisplayForBind != null)
+        {
+            var statusManager = playerDisplayForBind.GetStatusEffectManager();
+            if (statusManager != null && statusManager.HasStatusEffect(StatusEffectType.Bind))
+            {
+                if (card.cardType == "Guard")
+                {
+                    Debug.Log($"<color=red>Cannot play {card.cardName}: You are Bound! Cannot play Guard cards.</color>");
+                    
+                    // Show feedback
+                    var combatUI = UnityEngine.Object.FindFirstObjectByType<AnimatedCombatUI>();
+                    if (combatUI != null)
+                    {
+                        combatUI.LogMessage($"<color=red>Bound!</color> Cannot play Guard cards.");
+                    }
+                    
+                    AnimateInsufficientManaCard(cardObj); // Reuse animation for feedback
+                    return;
+                }
+            }
         }
         
         // Check if card should be delayed (Temporal Savant, etc.)
@@ -1194,6 +1242,10 @@ public class CombatDeckManager : MonoBehaviour
                         Debug.Log($"<color=yellow>[ChargeModifier] HitsTwice: Applying card effect again!</color>");
                         cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, targetEnemy, playerCharacter, targetPosition);
                     }
+                    
+                    // Boss Ability Handler - card played
+                    cardsPlayedThisTurn++;
+                    BossAbilityHandler.OnPlayerCardPlayed(cardForProcessor, cardsPlayedThisTurn);
                 }
                 else
                 {
@@ -1204,7 +1256,6 @@ public class CombatDeckManager : MonoBehaviour
                 OnCardPlayed?.Invoke(card);
                 Debug.Log($"  → Card effect triggered: {card.cardName}");
                 
-                // Apply "hits twice" effect if Aggression charge is active
                 // Consume charge modifiers after card is played
                 ConsumeChargeModifiers();
                 
@@ -1843,58 +1894,35 @@ public class CombatDeckManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Calculate the modified card cost for display purposes (includes momentum-based cost reductions).
-    /// This is a read-only calculation that doesn't modify any state.
+    /// Get the display cost for a card (includes all modifiers)
     /// </summary>
-    public static int GetDisplayCost(CardDataExtended card, int baseManaCost, Character player = null)
+    public static int GetDisplayCost(CardDataExtended card, int baseManaCost, Character character)
     {
         if (card == null) return baseManaCost;
         
-        int modifiedCost = baseManaCost;
+        // Apply mana cost modifiers (Focus charge effects, etc.)
+        int displayCost = ApplyManaCostModifier(card, baseManaCost);
         
-        // Apply Focus charge modifiers (if applicable)
-        if (Instance != null && Instance.GetFocusChargeEffect() == FocusChargeEffect.HalfManaCost)
+        // Note: Character-specific modifiers could be added here if needed
+        // For now, just return the modified cost
+        
+        return displayCost;
+    }
+    
+    /// <summary>
+    /// Add a card directly to the discard pile (without animation)
+    /// </summary>
+    public void AddCardToDiscardPile(CardDataExtended card)
+    {
+        if (card == null)
         {
-            modifiedCost = Mathf.Max(0, Mathf.RoundToInt(modifiedCost * 0.5f));
+            Debug.LogWarning("[CombatDeckManager] Cannot add null card to discard pile");
+            return;
         }
         
-        // Apply momentum threshold cost reduction (e.g., "6+ Momentum: This card costs 1 less")
-        if (!string.IsNullOrEmpty(card.momentumEffectDescription))
-        {
-            if (player == null)
-            {
-                // Try to get player from CharacterManager
-                if (Instance != null && Instance.characterManager != null && Instance.characterManager.HasCharacter())
-                {
-                    player = Instance.characterManager.GetCurrentCharacter();
-                }
-            }
-            
-            if (player != null)
-            {
-                int currentMomentum = player.GetMomentum();
-                var thresholdEffects = MomentumThresholdEffectParser.ParseThresholdEffects(card.momentumEffectDescription);
-                
-                foreach (var effect in thresholdEffects)
-                {
-                    bool applies = effect.isExact ? (currentMomentum == effect.threshold) : (currentMomentum >= effect.threshold);
-                    if (applies)
-                    {
-                        var effectType = MomentumThresholdEffectParser.ParseEffectType(effect.effectText);
-                        if (effectType == MomentumEffectType.CostReduction)
-                        {
-                            int reduction = MomentumThresholdEffectParser.ParseNumericValue(effect.effectText);
-                            if (reduction > 0)
-                            {
-                                modifiedCost = Mathf.Max(0, modifiedCost - reduction);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        return modifiedCost;
+        discardPile.Add(card);
+        OnCardDiscarded?.Invoke(card);
+        Debug.Log($"[CombatDeckManager] Added {card.cardName} to discard pile (count: {discardPile.Count})");
     }
 
     public static float ApplyDamageModifier(float baseDamage)
@@ -2570,6 +2598,41 @@ public class CombatDeckManager : MonoBehaviour
     public List<CardDataExtended> GetDiscardPile()
     {
         return new List<CardDataExtended>(discardPile);
+    }
+    
+    /// <summary>
+    /// Exhaust a card from hand (permanently remove it from combat)
+    /// </summary>
+    public void ExhaustCardFromHand(int handIndex)
+    {
+        if (handIndex < 0 || handIndex >= hand.Count)
+        {
+            Debug.LogWarning($"[ExhaustCard] Invalid hand index: {handIndex}");
+            return;
+        }
+        
+        CardDataExtended exhaustedCard = hand[handIndex];
+        hand.RemoveAt(handIndex);
+        
+        // Remove visual
+        if (handIndex < handVisuals.Count)
+        {
+            GameObject cardObj = handVisuals[handIndex];
+            handVisuals.RemoveAt(handIndex);
+            
+            if (cardRuntimeManager != null && cardObj != null)
+            {
+                cardRuntimeManager.ReturnCardToPool(cardObj);
+            }
+            
+            // Reposition remaining cards
+            if (cardRuntimeManager != null)
+            {
+                cardRuntimeManager.RepositionCards(handVisuals, animated: true, duration: 0.3f);
+            }
+        }
+        
+        Debug.Log($"[ExhaustCard] Exhausted {exhaustedCard.cardName} from hand");
     }
     
     public int GetHandCount()

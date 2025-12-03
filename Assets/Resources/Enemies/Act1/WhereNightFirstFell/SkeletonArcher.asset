@@ -33,12 +33,15 @@ MonoBehaviour:
   lightningResistance: 0
   chaosResistance: 0
   displayScale: 0.8
-  basePanelHeight: 280
+  basePanelHeight: 220
   enableEnergy: 1
   baseMaxEnergy: 100
   energyRegenPerTurn: 25
   chillDrainPerMagnitude: 2
   slowDrainPerMagnitude: 3
+  staggerThreshold: 100
+  staggerDecayPerTurn: 0
+  defendGuardPercent: 0.1
   aiPattern: 0
   attackPreference: 0.8
   specialAbilities: []

@@ -23,5 +23,10 @@ MonoBehaviour:
   maxEnemiesPerWave: 3
   randomizeEnemyCount: 1
   uniqueEnemy: {fileID: 11400000, guid: 77767db2eaea7644f821c7442d9eb9f0, type: 2}
+  encounterEnemyPool:
+  - {fileID: 11400000, guid: 740a4b51ba724844db0cfe5d3cf48656, type: 2}
+  - {fileID: 11400000, guid: 06a88e7621d29e846a48ccb6d3b14f74, type: 2}
+  - {fileID: 11400000, guid: dc59bc3d9122dfb46a108c40d64dc4ec, type: 2}
+  useExclusiveEnemyPool: 1
   lootTable: {fileID: 11400000, guid: c8f663c631e134944a9c3fc28c42c8df, type: 2}
   areaLootTable: {fileID: 11400000, guid: fefaa3f8b4dc14f4187e1335dc47773f, type: 2}

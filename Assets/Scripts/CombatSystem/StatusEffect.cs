@@ -73,26 +73,26 @@ public class StatusEffect
             case StatusEffectType.Poison:
                 effectColor = Color.green;
                 iconName = "Poison"; // Matches Poison.aseprite
-                tickInterval = 1f;
+                tickInterval = 0f; // Turn-based: processed once per turn, not every second
                 damageType = DamageType.Chaos; // Poison acts as chaos DoT
                 break;
             case StatusEffectType.Burn:
                 effectColor = Color.red;
                 iconName = "Ignite"; // Matches Ignite.aseprite
-                tickInterval = 1f;
+                tickInterval = 0f; // Turn-based: processed once per turn, not every second
                 damageType = DamageType.Fire;
                 break;
             case StatusEffectType.Bleed:
                 effectColor = new Color(0.7f, 0f, 0f);
                 iconName = "Bleed";
-                tickInterval = 1f;
+                tickInterval = 0f; // Turn-based: processed once per turn, not every second
                 damageType = DamageType.Physical;
                 isDebuff = true;
                 break;
             case StatusEffectType.ChaosDot:
                 effectColor = new Color(0.5f, 0.2f, 0.6f); // Purple-ish
                 iconName = "ChaosDot"; // Provide icon if available
-                tickInterval = 1f;
+                tickInterval = 0f; // Turn-based: processed once per turn, not every second
                 damageType = DamageType.Chaos;
                 isDebuff = true;
                 break;
@@ -177,6 +177,44 @@ public class StatusEffect
                 effectColor = new Color(0.8f, 0.4f, 1f); // Purple-ish
                 iconName = "SpellPower";
                 isDebuff = false;
+                tickInterval = 0f;
+                break;
+            
+            // Boss Ability Status Effects
+            case StatusEffectType.Bind:
+                effectColor = new Color(0.6f, 0.3f, 0.1f); // Brown
+                iconName = "Bind";
+                isDebuff = true;
+                tickInterval = 0f;
+                break;
+            case StatusEffectType.DrawReduction:
+                effectColor = new Color(0.4f, 0.4f, 0.5f); // Grey
+                iconName = "DrawReduction";
+                isDebuff = true;
+                tickInterval = 0f;
+                break;
+            case StatusEffectType.BuffDenial:
+                effectColor = new Color(0.8f, 0.2f, 0.2f); // Red
+                iconName = "BuffDenial";
+                isDebuff = true;
+                tickInterval = 0f;
+                break;
+            case StatusEffectType.DelayedDamage:
+                effectColor = new Color(0.9f, 0.5f, 0.1f); // Orange
+                iconName = "DelayedDamage";
+                isDebuff = true;
+                tickInterval = 0f;
+                break;
+            case StatusEffectType.Blind:
+                effectColor = new Color(0.2f, 0.2f, 0.2f); // Dark grey
+                iconName = "Blind";
+                isDebuff = true;
+                tickInterval = 0f;
+                break;
+            case StatusEffectType.DamageReflection:
+                effectColor = new Color(0.7f, 0.9f, 1f); // Light blue
+                iconName = "DamageReflection";
+                isDebuff = false; // It's a buff for the entity that has it
                 tickInterval = 0f;
                 break;
         }
@@ -333,6 +371,7 @@ public enum StatusEffectType
     TempMaxMana,    // Temporary maximum mana increase
     TempEvasion,    // Temporary increased evasion
     SpellPower,     // Increased spell damage multiplier
+    ArcaneReboundBonus, // Temporary icon for Arcane Rebound bonus selection
     
     // Special
     Invisible,      // Cannot be targeted
@@ -342,4 +381,12 @@ public enum StatusEffectType
     Curse,          // Various negative effects
     Shocked,        // Increased damage taken (up to 50% based on lightning damage)
     Stagger,        // Cannot act (base 1 turn)
+    
+    // Boss Ability Status Effects
+    Bind,           // Cannot play Guard-granting cards next turn
+    DrawReduction,  // Reduces number of cards drawn next turn
+    BuffDenial,     // Negates the next buff application
+    DelayedDamage,  // Damage triggers after N turns
+    Blind,          // Accuracy reduction (miss chance on attacks)
+    DamageReflection, // Reflects percentage of damage taken back to attacker
 }

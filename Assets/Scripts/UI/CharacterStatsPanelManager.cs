@@ -160,10 +160,29 @@ public class CharacterStatsPanelManager : MonoBehaviour
 		
 		if (!useSlideAnimation || panelRect == null || panelCanvasGroup == null)
 		{
+			// Enable panel and parents if needed
+			if (isPanelVisible && !characterStatsPanel.activeInHierarchy)
+			{
+				EnablePanelAndParents(characterStatsPanel);
+				
+				// Re-initialize references after enabling
+				if (panelRect == null)
+				 panelRect = characterStatsPanel.GetComponent<RectTransform>();
+				if (panelCanvasGroup == null)
+				{
+					panelCanvasGroup = characterStatsPanel.GetComponent<CanvasGroup>();
+					if (panelCanvasGroup == null)
+						panelCanvasGroup = characterStatsPanel.AddComponent<CanvasGroup>();
+				}
+			}
+			
 			characterStatsPanel.SetActive(isPanelVisible);
-			panelCanvasGroup.blocksRaycasts = isPanelVisible;
-			panelCanvasGroup.interactable = isPanelVisible;
-			panelCanvasGroup.alpha = isPanelVisible ? 1f : 0f;
+			if (panelCanvasGroup != null)
+			{
+				panelCanvasGroup.blocksRaycasts = isPanelVisible;
+				panelCanvasGroup.interactable = isPanelVisible;
+				panelCanvasGroup.alpha = isPanelVisible ? 1f : 0f;
+			}
 			if (isPanelVisible) UpdatePanelData();
 		}
 		else
@@ -172,6 +191,22 @@ public class CharacterStatsPanelManager : MonoBehaviour
 			Vector2 target = isPanelVisible ? visibleAnchoredPos : hiddenAnchoredPos;
 			if (isPanelVisible)
 			{
+				// Enable panel and parents if needed
+				if (!characterStatsPanel.activeInHierarchy)
+				{
+					EnablePanelAndParents(characterStatsPanel);
+					
+					// Re-initialize references after enabling
+					if (panelRect == null)
+						panelRect = characterStatsPanel.GetComponent<RectTransform>();
+					if (panelCanvasGroup == null)
+					{
+						panelCanvasGroup = characterStatsPanel.GetComponent<CanvasGroup>();
+						if (panelCanvasGroup == null)
+							panelCanvasGroup = characterStatsPanel.AddComponent<CanvasGroup>();
+					}
+				}
+				
 				// Ensure active before animating in
 				characterStatsPanel.SetActive(true);
 				// Start from hidden position and 0 alpha if this is a fresh open
@@ -206,6 +241,25 @@ public class CharacterStatsPanelManager : MonoBehaviour
     }
     
     /// <summary>
+    /// Recursively enable a GameObject and all its parents
+    /// </summary>
+    private void EnablePanelAndParents(GameObject obj)
+    {
+        if (obj == null) return;
+        
+        // Enable this object
+        obj.SetActive(true);
+        
+        // Recursively enable parents
+        Transform parent = obj.transform.parent;
+        while (parent != null)
+        {
+            parent.gameObject.SetActive(true);
+            parent = parent.parent;
+        }
+    }
+    
+    /// <summary>
     /// Show the character stats panel
     /// </summary>
     public void ShowPanel()
@@ -214,6 +268,22 @@ public class CharacterStatsPanelManager : MonoBehaviour
         {
             Debug.LogWarning("[CharacterStatsPanelManager] CharacterStatsPanel is not assigned!");
             return;
+        }
+        
+        // Enable panel and all parents before activating
+        if (!characterStatsPanel.activeInHierarchy)
+        {
+            EnablePanelAndParents(characterStatsPanel);
+            
+            // Re-initialize references after enabling (in case they were null)
+            if (panelRect == null)
+                panelRect = characterStatsPanel.GetComponent<RectTransform>();
+            if (panelCanvasGroup == null)
+            {
+                panelCanvasGroup = characterStatsPanel.GetComponent<CanvasGroup>();
+                if (panelCanvasGroup == null)
+                    panelCanvasGroup = characterStatsPanel.AddComponent<CanvasGroup>();
+            }
         }
         
         isPanelVisible = true;

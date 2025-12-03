@@ -346,14 +346,23 @@ public class AscendancyData : ScriptableObject
             AscendancyPassive first = FindPassiveByName(floating.firstNodeName);
             AscendancyPassive second = FindPassiveByName(floating.secondNodeName);
 
-            floatingNode.prerequisitePassives.Clear();
+            // Initialize prerequisites list if null
+            if (floatingNode.prerequisitePassives == null)
+            {
+                floatingNode.prerequisitePassives = new List<string>();
+            }
 
-            bool hasAnyPrerequisite = false;
+            // PRESERVE manually added prerequisites instead of clearing them
+            // Only add the two major nodes if they're not already in the list
+            bool hasAnyPrerequisite = floatingNode.prerequisitePassives.Count > 0;
 
             if (first != null)
             {
-                floatingNode.prerequisitePassives.Add(first.name);
-                hasAnyPrerequisite = true;
+                if (!floatingNode.prerequisitePassives.Contains(first.name))
+                {
+                    floatingNode.prerequisitePassives.Add(first.name);
+                    hasAnyPrerequisite = true;
+                }
             }
             else if (!string.IsNullOrEmpty(floating.firstNodeName))
             {
@@ -363,12 +372,41 @@ public class AscendancyData : ScriptableObject
             if (second != null)
             {
                 if (!floatingNode.prerequisitePassives.Contains(second.name))
+                {
                     floatingNode.prerequisitePassives.Add(second.name);
-                hasAnyPrerequisite = true;
+                    hasAnyPrerequisite = true;
+                }
             }
             else if (!string.IsNullOrEmpty(floating.secondNodeName))
             {
                 Debug.LogWarning($"[AscendancyData] Floating node '{floatingNode.name}' could not find second node: {floating.secondNodeName}");
+            }
+
+            // Add floating node as prerequisite to the two major nodes (reverse direction)
+            if (first != null)
+            {
+                if (first.prerequisitePassives == null)
+                {
+                    first.prerequisitePassives = new List<string>();
+                }
+                if (!first.prerequisitePassives.Contains(floatingNode.name))
+                {
+                    first.prerequisitePassives.Add(floatingNode.name);
+                    Debug.Log($"[AscendancyData] Added floating node '{floatingNode.name}' as prerequisite to '{first.name}'");
+                }
+            }
+
+            if (second != null)
+            {
+                if (second.prerequisitePassives == null)
+                {
+                    second.prerequisitePassives = new List<string>();
+                }
+                if (!second.prerequisitePassives.Contains(floatingNode.name))
+                {
+                    second.prerequisitePassives.Add(floatingNode.name);
+                    Debug.Log($"[AscendancyData] Added floating node '{floatingNode.name}' as prerequisite to '{second.name}'");
+                }
             }
 
             if (!hasAnyPrerequisite)

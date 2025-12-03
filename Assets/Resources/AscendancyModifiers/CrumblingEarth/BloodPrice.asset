@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3c5e22f99b96e4abdd2010d5e84bb9, type: 3}
+  m_Name: BloodPrice
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyModifierDefinition
+  modifierId: BloodPrice
+  linkedPassiveName: Blood Price
+  description: Apply "Pressure" for 3% of Max HP when you Attack; Attacks deal +30% more damage.
+  effects:
+  - eventType: 4
+    conditions: []
+    actions:
+    - actionType: 13
+      parameterDict:
+        entries:
+        - key: statusEffectType
+          value:
+            type: 0
+            stringValue: Pressure
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: magnitude
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 0.03
+            boolValue: 0
+        - key: duration
+          value:
+            type: 1
+            stringValue: 
+            intValue: 2
+            floatValue: 0
+            boolValue: 0
+        - key: calculateFromMaxHP
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+        - key: convertsToBleed
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+      executionOrder: 0
+    - actionType: 8
+      parameterDict:
+        entries:
+        - key: percent
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 30
+            boolValue: 0
+      executionOrder: 1
+    priority: 0
+  variableKeys: []
+  variableValues: []
+  tags:
+  - offensive
+  - defensive
+  - pressure
+  - attack
+

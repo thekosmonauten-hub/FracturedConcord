@@ -16,7 +16,7 @@ MonoBehaviour:
   groupKey: Chaos_Bolt
   cardType: Attack
   playCost: 2
-  description: 'Deal {damage} chaos damage to a single enemy. Apply 3 Poison. '
+  description: 'Deal {damage} chaos damage. Apply Poison (3 turns, 30% of hit damage). '
   rarity: 0
   element: 5
   category: 0
@@ -43,13 +43,15 @@ MonoBehaviour:
   isAoE: 0
   aoeTargets: 1
   aoeRowScope: 0
+  isMultiHit: 0
+  hitCount: 2
   damageScaling:
     strengthScaling: 0
     dexterityScaling: 0
-    intelligenceScaling: 1
+    intelligenceScaling: 0
     strengthDivisor: 0
     dexterityDivisor: 0
-    intelligenceDivisor: 0
+    intelligenceDivisor: 2
   guardScaling:
     strengthScaling: 0
     dexterityScaling: 0
@@ -57,6 +59,15 @@ MonoBehaviour:
     strengthDivisor: 0
     dexterityDivisor: 0
     intelligenceDivisor: 0
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -67,6 +78,7 @@ MonoBehaviour:
   enableCombo: 1
   comboWith: 
   comboDescription: Apply 2x Poison stacks.
+  momentumEffectDescription: 
   comboWithCardType: 0
   comboAttackIncrease: 0
   comboGuardIncrease: 0
@@ -97,6 +109,9 @@ MonoBehaviour:
   tags:
   - Chaos
   - Spell
+  - Poison
+  delayTurns: 0
+  isDelayed: 0
   canPrepare: 0
   maxPrepTurns: 3
   multiplierPerTurn: 0.5

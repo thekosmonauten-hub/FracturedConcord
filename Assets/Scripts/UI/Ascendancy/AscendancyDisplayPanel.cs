@@ -60,7 +60,7 @@ public class AscendancyDisplayPanel : MonoBehaviour
     /// <summary>
     /// Show the panel with Ascendancy data
     /// </summary>
-    public void ShowAscendancy(AscendancyData ascendancy, CharacterAscendancyProgress progress = null)
+    public void ShowAscendancy(AscendancyData ascendancy, CharacterAscendancyProgress progress = null, bool allowAllocation = false)
     {
         if (ascendancy == null)
         {
@@ -71,8 +71,11 @@ public class AscendancyDisplayPanel : MonoBehaviour
         currentAscendancy = ascendancy;
         currentProgress = progress ?? new CharacterAscendancyProgress();
         
+        // Set allocation mode
+        allowPointAllocation = allowAllocation;
+        
         if (showDebugLogs)
-            Debug.Log($"[AscendancyDisplayPanel] Showing: {ascendancy.ascendancyName}");
+            Debug.Log($"[AscendancyDisplayPanel] Showing: {ascendancy.ascendancyName} (Allow Allocation: {allowAllocation})");
         
         // Clear previous container if any
         if (spawnedContainer != null)
@@ -93,7 +96,7 @@ public class AscendancyDisplayPanel : MonoBehaviour
             
             if (treeDisplay != null)
             {
-                treeDisplay.DisplayAscendancy(ascendancy, currentProgress);
+                treeDisplay.DisplayAscendancy(ascendancy, currentProgress, allowAllocation);
             }
             
             UpdateProgressionInfo();
@@ -102,6 +105,14 @@ public class AscendancyDisplayPanel : MonoBehaviour
         // Show panel
         if (panelRoot != null)
             panelRoot.SetActive(true);
+    }
+    
+    /// <summary>
+    /// Set whether point allocation is allowed (for external control)
+    /// </summary>
+    public void SetAllowPointAllocation(bool allow)
+    {
+        allowPointAllocation = allow;
     }
     
     /// <summary>
@@ -131,7 +142,7 @@ public class AscendancyDisplayPanel : MonoBehaviour
         AscendancyTreeDisplay prefabTreeDisplay = spawnedContainer.GetComponentInChildren<AscendancyTreeDisplay>();
         if (prefabTreeDisplay != null)
         {
-            prefabTreeDisplay.DisplayAscendancy(ascendancy, currentProgress);
+            prefabTreeDisplay.DisplayAscendancy(ascendancy, currentProgress, allowPointAllocation);
             
             // Disable node interaction if in preview mode
             if (isPreviewMode || !allowPointAllocation)

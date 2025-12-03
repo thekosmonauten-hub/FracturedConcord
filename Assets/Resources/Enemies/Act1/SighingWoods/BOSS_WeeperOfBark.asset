@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: BOSS_WeeperOfBark
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: Weeper-of-Bark
+  description: An ancient tree spirit corrupted by grief. Its bark weeps with sorrow,
+    and its branches shatter with each movement.
+  enemySprite: {fileID: 0}
+  tier: 2
+  rarity: 3
+  category: 0
+  minHealth: 250
+  maxHealth: 300
+  baseDamage: 15
+  baseArmor: 0
+  criticalChance: 0.1
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 110
+  evasionRating: 10
+  physicalResistance: 15
+  fireResistance: -25
+  coldResistance: 10
+  lightningResistance: 0
+  chaosResistance: 20
+  displayScale: 1.3
+  basePanelHeight: 350
+  enableEnergy: 1
+  baseMaxEnergy: 150
+  energyRegenPerTurn: 15
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  staggerThreshold: 150
+  staggerDecayPerTurn: 10
+  defendGuardPercent: 0.15
+  aiPattern: 0
+  attackPreference: 0.85
+  specialAbilities:
+  - Echo of Breaking
+  abilities:
+  - {fileID: 11400000, guid: 1d31996f2e120f14db7a9b308f44f6f5, type: 2}
+  bossAbilities: 05000000
+  summonPool: []
+  spiritTags: 
+  guaranteedSpiritDrop: 0
+  minGoldDrop: 50
+  maxGoldDrop: 100
+  experienceReward: 100
+  cardDropChance: 0.3
+  initialAgitateStacks: 0
+  initialToleranceStacks: 0
+  initialPotentialStacks: 0
+  excludeFromRandom: 1
+  healthBarColor: {r: 0.6, g: 0.4, b: 0.2, a: 1}
+  animatorController: {fileID: 0}

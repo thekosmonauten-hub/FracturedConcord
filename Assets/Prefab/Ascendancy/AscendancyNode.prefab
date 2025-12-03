@@ -167,8 +167,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AscendancyPassiveNode
   nodeImage: {fileID: 7375029336557485909}
   nodeButton: {fileID: 1960913635263231563}
-  lockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
-  availableColor: {r: 1, g: 1, b: 0.5, a: 1}
+  availableColor: {r: 0.80105954, g: 1, b: 0.4764151, a: 1}
   hoverScale: 1.1
   showDebugLogs: 0

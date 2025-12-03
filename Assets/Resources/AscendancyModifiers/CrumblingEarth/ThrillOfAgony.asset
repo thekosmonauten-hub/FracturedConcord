@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3c5e22f99b96e4abdd2010d5e84bb9, type: 3}
+  m_Name: ThrillOfAgony
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyModifierDefinition
+  modifierId: ThrillOfAgony
+  linkedPassiveName: Thrill of Agony
+  description: While affected by Bleed or Ignite, 30% more Crumble Magnitude.
+  effects:
+  - eventType: 14
+    conditions:
+    - conditionType: 2
+      parameterDict:
+        entries:
+        - key: statusEffectType
+          value:
+            type: 0
+            stringValue: Bleed
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+      invert: 0
+    actions:
+    - actionType: 15
+      parameterDict:
+        entries:
+        - key: statName
+          value:
+            type: 0
+            stringValue: crumbleMagnitudeMorePercent
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: percentIncrease
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 30
+            boolValue: 0
+      executionOrder: 0
+    priority: 0
+  - eventType: 14
+    conditions:
+    - conditionType: 2
+      parameterDict:
+        entries:
+        - key: statusEffectType
+          value:
+            type: 0
+            stringValue: Ignite
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+      invert: 0
+    actions:
+    - actionType: 15
+      parameterDict:
+        entries:
+        - key: statName
+          value:
+            type: 0
+            stringValue: crumbleMagnitudeMorePercent
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: percentIncrease
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 30
+            boolValue: 0
+      executionOrder: 0
+    priority: 0
+  variableKeys: []
+  variableValues: []
+  tags:
+  - offensive
+  - crumble
+  - conditional
+

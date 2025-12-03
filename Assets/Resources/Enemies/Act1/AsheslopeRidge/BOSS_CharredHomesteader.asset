@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: BOSS_CharredHomesteader
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: Charred Homesteader
+  description: Once a settler on Asheslope Ridge, now a blackened husk fueled by
+    ember and regret.
+  enemySprite: {fileID: 0}
+  tier: 2
+  rarity: 2
+  category: 0
+  minHealth: 300
+  maxHealth: 350
+  baseDamage: 20
+  baseArmor: 0
+  criticalChance: 0.05
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 100
+  evasionRating: 5
+  physicalResistance: 5
+  fireResistance: 50
+  coldResistance: -30
+  lightningResistance: 0
+  chaosResistance: 10
+  displayScale: 1.25
+  basePanelHeight: 340
+  enableEnergy: 1
+  baseMaxEnergy: 130
+  energyRegenPerTurn: 13
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  staggerThreshold: 160
+  staggerDecayPerTurn: 5
+  defendGuardPercent: 0.1
+  aiPattern: 0
+  attackPreference: 0.9
+  specialAbilities:
+  - Coalburst
+  - Cooling Regret
+  abilities: []
+  bossAbilities:
+  - 6
+  summonPool: []
+  spiritTags:
+  - 0
+  guaranteedSpiritDrop: 0
+  minGoldDrop: 55
+  maxGoldDrop: 110
+  experienceReward: 140
+  cardDropChance: 0.32
+  initialAgitateStacks: 0
+  initialToleranceStacks: 0
+  initialPotentialStacks: 0
+  excludeFromRandom: 1
+  healthBarColor: {r: 0.8, g: 0.3, b: 0.1, a: 1}
+  animatorController: {fileID: 0}
+

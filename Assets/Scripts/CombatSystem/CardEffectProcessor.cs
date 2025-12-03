@@ -558,6 +558,23 @@ public class CardEffectProcessor : MonoBehaviour
             ApplyStatusEffectToEnemy(targetEnemy, bleedEffect);
             Debug.Log($"[Auto Status] Applied Bleeding from {damageBreakdown.physical} physical attack damage");
         }
+        
+        // Chaos damage can inflict Poison if card has "Poison" tag
+        if (damageBreakdown.chaos > 0f && card != null && card.tags != null && card.tags.Contains("Poison"))
+        {
+            // Poison stacks independently - apply 3 stacks for Chaos Bolt
+            // Each stack is 30% of (physical + chaos) damage per turn for 3 turns
+            int poisonStacks = 3; // Chaos Bolt applies 3 stacks
+            
+            for (int i = 0; i < poisonStacks; i++)
+            {
+                StatusEffect poisonEffect = StatusEffectFactory.CreatePoison(damageBreakdown.physical, damageBreakdown.chaos, 3);
+                ApplyStatusEffectToEnemy(targetEnemy, poisonEffect);
+            }
+            
+            float poisonDamagePerStack = StatusEffectManager.CalculatePoisonMagnitude(damageBreakdown.physical, damageBreakdown.chaos);
+            Debug.Log($"[Auto Status] Applied {poisonStacks} Poison stacks ({poisonDamagePerStack} damage/turn each, {poisonDamagePerStack * poisonStacks} total/turn) from {damageBreakdown.chaos} chaos damage");
+        }
     }
     
     /// <summary>

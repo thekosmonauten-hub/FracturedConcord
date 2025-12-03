@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: BOSS_ShadowShepherd
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: Shadow Shepherd
+  description: A dark entity that commands the shadows of the fallen. It shepherds
+    lost souls through the failing light.
+  enemySprite: {fileID: 0}
+  tier: 2
+  rarity: 2
+  category: 4
+  minHealth: 280
+  maxHealth: 320
+  baseDamage: 18
+  baseArmor: 0
+  criticalChance: 0.08
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 105
+  evasionRating: 15
+  physicalResistance: 10
+  fireResistance: 0
+  coldResistance: 15
+  lightningResistance: -10
+  chaosResistance: 30
+  displayScale: 1.35
+  basePanelHeight: 350
+  enableEnergy: 1
+  baseMaxEnergy: 140
+  energyRegenPerTurn: 14
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  staggerThreshold: 140
+  staggerDecayPerTurn: 8
+  defendGuardPercent: 0.12
+  aiPattern: 3
+  attackPreference: 0.75
+  specialAbilities:
+  - Mournful Toll
+  - Cloak of Dusk
+  abilities: []
+  bossAbilities:
+  - 7
+  summonPool: []
+  spiritTags: []
+  guaranteedSpiritDrop: 0
+  minGoldDrop: 60
+  maxGoldDrop: 120
+  experienceReward: 150
+  cardDropChance: 0.35
+  initialAgitateStacks: 0
+  initialToleranceStacks: 0
+  initialPotentialStacks: 0
+  excludeFromRandom: 1
+  healthBarColor: {r: 0.3, g: 0.2, b: 0.5, a: 1}
+  animatorController: {fileID: 0}
+

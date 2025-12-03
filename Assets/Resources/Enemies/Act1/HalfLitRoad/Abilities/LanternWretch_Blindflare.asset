@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20b7052e25649f34abb17565072ac40b, type: 3}
+  m_Name: LanternWretch_Blindflare
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAbility
+  id: lantern_blindflare
+  displayName: Blindflare
+  trigger: 1
+  cooldownTurns: 3
+  initialCooldown: 1
+  phaseThreshold: 0
+  consumesTurn: 0
+  target: 1
+  energyCost: 35
+  effects:
+  - {fileID: 8523041445148225660}
+--- !u!114 &8523041445148225660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectEffect
+  statusType: 41
+  magnitude: 30
+  durationTurns: 2
+  overrideEffectName: Blindflare
+  isDebuff: 1
+  stackAdjustment: {fileID: 0}
+  applyStatusEffect: 1
+  useInlineStackSettings: 0
+  inlineAgitateStacks: 0
+  inlineToleranceStacks: 0
+  inlinePotentialStacks: 0
+  inlineAgitateIncreasedPercent: 0
+  inlineToleranceIncreasedPercent: 0
+  inlinePotentialIncreasedPercent: 0
+  inlineAgitateMoreMultiplier: 0
+  inlineToleranceMoreMultiplier: 0
+  inlinePotentialMoreMultiplier: 0
+

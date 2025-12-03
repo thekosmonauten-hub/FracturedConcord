@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "New Encounter", menuName = "Dexiled/Encounter Data", order = 0)]
 public class EncounterDataAsset : ScriptableObject
@@ -27,6 +28,12 @@ public class EncounterDataAsset : ScriptableObject
 
 	[Header("Unique Boss (Final Wave)")]
 	public EnemyData uniqueEnemy;
+	
+	[Header("Encounter-Specific Enemy Pool")]
+	[Tooltip("If assigned, only enemies from this list can spawn in this encounter. If empty, uses EnemyDatabase with excludeFromRandom filtering.")]
+	public List<EnemyData> encounterEnemyPool = new List<EnemyData>();
+	[Tooltip("If true, encounterEnemyPool is used exclusively. If false, encounterEnemyPool is combined with EnemyDatabase (filtered).")]
+	public bool useExclusiveEnemyPool = false;
 	
 	[Header("Loot Rewards")]
 	[Tooltip("Classic loot table that defines rewards for completing this encounter")]

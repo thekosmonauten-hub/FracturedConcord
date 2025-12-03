@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: BOSS_ConcordialEchoBeast
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: Concordial Echo-Beast
+  description: A dual-natured creature from the Folding Vale, striking with echoing
+    attacks that resonate across time.
+  enemySprite: {fileID: 0}
+  tier: 2
+  rarity: 2
+  category: 0
+  minHealth: 285
+  maxHealth: 325
+  baseDamage: 18
+  baseArmor: 0
+  criticalChance: 0.08
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 104
+  evasionRating: 12
+  physicalResistance: 12
+  fireResistance: 10
+  coldResistance: 10
+  lightningResistance: 10
+  chaosResistance: 12
+  displayScale: 1.35
+  basePanelHeight: 350
+  enableEnergy: 1
+  baseMaxEnergy: 138
+  energyRegenPerTurn: 13
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  staggerThreshold: 142
+  staggerDecayPerTurn: 9
+  defendGuardPercent: 0.11
+  aiPattern: 2
+  attackPreference: 0.8
+  specialAbilities:
+  - Twin Snarl
+  - Afterbite
+  abilities: []
+  bossAbilities: []
+  summonPool: []
+  spiritTags: []
+  guaranteedSpiritDrop: 0
+  minGoldDrop: 56
+  maxGoldDrop: 110
+  experienceReward: 142
+  cardDropChance: 0.33
+  initialAgitateStacks: 0
+  initialToleranceStacks: 0
+  initialPotentialStacks: 0
+  excludeFromRandom: 1
+  healthBarColor: {r: 0.6, g: 0.5, b: 0.7, a: 1}
+  animatorController: {fileID: 0}
+

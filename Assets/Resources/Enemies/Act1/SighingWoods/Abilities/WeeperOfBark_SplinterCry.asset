@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20b7052e25649f34abb17565072ac40b, type: 3}
+  m_Name: WeeperOfBark_SplinterCry
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAbility
+  id: weeper_splinter_cry
+  displayName: Splinter Cry
+  trigger: 3
+  cooldownTurns: 2
+  initialCooldown: 0
+  phaseThreshold: 0
+  consumesTurn: 1
+  target: 1
+  energyCost: 40
+  effects:
+  - {fileID: 8523041445148225571}
+  - {fileID: 8523041445148225572}
+  - {fileID: 8523041445148225573}
+--- !u!114 &8523041445148225571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0cad68394b043c48932ab93d06dc5ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DamageEffect
+  damageType: 0
+  flatDamage: 12
+  percentOfMaxHp: 0
+  includeCasterWhenTargetingAllies: 0
+--- !u!114 &8523041445148225572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0cad68394b043c48932ab93d06dc5ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DamageEffect
+  damageType: 0
+  flatDamage: 12
+  percentOfMaxHp: 0
+  includeCasterWhenTargetingAllies: 0
+--- !u!114 &8523041445148225573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0cad68394b043c48932ab93d06dc5ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DamageEffect
+  damageType: 0
+  flatDamage: 12
+  percentOfMaxHp: 0
+  includeCasterWhenTargetingAllies: 0
+

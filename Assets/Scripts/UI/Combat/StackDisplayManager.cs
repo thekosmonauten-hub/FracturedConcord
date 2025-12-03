@@ -5,14 +5,26 @@ using System.Collections.Generic;
 using System.Linq;
 
 /// <summary>
-/// Manages visual display of player stacks (Momentum, Agitate, Tolerance, Potential, etc.)
-/// Uses existing GameObjects in StackContainer instead of instantiating new ones
+/// Manages visual display of player stacks (Momentum, Agitate, Tolerance, Potential, Flow, etc.)
+/// Supports separate containers for regular stacks and Ascendancy-related stacks.
+/// 
+/// Regular Stacks (displayed in StackContainer):
+/// - Momentum, Agitate, Tolerance, Potential, Flow
+/// 
+/// Ascendancy Stacks (displayed in AscendancyStacks container):
+/// - Corruption (Profane Vessel)
+/// - BattleRhythm (Disciple of War)
+/// 
+/// Uses existing GameObjects in containers instead of instantiating new ones
 /// </summary>
 public class StackDisplayManager : MonoBehaviour
 {
     [Header("UI References")]
-    [Tooltip("Container that holds stack GameObjects (e.g., Momentum, Agitate, etc.)")]
+    [Tooltip("Container that holds regular stack GameObjects (e.g., Momentum, Agitate, Tolerance, Potential, Flow)")]
     public Transform stackContainer;
+    
+    [Tooltip("Container that holds Ascendancy-related stack GameObjects (e.g., Corruption, BattleRhythm)")]
+    public Transform ascendancyStacksContainer;
     
     [Header("Settings")]
     [Tooltip("Hide stack GameObjects when stack count is 0")]
@@ -31,7 +43,7 @@ public class StackDisplayManager : MonoBehaviour
     
     private void Awake()
     {
-        // Auto-find stack container if not assigned
+        // Auto-find regular stack container if not assigned
         if (stackContainer == null)
         {
             Transform container = transform.Find("StackContainer");
@@ -59,6 +71,34 @@ public class StackDisplayManager : MonoBehaviour
             }
         }
         
+        // Auto-find Ascendancy stacks container if not assigned
+        if (ascendancyStacksContainer == null)
+        {
+            Transform container = transform.Find("AscendancyStacks");
+            if (container != null)
+            {
+                ascendancyStacksContainer = container;
+            }
+            else
+            {
+                // Try to find in parent or scene
+                StackDisplayManager[] managers = FindObjectsByType<StackDisplayManager>(FindObjectsSortMode.None);
+                foreach (var mgr in managers)
+                {
+                    if (mgr != this && mgr.ascendancyStacksContainer != null)
+                    {
+                        ascendancyStacksContainer = mgr.ascendancyStacksContainer;
+                        break;
+                    }
+                }
+                
+                if (ascendancyStacksContainer == null)
+                {
+                    Debug.LogWarning("[StackDisplayManager] AscendancyStacks container not found! Ascendancy stacks will not be displayed. Please create a child GameObject named 'AscendancyStacks'.");
+                }
+            }
+        }
+        
         // Initialize stack GameObject lookup
         InitializeStackLookup();
     }
@@ -78,12 +118,38 @@ public class StackDisplayManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Initialize lookup dictionary by finding all stack GameObjects in container
+    /// Check if a stack type is Ascendancy-related (should be displayed in AscendancyStacks container)
+    /// Public method for external use
+    /// </summary>
+    public static bool IsAscendancyStack(StackType stackType)
+    {
+        switch (stackType)
+        {
+            case StackType.Corruption:
+            case StackType.BattleRhythm:
+                return true;
+            default:
+                return false;
+        }
+    }
+    
+    /// <summary>
+    /// Get the appropriate container for a stack type
+    /// </summary>
+    private Transform GetContainerForStack(StackType stackType)
+    {
+        if (IsAscendancyStack(stackType))
+        {
+            return ascendancyStacksContainer;
+        }
+        return stackContainer;
+    }
+    
+    /// <summary>
+    /// Initialize lookup dictionary by finding all stack GameObjects in appropriate containers
     /// </summary>
     private void InitializeStackLookup()
     {
-        if (stackContainer == null) return;
-        
         stackGameObjectLookup.Clear();
         
         // Get all stack types from enum
@@ -95,7 +161,9 @@ public class StackDisplayManager : MonoBehaviour
             if (stackObj != null)
             {
                 stackGameObjectLookup[stackType] = stackObj;
-                Debug.Log($"[StackDisplayManager] Found stack GameObject: {stackType} -> {stackObj.name}");
+                Transform container = GetContainerForStack(stackType);
+                string containerName = container != null ? container.name : "Unknown";
+                Debug.Log($"[StackDisplayManager] Found stack GameObject: {stackType} -> {stackObj.name} (in {containerName})");
             }
         }
     }
@@ -171,17 +239,18 @@ public class StackDisplayManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Find existing stack GameObject in StackContainer by StackType name
+    /// Find existing stack GameObject in appropriate container by StackType name
     /// Supports multiple naming conventions for flexibility
     /// </summary>
     private GameObject FindStackGameObject(StackType stackType)
     {
-        if (stackContainer == null) return null;
+        Transform container = GetContainerForStack(stackType);
+        if (container == null) return null;
         
         string stackName = stackType.ToString();
         
-        // Try exact name match first (e.g., "Momentum", "Agitate")
-        Transform stackTransform = stackContainer.Find(stackName);
+        // Try exact name match first (e.g., "Momentum", "Agitate", "Corruption")
+        Transform stackTransform = container.Find(stackName);
         if (stackTransform != null)
         {
             return stackTransform.gameObject;
@@ -198,7 +267,7 @@ public class StackDisplayManager : MonoBehaviour
         
         foreach (string name in nameVariations)
         {
-            stackTransform = stackContainer.Find(name);
+            stackTransform = container.Find(name);
             if (stackTransform != null)
             {
                 return stackTransform.gameObject;
@@ -206,7 +275,7 @@ public class StackDisplayManager : MonoBehaviour
         }
         
         // Search all children for name containing the stack type (case-insensitive)
-        foreach (Transform child in stackContainer)
+        foreach (Transform child in container)
         {
             if (child.name.Contains(stackName, System.StringComparison.OrdinalIgnoreCase))
             {
@@ -391,6 +460,12 @@ public class StackDisplayManager : MonoBehaviour
                 return new Color(0.3f, 0.8f, 1f); // Light blue
             case StackType.Potential:
                 return new Color(0.8f, 0.3f, 1f); // Purple
+            case StackType.Flow:
+                return new Color(0.5f, 0.9f, 1f); // Cyan-blue
+            case StackType.Corruption:
+                return new Color(0.8f, 0.2f, 0.8f); // Purple-pink (chaos/corruption theme)
+            case StackType.BattleRhythm:
+                return new Color(1f, 0.6f, 0.2f); // Orange (war/rhythm theme)
             default:
                 return Color.white;
         }
@@ -421,23 +496,24 @@ public class StackDisplayManager : MonoBehaviour
     [ContextMenu("Setup Stack GameObjects")]
     public void SetupStackGameObjects()
     {
-        if (stackContainer == null)
-        {
-            Debug.LogWarning("[StackDisplayManager] StackContainer not assigned!");
-            return;
-        }
-        
         StackType[] allStackTypes = System.Enum.GetValues(typeof(StackType)) as StackType[];
         
         foreach (StackType stackType in allStackTypes)
         {
             GameObject stackObj = FindStackGameObject(stackType);
+            Transform container = GetContainerForStack(stackType);
+            
+            if (container == null)
+            {
+                Debug.LogWarning($"[StackDisplayManager] Container not found for {stackType}! Skipping.");
+                continue;
+            }
             
             if (stackObj == null)
             {
-                // Create new GameObject for this stack type
+                // Create new GameObject for this stack type in the appropriate container
                 stackObj = new GameObject(stackType.ToString());
-                stackObj.transform.SetParent(stackContainer, false);
+                stackObj.transform.SetParent(container, false);
                 
                 // Add RectTransform
                 RectTransform rect = stackObj.AddComponent<RectTransform>();

@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3c5e22f99b96e4abdd2010d5e84bb9, type: 2}
+  m_Name: HourglassParadox
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyModifierDefinition
+  modifierId: HourglassParadox
+  linkedPassiveName: Hourglass Paradox
+  description: If you spend No mana on your turn, gain +2 Draw, +10% increased Mana next turn, and your first card costs 0.
+  effects:
+  - eventType: 2
+    conditions: []
+    actions:
+    - actionType: 0
+      parameterDict:
+        entries:
+        - key: stackType
+          value:
+            type: 0
+            stringValue: HourglassParadoxBonus
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: amount
+          value:
+            type: 1
+            stringValue: 
+            intValue: 1
+            floatValue: 0
+            boolValue: 0
+        - key: checkNoManaSpent
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+      executionOrder: 0
+    priority: 0
+  variableKeys: []
+  variableValues: []
+  tags:
+  - utility
+  - temporal
+  - mana
+
+
+
+

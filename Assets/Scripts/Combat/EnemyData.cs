@@ -80,6 +80,10 @@ public class EnemyData : ScriptableObject
     [Header("Abilities (Scriptable)")]
     public List<EnemyAbility> abilities = new List<EnemyAbility>();
     
+    [Header("Boss Abilities (Complex)")]
+    [Tooltip("Special boss abilities that require advanced handling via BossAbilityHandler")]
+    public List<BossAbilityType> bossAbilities = new List<BossAbilityType>();
+    
     [Header("Summons")]
     [Tooltip("Preferred minions this enemy can summon. Used by Summon abilities and for final-wave co-spawns.")]
     public List<EnemyData> summonPool = new List<EnemyData>();
@@ -159,6 +163,19 @@ public class EnemyData : ScriptableObject
         if (initialAgitateStacks > 0) enemy.AddStacks(StackType.Agitate, initialAgitateStacks);
         if (initialToleranceStacks > 0) enemy.AddStacks(StackType.Tolerance, initialToleranceStacks);
         if (initialPotentialStacks > 0) enemy.AddStacks(StackType.Potential, initialPotentialStacks);
+        
+        // Register boss abilities
+        if (bossAbilities != null && bossAbilities.Count > 0)
+        {
+            foreach (var ability in bossAbilities)
+            {
+                if (ability != BossAbilityType.None)
+                {
+                    enemy.RegisterAbility(ability);
+                    Debug.Log($"[Boss Ability] Registered {ability} on {enemyName}");
+                }
+            }
+        }
         
         // TODO: Apply resistances, abilities, etc.
         

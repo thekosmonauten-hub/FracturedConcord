@@ -144,8 +144,8 @@ Material:
     - _Background: 0.55
     - _BlendMode: 0
     - _CoatMask: 0
-    - _ColorCutoff: 0.2
-    - _ColorFeathering: 0.3
+    - _ColorCutoff: 0.165
+    - _ColorFeathering: 0.424
     - _CullMode: 2
     - _CullModeForward: 2
     - _Cutoff: 0.1
@@ -201,7 +201,7 @@ Material:
     - _IridescenceMask: 1
     - _IridescenceThickness: 1
     - _LinkDetailsWithBase: 1
-    - _MaskFeathering: 1
+    - _MaskFeathering: 0.692
     - _MaterialID: 1
     - _Metallic: 0
     - _NormalMapSpace: 0
@@ -214,7 +214,7 @@ Material:
     - _ReceivesSSR: 1
     - _RefractionModel: 0
     - _SSRefractionProjectionModel: 0
-    - _Sharpening: 0.5
+    - _Sharpening: 0.576
     - _SmoothStrength: 0
     - _Smoothness: 0.5
     - _SmoothnessRemapMax: 1

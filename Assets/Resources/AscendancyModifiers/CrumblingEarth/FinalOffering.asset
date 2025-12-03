@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3c5e22f99b96e4abdd2010d5e84bb9, type: 3}
+  m_Name: FinalOffering
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyModifierDefinition
+  modifierId: FinalOffering
+  linkedPassiveName: Final Offering
+  description: On death's door (≤25% Life), Deal Double damage and trigger all active Crumble stacks instantly.
+  effects:
+  - eventType: 14
+    conditions:
+    - conditionType: 3
+      parameterDict:
+        entries:
+        - key: threshold
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 0.25
+            boolValue: 0
+        - key: checkType
+          value:
+            type: 0
+            stringValue: healthPercent
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+      invert: 0
+    actions:
+    - actionType: 8
+      parameterDict:
+        entries:
+        - key: percent
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 100
+            boolValue: 0
+      executionOrder: 0
+    priority: 0
+  - eventType: 14
+    conditions:
+    - conditionType: 3
+      parameterDict:
+        entries:
+        - key: threshold
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 0.25
+            boolValue: 0
+        - key: checkType
+          value:
+            type: 0
+            stringValue: healthPercent
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+      invert: 0
+    actions:
+    - actionType: 20
+      parameterDict:
+        entries:
+        - key: triggerAllCrumbleStacks
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+      executionOrder: 0
+    priority: 0
+  variableKeys: []
+  variableValues: []
+  tags:
+  - offensive
+  - crumble
+  - conditional
+  - emergency
+

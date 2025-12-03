@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3c5e22f99b96e4abdd2010d5e84bb9, type: 3}
+  m_Name: PactOfTheHarvester
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyModifierDefinition
+  modifierId: PactOfTheHarvester
+  linkedPassiveName: Pact of the Harvester
+  description: You take 25% increased self-inflicted damage. You deal 40% more damage per 20 Corruption Pressure. At 50 Corruption Pressure, automatically trigger Profane Harvest: Release all Corruption Pressure, Heal 1% of Missing HP per Corruption pressure, Gain +20% Max Mana for 1 turn, Next 3 cards deal extra Chaos damage with +30% more base damage.
+  effects:
+  - eventType: 0
+    conditions: []
+    actions:
+    - actionType: 15
+      parameterDict:
+        entries:
+        - key: statName
+          value:
+            type: 0
+            stringValue: increasedSelfInflictedDamagePercent
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: increasePercent
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 25
+            boolValue: 0
+      executionOrder: 0
+    priority: 0
+  - eventType: 4
+    conditions: []
+    actions:
+    - actionType: 8
+      parameterDict:
+        entries:
+        - key: percent
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 40
+            boolValue: 0
+        - key: perCorruptionThreshold
+          value:
+            type: 1
+            stringValue: 
+            intValue: 20
+            floatValue: 0
+            boolValue: 0
+      executionOrder: 0
+    priority: 0
+  - eventType: 3
+    conditions:
+    - conditionType: 1
+      parameterDict:
+        entries:
+        - key: stackType
+          value:
+            type: 0
+            stringValue: Corruption
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: threshold
+          value:
+            type: 1
+            stringValue: 
+            intValue: 50
+            floatValue: 0
+            boolValue: 0
+      invert: 0
+    actions:
+    - actionType: 24
+      parameterDict:
+        entries:
+        - key: triggerProfaneHarvest
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+      executionOrder: 0
+    priority: 0
+  variableKeys: []
+  variableValues: []
+  tags:
+  - offensive
+  - corruption
+  - profaneHarvest
+
+
+
+

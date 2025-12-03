@@ -1,0 +1,129 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20b7052e25649f34abb17565072ac40b, type: 3}
+  m_Name: BanditReclaimer_BestialGraft
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAbility
+  id: bandit_bestial_graft
+  displayName: Bestial Graft
+  trigger: 1
+  cooldownTurns: 2
+  initialCooldown: 1
+  phaseThreshold: 0
+  consumesTurn: 0
+  target: 0
+  energyCost: 40
+  effects:
+  - {fileID: 8523041445148225610}
+--- !u!114 &8523041445148225610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RandomBuffEffect
+  possibleBuffs:
+  - {fileID: 8523041445148225611}
+  - {fileID: 8523041445148225612}
+  - {fileID: 8523041445148225613}
+--- !u!114 &8523041445148225611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectEffect
+  statusType: 21
+  magnitude: 3
+  durationTurns: 2
+  overrideEffectName: 
+  isDebuff: 0
+  stackAdjustment: {fileID: 0}
+  applyStatusEffect: 1
+  useInlineStackSettings: 0
+  inlineAgitateStacks: 0
+  inlineToleranceStacks: 0
+  inlinePotentialStacks: 0
+  inlineAgitateIncreasedPercent: 0
+  inlineToleranceIncreasedPercent: 0
+  inlinePotentialIncreasedPercent: 0
+  inlineAgitateMoreMultiplier: 0
+  inlineToleranceMoreMultiplier: 0
+  inlinePotentialMoreMultiplier: 0
+--- !u!114 &8523041445148225612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectEffect
+  statusType: 26
+  magnitude: 2
+  durationTurns: 3
+  overrideEffectName: 
+  isDebuff: 0
+  stackAdjustment: {fileID: 0}
+  applyStatusEffect: 1
+  useInlineStackSettings: 1
+  inlineAgitateStacks: 0
+  inlineToleranceStacks: 2
+  inlinePotentialStacks: 0
+  inlineAgitateIncreasedPercent: 0
+  inlineToleranceIncreasedPercent: 0
+  inlinePotentialIncreasedPercent: 0
+  inlineAgitateMoreMultiplier: 0
+  inlineToleranceMoreMultiplier: 0
+  inlinePotentialMoreMultiplier: 0
+--- !u!114 &8523041445148225613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectEffect
+  statusType: 25
+  magnitude: 20
+  durationTurns: 2
+  overrideEffectName: 
+  isDebuff: 0
+  stackAdjustment: {fileID: 0}
+  applyStatusEffect: 1
+  useInlineStackSettings: 0
+  inlineAgitateStacks: 0
+  inlineToleranceStacks: 0
+  inlinePotentialStacks: 0
+  inlineAgitateIncreasedPercent: 0
+  inlineToleranceIncreasedPercent: 0
+  inlinePotentialIncreasedPercent: 0
+  inlineAgitateMoreMultiplier: 0
+  inlineToleranceMoreMultiplier: 0
+  inlinePotentialMoreMultiplier: 0
+

@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3c5e22f99b96e4abdd2010d5e84bb9, type: 3}
+  m_Name: WallOfWar
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyModifierDefinition
+  modifierId: WallOfWar
+  linkedPassiveName: Wall of War
+  description: At combat start, gain Guard = 35% of max HP, Guard cap increased to 2x of Max HP.
+  effects:
+  - eventType: 0
+    conditions: []
+    actions:
+    - actionType: 16
+      parameterDict:
+        entries:
+        - key: amount
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 0.35
+            boolValue: 0
+        - key: calculateFromMaxHP
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+      executionOrder: 0
+    - actionType: 15
+      parameterDict:
+        entries:
+        - key: statName
+          value:
+            type: 0
+            stringValue: maxGuardMultiplier
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: setValue
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 2
+            boolValue: 0
+      executionOrder: 1
+    priority: 0
+  variableKeys: []
+  variableValues: []
+  tags:
+  - defensive
+  - guard
+  - combatStart
+

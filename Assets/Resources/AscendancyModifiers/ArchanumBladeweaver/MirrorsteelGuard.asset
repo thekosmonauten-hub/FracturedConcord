@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3c5e22f99b96e4abdd2010d5e84bb9, type: 3}
+  m_Name: MirrorsteelGuard
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyModifierDefinition
+  modifierId: MirrorsteelGuard
+  linkedPassiveName: Mirrorsteel Guard
+  description: Start combat with 3 Mirrorsteel stacks. 1 stack is consumed when hit. Each Mirrorsteel stack reduces hit damage by 40%. Playing a Guard skill after a Spell refreshes one stack.
+  effects:
+  - eventType: 0
+    conditions: []
+    actions:
+    - actionType: 3
+      parameterDict:
+        entries:
+        - key: stackType
+          value:
+            type: 0
+            stringValue: Mirrorsteel
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: amount
+          value:
+            type: 1
+            stringValue: 
+            intValue: 3
+            floatValue: 0
+            boolValue: 0
+      executionOrder: 0
+    priority: 0
+  - eventType: 7
+    conditions: []
+    actions:
+    - actionType: 2
+      parameterDict:
+        entries:
+        - key: stackType
+          value:
+            type: 0
+            stringValue: Mirrorsteel
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: amount
+          value:
+            type: 1
+            stringValue: 
+            intValue: 1
+            floatValue: 0
+            boolValue: 0
+      executionOrder: 0
+    - actionType: 9
+      parameterDict:
+        entries:
+        - key: damageReductionPercent
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 40
+            boolValue: 0
+        - key: perMirrorsteelStack
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+      executionOrder: 1
+    priority: 0
+  - eventType: 3
+    conditions:
+    - conditionType: 6
+      parameterDict:
+        entries:
+        - key: cardType
+          value:
+            type: 0
+            stringValue: Guard
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+      invert: 0
+    actions:
+    - actionType: 0
+      parameterDict:
+        entries:
+        - key: stackType
+          value:
+            type: 0
+            stringValue: Mirrorsteel
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: amount
+          value:
+            type: 1
+            stringValue: 
+            intValue: 1
+            floatValue: 0
+            boolValue: 0
+        - key: maxStacks
+          value:
+            type: 1
+            stringValue: 
+            intValue: 3
+            floatValue: 0
+            boolValue: 0
+        - key: requireSpellPlayedBefore
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+      executionOrder: 0
+    priority: 0
+  variableKeys: []
+  variableValues: []
+  tags:
+  - defensive
+  - mirrorsteel
+
+
+
+

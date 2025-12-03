@@ -120,7 +120,7 @@ At 3 types, critical strikes deal +100% more damage.
 Synergy: Cleanly reinforces the Battle Rhythm triad (Attack–Guard–Skill).
 
 Tactical Transference
-When you end your turn with Battle Rhythm, your next turn starts with +2 Momentum stacks, increasing card speed and damage by 10%.
+When you end your turn with Battle Rhythm, your next turn starts with +2 Momentum stacks.
 
 Synergy: Rewards end-of-turn control; builds continuity between turns.
 
@@ -149,44 +149,116 @@ Every 5 pulses grant +1 stack of Flow and restore 10% Mana.
 
 
 🔮 WITCH (Intelligence Class)
-1️⃣ Profane Vessel
+1️⃣ CORE MECHANIC — Corruption Pressure
+Corruption Pressure (new Mechanic/Stack)
+Whenever you play a card, lose life equal to 1% of CURRENT HP and gain 1 Corruption Pressure.
+You can hold any amount (no hard cap).
+Each stack represents “pressure” building inside your body.
 
-Theme: Chaos, corruption, and life as fuel.
-Fantasy Hook: “Every breath is a trade — life for annihilation.”
+Each Corruption Pressure grants:
++3% All Damage
++0.2% increased Life Lost from self-inflicted effects (scaling danger)
+At every 10 stacks → trigger an automatic “Surge”
 
-Mechanics:
+⭐ SURGES — Micro Explosions of Power
+SURGES — Micro Explosions of Power
 
-Corruption: Whenever you play a Card, lose 2% of your current Life and gain 1 Corruption (max 10).
-Each stack of Corruption grants +5% All Damage and reduces max HP by 1% for this combat.
-At 10 stacks, trigger Overwhelmed — expend all Corruption to unleash a Chaos Nova (damage scales with stacks spent).
+At 10, 20, 30, 40, ... Corruption Pressure, automatically trigger:
+Chaos Surge
+Deal moderate AoE Chaos damage
+Gain +1 Corruption flow (stacking) - +1 Corruption on card play per stack
+Lose 5% of max HP
+These triggers enforce a rhythm:
+You become a bomb that ticks faster and harder the more aggressively you play.
 
-Specific Card Unlock
-3x Chaotic Eruption
-- Consume Corruption stacks to cast a Chaos nova with increased Damage per corruption stack.
+Whenever you voluntarily expend Corruption (with a card or effect):
 
-Searing Insight -   Playing Fire or Chaos cards drains 2% HP, granting +4% damage for 1 turn (stacks 5x). - Makes elemental builds synergize.
+Consume all Corruption Pressure → unleash a massive Chaos Nova
+Damage scales quadratically with stacks
+Heal 1% missing HP per Corruption.
+Gain 1 free card play this turn
 
-Tormented Knowledge - When you take self-inflicted damage, your next card deals +25% more damage. - Generic, works for any card.
+This gives them:
+a panic button
+a finisher
+AND a survival valve
 
-Abyssal Bargain - Once per combat, sacrifice 10% Max HP to gain +2 Max Mana and draw 1 card. - Hybrid enabler.
+-- Branch 1 --
 
-Chaotic Equilibrium - Each Wave, your cards randomly change Damage type but deal +20% base damage.
+8. Feast of Pain
 
-Void Hymn - When below 25% HP, all cards cost 0 mana for 1 turn. - Risk–reward clutch play.
+Killing an enemy while you have 10+ Corruption Pressure:
+Heal 10% of Missing HP.
 
-Descent of Thought - Taking self-inflicted damage grants +1 Intelligence or Dexterity (random) for the rest of combat. - Synergizes with recurring damage loop.
+2. Searing Insight
+Whenever you play a Fire or Chaos card:
+Lose 2% of Max HP to gain +8% More Damage for 1 turn (stacks to 5).
 
-Feast of Pain - Heal 5% of missing HP when you kill an enemy while above 5 Corruption. - Gives sustainability.
+Clearer. More impactful. Still stacks with the main mechanic.
 
-Blood Pact - At the start of combat, lose 10% HP → Gain +10% damage and +1 Draw for 2 turns. - Fast-start aggressive option.
+12. Pact of the Harvester
 
-Echo of Agony - When you trigger Overwhelmed, next turn’s first card is duplicated. - Rewards committing to the mechanic.
+You take 25% increased self-inflicted damage.
+You deal 40% more damage per 20 Corruption Pressure.
+At 50 Corruption Pressure, automatically trigger Profane Harvest:
 
-Black Alchemy - Your healing effects now grant Corruption instead of HP, but heal 2% per stack consumed.
+Profane Harvest
+Consume all Corruption Pressure →
+Heal 1% of Missing HP per Corrpution pressure.
+Gain +20% Max Mana for 1 turn
+Next 3 cards deal extra Chaos damage with +30% base damage
 
-Pact of the Harvester -You can exceed max Corruption stacks (up to 20).
-While above 10 Corruption, take 25% increased self-damage, but deal 50% more damage overall.
-Upon reaching 20 stacks, automatically trigger "Profane Ritual": Consume all Corruption, heal 25% missing HP, and gain 20% increased Max Mana next turn.
+This turns “going big” into an active strategy rather than an accident.
+
+-- Branch 2 --
+
+4. Abyssal Bargain
+Each 20 stacks of Corruption: Recover 25% Mana and draw 1 card.
+
+
+3. Tormented Knowledge
+
+Whenever you lose life from your own effects,
+your next card has +30% More effect.
+
+Cleaner, more satisfying.
+
+5. Chaotic Pendulum
+
+At the start of each wave:
+Gain a buff that alternates between Chaos & Fire, gaining +25% more damage for that element, playing the pendulum element also grans +1 corruption pressure.
+
+6. Void Hymn
+
+When you reach 25% HP:
+Draw 3 cards, your cards cost 0 Mana for this turn
+Gain +5 Corruption Pressure at end of turn.
+Can only trigger once every 5 turns.
+
+
+7. Descent of Thought
+
+Whenever you lose life from your own effects:
+Gain either +1 Intelligence OR +1 Dexterity Or +1 Strength for the remainder of this combat. (33/33/33)
+
+
+9. Blood Pact
+
+Start of combat:
+Lose 10% of Max HP →
+Gain +15% Damage and +1 Draw for 3 turns.
+
+Blood price up, reward up.
+
+10. Echo of Agony
+
+After Chaos Surge triggers:
+Your next card cast is duplicated.
+Duplicate deals its damage as extra Chaos damage regardless of original type.
+
+Chaos twist included.
+
+
 
 👉 Playstyle: Manage a growing, self-destructive engine of chaos. Dangerous scaling power.
 
@@ -239,36 +311,93 @@ Chrono Collapse	When an enemy dies, all their debuffs spread to a random enemy.	
 --
 
 👉 Playstyle: Predictive casting, foresight management, and delayed power surges.
-3️⃣ Architect of Entropy
+3️⃣ ARCHANUM BLADEWEAVER
+“Where steel ends, spellwork begins.”
+Fantasy Identity:
 
-Theme: Deck manipulation, resource recursion, and inevitability.
-Fantasy Hook: “Your deck is a ritual circle; every discard a new incantation.”
+A Witch who engraves spells into her weapon, weaving arcane and martial techniques into one fluid style.
+Every swing is a sigil. Every spell alters the shape of her next strike.
 
-Mechanics:
+Theme Keywords:
 
-Entropy Mechanic:
-Each Discard increases “Entropy” by 1 (max 10). 
-Every 3 Entropy, trigger a “Soul Pulse”: return a random discarded Spell to hand.
+Hybrid • Spell-fused attacks • Arcane melee • Momentum + Mana cycling • Prismatic damage shifts • Enchanted weaponry
 
-Specific card unlock:
-3x Collapse
-- Consume Entropy stacks to recover 5% Mana per stack consumed.
+Core Fantasy Hook:
 
-Small Nodes:
-Discard Power & Card Effectiveness_
-5% increased Discard power, 5% increased card Effectiveness
+Your weapons channel spells.
+Your spells empower your weapons.
+You fight in the space between magic and martial arts.
 
+No entropy. No self-damage.
+Just pure martial arcana.
 
-Soul Reclaimer – Each discard has 10% chance to return to hand with 0 mana cost.
-Fading Memory – Echo last Spell each turn at 50% power.
-Grave Catalyst – +1% more Damage per card in discard (max 30%) this combat.
-Withering Insight – Discarding a card applies a random Curse to random enemy.
-Soulfire Loop – When enemy dies, return top card of discard.
-Entropy Engine – Casting 3 spells causes the next Spell to costs 0.
-Grimoire Recall – Gain X % increased discard power for each 0 cost card played this round.
+🧩 Core Mechanic: Spellwoven Strikes
 
+Every time you Attack, trigger your “Imbued Spell.”
+Every time you Cast a Spell, empower your next weapon Attack 10% more damage.
 
-👉 Playstyle: Recursive cycling and scaling via discard manipulation. “Deck as a resource” gameplay.
+Imbued Spell (Passive)
+Your next weapon Attack automatically casts a small spell effect based on your specialization (you choose 1 of 3 at ascendancy start):
+🔥 Flame Brand
+Attack deals bonus Fire damage and scorches.
+❄️ Frost Sigil
+Attack applies Chill and small Ward.
+⚡ Storm Edge
+Attack chains Lightning to a second enemy.
+This creates a playstyle-sealing identity without being restrictive.
+
+🧩 Reverse-Fusion Mechanic: Arcane Rebound
+
+After you cast a Spell, your next weapon Attack gains one of these:
+20% more damage
++1 hit (extra strike)
+Bonus flat elemental damage
+This makes spells prime your martial attacks, regardless of build type.
+
+⭐ MAJOR ASCENDANCY NODES (Battlemage Identity)
+
+All of these work for physical, elemental, or spell-based hybrids.
+
+⭐ 1. Archanum Martial Codex
+
+Your Attacks count as Spells.
+Your Spells count as Attacks.
+Enables “on hit” spell builds
+Enables “cast on hit” or “on cast” weapon builds
+Full bridge between martial & arcane scaling
+This is the Battlemage cornerstone.
+
+⭐ 2. Balanced Flux Weaving
+
+Whenever you alternate actions (Attack → Spell or Spell → Attack):
+Gain +15% More Damage for your next action
+Gain 2 Ward
+This encourages the “rhythm dance” of a Battlemage.
+
+⭐ 3. Blades of Conduction
+
+Your weapon attacks gain damage equal to 20% of your Spell Power.
+Your spells gain damage equal to 20% of your Physical Power.
+A perfect hybridization node that removes stat-path penalties.
+
+⭐ 4. Prismatic Arsenal
+
+When you Attack after casting a Spell, convert 50% of your weapon damage to that spell’s element.
+
+Examples:
+Cast a Fire spell → next attack becomes a fiery cleave
+Cast Frost → next attack chills
+Cast Chaos → becomes half Chaos damage
+Flavorful, visual, perfect for a Battlemage.
+
+⭐ 5. Twin Arts Invocation (Capstone)
+
+Every 3rd Attack casts your last Spell.
+Every 3rd Spell performs a free weapon Attack.
+Attack builds get automatic spell weaves
+Spell builds get automatic melee strikes
+Full hybrid identity achieved
+This is the “I am the Battlemage” button.
 
 🏹 RANGER (Dexterity Class)
 1️⃣ Marksman
@@ -285,17 +414,23 @@ Each chain hit deals 25% less damage but increases Evasion by 5% for 1 turn.
 Specific card unlock:
 3x Ricochet
 - Damage card
-- Projectile chains to 3 enemies, deal 5% more damage per remaining chain (3 chain = First target 15% more damage, 2nd target 10% more damage, 3rd target 5% more damage)
+- Projectile chains to 3 enemies, deal 5% more damage per remaining chain.
 
-
-Killing Intent – 150% increased Critical strike chance for the first card each turn.
-Executioner’s Flow – Crits reduce next card’s cost by 25%.
-Fade to Black – On Crit, gain 20% Evasion for 1 turn.
-Vantage Point – Deal +25% more damage if player HP > 50%.
 Chaining blows - Your projectiles chain to 1 additional enemy, +1 chain per 250 Dexterity.
+-- Branch 1 --
+Tightened String – 150% increased Critical strike chance for the first card each turn.
+Executioner’s Flow – Crits reduce next card’s cost by 25%.
+Fade to Black – On Crit, gain 20% Evasion for 1 turn and 1 Agitate Stack
+
+-- Branch 2 --
+Vantage Point – Deal +25% more damage if player HP > 50%.
 Knife’s Edge – Below 30% HP, all attacks Crit but deal 25% less base damage.
+
+-- Branch 3 --
+
+
+Meet at 
 Lethal Sequence – Projectile Multishot (Projectile attack and Spells attack/Cast twice)
-Last Breath – When you would die, instead go Invisible for 1 turn (Unable to take damage/Cheat death mechanic)
 
 👉 Playstyle: Predictive crit rhythm. Rewarded for conserving actions and perfect timing.
 
@@ -426,6 +561,9 @@ Deal 100% of your weapon damage to a random enemy.
 If you’ve Blocked this turn, deal it again at +50% damage.
 If the target is Bleeding, consume all Bleed to deal it instantly.
 Gain +5% Block Chance until end of turn.
+
+
+Apostle 
 
 1️⃣ Battlemind — The Arcane Bulwark
 

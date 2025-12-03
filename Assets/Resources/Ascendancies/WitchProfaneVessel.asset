@@ -60,7 +60,7 @@ MonoBehaviour:
   - branchName: Pact of the Harvester
     branchTheme: 
     branchNodes:
-    - name: Reduced self-inflicted damage & Chaos Resistance
+    - name: Reduced self-inflicted damage & Chaos Resistance_1
       nodeType: 1
       description: +3% Chaos Resistance\n+1% reduced self-inflicted damage
       icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
@@ -95,7 +95,7 @@ MonoBehaviour:
       subNodes: []
       subNodeRadius: 100
       selectedSubNodeIndex: -1
-    - name: Reduced self-inflicted damage & Chaos Resistance
+    - name: Reduced self-inflicted damage & Chaos Resistance_2
       nodeType: 1
       description: +3% Chaos Resistance\n+1% reduced self-inflicted damage
       icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
@@ -115,8 +115,8 @@ MonoBehaviour:
       nodeType: 2
       description: 'Whenever you play a Fire or Chaos card:
 
-        Lose 2% of
-        Max HP to gain +8% More Damage for 1 turn (stacks to 5).'
+        Lose 2% of Max
+        HP to gain +8% More Damage for 1 turn (stacks to 5).'
       icon: {fileID: -873090334391177266, guid: c2233f082e6d9d445ad4ce876be92f0b, type: 3}
       nodeScale: 1.5
       pointCost: 1
@@ -130,7 +130,7 @@ MonoBehaviour:
       subNodes: []
       subNodeRadius: 100
       selectedSubNodeIndex: -1
-    - name: Reduced self-inflicted damage & Chaos Resistance
+    - name: Reduced self-inflicted damage & Chaos Resistance_3
       nodeType: 1
       description: +3% Chaos Resistance\n+1% reduced self-inflicted damage
       icon: {fileID: 8936345456868684626, guid: 2465b8ff3e005ad43b47cfeb2a115fd0, type: 3}
@@ -244,8 +244,8 @@ MonoBehaviour:
       nodeType: 2
       description: 'Whenever you lose life from your own effects,
 
-        your
-        next card has +30% More effect.'
+        your next
+        card has +30% More effect.'
       icon: {fileID: -873090334391177266, guid: c2233f082e6d9d445ad4ce876be92f0b, type: 3}
       nodeScale: 1.5
       pointCost: 1
@@ -335,9 +335,9 @@ MonoBehaviour:
       nodeType: 2
       description: 'Whenever you lose life from your own effects:
 
-        Gain
-        either +1 Intelligence OR +1 Dexterity Or +1 Strength for the remainder of
-        this combat. (33/33/33)'
+        Gain either
+        +1 Intelligence OR +1 Dexterity Or +1 Strength for the remainder of this
+        combat. (33/33/33)'
       icon: {fileID: -873090334391177266, guid: c2233f082e6d9d445ad4ce876be92f0b, type: 3}
       nodeScale: 1.5
       pointCost: 1
@@ -404,11 +404,10 @@ MonoBehaviour:
       nodeType: 2
       description: 'After Chaos Surge triggers:
 
-        Your next card cast is
-        duplicated.
+        Your next card cast is duplicated.
 
-        Duplicate deals its damage as extra Chaos damage regardless
-        of original type.'
+        Duplicate
+        deals its damage as extra Chaos damage regardless of original type.'
       icon: {fileID: -873090334391177266, guid: c2233f082e6d9d445ad4ce876be92f0b, type: 3}
       nodeScale: 1.5
       pointCost: 1

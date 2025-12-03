@@ -35,14 +35,48 @@ public class StatusEffectManager : MonoBehaviour
         var effectsToAdvance = activeStatusEffects.ToList();
         foreach (var effect in effectsToAdvance)
         {
-            effect.AdvanceTurn();
-            
-            // Handle Crumble expiration (deal stored damage)
-            if (effect.effectType == StatusEffectType.Crumble && !effect.isActive && effect.magnitude > 0f)
+            try
             {
-                float storedDamage = effect.magnitude;
-                Debug.Log($"[Crumble] Expired, dealing {storedDamage} stored physical damage");
-                ApplyDamageToEntity(storedDamage, DamageType.Physical);
+                // Process DoT damage BEFORE advancing turn (damage happens at turn end)
+                // This ensures damage is applied before duration is reduced
+                // For turn-based mode, we check if it's a DoT effect type rather than tickInterval
+                if (effect.isActive && IsDamageOverTimeEffect(effect.effectType))
+                {
+                    // This is a damage-over-time effect - process damage now
+                    ProcessStatusEffectTick(effect);
+                }
+                
+                // Now advance the turn (reduces duration)
+                effect.AdvanceTurn();
+                
+                // Handle Crumble expiration (deal stored damage)
+                if (effect.effectType == StatusEffectType.Crumble && !effect.isActive && effect.magnitude > 0f)
+                {
+                    float storedDamage = effect.magnitude;
+                    Debug.Log($"[Crumble] Expired, dealing {storedDamage} stored physical damage");
+                    ApplyDamageToEntity(storedDamage, DamageType.Physical);
+                }
+                
+                // Handle DelayedDamage trigger (damage triggers when duration reaches 0)
+                if (effect.effectType == StatusEffectType.DelayedDamage && !effect.isActive && effect.magnitude > 0f)
+                {
+                    float delayedDamage = effect.magnitude;
+                    Debug.Log($"<color=orange>[DelayedDamage] {effect.effectName} triggered! Dealing {delayedDamage} damage!</color>");
+                    
+                    // Show combat message
+                    var combatUI = Object.FindFirstObjectByType<AnimatedCombatUI>();
+                    if (combatUI != null)
+                    {
+                        combatUI.LogMessage($"<color=orange>{effect.effectName}!</color> Delayed damage triggers for {delayedDamage}!");
+                    }
+                    
+                    ApplyDamageToEntity(delayedDamage, DamageType.Physical);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[StatusEffect] Error processing {effect.effectName}: {ex.Message}\n{ex.StackTrace}");
+                // Continue processing other effects even if one fails
             }
         }
         
@@ -57,6 +91,26 @@ public class StatusEffectManager : MonoBehaviour
     public bool AddStatusEffect(StatusEffect newEffect)
     {
         if (newEffect == null) return false;
+        
+        // Check for BuffDenial status effect
+        if (!newEffect.isDebuff) // Only check for buffs
+        {
+            if (HasStatusEffect(StatusEffectType.BuffDenial))
+            {
+                Debug.Log($"<color=red>[BuffDenial] {newEffect.effectName} was DENIED!</color>");
+                
+                var combatUI = Object.FindFirstObjectByType<AnimatedCombatUI>();
+                if (combatUI != null)
+                {
+                    combatUI.LogMessage($"<color=red>Buff Denied!</color> {newEffect.effectName} was negated.");
+                }
+                
+                // Remove BuffDenial (consume it after use)
+                RemoveStatusEffect(StatusEffectType.BuffDenial);
+                
+                return false; // Buff was denied, don't add it
+            }
+        }
         
         // Special handling for effects with unique stacking rules
         switch (newEffect.effectType)
@@ -332,7 +386,39 @@ public class StatusEffectManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Update all active status effects
+    /// Check if a status effect is a damage-over-time effect
+    /// </summary>
+    private bool IsDamageOverTimeEffect(StatusEffectType effectType)
+    {
+        return effectType == StatusEffectType.Bleed ||
+               effectType == StatusEffectType.Poison ||
+               effectType == StatusEffectType.Burn ||
+               effectType == StatusEffectType.ChaosDot;
+    }
+    
+    /// <summary>
+    /// Notify combat manager that an enemy died from DoT damage
+    /// This triggers the same death animation and cleanup as regular combat deaths
+    /// </summary>
+    private void NotifyCombatManagerOfEnemyDeath(EnemyCombatDisplay enemyDisplay, Enemy enemy)
+    {
+        if (enemyDisplay == null || enemy == null) return;
+        
+        // Find the combat manager
+        var combatManager = FindFirstObjectByType<CombatDisplayManager>();
+        if (combatManager == null)
+        {
+            Debug.LogWarning("[StatusEffect DoT] CombatDisplayManager not found - cannot trigger death animation");
+            return;
+        }
+        
+        // Notify combat manager to handle death (loot, experience, animation, cleanup)
+        combatManager.OnEnemyDefeatedByDoT(enemyDisplay, enemy);
+    }
+    
+    /// <summary>
+    /// Update all active status effects (called every frame)
+    /// For turn-based games, DoT damage is processed in AdvanceAllEffectsOneTurn() instead
     /// </summary>
     private void UpdateStatusEffects()
     {
@@ -342,8 +428,12 @@ public class StatusEffectManager : MonoBehaviour
         {
             effect.UpdateEffect(Time.deltaTime);
             
-            // Check if effect should tick
-            if (effect.ShouldTick())
+            // TURN-BASED MODE: Skip DoT damage ticks in Update loop
+            // DoT effects (Bleed, Poison, Burn, etc.) are processed in AdvanceAllEffectsOneTurn()
+            // Only process non-damage ticks here (buffs, visual effects, etc.)
+            bool isDamageOverTimeEffect = IsDamageOverTimeEffect(effect.effectType);
+            
+            if (effect.ShouldTick() && !isDamageOverTimeEffect)
             {
                 ProcessStatusEffectTick(effect);
                 effect.ResetTick();
@@ -397,7 +487,7 @@ public class StatusEffectManager : MonoBehaviour
                 ApplyPoisonDamage(effect);
                 break;
             case StatusEffectType.Burn:
-                // Ignite: 90% of fire damage per second (tickInterval should be 1 second)
+                // Ignite: 70% of fire damage per turn
                 ApplyIgniteDamage(effect);
                 break;
             case StatusEffectType.ChaosDot:
@@ -437,18 +527,23 @@ public class StatusEffectManager : MonoBehaviour
         // Magnitude is already calculated as 30% of (physical + chaos) damage
         float damage = effect.magnitude;
         float totalSource = effect.sourcePhysicalDamage + effect.sourceChaosDamage;
-        Debug.Log($"Applying Poison: {damage} chaos damage (30% of {totalSource} combined source damage)");
+        
+        // Get total poison magnitude for display
+        float totalPoisonMagnitude = GetTotalMagnitude(StatusEffectType.Poison);
+        int poisonStacks = activeStatusEffects.Count(e => e.effectType == StatusEffectType.Poison && e.isActive);
+        
+        Debug.Log($"Applying Poison stack: {damage} chaos damage (30% of {totalSource} source). Total Poison: {totalPoisonMagnitude} from {poisonStacks} stacks");
         ApplyDamageToEntity(damage, DamageType.Chaos);
     }
     
     /// <summary>
-    /// Apply Ignite damage: 90% of fire damage per turn
+    /// Apply Ignite damage: 70% of fire damage per turn
     /// </summary>
     private void ApplyIgniteDamage(StatusEffect effect)
     {
-        // Magnitude is already calculated as 90% of source fire damage
+        // Magnitude is already calculated as 70% of source fire damage
         float damage = effect.magnitude;
-        Debug.Log($"Applying Ignite: {damage} fire damage (90% of {effect.sourceFireDamage} source damage)");
+        Debug.Log($"Applying Ignite: {damage} fire damage (70% of {effect.sourceFireDamage} source damage)");
         ApplyDamageToEntity(damage, DamageType.Fire);
     }
     
@@ -457,30 +552,55 @@ public class StatusEffectManager : MonoBehaviour
     /// </summary>
     private void ApplyDamageToEntity(float damage, DamageType damageType)
     {
-        Character character = GetComponent<Character>();
-        if (character != null)
+        // Check if this is on PlayerCombatDisplay
+        var playerDisplay = GetComponent<PlayerCombatDisplay>();
+        if (playerDisplay != null)
         {
-            character.TakeDamage(damage, damageType);
-            return;
+            // Get the character from CharacterManager
+            if (CharacterManager.Instance != null && CharacterManager.Instance.HasCharacter())
+            {
+                Character character = CharacterManager.Instance.GetCurrentCharacter();
+                if (character != null)
+                {
+                    character.TakeDamage(damage, damageType);
+                    // Display will update automatically via CharacterManager.OnCharacterDamaged event
+                    Debug.Log($"[StatusEffect DoT] Applied {damage} {damageType} damage to player");
+                    return;
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[StatusEffect DoT] PlayerCombatDisplay found but CharacterManager or Character is null!");
+            }
         }
         
-        Enemy enemy = GetComponent<Enemy>();
-        if (enemy != null)
-        {
-            enemy.TakeDamage(damage);
-            return;
-        }
-        
-        // Try to get from display components
+        // Check if this is on EnemyCombatDisplay
         var enemyDisplay = GetComponent<EnemyCombatDisplay>();
         if (enemyDisplay != null)
         {
-            Enemy displayEnemy = enemyDisplay.GetCurrentEnemy();
-            if (displayEnemy != null)
+            Enemy enemy = enemyDisplay.GetCurrentEnemy();
+            if (enemy != null)
             {
-                displayEnemy.TakeDamage(damage);
+                string enemyName = enemy.enemyName;
+                float healthBefore = enemy.currentHealth;
+                
+                // Use the display's TakeDamage method to ensure UI updates properly
+                enemyDisplay.TakeDamage(damage);
+                
+                Debug.Log($"[StatusEffect DoT] Applied {damage} {damageType} damage to {enemyName} (HP: {healthBefore} → {enemy.currentHealth})");
+                
+                // Check if enemy died from DoT damage
+                if (enemy.currentHealth <= 0)
+                {
+                    Debug.Log($"[StatusEffect DoT] {enemyName} defeated by {damageType} damage!");
+                    // Notify the combat manager to handle death properly
+                    NotifyCombatManagerOfEnemyDeath(enemyDisplay, enemy);
+                }
             }
+            return;
         }
+        
+        Debug.LogWarning($"[StatusEffect DoT] Could not find PlayerCombatDisplay or EnemyCombatDisplay to apply {damage} {damageType} damage!");
     }
     
     /// <summary>
@@ -608,11 +728,11 @@ public class StatusEffectManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Calculate Ignite magnitude: 90% of fire damage
+    /// Calculate Ignite magnitude: 70% of fire damage
     /// </summary>
     public static float CalculateIgniteMagnitude(float fireDamage)
     {
-        return fireDamage * 0.9f;
+        return fireDamage * 0.7f;
     }
     
     /// <summary>
@@ -669,10 +789,39 @@ public class StatusEffectManager : MonoBehaviour
             Destroy(child.gameObject);
         }
         
-        // Create new icons for active effects
-        foreach (var effect in activeStatusEffects.Where(e => e.isActive))
+        // Group effects by type for stacking display
+        var effectsByType = activeStatusEffects.Where(e => e.isActive)
+                                               .GroupBy(e => e.effectType);
+        
+        foreach (var group in effectsByType)
         {
-            CreateStatusEffectIcon(effect);
+            StatusEffectType effectType = group.Key;
+            
+            // For Poison, create a single icon showing total magnitude
+            if (effectType == StatusEffectType.Poison)
+            {
+                // Get the shortest duration among all Poison stacks (soonest to expire)
+                int shortestDuration = group.Min(e => Mathf.CeilToInt(e.timeRemaining));
+                float totalMagnitude = group.Sum(e => e.magnitude);
+                int stackCount = group.Count();
+                
+                // Create a combined display effect
+                StatusEffect displayEffect = group.First().Clone();
+                displayEffect.magnitude = totalMagnitude;
+                displayEffect.timeRemaining = shortestDuration;
+                displayEffect.effectName = $"Poison ({stackCount})"; // Show stack count
+                
+                CreateStatusEffectIcon(displayEffect);
+                Debug.Log($"[Poison Display] Showing {stackCount} stacks with total magnitude {totalMagnitude} (shortest duration: {shortestDuration})");
+            }
+            else
+            {
+                // For non-stacking effects, show each one individually
+                foreach (var effect in group)
+                {
+                    CreateStatusEffectIcon(effect);
+                }
+            }
         }
 
         // If a layout group is present, let it control positioning; otherwise, fallback spacing
@@ -847,6 +996,9 @@ public class StatusEffectManager : MonoBehaviour
                 ApplyStackDeltaToStackSystem(stackSystem, StackType.Tolerance, CalculateAdjustedDelta(adjustment.toleranceStacks, adjustment.toleranceMoreMultiplier, adjustment.toleranceIncreasedPercent, signedMultiplier));
                 ApplyStackDeltaToStackSystem(stackSystem, StackType.Potential, CalculateAdjustedDelta(adjustment.potentialStacks, adjustment.potentialMoreMultiplier, adjustment.potentialIncreasedPercent, signedMultiplier));
                 ApplyStackDeltaToStackSystem(stackSystem, StackType.Momentum, CalculateAdjustedDelta(adjustment.momentumStacks, adjustment.momentumMoreMultiplier, adjustment.momentumIncreasedPercent, signedMultiplier));
+                ApplyStackDeltaToStackSystem(stackSystem, StackType.Flow, CalculateAdjustedDelta(adjustment.flowStacks, adjustment.flowMoreMultiplier, adjustment.flowIncreasedPercent, signedMultiplier));
+                ApplyStackDeltaToStackSystem(stackSystem, StackType.Corruption, CalculateAdjustedDelta(adjustment.corruptionStacks, adjustment.corruptionMoreMultiplier, adjustment.corruptionIncreasedPercent, signedMultiplier));
+                ApplyStackDeltaToStackSystem(stackSystem, StackType.BattleRhythm, CalculateAdjustedDelta(adjustment.battleRhythmStacks, adjustment.battleRhythmMoreMultiplier, adjustment.battleRhythmIncreasedPercent, signedMultiplier));
             }
         }
     }

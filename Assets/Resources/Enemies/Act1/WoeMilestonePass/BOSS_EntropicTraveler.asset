@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: BOSS_EntropicTraveler
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: Entropic Traveler
+  description: A mysterious wanderer whose footsteps leave trails of decay and entropy,
+    avoiding attacks with unnatural ease.
+  enemySprite: {fileID: 0}
+  tier: 2
+  rarity: 2
+  category: 4
+  minHealth: 255
+  maxHealth: 295
+  baseDamage: 16
+  baseArmor: 0
+  criticalChance: 0.08
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 102
+  evasionRating: 20
+  physicalResistance: 10
+  fireResistance: 10
+  coldResistance: 10
+  lightningResistance: 10
+  chaosResistance: 30
+  displayScale: 1.25
+  basePanelHeight: 340
+  enableEnergy: 1
+  baseMaxEnergy: 125
+  energyRegenPerTurn: 12
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  staggerThreshold: 115
+  staggerDecayPerTurn: 12
+  defendGuardPercent: 0.09
+  aiPattern: 4
+  attackPreference: 0.7
+  specialAbilities:
+  - Empty Footfalls
+  - Dust Trail
+  abilities: []
+  bossAbilities:
+  - 5
+  - 13
+  summonPool: []
+  spiritTags:
+  - 3
+  guaranteedSpiritDrop: 0
+  minGoldDrop: 51
+  maxGoldDrop: 100
+  experienceReward: 126
+  cardDropChance: 0.3
+  initialAgitateStacks: 0
+  initialToleranceStacks: 0
+  initialPotentialStacks: 0
+  excludeFromRandom: 1
+  healthBarColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  animatorController: {fileID: 0}
+

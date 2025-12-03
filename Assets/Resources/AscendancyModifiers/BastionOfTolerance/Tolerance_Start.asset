@@ -1,0 +1,109 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3c5e22f99b96e4abdd2010d5e84bb9, type: 3}
+  m_Name: Tolerance_Start
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyModifierDefinition
+  modifierId: Tolerance_Start
+  linkedPassiveName: Tolerance
+  description: Gain 1 Tolerance stack when hit (or 2 on kill). Each stack reduces
+    incoming damage by 3% (max 10 stacks).
+  effects:
+  - eventType: 0
+    conditions: []
+    actions:
+    - actionType: 3
+      parameterDict:
+        entries:
+        - key: stackType
+          value:
+            type: 0
+            stringValue: Tolerance
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: amount
+          value:
+            type: 1
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+      executionOrder: 0
+    - actionType: 5
+      parameterDict:
+        entries:
+        - key: stackType
+          value:
+            type: 0
+            stringValue: Tolerance
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: bonusMax
+          value:
+            type: 1
+            stringValue: 
+            intValue: 10
+            floatValue: 0
+            boolValue: 0
+      executionOrder: 1
+    priority: 0
+  - eventType: 13
+    conditions: []
+    actions:
+    - actionType: 0
+      parameterDict:
+        entries:
+        - key: stackType
+          value:
+            type: 0
+            stringValue: Tolerance
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: amount
+          value:
+            type: 1
+            stringValue: 
+            intValue: 1
+            floatValue: 0
+            boolValue: 0
+      executionOrder: 0
+    priority: 0
+  - eventType: 19
+    conditions: []
+    actions:
+    - actionType: 0
+      parameterDict:
+        entries:
+        - key: stackType
+          value:
+            type: 0
+            stringValue: Tolerance
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: amount
+          value:
+            type: 1
+            stringValue: 
+            intValue: 2
+            floatValue: 0
+            boolValue: 0
+      executionOrder: 0
+    priority: 0
+  variableKeys: []
+  variableValues: []
+  tags:
+  - defensive
+  - stack-based
+  - tolerance

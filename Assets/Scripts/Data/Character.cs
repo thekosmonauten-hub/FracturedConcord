@@ -159,9 +159,41 @@ public class Character
     [Header("Utility & Effigy Stats")]
     public float dodgeChance = 0f;
     public float guardEffectivenessPercent = 0f;
+    public float toleranceEffectivenessPercent = 0f; // Increased effectiveness of Tolerance stacks
+    public float maxGuardMultiplier = 1f; // Multiplier for max guard (default 1x, Wall of War sets to 2x)
+    public bool attackCannotMiss = false; // Iron Will: Attacks cannot miss
+    public float attackDamageIncreasedPercent = 0f; // Increased attack damage (for Crumbling Earth)
+    public float crumbleMagnitudeIncreasedPercent = 0f; // Increased Crumble magnitude (additive)
+    public float crumbleMagnitudeMorePercent = 0f; // More Crumble magnitude (multiplicative)
+    public float crumbleDurationIncreasedPercent = 0f; // Increased Crumble duration
+    public float crumbleExplosionHealPercent = 0f; // Heal percent from Crumble explosions
+    public float maxManaPercentIncrease = 0f; // Percent increase to max mana
+    public bool immuneToBleed = false; // Stoneskin: Immune to Bleed
+    public bool immuneToIgnite = false; // Stoneskin: Immune to Ignite
     public float buffDurationIncreasedPercent = 0f;
     public float randomAilmentChancePercent = 0f;
     public float increasedDamageAfterGuardPercent = 0f;
+    public float increasedDamagePercent = 0f; // General increased damage (for Disciple of War and Profane Vessel nodes)
+    public float criticalStrikeChance = 0f; // General critical strike chance (for Disciple of War nodes)
+    
+    [Header("Profane Vessel Modifiers")]
+    public float chaosResistancePercent = 0f; // Chaos resistance (stored separately from damageStats for modifiers)
+    public float reducedSelfInflictedDamagePercent = 0f; // Reduced self-inflicted damage
+    public float increasedSelfInflictedDamagePercent = 0f; // Increased self-inflicted damage
+    public float increasedChaosDamagePercent = 0f; // Increased Chaos damage
+    public float corruptionGainRatePercent = 0f; // Corruption gain rate multiplier
+    
+    [Header("Archanum Bladeweaver Modifiers")]
+    public float increasedElementalDamageWithAttacksPercent = 0f; // Increased elemental damage with attacks
+    public float weaponAttacksScaleWithSpellPowerPercent = 0f; // Weapon attacks scale with % of Spell Power
+    public float spellsGainDamageFromWeaponPercent = 0f; // Spells gain damage equal to % of weapon damage
+    
+    [Header("Temporal Savant Modifiers")]
+    public float temporalCardDrawChancePercent = 0f; // Chance to draw Temporal cards
+    public float increasedEnergyShieldPercent = 0f; // Increased Energy Shield
+    public float increasedTemporalCardEffectivenessPercent = 0f; // Increased effectiveness of Temporal cards
+    public float temporalCardEffectBonusPercent = 0f; // Bonus effect for Temporal cards (Borrowed Power)
+    public int temporalCardManaCostIncrease = 0; // Mana cost increase for Temporal cards (Borrowed Power)
     
     [Header("Speed Modifiers")]
     [Tooltip("Total % increased attack speed from items/passives (additive).")]
@@ -209,6 +241,9 @@ public class Character
     [Header("Deck & Cards")]
     public Deck currentDeck; // Legacy - for backward compatibility
     public CharacterDeckData deckData = new CharacterDeckData(); // New: deck management & card collection
+    
+    [Header("Ascendancy")]
+    public CharacterAscendancyProgress ascendancyProgress = new CharacterAscendancyProgress();
     
     [System.NonSerialized]
     private ChannelingTracker channelingTracker = new ChannelingTracker();
@@ -893,22 +928,29 @@ public class Character
         return bestSpeed > 0f ? bestSpeed : 1f;
     }
     
-    // Add guard to the character (capped at max health)
+    // Add guard to the character (capped at max guard)
     public void AddGuard(float guardAmount)
     {
-        // Guard cannot exceed max health
+        // Guard cannot exceed max guard (which is maxHealth * maxGuardMultiplier)
         float effectivenessMultiplier = 1f + Mathf.Max(0f, guardEffectivenessPercent) / 100f;
         float adjustedGuard = guardAmount * effectivenessMultiplier;
         float newGuard = currentGuard + adjustedGuard;
-        currentGuard = Mathf.Min(newGuard, maxHealth);
+        UpdateMaxGuard(); // Ensure maxGuard is up to date
+        currentGuard = Mathf.Min(newGuard, maxGuard);
         
-        Debug.Log($"{characterName} gained {adjustedGuard} guard (base {guardAmount}). Total guard: {currentGuard}/{maxHealth}");
+        Debug.Log($"{characterName} gained {adjustedGuard} guard (base {guardAmount}). Total guard: {currentGuard}/{maxGuard}");
+        
+        // Boss Ability Handler - guard gained
+        if (adjustedGuard > 0)
+        {
+            BossAbilityHandler.OnPlayerGainedGuard(adjustedGuard);
+        }
     }
     
-    // Set max guard based on max health (call this when max health changes)
+    // Set max guard based on max health and maxGuardMultiplier (call this when max health or maxGuardMultiplier changes)
     public void UpdateMaxGuard()
     {
-        maxGuard = maxHealth;
+        maxGuard = maxHealth * maxGuardMultiplier;
         // Ensure current guard doesn't exceed new max
         if (currentGuard > maxGuard)
         {

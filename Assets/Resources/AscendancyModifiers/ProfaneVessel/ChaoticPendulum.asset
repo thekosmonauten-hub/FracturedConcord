@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3c5e22f99b96e4abdd2010d5e84bb9, type: 3}
+  m_Name: ChaoticPendulum
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyModifierDefinition
+  modifierId: ChaoticPendulum
+  linkedPassiveName: Chaotic Pendulum
+  description: At the start of each wave: Gain a buff that alternates between Chaos & Fire, gaining +25% more damage for that element, playing the pendulum element also grants +1 corruption pressure.
+  effects:
+  - eventType: 19
+    conditions: []
+    actions:
+    - actionType: 13
+      parameterDict:
+        entries:
+        - key: statusEffectType
+          value:
+            type: 0
+            stringValue: ChaoticPendulumBuff
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: magnitude
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 25
+            boolValue: 0
+        - key: duration
+          value:
+            type: 1
+            stringValue: 
+            intValue: 999
+            floatValue: 0
+            boolValue: 0
+        - key: alternateElement
+          value:
+            type: 3
+            stringValue: 
+            intValue: 0
+            floatValue: 0
+            boolValue: 1
+      executionOrder: 0
+    priority: 0
+  variableKeys: []
+  variableValues: []
+  tags:
+  - offensive
+  - chaos
+  - fire
+  - waveStart
+
+
+
+

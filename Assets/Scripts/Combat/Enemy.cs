@@ -475,6 +475,12 @@ public class Enemy
         
         currentHealth = Mathf.Max(0, currentHealth - Mathf.RoundToInt(adjustedDamage));
         
+        // Boss Ability Handler - enemy damaged
+        if (adjustedDamage > 0)
+        {
+            BossAbilityHandler.OnEnemyDamaged(this, adjustedDamage);
+        }
+        
         if (currentHealth <= 0)
         {
             Debug.Log($"{enemyName} has been defeated!");
@@ -903,6 +909,56 @@ public class Enemy
     private void OnStackValueChanged(StackType type, int value)
     {
         OnStacksChanged?.Invoke(type, value);
+    }
+    
+    // ====================
+    // BOSS CUSTOM DATA
+    // ====================
+    
+    /// <summary>
+    /// Custom data dictionary for boss abilities to store state across turns.
+    /// Used by BossAbilityHandler for tracking complex mechanics.
+    /// </summary>
+    [System.NonSerialized]
+    private Dictionary<string, object> bossCustomData = new Dictionary<string, object>();
+    
+    /// <summary>
+    /// Set custom data for boss abilities
+    /// </summary>
+    public void SetBossData(string key, object value)
+    {
+        if (bossCustomData == null)
+            bossCustomData = new Dictionary<string, object>();
+        
+        bossCustomData[key] = value;
+    }
+    
+    /// <summary>
+    /// Get custom data for boss abilities
+    /// </summary>
+    public object GetBossData(string key)
+    {
+        if (bossCustomData == null)
+            bossCustomData = new Dictionary<string, object>();
+        
+        return bossCustomData.ContainsKey(key) ? bossCustomData[key] : null;
+    }
+    
+    /// <summary>
+    /// Check if custom data exists for a key
+    /// </summary>
+    public bool HasBossData(string key)
+    {
+        return bossCustomData != null && bossCustomData.ContainsKey(key);
+    }
+    
+    /// <summary>
+    /// Clear all custom boss data (useful when enemy is reset/respawned)
+    /// </summary>
+    public void ClearBossData()
+    {
+        if (bossCustomData != null)
+            bossCustomData.Clear();
     }
 }
 

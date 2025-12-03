@@ -39,6 +39,12 @@ public class EnemyCombatDisplay : MonoBehaviour
     [SerializeField] private Color energyReadyColor = new Color(0.3f, 0.85f, 1f);
     [SerializeField] private Color energyDepletedColor = new Color(0.1f, 0.25f, 0.4f);
     
+    [Header("Guard Display")]
+    [SerializeField] private GameObject guardContainer;
+    [SerializeField] private Image guardFillImage;
+    [SerializeField] private TextMeshProUGUI guardText;
+    [SerializeField] private Color guardColor = new Color(0.2f, 0.6f, 1f);
+    
     [Header("Stacks")]
     public Transform stacksContainer;
     public GameObject stackIconPrefab;
@@ -161,6 +167,7 @@ public class EnemyCombatDisplay : MonoBehaviour
         }
         
         EnsureEnergyUI();
+        EnsureGuardUI();
         
         // Provide a default runtime status-effect icon prefab if none assigned
         if (statusEffectPrefab == null)
@@ -359,10 +366,9 @@ public class EnemyCombatDisplay : MonoBehaviour
         // Set up animator when enemy data changes
         SetupEnemyAnimator();
         
-        if (isInitialized)
-        {
-            UpdateDisplay();
-        }
+        // Always update display when enemy is set, even if not fully initialized yet
+        // This ensures spawned enemies show immediately without waiting for turn advance
+        UpdateDisplay();
     }
     
     /// <summary>
@@ -379,6 +385,9 @@ public class EnemyCombatDisplay : MonoBehaviour
         // Clear visual elements
         if (enemyNameText != null)
             enemyNameText.text = "";
+        
+        if (enemyTypeText != null)
+            enemyTypeText.text = "";
         
         if (enemyPortrait != null)
         {
@@ -571,6 +580,7 @@ public class EnemyCombatDisplay : MonoBehaviour
         // Update status effects
         UpdateStatusEffects();
         UpdateEnergyDisplay();
+        UpdateGuardDisplay();
 
         // Apply layout scaling if EnemyData provides displayScale/basePanelHeight
         if (enemyData != null)
@@ -690,6 +700,48 @@ public class EnemyCombatDisplay : MonoBehaviour
             intentContainer.SetActive(true);
         }
         
+        // Check for crowd control status effects (Frozen, Stunned) that prevent actions
+        bool isFrozen = statusEffectManager != null && statusEffectManager.HasStatusEffect(StatusEffectType.Freeze);
+        bool isStunned = statusEffectManager != null && statusEffectManager.HasStatusEffect(StatusEffectType.Stun);
+        
+        // Display crowd control status instead of normal intent
+        if (isFrozen)
+        {
+            if (intentText != null)
+            {
+                intentText.text = "FROZEN!";
+                intentText.color = new Color(0.6f, 0.9f, 1f); // Light blue
+            }
+            if (intentDamageText != null)
+            {
+                intentDamageText.text = "";
+            }
+            if (intentIcon != null)
+            {
+                intentIcon.sprite = null; // Or use a frozen icon if available
+            }
+            return;
+        }
+        
+        if (isStunned)
+        {
+            if (intentText != null)
+            {
+                intentText.text = "STAGGERED!";
+                intentText.color = Color.yellow;
+            }
+            if (intentDamageText != null)
+            {
+                intentDamageText.text = "";
+            }
+            if (intentIcon != null)
+            {
+                intentIcon.sprite = null; // Or use a stunned icon if available
+            }
+            return;
+        }
+        
+        // Normal intent display (if not frozen/stunned)
         if (showingAbilityIntent)
         {
             intentText.text = activeAbilityIntentName;
@@ -699,6 +751,7 @@ public class EnemyCombatDisplay : MonoBehaviour
         if (intentText != null)
         {
             intentText.text = currentEnemy.GetIntentDescription();
+            intentText.color = Color.white; // Reset to default color
         }
         
         if (intentDamageText != null)
@@ -1133,6 +1186,129 @@ public class EnemyCombatDisplay : MonoBehaviour
             UpdateEnergyDisplay();
         }
     }
+    
+    private void EnsureGuardUI()
+    {
+        if (guardContainer == null)
+        {
+            var existing = transform.Find("GuardContainer");
+            if (existing != null)
+            {
+                guardContainer = existing.gameObject;
+                guardFillImage = guardContainer.transform.Find("GuardFill")?.GetComponent<Image>();
+                guardText = guardContainer.GetComponentInChildren<TextMeshProUGUI>();
+            }
+        }
+
+        if (guardContainer == null)
+        {
+            var container = new GameObject("GuardContainer", typeof(RectTransform));
+            container.transform.SetParent(transform, false);
+            var rect = container.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.5f, 0f);
+            rect.anchorMax = new Vector2(0.5f, 0f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = new Vector2(0f, -48f); // Position below energy bar
+            rect.sizeDelta = new Vector2(200f, 22f);
+            guardContainer = container;
+
+            var bgGO = new GameObject("GuardBackground", typeof(RectTransform), typeof(Image));
+            bgGO.transform.SetParent(container.transform, false);
+            var bgRect = bgGO.GetComponent<RectTransform>();
+            bgRect.anchorMin = Vector2.zero;
+            bgRect.anchorMax = Vector2.one;
+            bgRect.offsetMin = Vector2.zero;
+            bgRect.offsetMax = Vector2.zero;
+            var bgImage = bgGO.GetComponent<Image>();
+            bgImage.color = new Color(0f, 0f, 0f, 0.35f);
+
+            var fillGO = new GameObject("GuardFill", typeof(RectTransform), typeof(Image));
+            fillGO.transform.SetParent(container.transform, false);
+            var fillRect = fillGO.GetComponent<RectTransform>();
+            fillRect.anchorMin = Vector2.zero;
+            fillRect.anchorMax = Vector2.one;
+            fillRect.offsetMin = new Vector2(2f, 2f);
+            fillRect.offsetMax = new Vector2(-2f, -2f);
+            guardFillImage = fillGO.GetComponent<Image>();
+            guardFillImage.type = Image.Type.Filled;
+            guardFillImage.fillMethod = Image.FillMethod.Horizontal;
+            guardFillImage.color = guardColor;
+
+            var textGO = new GameObject("GuardText", typeof(RectTransform));
+            textGO.transform.SetParent(container.transform, false);
+            var textRect = textGO.GetComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+            guardText = textGO.AddComponent<TextMeshProUGUI>();
+            guardText.alignment = TextAlignmentOptions.Center;
+            guardText.fontSize = 22f;
+            guardText.color = Color.white;
+            guardText.raycastTarget = false;
+        }
+
+        ConfigureGuardFillImage();
+
+        if (guardContainer != null)
+        {
+            guardContainer.SetActive(false);
+        }
+    }
+
+    private void ConfigureGuardFillImage()
+    {
+        if (guardFillImage == null)
+            return;
+
+        guardFillImage.type = Image.Type.Filled;
+        guardFillImage.fillMethod = Image.FillMethod.Horizontal;
+        guardFillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
+        guardFillImage.fillAmount = Mathf.Clamp01(currentEnemy != null && currentEnemy.maxGuard > 0f
+            ? currentEnemy.currentGuard / currentEnemy.maxGuard
+            : 0f);
+    }
+
+    public void UpdateGuardDisplay()
+    {
+        if (guardContainer == null || currentEnemy == null)
+            return;
+
+        bool shouldShow = currentEnemy.currentGuard > 0f;
+        guardContainer.SetActive(shouldShow);
+        if (!shouldShow)
+            return;
+
+        // Force read the latest values directly from the enemy
+        float current = currentEnemy.currentGuard;
+        float max = currentEnemy.maxGuard;
+        float percent = max > 0f ? Mathf.Clamp01(current / max) : 0f;
+        
+        if (guardFillImage != null)
+        {
+            if (Application.isPlaying)
+            {
+                LeanTween.cancel(guardFillImage.gameObject);
+                float startFill = guardFillImage.fillAmount;
+                LeanTween.value(guardFillImage.gameObject, startFill, percent, 0.35f)
+                    .setEase(LeanTweenType.easeOutQuad)
+                    .setOnUpdate((float value) =>
+                    {
+                        if (guardFillImage == null) return;
+                        guardFillImage.fillAmount = value;
+                    });
+            }
+            else
+            {
+                guardFillImage.fillAmount = percent;
+            }
+        }
+
+        if (guardText != null)
+        {
+            guardText.text = $"{Mathf.RoundToInt(current)}/{Mathf.RoundToInt(max)}";
+        }
+    }
 
     public void UpdateStackDisplay()
     {
@@ -1326,10 +1502,47 @@ public class EnemyCombatDisplay : MonoBehaviour
     {
         if (currentEnemy != null)
         {
+            // Check for DamageReflection status effect BEFORE taking damage
+            var statusManager = GetStatusEffectManager();
+            if (statusManager != null && statusManager.HasStatusEffect(StatusEffectType.DamageReflection))
+            {
+                float reflectionPercent = statusManager.GetTotalMagnitude(StatusEffectType.DamageReflection);
+                float reflectedDamage = damage * (reflectionPercent / 100f);
+                
+                if (reflectedDamage > 0f)
+                {
+                    Debug.Log($"<color=cyan>[DamageReflection] {currentEnemy.enemyName} reflects {reflectedDamage:F1} damage back ({reflectionPercent}%)!</color>");
+                    
+                    // Reflect damage back to player
+                    if (CharacterManager.Instance != null)
+                    {
+                        CharacterManager.Instance.TakeDamage(Mathf.RoundToInt(reflectedDamage));
+                        
+                        // Show floating damage on player
+                        var floatingDamageManager = UnityEngine.Object.FindFirstObjectByType<FloatingDamageManager>();
+                        var playerDisplay = UnityEngine.Object.FindFirstObjectByType<PlayerCombatDisplay>();
+                        if (floatingDamageManager != null && playerDisplay != null)
+                        {
+                            floatingDamageManager.ShowDamage(reflectedDamage, false, playerDisplay.transform);
+                        }
+                        
+                        var combatUI = UnityEngine.Object.FindFirstObjectByType<AnimatedCombatUI>();
+                        if (combatUI != null)
+                        {
+                            combatUI.LogMessage($"<color=cyan>Reflected!</color> {reflectedDamage:F0} damage returned.");
+                        }
+                    }
+                    
+                    // Remove reflection after use (consumed on hit)
+                    statusManager.RemoveStatusEffect(StatusEffectType.DamageReflection);
+                }
+            }
+            
             currentEnemy.TakeDamage(damage, ignoreGuardArmor);
             abilityRunner?.OnDamaged();
             UpdateHealthDisplay();
             UpdateStaggerDisplay(); // Update stagger when damage is taken (stagger may have been applied)
+            UpdateGuardDisplay(); // Update guard display when damage is taken (guard may have been reduced)
             PlayDamageAnimation();
             if (currentEnemy.currentHealth <= 0)
             {

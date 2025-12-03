@@ -455,12 +455,26 @@ public class CombatDisplayManager : MonoBehaviour
                 }
             }
             
-            // Fill remaining slots with random enemies if under spawnCount-1
+            // Fill remaining slots with enemies from encounter pool (respects exclusive pool setting)
             while (encounterData.Count < spawnCount - 1)
             {
-                var any = enemyDatabase.GetRandomEnemy();
-                if (any != null)
-                    encounterData.Add(any);
+                EnemyData fillEnemy = null;
+                
+                // Check if encounter has a specific enemy pool
+                if (currentEncounter.encounterEnemyPool != null && currentEncounter.encounterEnemyPool.Count > 0)
+                {
+                    // Use encounter-specific pool
+                    fillEnemy = currentEncounter.encounterEnemyPool[UnityEngine.Random.Range(0, currentEncounter.encounterEnemyPool.Count)];
+                    Debug.Log($"[Boss Wave] Filling minion slot from encounter pool: {fillEnemy.enemyName}");
+                }
+                else if (enemyDatabase != null)
+                {
+                    // Fallback to database if no encounter pool
+                    fillEnemy = enemyDatabase.GetRandomEnemy();
+                }
+                
+                if (fillEnemy != null)
+                    encounterData.Add(fillEnemy);
                 else
                     break;
             }
@@ -477,6 +491,12 @@ public class CombatDisplayManager : MonoBehaviour
             {
                 // Regular encounter - check for encounter-specific enemy pool first
                 var currentEnc = EncounterManager.Instance != null ? EncounterManager.Instance.GetCurrentEncounter() : null;
+                
+                Debug.Log($"[SpawnWave] Current encounter: {(currentEnc != null ? currentEnc.encounterName : "NULL")}");
+                if (currentEnc != null)
+                {
+                    Debug.Log($"[SpawnWave] Encounter pool count: {(currentEnc.encounterEnemyPool != null ? currentEnc.encounterEnemyPool.Count : 0)}, Exclusive: {currentEnc.useExclusiveEnemyPool}");
+                }
                 
                 if (currentEnc != null && currentEnc.encounterEnemyPool != null && currentEnc.encounterEnemyPool.Count > 0)
                 {
@@ -620,6 +640,52 @@ public class CombatDisplayManager : MonoBehaviour
         currentState = CombatState.PlayerTurn;
         isPlayerTurn = true;
         
+        // Reset turn-based counters for boss abilities
+        CombatDeckManager combatDeckMgr = CombatDeckManager.Instance;
+        if (combatDeckMgr != null)
+        {
+            combatDeckMgr.ResetTurnCounters();
+        }
+        
+        // Check if player is frozen or stunned - if so, skip their turn
+        bool isPlayerFrozen = false;
+        bool isPlayerStunned = false;
+        if (playerDisplay != null)
+        {
+            var statusManager = playerDisplay.GetStatusEffectManager();
+            if (statusManager != null)
+            {
+                isPlayerFrozen = statusManager.HasStatusEffect(StatusEffectType.Freeze);
+                isPlayerStunned = statusManager.HasStatusEffect(StatusEffectType.Stun);
+            }
+        }
+        
+        if (isPlayerFrozen)
+        {
+            Debug.Log($"<color=cyan>[Freeze] Player is frozen and cannot act this turn!</color>");
+            // Show a message to the player
+            if (combatUI != null)
+            {
+                combatUI.LogMessage("You are FROZEN! Your turn is skipped.");
+            }
+            // Auto-end turn after a brief delay
+            StartCoroutine(AutoEndFrozenTurn());
+            return;
+        }
+        
+        if (isPlayerStunned)
+        {
+            Debug.Log($"<color=yellow>[Stun] Player is stunned and cannot act this turn!</color>");
+            // Show a message to the player
+            if (combatUI != null)
+            {
+                combatUI.LogMessage("You are STUNNED! Your turn is skipped.");
+            }
+            // Auto-end turn after a brief delay
+            StartCoroutine(AutoEndFrozenTurn());
+            return;
+        }
+        
         // Update prepared cards (increment charges and apply bonuses)
         // This happens at the START of the player's turn so cards gain power
         var prepManager = PreparationManager.Instance;
@@ -703,14 +769,14 @@ public class CombatDisplayManager : MonoBehaviour
         // Process delayed player cards that are ready to execute
         ProcessDelayedPlayerCards();
         
-        CombatDeckManager deckManager = CombatDeckManager.Instance;
+        CombatDeckManager deckMgr = CombatDeckManager.Instance;
         Character currentCharacter = characterManager != null && characterManager.HasCharacter() ? characterManager.GetCurrentCharacter() : null;
-        if (deckManager != null && currentCharacter != null)
+        if (deckMgr != null && currentCharacter != null)
         {
             int cardsToDraw = Mathf.Max(0, currentCharacter.GetCardsDrawnPerTurn());
             if (cardsToDraw > 0)
             {
-                deckManager.DrawCards(cardsToDraw);
+                deckMgr.DrawCards(cardsToDraw);
             }
         }
         
@@ -747,6 +813,11 @@ public class CombatDisplayManager : MonoBehaviour
                     
                     // Decay guard
                     enemy.DecayGuard();
+                    // Update guard display after decay
+                    if (display != null)
+                    {
+                        display.UpdateGuardDisplay();
+                    }
                     
                     // Decay stagger
                     enemy.DecayStagger();
@@ -816,20 +887,37 @@ public class CombatDisplayManager : MonoBehaviour
         var activeDisplays = enemySpawner != null ? enemySpawner.GetActiveEnemies() : new List<EnemyCombatDisplay>();
         EnemyCombatDisplay enemyDisplay = (enemyIndex >= 0 && enemyIndex < activeDisplays.Count) ? activeDisplays[enemyIndex] : null;
         
-        // Check if enemy is staggered (has Stun status effect)
+        // Boss Ability Handler - enemy turn start
+        BossAbilityHandler.OnEnemyTurnStart(enemy, enemyDisplay);
+        
+        // Check if enemy is staggered (has Stun status effect) or frozen
         bool isStaggered = false;
+        bool isFrozen = false;
         if (enemyDisplay != null)
         {
             var statusManager = enemyDisplay.GetStatusEffectManager();
             if (statusManager != null)
             {
                 isStaggered = statusManager.HasStatusEffect(StatusEffectType.Stun);
+                isFrozen = statusManager.HasStatusEffect(StatusEffectType.Freeze);
             }
         }
         
         if (isStaggered)
         {
             Debug.Log($"[Stagger] {enemy.enemyName} is staggered and cannot act this turn!");
+            // Still update intent for next turn
+            enemy.SetIntent();
+            if (enemyDisplay != null)
+            {
+                enemyDisplay.UpdateIntent();
+            }
+            yield break; // Skip this enemy's action
+        }
+        
+        if (isFrozen)
+        {
+            Debug.Log($"[Freeze] {enemy.enemyName} is frozen and cannot act this turn!");
             // Still update intent for next turn
             enemy.SetIntent();
             if (enemyDisplay != null)
@@ -993,6 +1081,7 @@ public class CombatDisplayManager : MonoBehaviour
                 if (enemyDisplay != null)
                 {
                     enemyDisplay.UpdateIntent();
+                    enemyDisplay.UpdateGuardDisplay(); // Update guard display when enemy defends
                 }
                 break;
         }
@@ -1005,6 +1094,9 @@ public class CombatDisplayManager : MonoBehaviour
         {
             enemyDisplay.UpdateIntent();
         }
+        
+        // Boss Ability Handler - enemy turn end
+        BossAbilityHandler.OnEnemyTurnEnd(enemy, enemyDisplay);
         
         yield return null;
     }
@@ -1163,6 +1255,18 @@ public class CombatDisplayManager : MonoBehaviour
         // UI will update automatically through other systems
     }
     
+    /// <summary>
+    /// Coroutine to auto-end player turn when frozen/stunned
+    /// </summary>
+    private System.Collections.IEnumerator AutoEndFrozenTurn()
+    {
+        // Wait a moment so player can see the message
+        yield return new WaitForSeconds(1.5f);
+        
+        Debug.Log("[Freeze/Stun] Auto-ending player turn...");
+        EndPlayerTurn();
+    }
+    
     private void EndEnemyTurn()
     {
         currentTurn++;
@@ -1174,6 +1278,26 @@ public class CombatDisplayManager : MonoBehaviour
         // This would be called when the player finishes their turn
         // (e.g., after playing cards or clicking "End Turn")
         Debug.Log("Player ended their turn. Starting enemy turn...");
+        
+        // Store cards played this turn for boss abilities (Black Dawn Crash)
+        var deckManager = CombatDeckManager.Instance;
+        if (deckManager != null)
+        {
+            int cardsPlayedThisTurn = deckManager.GetCardsPlayedThisTurn();
+            
+            // Store on all active enemies for next turn
+            var activeDisplays = enemySpawner != null ? enemySpawner.GetActiveEnemies() : new System.Collections.Generic.List<EnemyCombatDisplay>();
+            foreach (var display in activeDisplays)
+            {
+                Enemy enemy = display?.GetCurrentEnemy();
+                if (enemy != null)
+                {
+                    enemy.SetBossData("cardsPlayedLastTurn", cardsPlayedThisTurn);
+                }
+            }
+            
+            Debug.Log($"[Boss Ability] Stored {cardsPlayedThisTurn} cards played for scaling abilities");
+        }
         
         // Safety check: Remove any enemies that reached 0 HP but weren't removed
         CleanupDefeatedEnemies();
@@ -1192,6 +1316,73 @@ public class CombatDisplayManager : MonoBehaviour
         // For now, we'll let the player manually end their turn
         // In the future, this could implement automatic turn ending conditions
         Debug.Log("Card played. Turn continues...");
+    }
+    
+    /// <summary>
+    /// Handle enemy death from DoT damage (called by StatusEffectManager)
+    /// </summary>
+    public void OnEnemyDefeatedByDoT(EnemyCombatDisplay enemyDisplay, Enemy defeatedEnemy)
+    {
+        if (enemyDisplay == null || defeatedEnemy == null) return;
+        
+        var activeDisplays = enemySpawner != null ? enemySpawner.GetActiveEnemies() : new List<EnemyCombatDisplay>();
+        int enemyIndex = activeDisplays.IndexOf(enemyDisplay);
+        
+        if (enemyIndex < 0)
+        {
+            Debug.LogWarning($"[DoT Death] Could not find {defeatedEnemy.enemyName} in active displays");
+            return;
+        }
+        
+        Debug.Log($"[DoT Death] {defeatedEnemy.enemyName} defeated by damage over time!");
+        
+        // Award loot and experience (same as regular defeat)
+        if (activeEnemies.Contains(defeatedEnemy))
+        {
+            EnemyData enemyData = enemyDisplay.GetEnemyData();
+            if (enemyData != null)
+            {
+                // Track for end-of-combat loot table
+                if (!defeatedEnemiesData.Contains(enemyData))
+                {
+                    defeatedEnemiesData.Add(enemyData);
+                }
+                // Track Enemy instance for rarity modifiers
+                if (!defeatedEnemies.Contains(defeatedEnemy))
+                {
+                    defeatedEnemies.Add(defeatedEnemy);
+                }
+                
+                // Award character experience for this kill
+                AwardExperienceForKill(enemyData);
+                
+                // Generate immediate loot drops
+                GenerateAndApplyImmediateLoot(enemyData);
+            }
+            
+            // Remove from active enemies
+            OnEnemyDefeated?.Invoke(defeatedEnemy);
+            activeEnemies.Remove(defeatedEnemy);
+            Debug.Log($"[DoT Death] Removed {defeatedEnemy.enemyName} from active enemies. Remaining: {activeEnemies.Count}");
+            
+            // Despawn callback
+            System.Action despawnEnemy = () => {
+                enemyDisplay?.NotifyAbilityRunnerDeath();
+                DespawnEnemyAtIndex(enemyIndex);
+                CheckWaveCompletion();
+            };
+            
+            // Trigger death animation
+            if (enemyDisplay != null && enemyDisplay.gameObject.activeInHierarchy)
+            {
+                enemyDisplay.StartDeathFadeOut(despawnEnemy);
+                StartCoroutine(ForceDespawnAfterDelay(enemyIndex, enemyDisplay, 1.0f));
+            }
+            else
+            {
+                despawnEnemy();
+            }
+        }
     }
     
     public void PlayerAttackEnemy(int enemyIndex, float damage)
@@ -1316,6 +1507,35 @@ public class CombatDisplayManager : MonoBehaviour
             }
         }
         
+        // Check for Blind status effect (miss chance)
+        if (playerDisplay != null)
+        {
+            var statusManager = playerDisplay.GetStatusEffectManager();
+            if (statusManager != null && statusManager.HasStatusEffect(StatusEffectType.Blind))
+            {
+                float blindMagnitude = statusManager.GetTotalMagnitude(StatusEffectType.Blind);
+                float missChance = blindMagnitude / 100f; // Magnitude is percentage (e.g., 30 = 30%)
+                
+                if (UnityEngine.Random.Range(0f, 1f) < missChance)
+                {
+                    Debug.Log($"<color=yellow>[Blind] Attack MISSED! ({blindMagnitude}% miss chance)</color>");
+                    
+                    // Show miss indicator
+                    if (floatingDamageManager != null && enemyIndex < activeDisplays.Count)
+                    {
+                        floatingDamageManager.ShowDamage(0f, false, activeDisplays[enemyIndex].transform);
+                    }
+                    
+                    if (combatUI != null)
+                    {
+                        combatUI.LogMessage($"<color=grey>Blinded!</color> Your attack missed!");
+                    }
+                    
+                    return; // Attack misses entirely
+                }
+            }
+        }
+        
         // Apply charge modifiers: Always Crit
         bool wasCritical = CombatDeckManager.ShouldAlwaysCrit() || UnityEngine.Random.Range(0f, 1f) < 0.1f; // 10% critical chance for demo, or forced by charge
             
@@ -1350,6 +1570,28 @@ public class CombatDisplayManager : MonoBehaviour
             {
                 // Use physical damage as default for direct attacks
                 combatEffectManager.PlayElementalDamageEffectOnTarget(activeDisplays[enemyIndex].transform, DamageType.Physical, wasCritical);
+            }
+            
+            // Boss Ability Handler - check for evasion (Empty Footfalls)
+            bool shouldEvade = BossAbilityHandler.ShouldEvadeAttack(targetEnemy);
+            if (shouldEvade)
+            {
+                Debug.Log($"<color=yellow>[Boss Ability] {targetEnemy.enemyName} EVADED the attack!</color>");
+                
+                // Show "EVADED" floating text (use 0 damage as miss indicator)
+                if (floatingDamageManager != null && enemyIndex < activeDisplays.Count)
+                {
+                    // ShowDamage with 0 damage can represent a miss/evade
+                    floatingDamageManager.ShowDamage(0f, false, activeDisplays[enemyIndex].transform);
+                }
+                
+                // Log to combat UI
+                if (combatUI != null)
+                {
+                    combatUI.LogMessage($"<color=yellow>{targetEnemy.enemyName} evaded the attack!</color>");
+                }
+                
+                return; // Skip damage entirely
             }
             
             // Update enemy display and apply damage
@@ -1701,31 +1943,58 @@ public class CombatDisplayManager : MonoBehaviour
     /// </summary>
     private void AdvanceAllStatusEffects()
     {
-        // Advance player status effects
-        if (playerDisplay != null)
-        {
-            StatusEffectManager playerStatusManager = playerDisplay.GetStatusEffectManager();
-            if (playerStatusManager != null)
-            {
-                playerStatusManager.AdvanceAllEffectsOneTurn();
-            }
-        }
+        Debug.Log($"<color=cyan>[Status Effects] Starting turn advancement...</color>");
         
-        // Advance enemy status effects
-        EnemyCombatDisplay[] activeEnemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
-        foreach (var enemyDisplay in activeEnemyDisplays)
+        try
         {
-            if (enemyDisplay != null && enemyDisplay.gameObject.activeInHierarchy)
+            // Advance player status effects
+            if (playerDisplay != null)
             {
-                StatusEffectManager enemyStatusManager = enemyDisplay.GetStatusEffectManager();
-                if (enemyStatusManager != null)
+                StatusEffectManager playerStatusManager = playerDisplay.GetStatusEffectManager();
+                if (playerStatusManager != null)
                 {
-                    enemyStatusManager.AdvanceAllEffectsOneTurn();
+                    Debug.Log($"[Status Effects] Advancing player status effects...");
+                    playerStatusManager.AdvanceAllEffectsOneTurn();
+                    Debug.Log($"[Status Effects] Player status effects advanced successfully");
+                }
+                else
+                {
+                    Debug.LogWarning($"[Status Effects] Player StatusEffectManager is null!");
                 }
             }
+            else
+            {
+                Debug.LogWarning($"[Status Effects] PlayerDisplay is null!");
+            }
+            
+            // Advance enemy status effects
+            EnemyCombatDisplay[] activeEnemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+            Debug.Log($"[Status Effects] Found {activeEnemyDisplays.Length} enemy displays");
+            
+            foreach (var enemyDisplay in activeEnemyDisplays)
+            {
+                if (enemyDisplay != null && enemyDisplay.gameObject.activeInHierarchy)
+                {
+                    Enemy enemy = enemyDisplay.GetEnemy();
+                    string enemyName = enemy != null ? enemy.enemyName : "Unknown";
+                    
+                    StatusEffectManager enemyStatusManager = enemyDisplay.GetStatusEffectManager();
+                    if (enemyStatusManager != null)
+                    {
+                        Debug.Log($"[Status Effects] Advancing {enemyName}'s status effects...");
+                        enemyStatusManager.AdvanceAllEffectsOneTurn();
+                        Debug.Log($"[Status Effects] {enemyName}'s status effects advanced successfully");
+                    }
+                }
+            }
+            
+            Debug.Log($"<color=cyan>[Status Effects] All status effects advanced by one turn</color>");
         }
-        
-        Debug.Log($"<color=cyan>Advanced all status effects by one turn</color>");
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"[Status Effects] ERROR during status effect advancement: {ex.Message}\n{ex.StackTrace}");
+            // Don't rethrow - allow turn to continue even if status effects fail
+        }
     }
     
     /// <summary>

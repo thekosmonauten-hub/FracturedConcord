@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173d376fec7d3634ca4a122de528390c, type: 3}
+  m_Name: BOSS_RiverSwornRotmass
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  enemyName: River-Sworn Rotmass
+  description: A bloated mass of decay and pestilence sworn to the corrupted creek,
+    seeping poison with every movement.
+  enemySprite: {fileID: 0}
+  tier: 2
+  rarity: 3
+  category: 3
+  minHealth: 320
+  maxHealth: 370
+  baseDamage: 16
+  baseArmor: 0
+  criticalChance: 0.04
+  criticalMultiplier: 1.5
+  dodgeChance: 0
+  accuracyRating: 98
+  evasionRating: 5
+  physicalResistance: 15
+  fireResistance: -20
+  coldResistance: 25
+  lightningResistance: 10
+  chaosResistance: 40
+  displayScale: 1.45
+  basePanelHeight: 365
+  enableEnergy: 1
+  baseMaxEnergy: 150
+  energyRegenPerTurn: 12
+  chillDrainPerMagnitude: 2
+  slowDrainPerMagnitude: 3
+  staggerThreshold: 180
+  staggerDecayPerTurn: 5
+  defendGuardPercent: 0.15
+  aiPattern: 1
+  attackPreference: 0.65
+  specialAbilities:
+  - Bile Torrent
+  - Seep
+  abilities: []
+  bossAbilities:
+  - 2
+  - 3
+  summonPool: []
+  spiritTags:
+  - 3
+  guaranteedSpiritDrop: 0
+  minGoldDrop: 62
+  maxGoldDrop: 122
+  experienceReward: 155
+  cardDropChance: 0.35
+  initialAgitateStacks: 0
+  initialToleranceStacks: 2
+  initialPotentialStacks: 0
+  excludeFromRandom: 1
+  healthBarColor: {r: 0.3, g: 0.5, b: 0.3, a: 1}
+  animatorController: {fileID: 0}
+

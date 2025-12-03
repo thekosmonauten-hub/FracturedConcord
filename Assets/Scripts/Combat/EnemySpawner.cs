@@ -137,6 +137,9 @@ public class EnemySpawner : MonoBehaviour
         // Activate and track
         enemyDisplay.gameObject.SetActive(true);
         
+        // Force update display immediately to ensure enemy name/data shows
+        enemyDisplay.RefreshDisplay();
+        
         // Ensure visibility components are enabled
         var canvasGroup = enemyDisplay.GetComponent<CanvasGroup>();
         if (canvasGroup != null)

@@ -8,6 +8,7 @@ public class CombatManager : MonoBehaviour
     public bool isPlayerTurn = true;
     public bool combatActive = false;
     public int selectedEnemyIndex = 0; // Track which enemy is targeted
+    private int cardsPlayedThisTurn = 0; // Track cards played this turn for boss abilities
     
     [Header("Characters")]
     public Character playerCharacter;
@@ -190,6 +191,23 @@ public class CombatManager : MonoBehaviour
     
     public bool CanPlayCard(Card card)
     {
+        // Check if player is frozen
+        var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        if (playerDisplay != null)
+        {
+            var statusManager = playerDisplay.GetStatusEffectManager();
+            if (statusManager != null && statusManager.HasStatusEffect(StatusEffectType.Freeze))
+            {
+                Debug.LogWarning("Cannot play card - Player is Frozen!");
+                return false;
+            }
+            if (statusManager != null && statusManager.HasStatusEffect(StatusEffectType.Stun))
+            {
+                Debug.LogWarning("Cannot play card - Player is Stunned!");
+                return false;
+            }
+        }
+        
         // Check mana cost
         if (playerCharacter.mana < card.manaCost)
             return false;
@@ -246,6 +264,11 @@ public class CombatManager : MonoBehaviour
                         
                         // Trigger event
                         OnCardPlayed?.Invoke(card);
+                        
+                        // Boss Ability Handler - card played
+                        cardsPlayedThisTurn++;
+                        BossAbilityHandler.OnPlayerCardPlayed(card, cardsPlayedThisTurn);
+                        
                         return;
                     }
                     else
@@ -298,6 +321,11 @@ public class CombatManager : MonoBehaviour
                 
                 // Trigger event
                 OnCardPlayed?.Invoke(card);
+                
+                // Boss Ability Handler - card played
+                cardsPlayedThisTurn++;
+                BossAbilityHandler.OnPlayerCardPlayed(card, cardsPlayedThisTurn);
+                
                 return;
             }
         }
@@ -339,6 +367,11 @@ public class CombatManager : MonoBehaviour
         
         // Trigger event
         OnCardPlayed?.Invoke(card);
+        
+        // Boss Ability Handler - card played
+        cardsPlayedThisTurn++;
+        Debug.Log($"<color=lime>[CombatManager] Calling BossAbilityHandler.OnPlayerCardPlayed for {card.cardName} (Type: {card.cardType}, Count: {cardsPlayedThisTurn})</color>");
+        BossAbilityHandler.OnPlayerCardPlayed(card, cardsPlayedThisTurn);
     }
     
     private void PlaySingleTargetCard(Card card, float damage)
@@ -721,6 +754,7 @@ public class CombatManager : MonoBehaviour
         
         // Start player turn
         isPlayerTurn = true;
+        cardsPlayedThisTurn = 0; // Reset card counter for new turn
         
         // Restore mana based on recovery per turn (not to maximum)
         int manaToRestore = playerCharacter.GetManaRecoveryPerTurn();

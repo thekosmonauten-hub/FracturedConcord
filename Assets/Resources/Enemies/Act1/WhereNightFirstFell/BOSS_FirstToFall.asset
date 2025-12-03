@@ -16,12 +16,12 @@ MonoBehaviour:
   description: "\u201CHe was the first to stand when the waves came\u2026 and the
     first to drown beneath them.\u201D\n\u2014 Inscription on a rusted helm, found
     on the shore where night first fell."
-  enemySprite: {fileID: -9211668590076574965, guid: 5ac698609f3d0c844b52b790e747be5f, type: 3}
+  enemySprite: {fileID: 8523178709116943755, guid: 34a98dc4508c68a4ba10eb82595eb464, type: 3}
   tier: 2
   rarity: 3
   category: 0
-  minHealth: 320
-  maxHealth: 320
+  minHealth: 280
+  maxHealth: 280
   baseDamage: 16
   baseArmor: 0
   criticalChance: 0.05
@@ -41,14 +41,21 @@ MonoBehaviour:
   energyRegenPerTurn: 25
   chillDrainPerMagnitude: 2
   slowDrainPerMagnitude: 3
+  staggerThreshold: 100
+  staggerDecayPerTurn: 0
+  defendGuardPercent: 0.1
   aiPattern: 0
   attackPreference: 0.8
-  specialAbilities: []
+  specialAbilities:
+  - Sundering Echo
+  - Black Dawn Crash
   abilities:
   - {fileID: 11400000, guid: e359c9798b64cf54980c780b8a02d247, type: 2}
   - {fileID: 11400000, guid: deac3d870fbde104b8432c3dfb29e8e0, type: 2}
   - {fileID: 11400000, guid: 9a53625f6bcbf2d49bd9032be6b2eec8, type: 2}
   - {fileID: 11400000, guid: 904f1d3be7b9e7b45961cf8216dade81, type: 2}
+  bossAbilities:
+  - 0
   summonPool:
   - {fileID: 11400000, guid: 661b1d27eedc889468f5776f2da27f30, type: 2}
   spiritTags: 05000000

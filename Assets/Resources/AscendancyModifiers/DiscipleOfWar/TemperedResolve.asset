@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc3c5e22f99b96e4abdd2010d5e84bb9, type: 3}
+  m_Name: TemperedResolve
+  m_EditorClassIdentifier: Assembly-CSharp::AscendancyModifierDefinition
+  modifierId: TemperedResolve
+  linkedPassiveName: Tempered Resolve
+  description: When you lose Battle Rhythm, gain +20% Damage Reduction until your next turn. (20% cap) This reduction fades 5% per turn.
+  effects:
+  - eventType: 2
+    conditions:
+    - conditionType: 0
+      parameterDict:
+        entries:
+        - key: stackType
+          value:
+            type: 0
+            stringValue: BattleRhythm
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+      invert: 1
+    actions:
+    - actionType: 15
+      parameterDict:
+        entries:
+        - key: statName
+          value:
+            type: 0
+            stringValue: damageReductionPercent
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: increasePercent
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 20
+            boolValue: 0
+        - key: maxValue
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 20
+            boolValue: 0
+      executionOrder: 0
+    priority: 0
+  - eventType: 1
+    conditions: []
+    actions:
+    - actionType: 15
+      parameterDict:
+        entries:
+        - key: statName
+          value:
+            type: 0
+            stringValue: damageReductionFade
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+        - key: decreasePercent
+          value:
+            type: 2
+            stringValue: 
+            intValue: 0
+            floatValue: 5
+            boolValue: 0
+      executionOrder: 0
+    priority: 0
+  variableKeys: []
+  variableValues: []
+  tags:
+  - defensive
+  - battleRhythm
+  - damageReduction
+
+
+
+

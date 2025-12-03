@@ -31,6 +31,7 @@ public class CardVisualAssets : ScriptableObject
     [Header("Special Effects")]
     public Sprite cardHighlight;
     public Sprite iceBubble;
+    public Sprite temporalCard; // Special background for Temporal cards (Temporal Savant)
     
     [Header("Category Icons")]
     public Sprite attackIcon;
