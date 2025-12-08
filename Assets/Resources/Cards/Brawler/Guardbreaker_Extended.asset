@@ -109,8 +109,9 @@ MonoBehaviour:
   channelingGuardIncreasedPercent: 0
   channelingGuardMorePercent: 0
   tags:
-  - Skill
+  - Attack
   - Basic
+  - Melee
   delayTurns: 0
   isDelayed: 0
   canPrepare: 0

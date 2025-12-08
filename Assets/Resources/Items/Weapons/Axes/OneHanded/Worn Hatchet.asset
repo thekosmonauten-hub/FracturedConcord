@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponItem
   itemName: Worn Hatchet
   description: A axe weapon.
-  itemIcon: {fileID: 0}
+  itemIcon: {fileID: -7435662100962930059, guid: 22814a9d3b46e7c40805fa47da5e6fdd, type: 3}
   rarity: 0
   requiredLevel: 2
   itemType: 0

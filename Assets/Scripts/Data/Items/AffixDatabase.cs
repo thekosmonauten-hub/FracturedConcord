@@ -148,9 +148,10 @@ public class AffixDatabase : ScriptableObject
                 break;
         }
         
-        // Filter by tier requirements and item tags
+        // Filter by tier requirements, level requirements, and item tags
         return allPrefixes.Where(a => 
             (int)a.tier <= (int)maxTier && 
+            a.minLevel <= itemLevel &&
             a.requiredTags.Any(tag => GetItemTags(itemType).Contains(tag))
         ).ToList();
     }
@@ -182,9 +183,10 @@ public class AffixDatabase : ScriptableObject
                 break;
         }
         
-        // Filter by tier requirements and item tags
+        // Filter by tier requirements, level requirements, and item tags
         return allSuffixes.Where(a => 
             (int)a.tier <= (int)maxTier && 
+            a.minLevel <= itemLevel &&
             a.requiredTags.Any(tag => GetItemTags(itemType).Contains(tag))
         ).ToList();
     }

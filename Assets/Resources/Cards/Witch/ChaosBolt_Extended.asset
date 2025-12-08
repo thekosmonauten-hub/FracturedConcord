@@ -109,7 +109,7 @@ MonoBehaviour:
   tags:
   - Chaos
   - Spell
-  - Poison
+  - Projectile
   delayTurns: 0
   isDelayed: 0
   canPrepare: 0

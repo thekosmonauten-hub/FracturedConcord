@@ -12,6 +12,9 @@ public abstract class BaseItem : ScriptableObject
     public ItemRarity rarity = ItemRarity.Normal;
     public int requiredLevel = 1;
     
+    [Tooltip("Item level determines which affix tiers can roll. Separate from requiredLevel (character requirement).")]
+    public int itemLevel = 1;
+    
     [Header("Item Properties")]
     public ItemType itemType;
     public EquipmentType equipmentType;
@@ -31,9 +34,20 @@ public abstract class BaseItem : ScriptableObject
     [Header("Item Tags")]
     public List<string> itemTags = new List<string>();
     
+    [Header("Generated Name (Runtime)")]
+    [Tooltip("Auto-generated name for Magic/Rare items. Set at runtime.")]
+    public string generatedName = "";
+    
     // Virtual methods for derived classes
     public virtual string GetDisplayName()
     {
+        // Use generated name if available (Magic/Rare items)
+        if (!string.IsNullOrEmpty(generatedName))
+        {
+            return generatedName;
+        }
+        
+        // Fallback to legacy format for items without generated names
         string qualityPrefix = quality > 0 ? $"Superior " : "";
         string rarityName = GetRarityName();
         string rarityPrefix = rarity != ItemRarity.Normal ? $"{rarityName} " : "";

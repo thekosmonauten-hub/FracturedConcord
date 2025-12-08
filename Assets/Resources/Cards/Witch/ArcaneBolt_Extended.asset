@@ -43,6 +43,8 @@ MonoBehaviour:
   isAoE: 0
   aoeTargets: 1
   aoeRowScope: 0
+  isMultiHit: 0
+  hitCount: 2
   damageScaling:
     strengthScaling: 0
     dexterityScaling: 0
@@ -57,6 +59,15 @@ MonoBehaviour:
     strengthDivisor: 0
     dexterityDivisor: 0
     intelligenceDivisor: 10
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -67,6 +78,7 @@ MonoBehaviour:
   enableCombo: 1
   comboWith: 
   comboDescription: 'Channeling: Deal 150% damage and gain 5 additional Guard.'
+  momentumEffectDescription: 
   comboWithCardType: 0
   comboAttackIncrease: 0
   comboGuardIncrease: 0
@@ -97,6 +109,9 @@ MonoBehaviour:
   tags:
   - Lightning
   - Spell
+  - Projectile
+  delayTurns: 0
+  isDelayed: 0
   canPrepare: 0
   maxPrepTurns: 3
   multiplierPerTurn: 0.5

@@ -118,7 +118,26 @@ public class CombatLogTooltip : MonoBehaviour
             // Add weapon stats
             if (itemData.baseDamageMin > 0 || itemData.baseDamageMax > 0)
             {
-                desc += $"Damage: {itemData.baseDamageMin}-{itemData.baseDamageMax}\n";
+                // Check if source item has rolled damage
+                bool hasRolledDamage = false;
+                float rolledBaseDamage = 0f;
+                
+                if (itemData.sourceItem is WeaponItem weaponSource)
+                {
+                    hasRolledDamage = weaponSource.rolledBaseDamage > 0f;
+                    rolledBaseDamage = weaponSource.rolledBaseDamage;
+                }
+                
+                if (hasRolledDamage)
+                {
+                    int rolledBase = Mathf.RoundToInt(rolledBaseDamage);
+                    desc += $"Damage: {rolledBase}\n";
+                }
+                else
+                {
+                    // Fallback: Show range
+                    desc += $"Damage: {itemData.baseDamageMin}-{itemData.baseDamageMax}\n";
+                }
             }
             
             // Add armor stats

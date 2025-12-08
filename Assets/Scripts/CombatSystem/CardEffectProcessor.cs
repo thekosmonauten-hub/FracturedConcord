@@ -248,9 +248,9 @@ public class CardEffectProcessor : MonoBehaviour
         }
         else
         {
-            // Standard damage calculation
+            // Standard damage calculation (AoE hits all enemies, so pass null for targetEnemy)
             totalDamage = (card.cardType == CardType.Attack || (card.cardType == CardType.Skill && card.baseDamage > 0))
-                ? DamageCalculator.CalculateCardDamage(card, player)
+                ? DamageCalculator.CalculateCardDamage(card, player, null, null)
                 : 0f;
         }
 
@@ -286,7 +286,7 @@ public class CardEffectProcessor : MonoBehaviour
             Debug.Log($"<color=yellow>💥 Dealing {totalDamage} damage to {enemy.enemyName} at display index {displayIndex} ({n+1}/{maxTargets})</color>");
             
             // Apply damage
-            combatDisplayManager.PlayerAttackEnemy(displayIndex, totalDamage);
+            combatDisplayManager.PlayerAttackEnemy(displayIndex, totalDamage, card);
             
             // Apply automatic status effects based on damage types
             ApplyAutomaticStatusEffects(enemy, damageBreakdown, card);
@@ -453,6 +453,34 @@ public class CardEffectProcessor : MonoBehaviour
     private void ApplyStatusEffectToEnemy(Enemy targetEnemy, StatusEffect effect)
     {
         if (targetEnemy == null || effect == null) return;
+
+        // Apply status effect duration modifier from character stats (before applying effect)
+        // Duration needs to be calculated before the status effect is applied to the enemy (Rounding up to closest whole)
+        // Get player character from CharacterManager
+        Character playerCharacter = null;
+        if (CharacterManager.Instance != null && CharacterManager.Instance.HasCharacter())
+        {
+            playerCharacter = CharacterManager.Instance.GetCurrentCharacter();
+        }
+        
+        if (playerCharacter != null && effect.duration > 0) // Only apply to non-permanent effects (duration > 0)
+        {
+            var statsData = new CharacterStatsData(playerCharacter);
+            float statusEffectDuration = statsData.statusEffectDuration;
+            
+            if (statusEffectDuration > 0f)
+            {
+                // Apply as increased modifier: finalDuration = baseDuration * (1 + statusEffectDuration / 100)
+                float durationMultiplier = 1f + (statusEffectDuration / 100f);
+                float modifiedDuration = effect.duration * durationMultiplier;
+                
+                // Round up to nearest whole number
+                effect.duration = Mathf.CeilToInt(modifiedDuration);
+                effect.timeRemaining = effect.duration; // Update time remaining to match new duration
+                
+                Debug.Log($"[Status Effect Duration] Applied {statusEffectDuration}% duration modifier. Base={effect.duration / durationMultiplier:F1}, Final={effect.duration}");
+            }
+        }
 
         var displays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
         foreach (var display in displays)
@@ -645,8 +673,8 @@ public class CardEffectProcessor : MonoBehaviour
         }
         else
         {
-            // Standard damage calculation
-            totalDamage = DamageCalculator.CalculateCardDamage(card, player);
+            // Standard damage calculation (pass targetEnemy for conditional damage modifiers)
+            totalDamage = DamageCalculator.CalculateCardDamage(card, player, null, targetEnemy);
         }
         
         // Multi-hit attack: Check card's isMultiHit property EARLY (before momentum effects that might return early)
@@ -721,7 +749,7 @@ public class CardEffectProcessor : MonoBehaviour
                             int enemyIdx = FindActiveEnemyIndex(randomEnemy);
                             if (enemyIdx >= 0 && combatManager != null)
                             {
-                                combatManager.PlayerAttackEnemy(enemyIdx, totalDamage);
+                                combatManager.PlayerAttackEnemy(enemyIdx, totalDamage, card);
                             }
                         }
                     }
@@ -815,13 +843,30 @@ public class CardEffectProcessor : MonoBehaviour
             {
                 // Single hit - use normal path
                 // Note: combatManager is CombatDisplayManager which has PlayerAttackEnemy
-                combatManager.PlayerAttackEnemy(idx, totalDamage);
+                combatManager.PlayerAttackEnemy(idx, totalDamage, card);
                 
                 // Trigger nudge animation for single hit
                 var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
                 if (playerDisplay != null)
                 {
                     playerDisplay.TriggerAttackNudge();
+                }
+            }
+            
+            // Gain Aggression charges from Attack cards (affected by attackSpeed and aggressionGainIncreased)
+            if (player != null && StackSystem.Instance != null)
+            {
+                var statsData = new CharacterStatsData(player);
+                float baseGain = 1f; // Base: 1 Aggression charge per Attack card
+                float speedMultiplier = 1f + (statsData.attackSpeed / 100f);
+                float gainMultiplier = 1f + (statsData.aggressionGainIncreased / 100f);
+                float finalGain = baseGain * speedMultiplier * gainMultiplier;
+                int aggressionGain = Mathf.RoundToInt(finalGain);
+                
+                if (aggressionGain > 0)
+                {
+                    StackSystem.Instance.AddStacks(StackType.Aggression, aggressionGain);
+                    Debug.Log($"[Aggression] Gained {aggressionGain} Aggression charge(s) from {card.cardName} (Attack Speed: {statsData.attackSpeed}%, Aggression Gain: {statsData.aggressionGainIncreased}%)");
                 }
             }
             
@@ -1644,6 +1689,23 @@ public class CardEffectProcessor : MonoBehaviour
             ApplyDelayedSkillBonuses(card, targetEnemy, player);
         }
         
+        // Gain Focus charges from Skill cards (affected by castSpeed and focusGainIncreased)
+        if (player != null && StackSystem.Instance != null)
+        {
+            var statsData = new CharacterStatsData(player);
+            float baseGain = 1f; // Base: 1 Focus charge per Skill card
+            float speedMultiplier = 1f + (statsData.castSpeed / 100f);
+            float gainMultiplier = 1f + (statsData.focusGainIncreased / 100f);
+            float finalGain = baseGain * speedMultiplier * gainMultiplier;
+            int focusGain = Mathf.RoundToInt(finalGain);
+            
+            if (focusGain > 0)
+            {
+                StackSystem.Instance.AddStacks(StackType.Focus, focusGain);
+                Debug.Log($"[Focus] Gained {focusGain} Focus charge(s) from {card.cardName} (Cast Speed: {statsData.castSpeed}%, Focus Gain: {statsData.focusGainIncreased}%)");
+            }
+        }
+        
         // Process momentum threshold effects
         MomentumThresholdResult momentumEffects = ProcessMomentumThresholdEffects(card, player, CardType.Skill);
         
@@ -2279,7 +2341,7 @@ public class CardEffectProcessor : MonoBehaviour
                             int idx = FindActiveEnemyIndex(enemy);
                             if (idx >= 0 && combatManager != null)
                             {
-                                combatManager.PlayerAttackEnemy(idx, totalDmg);
+                                combatManager.PlayerAttackEnemy(idx, totalDmg, card);
                             }
                         }
                         Debug.Log($"<color=orange>[Momentum Effect] Adrenaline Burst: Dealt {totalDmg:F1} damage to all enemies</color>");
@@ -2323,6 +2385,23 @@ public class CardEffectProcessor : MonoBehaviour
             baseGuard += scalingBonus;
             
             Debug.Log($"[Guard Calculation] {card.cardName}: Base={card.baseGuard}, ScalingBonus={scalingBonus:F2}, Total={baseGuard:F2}");
+        }
+        
+        // Apply guard effectiveness increased modifier from warrants/character stats
+        // Only apply if card has "Guard" tag or is a Guard card type
+        if (card.cardType == CardType.Guard || (card.tags != null && (card.tags.Contains("Guard") || card.tags.Contains("guard"))))
+        {
+            var statsData = new CharacterStatsData(player);
+            float guardEffectivenessIncreased = statsData.guardEffectivenessIncreased;
+            
+            if (guardEffectivenessIncreased > 0f)
+            {
+                // Apply as increased modifier: finalGuard = baseGuard * (1 + guardEffectivenessIncreased / 100)
+                float effectivenessMultiplier = 1f + (guardEffectivenessIncreased / 100f);
+                baseGuard *= effectivenessMultiplier;
+                
+                Debug.Log($"[Guard Calculation] {card.cardName}: Applied {guardEffectivenessIncreased}% guard effectiveness. Final={baseGuard:F2}");
+            }
         }
         
         return baseGuard;
@@ -2432,7 +2511,7 @@ public class CardEffectProcessor : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
             
             // Apply damage via CombatDisplayManager (handles floating text internally)
-            combatMgr.PlayerAttackEnemy(enemyIndex, damage);
+            combatMgr.PlayerAttackEnemy(enemyIndex, damage, card);
             Debug.Log($"<color=red>  ⚔️ Hit {hit + 1}/{hits}: Dealt {damage:F0} damage via CombatDisplayManager</color>");
             
             // Apply automatic status effects (only on first hit to avoid stacking issues)
@@ -2493,7 +2572,7 @@ public class CardEffectProcessor : MonoBehaviour
                 int enemyIdx = FindActiveEnemyIndex(enemy);
                 if (enemyIdx >= 0)
                 {
-                    combatDisplayManager.PlayerAttackEnemy(enemyIdx, totalDamage);
+                    combatDisplayManager.PlayerAttackEnemy(enemyIdx, totalDamage, card);
                     
                     // Apply automatic status effects (only on first hit to avoid stacking issues)
                     if (hit == 0)
@@ -2550,7 +2629,7 @@ public class CardEffectProcessor : MonoBehaviour
                 int enemyIdx = FindActiveEnemyIndex(randomEnemy);
                 if (enemyIdx >= 0 && combatManager != null)
                 {
-                    combatManager.PlayerAttackEnemy(enemyIdx, totalDamage);
+                    combatManager.PlayerAttackEnemy(enemyIdx, totalDamage, card);
                     
                     // Apply automatic status effects (only on first hit to avoid stacking issues)
                     if (hit == 0)

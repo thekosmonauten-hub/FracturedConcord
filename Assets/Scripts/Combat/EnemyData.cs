@@ -64,8 +64,8 @@ public class EnemyData : ScriptableObject
     [Header("Stagger System")]
     [Tooltip("Amount of stagger needed to trigger stun (0 = cannot be staggered)")]
     [Min(0f)] public float staggerThreshold = 100f;
-    [Tooltip("How much stagger decays per turn (0 = no decay)")]
-    [Min(0f)] public float staggerDecayPerTurn = 0f;
+    [Tooltip("How much stagger decays per turn (set low to allow stagger buildup)")]
+    [Min(0f)] public float staggerDecayPerTurn = 3f; // Default reduced to 3 (was 0, but status effects decay at same rate ~10-15)
     
     [Header("Guard System")]
     [Tooltip("Percentage of max health gained as guard when defending (0.1 = 10%, 0.2 = 20%, etc.)")]

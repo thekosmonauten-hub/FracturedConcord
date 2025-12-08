@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dexiled.Data.Items;
 
 [Serializable]
 public class Character
@@ -27,6 +28,16 @@ public class Character
     public int cardsDrawnPerWave = 1; // Base cards drawn when a new wave starts (in addition to turn draw)
     public int reliance = 200;
     public int maxReliance = 200;
+    
+    [Header("Reliance Auras")]
+    [Tooltip("List of Reliance Aura names that the character owns (can activate)")]
+    public List<string> ownedRelianceAuras = new List<string>();
+    
+    [Tooltip("List of Reliance Aura names that are currently active (persistent buffs)")]
+    public List<string> activeRelianceAuras = new List<string>();
+    
+    [Tooltip("Experience and level data for each owned aura")]
+    public List<AuraExperienceData> auraExperienceData = new List<AuraExperienceData>();
     public float currentGuard = 0f; // Current guard amount
     public float maxGuard = 0f; // Maximum guard (based on max health)
     public float guardPersistenceFraction = 0.25f; // Fraction of guard retained between turns
@@ -36,7 +47,7 @@ public class Character
     [Header("Stagger System")]
     public float staggerThreshold = 100f; // Amount of stagger needed to trigger stun
     public float currentStagger = 0f; // Current stagger meter value
-    public float staggerDecayPerTurn = 0f; // How much stagger decays per turn (0 = no decay)
+    public float staggerDecayPerTurn = 3f; // How much stagger decays per turn (reduced decay to allow stagger buildup)
     
     [Header("Combat-Wide Modifiers")]
     [Tooltip("Bonus momentum gained from all sources (e.g., Berserker's Fury: +1 per momentum gain)")]
@@ -208,6 +219,19 @@ public class Character
     public float increasedDamage = 0f; // Total increased damage modifier
     public float moreDamage = 1f; // Total more damage multiplier
     
+    [Header("Warrant Stat Modifiers")]
+    [Tooltip("Non-damage warrant modifiers (e.g., evasionIncreased, maxHealthIncreased). Applied to CharacterStatsData when creating stat snapshots.")]
+    public Dictionary<string, float> warrantStatModifiers = new Dictionary<string, float>();
+    
+    [Tooltip("Flat warrant modifiers (e.g., maxHealthFlat, maxManaFlat). Applied before percentage modifiers.")]
+    public Dictionary<string, float> warrantFlatModifiers = new Dictionary<string, float>();
+    
+    [Header("Base Defense Values from Items")]
+    [Tooltip("Base defense values from equipped items (before increased modifiers). Used for scaling with evasionIncreased, armourIncreased, energyShieldIncreased.")]
+    public float baseEvasionFromItems = 0f;
+    public float baseArmourFromItems = 0f;
+    public float baseEnergyShieldFromItems = 0f;
+    
     [Header("Damage Stats")]
     public DamageStats damageStats = new DamageStats();
     
@@ -221,6 +245,7 @@ public class Character
     public List<string> inventory = new List<string>();
     public Dictionary<string, string> equippedItems = new Dictionary<string, string>();
     public List<Effigy> ownedEffigies = new List<Effigy>();
+    public List<Effigy> equippedEffigies = new List<Effigy>();
     
     [Header("Warrants")]
     [Tooltip("List of warrant instances owned by this character. Persisted across scenes.")]
@@ -390,11 +415,13 @@ public class Character
         // Defense (based on Dexterity and Intelligence)
         defense = dexterity * 1 + intelligence * 1;
         
-        // Critical chance (based on Dexterity)
-        criticalChance = dexterity * 0.5f; // 0.5% per dexterity point
+        // Critical chance (NOT scaled by attributes - only from equipment/buffs)
+        // criticalChance = dexterity * 0.5f; // REMOVED - attributes don't affect crit chance
+        // Critical chance comes ONLY from equipment and temporary buffs
         
-        // Critical multiplier (based on Intelligence)
-        criticalMultiplier = 1.5f + (intelligence * 0.02f); // Base 1.5x + 0.02x per int point
+        // Critical multiplier (NOT scaled by attributes - only from equipment/buffs)  
+        // criticalMultiplier = 1.5f + (intelligence * 0.02f); // REMOVED - attributes don't affect crit multi
+        // Critical multiplier comes ONLY from equipment and temporary buffs
     }
     
     // Get level-up attribute gains based on class
@@ -754,6 +781,161 @@ public class Character
         // Warrants
         data.ownedWarrants = new List<WarrantInstanceData>(ownedWarrants);
         
+        // Currencies (NEW)
+        var lootManager = LootManager.Instance;
+        if (lootManager != null)
+        {
+            var currencies = lootManager.GetAllCurrencies();
+            foreach (var kvp in currencies)
+            {
+                data.currencyTypes.Add(kvp.Key.ToString());
+                data.currencyAmounts.Add(kvp.Value);
+            }
+            Debug.Log($"[Character] Saved {currencies.Count} currency types to CharacterData");
+        }
+        
+        // Inventory (NEW)
+        var charManager = CharacterManager.Instance;
+        if (charManager != null && charManager.inventoryItems != null)
+        {
+            foreach (var item in charManager.inventoryItems)
+            {
+                if (item == null) continue;
+                
+                SerializedItemData itemData = SerializeItem(item);
+                if (itemData != null)
+                {
+                    data.inventoryItems.Add(itemData);
+                }
+            }
+            Debug.Log($"[Character] Saved {data.inventoryItems.Count} inventory items to CharacterData");
+        }
+        
+        // Aura Experience Data
+        data.auraExperienceData = auraExperienceData != null ? new List<AuraExperienceData>(auraExperienceData) : new List<AuraExperienceData>();
+        
+        return data;
+    }
+    
+    /// <summary>
+    /// Serialize a BaseItem for saving
+    /// </summary>
+    private static SerializedItemData SerializeItem(BaseItem item)
+    {
+        if (item == null) return null;
+        
+        var data = new SerializedItemData
+        {
+            itemName = item.itemName,
+            rarity = item.rarity
+        };
+        
+        // Determine item type and save type-specific data
+        if (item is WeaponItem weapon)
+        {
+            data.itemType = "WeaponItem";
+            data.rolledBaseDamage = weapon.rolledBaseDamage;
+            
+            // Save affixes with rolled values
+            if (weapon.prefixes != null)
+            {
+                foreach (var affix in weapon.prefixes)
+                {
+                    data.affixes.Add(SerializeAffix(affix));
+                }
+            }
+            if (weapon.suffixes != null)
+            {
+                foreach (var affix in weapon.suffixes)
+                {
+                    data.affixes.Add(SerializeAffix(affix));
+                }
+            }
+            if (weapon.implicitModifiers != null)
+            {
+                foreach (var affix in weapon.implicitModifiers)
+                {
+                    data.affixes.Add(SerializeAffix(affix));
+                }
+            }
+        }
+        else if (item is Armour armour)
+        {
+            data.itemType = "Armour";
+            
+            // Save affixes
+            if (armour.prefixes != null)
+            {
+                foreach (var affix in armour.prefixes)
+                {
+                    data.affixes.Add(SerializeAffix(affix));
+                }
+            }
+            if (armour.suffixes != null)
+            {
+                foreach (var affix in armour.suffixes)
+                {
+                    data.affixes.Add(SerializeAffix(affix));
+                }
+            }
+            if (armour.implicitModifiers != null)
+            {
+                foreach (var affix in armour.implicitModifiers)
+                {
+                    data.affixes.Add(SerializeAffix(affix));
+                }
+            }
+        }
+        else if (item is Effigy effigy)
+        {
+            data.itemType = "Effigy";
+            // Effigies don't have affixes, just save basic data
+        }
+        else
+        {
+            data.itemType = "BaseItem";
+        }
+        
+        return data;
+    }
+    
+    /// <summary>
+    /// Serialize an Affix for saving
+    /// </summary>
+    private static SerializedAffix SerializeAffix(Affix affix)
+    {
+        if (affix == null) return null;
+        
+        var data = new SerializedAffix
+        {
+            affixName = affix.name,
+            description = affix.description,
+            affixType = affix.affixType,
+            isRolled = affix.isRolled,
+            rolledValue = affix.rolledValue
+        };
+        
+        // Serialize modifiers
+        if (affix.modifiers != null)
+        {
+            foreach (var modifier in affix.modifiers)
+            {
+                if (modifier == null) continue;
+                
+                data.modifiers.Add(new SerializedAffixModifier
+                {
+                    modifierType = modifier.modifierType,
+                    minValue = modifier.minValue,
+                    maxValue = modifier.maxValue,
+                    isRolled = modifier.isRolled,
+                    rolledValue = modifier.rolledValue,
+                    isDualRange = modifier.isDualRange,
+                    rolledFirstValue = modifier.rolledFirstValue,
+                    rolledSecondValue = modifier.rolledSecondValue
+                });
+            }
+        }
+        
         return data;
     }
     
@@ -784,6 +966,9 @@ public class Character
         character.reliance = data.reliance;
         character.maxReliance = data.maxReliance;
         
+        // Aura Experience Data
+        character.auraExperienceData = data.auraExperienceData != null ? new List<AuraExperienceData>(data.auraExperienceData) : new List<AuraExperienceData>();
+        
         character.completedEncounterIDs = data.completedEncounterIDs != null ? new List<int>(data.completedEncounterIDs) : new List<int>();
         character.unlockedEncounterIDs = data.unlockedEncounterIDs != null ? new List<int>(data.unlockedEncounterIDs) : new List<int>();
         character.enteredEncounterIDs = data.enteredEncounterIDs != null ? new List<int>(data.enteredEncounterIDs) : new List<int>();
@@ -793,15 +978,252 @@ public class Character
         // Warrants
         character.ownedWarrants = data.ownedWarrants != null ? new List<WarrantInstanceData>(data.ownedWarrants) : new List<WarrantInstanceData>();
         
+        // Currencies (NEW)
+        var lootManager = LootManager.Instance;
+        if (lootManager != null && data.currencyTypes != null && data.currencyAmounts != null)
+        {
+            for (int i = 0; i < data.currencyTypes.Count && i < data.currencyAmounts.Count; i++)
+            {
+                try
+                {
+                    CurrencyType type = (CurrencyType)System.Enum.Parse(typeof(CurrencyType), data.currencyTypes[i]);
+                    int amount = data.currencyAmounts[i];
+                    lootManager.SetCurrency(type, amount);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogWarning($"[Character] Failed to load currency type '{data.currencyTypes[i]}': {e.Message}");
+                }
+            }
+            Debug.Log($"[Character] Loaded {data.currencyTypes.Count} currency types from CharacterData");
+        }
+        
+        // Inventory (NEW)
+        var charManager = CharacterManager.Instance;
+        if (charManager != null && data.inventoryItems != null)
+        {
+            charManager.inventoryItems.Clear();
+            
+            foreach (var itemData in data.inventoryItems)
+            {
+                BaseItem item = DeserializeItem(itemData);
+                if (item != null)
+                {
+                    charManager.inventoryItems.Add(item);
+                }
+            }
+            Debug.Log($"[Character] Loaded {charManager.inventoryItems.Count} inventory items from CharacterData");
+        }
+        
         // Recalculate derived stats based on loaded attributes
         character.CalculateDerivedStats();
         
         return character;
     }
+    
+    /// <summary>
+    /// Deserialize a saved item back to BaseItem
+    /// NOTE: This creates runtime instances from serialized data
+    /// </summary>
+    private static BaseItem DeserializeItem(SerializedItemData data)
+    {
+        if (data == null) return null;
+        
+        BaseItem item = null;
+        
+        // Create appropriate item type
+        if (data.itemType == "WeaponItem")
+        {
+            item = ScriptableObject.CreateInstance<WeaponItem>();
+            var weapon = item as WeaponItem;
+            weapon.rolledBaseDamage = data.rolledBaseDamage;
+        }
+        else if (data.itemType == "Armour")
+        {
+            item = ScriptableObject.CreateInstance<Armour>();
+        }
+        else if (data.itemType == "Effigy")
+        {
+            item = ScriptableObject.CreateInstance<Effigy>();
+        }
+        else
+        {
+            item = ScriptableObject.CreateInstance<BaseItem>();
+        }
+        
+        // Set basic properties
+        item.itemName = data.itemName;
+        item.rarity = data.rarity;
+        
+        // Deserialize affixes
+        var prefixes = new List<Affix>();
+        var suffixes = new List<Affix>();
+        var implicits = new List<Affix>();
+        
+        foreach (var affixData in data.affixes)
+        {
+            Affix affix = DeserializeAffix(affixData);
+            if (affix != null)
+            {
+                switch (affix.affixType)
+                {
+                    case AffixType.Prefix:
+                        prefixes.Add(affix);
+                        break;
+                    case AffixType.Suffix:
+                        suffixes.Add(affix);
+                        break;
+                    default:
+                        implicits.Add(affix);
+                        break;
+                }
+            }
+        }
+        
+        // Apply affixes to item
+        if (item is WeaponItem weapon2)
+        {
+            weapon2.prefixes = prefixes;
+            weapon2.suffixes = suffixes;
+            weapon2.implicitModifiers = implicits;
+        }
+        else if (item is Armour armour)
+        {
+            armour.prefixes = prefixes;
+            armour.suffixes = suffixes;
+            armour.implicitModifiers = implicits;
+        }
+        
+        return item;
+    }
+    
+    /// <summary>
+    /// Deserialize a saved affix
+    /// </summary>
+    private static Affix DeserializeAffix(SerializedAffix data)
+    {
+        if (data == null) return null;
+        
+        // Create affix with required constructor parameters
+        var affix = new Affix(
+            data.affixName,
+            data.description,
+            data.affixType,
+            AffixTier.Tier1 // Default tier, may need to be saved/loaded if important
+        )
+        {
+            isRolled = data.isRolled,
+            rolledValue = (int)data.rolledValue // Cast float to int
+        };
+        
+        // Deserialize modifiers
+        foreach (var modData in data.modifiers)
+        {
+            // Use 4-parameter constructor: statName, minValue, maxValue, modifierType
+            var modifier = new AffixModifier(
+                modData.modifierType.ToString(), // statName
+                modData.minValue,
+                modData.maxValue,
+                modData.modifierType
+            )
+            {
+                isRolled = modData.isRolled,
+                rolledValue = modData.rolledValue,
+                isDualRange = modData.isDualRange,
+                rolledFirstValue = modData.rolledFirstValue,
+                rolledSecondValue = modData.rolledSecondValue
+            };
+            
+            affix.modifiers.Add(modifier);
+        }
+        
+        return affix;
+    }
 
     public DamageModifiers GetDamageModifiers()
     {
         return damageModifiers;
+    }
+    
+    /// <summary>
+    /// Clear all warrant modifiers (both damage and stat modifiers)
+    /// </summary>
+    private void ClearAllWarrantModifiers()
+    {
+        // Clear damage modifiers
+        damageModifiers.increasedPhysicalDamage.Clear();
+        damageModifiers.increasedFireDamage.Clear();
+        damageModifiers.increasedColdDamage.Clear();
+        damageModifiers.increasedLightningDamage.Clear();
+        damageModifiers.increasedChaosDamage.Clear();
+        damageModifiers.increasedAttackDamage.Clear();
+        damageModifiers.increasedSpellDamage.Clear();
+        damageModifiers.morePhysicalDamage.Clear();
+        damageModifiers.moreFireDamage.Clear();
+        damageModifiers.moreColdDamage.Clear();
+        damageModifiers.moreLightningDamage.Clear();
+        damageModifiers.moreChaosDamage.Clear();
+        
+        damageModifiers.addedPhysicalDamage = 0f;
+        damageModifiers.addedFireDamage = 0f;
+        damageModifiers.addedColdDamage = 0f;
+        damageModifiers.addedLightningDamage = 0f;
+        damageModifiers.addedChaosDamage = 0f;
+        
+        damageModifiers.criticalStrikeChance = 0f;
+        damageModifiers.criticalStrikeMultiplier = 1.5f; // Base multiplier
+        
+        // Clear warrant stat modifiers
+        if (warrantStatModifiers != null)
+        {
+            warrantStatModifiers.Clear();
+        }
+        
+        // Clear warrant flat modifiers
+        if (warrantFlatModifiers != null)
+        {
+            warrantFlatModifiers.Clear();
+        }
+    }
+    
+    /// <summary>
+    /// Refresh warrant modifiers from the warrant board
+    /// Should be called when warrants are allocated/deallocated or when character is loaded
+    /// This clears all modifiers and re-applies both equipment and warrant modifiers
+    /// </summary>
+    public void RefreshWarrantModifiers()
+    {
+        // Clear all warrant modifiers first to avoid duplicates
+        ClearAllWarrantModifiers();
+        
+        // Re-apply equipment modifiers first
+        var equipmentManager = EquipmentManager.Instance;
+        if (equipmentManager != null)
+        {
+            equipmentManager.ApplyEquipmentStats();
+        }
+        
+        // Find WarrantBoardStateController and WarrantLockerGrid
+        var boardState = UnityEngine.Object.FindFirstObjectByType<WarrantBoardStateController>();
+        var lockerGrid = UnityEngine.Object.FindFirstObjectByType<WarrantLockerGrid>();
+        
+        // WarrantBoardRuntimeGraph is not a MonoBehaviour, get it from WarrantBoardGraphBuilder
+        WarrantBoardRuntimeGraph runtimeGraph = null;
+        var graphBuilder = UnityEngine.Object.FindFirstObjectByType<WarrantBoardGraphBuilder>();
+        if (graphBuilder != null)
+        {
+            runtimeGraph = graphBuilder.RuntimeGraph;
+        }
+        
+        if (boardState != null && lockerGrid != null && runtimeGraph != null)
+        {
+            WarrantModifierCollector.ApplyWarrantModifiersToCharacter(this, boardState, lockerGrid, runtimeGraph);
+            Debug.Log($"[Character] ✅ Refreshed warrant modifiers. Total increased Physical Damage entries: {damageModifiers.increasedPhysicalDamage.Count}");
+        }
+        else
+        {
+            Debug.LogWarning("[Character] Could not refresh warrant modifiers - missing warrant board components");
+        }
     }
 
     public void ApplyEquipmentModifiers(DamageModifiers equipmentModifiers)

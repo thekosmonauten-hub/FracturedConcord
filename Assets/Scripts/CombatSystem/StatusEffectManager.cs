@@ -515,6 +515,22 @@ public class StatusEffectManager : MonoBehaviour
     {
         // Magnitude is already calculated as 70% of source physical damage
         float damage = effect.magnitude;
+        
+        // Apply ailment modifiers from player character (if this is an enemy status effect)
+        Character playerCharacter = GetPlayerCharacter();
+        if (playerCharacter != null)
+        {
+            var statsData = new CharacterStatsData(playerCharacter);
+            
+            // Apply increased bleed magnitude and increased DoT
+            float magnitudeMultiplier = 1f + (statsData.increasedBleedMagnitude / 100f);
+            float dotMultiplier = 1f + (statsData.increasedDamageOverTime / 100f);
+            
+            damage = damage * magnitudeMultiplier * dotMultiplier;
+            
+            Debug.Log($"[Ailment Modifiers] Bleed: Base={effect.magnitude}, Magnitude+{statsData.increasedBleedMagnitude}%, DoT+{statsData.increasedDamageOverTime}%, Final={damage:F2}");
+        }
+        
         Debug.Log($"Applying Bleeding: {damage} physical damage (70% of {effect.sourcePhysicalDamage} source damage)");
         ApplyDamageToEntity(damage, DamageType.Physical);
     }
@@ -527,6 +543,22 @@ public class StatusEffectManager : MonoBehaviour
         // Magnitude is already calculated as 30% of (physical + chaos) damage
         float damage = effect.magnitude;
         float totalSource = effect.sourcePhysicalDamage + effect.sourceChaosDamage;
+        
+        // Apply ailment modifiers from player character (if this is an enemy status effect)
+        Character playerCharacter = GetPlayerCharacter();
+        if (playerCharacter != null)
+        {
+            var statsData = new CharacterStatsData(playerCharacter);
+            
+            // Apply increased poison magnitude, increased poison damage, and increased DoT
+            float magnitudeMultiplier = 1f + (statsData.increasedPoisonMagnitude / 100f);
+            float poisonDamageMultiplier = 1f + (statsData.increasedPoisonDamage / 100f);
+            float dotMultiplier = 1f + (statsData.increasedDamageOverTime / 100f);
+            
+            damage = damage * magnitudeMultiplier * poisonDamageMultiplier * dotMultiplier;
+            
+            Debug.Log($"[Ailment Modifiers] Poison: Base={effect.magnitude}, Magnitude+{statsData.increasedPoisonMagnitude}%, Damage+{statsData.increasedPoisonDamage}%, DoT+{statsData.increasedDamageOverTime}%, Final={damage:F2}");
+        }
         
         // Get total poison magnitude for display
         float totalPoisonMagnitude = GetTotalMagnitude(StatusEffectType.Poison);
@@ -543,8 +575,40 @@ public class StatusEffectManager : MonoBehaviour
     {
         // Magnitude is already calculated as 70% of source fire damage
         float damage = effect.magnitude;
+        
+        // Apply ailment modifiers from player character (if this is an enemy status effect)
+        Character playerCharacter = GetPlayerCharacter();
+        if (playerCharacter != null)
+        {
+            var statsData = new CharacterStatsData(playerCharacter);
+            
+            // Apply increased ignite magnitude and increased DoT
+            float magnitudeMultiplier = 1f + (statsData.increasedIgniteMagnitude / 100f);
+            float dotMultiplier = 1f + (statsData.increasedDamageOverTime / 100f);
+            
+            damage = damage * magnitudeMultiplier * dotMultiplier;
+            
+            Debug.Log($"[Ailment Modifiers] Ignite: Base={effect.magnitude}, Magnitude+{statsData.increasedIgniteMagnitude}%, DoT+{statsData.increasedDamageOverTime}%, Final={damage:F2}");
+        }
+        
         Debug.Log($"Applying Ignite: {damage} fire damage (70% of {effect.sourceFireDamage} source damage)");
         ApplyDamageToEntity(damage, DamageType.Fire);
+    }
+    
+    /// <summary>
+    /// Get the player character for applying ailment modifiers
+    /// </summary>
+    private Character GetPlayerCharacter()
+    {
+        // If this is on an enemy, get the player character
+        if (GetComponent<EnemyCombatDisplay>() != null)
+        {
+            if (CharacterManager.Instance != null && CharacterManager.Instance.HasCharacter())
+            {
+                return CharacterManager.Instance.GetCurrentCharacter();
+            }
+        }
+        return null;
     }
     
     /// <summary>

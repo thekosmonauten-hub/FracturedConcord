@@ -1385,7 +1385,7 @@ public class CombatDisplayManager : MonoBehaviour
         }
     }
     
-    public void PlayerAttackEnemy(int enemyIndex, float damage)
+    public void PlayerAttackEnemy(int enemyIndex, float damage, Card playedCard = null)
     {
         // enemyIndex is a DISPLAY index, not an activeEnemies list index!
         // We need to get the enemy from the display, not from activeEnemies
@@ -1536,8 +1536,50 @@ public class CombatDisplayManager : MonoBehaviour
             }
         }
         
-        // Apply charge modifiers: Always Crit
-        bool wasCritical = CombatDeckManager.ShouldAlwaysCrit() || UnityEngine.Random.Range(0f, 1f) < 0.1f; // 10% critical chance for demo, or forced by charge
+        // Calculate critical strike chance
+        float critChance = 0f;
+        
+        if (player != null)
+        {
+            // 1. Add base crit chance from card type (2% for attacks, 5% for spells)
+            if (playedCard != null)
+            {
+                critChance = CardTypeConstants.GetBaseCritChance(playedCard);
+                Debug.Log($"<color=cyan>[Crit] Base crit chance for {playedCard.cardName} ({playedCard.cardType}): {critChance}%</color>");
+            }
+            
+            // 2. Add equipment crit modifiers
+            var damageModifiers = player.GetDamageModifiers();
+            if (damageModifiers != null)
+            {
+                critChance += damageModifiers.criticalStrikeChance;
+                Debug.Log($"<color=cyan>[Crit] + Equipment crit chance: {damageModifiers.criticalStrikeChance}% (Total: {critChance}%)</color>");
+            }
+            
+            // 3. Add character crit modifiers (from ascendancy/passives)
+            critChance += player.criticalStrikeChance;
+            if (player.criticalStrikeChance > 0)
+            {
+                Debug.Log($"<color=cyan>[Crit] + Character crit chance: {player.criticalStrikeChance}% (Total: {critChance}%)</color>");
+            }
+            
+            // 4. Add stack system bonuses
+            if (StackSystem.Instance != null)
+            {
+                float stackCritBonus = StackSystem.Instance.GetCritChanceBonus();
+                critChance += stackCritBonus;
+                if (stackCritBonus > 0)
+                {
+                    Debug.Log($"<color=cyan>[Crit] + Stack crit bonus: {stackCritBonus}% (Total: {critChance}%)</color>");
+                }
+            }
+        }
+        
+        // Clamp crit chance to 0-100%
+        critChance = Mathf.Clamp(critChance, 0f, 100f);
+        
+        // Apply charge modifiers: Always Crit, or roll for crit
+        bool wasCritical = CombatDeckManager.ShouldAlwaysCrit() || UnityEngine.Random.Range(0f, 100f) < critChance;
             
             if (wasCritical)
             {

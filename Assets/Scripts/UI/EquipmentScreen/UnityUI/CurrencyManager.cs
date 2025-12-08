@@ -83,6 +83,9 @@ namespace Dexiled.UI.EquipmentScreen
 
             isInitialized = true;
             Debug.Log("[CurrencyManager] Currency system initialized successfully!");
+            
+            // CRITICAL: Sync from LootManager AFTER initialization so display items exist
+            SyncFromLootManager();
         }
 
         /// <summary>
@@ -94,14 +97,69 @@ namespace Dexiled.UI.EquipmentScreen
             {
                 Debug.LogWarning("[CurrencyManager] Not initialized. Initializing now...");
                 Initialize();
+                // After initialization, sync from LootManager
+                SyncFromLootManager();
                 return;
             }
+            
+            // Sync from LootManager before refreshing display
+            SyncFromLootManager();
 
+            // UpdateAllDisplays is now redundant since SyncFromLootManager calls UpdateCurrency for each
+            // But keeping it as a safety net
             orbsSection?.UpdateAllDisplays();
             spiritsSection?.UpdateAllDisplays();
             fragmentsSection?.UpdateAllDisplays();
 
             Debug.Log("[CurrencyManager] All currency displays refreshed");
+        }
+        
+        /// <summary>
+        /// Syncs currency quantities from LootManager to CurrencyDatabase AND updates all displays
+        /// CRITICAL: LootManager stores the actual player currencies!
+        /// </summary>
+        public void SyncFromLootManager()
+        {
+            if (LootManager.Instance == null)
+            {
+                Debug.LogWarning("[CurrencyManager] LootManager.Instance is null - cannot sync currencies!");
+                return;
+            }
+            
+            if (currencyDatabase == null)
+            {
+                Debug.LogWarning("[CurrencyManager] CurrencyDatabase is null - cannot sync currencies!");
+                return;
+            }
+            
+            // Get all currencies from LootManager
+            var lootManagerCurrencies = LootManager.Instance.GetAllCurrencies();
+            
+            // Update CurrencyDatabase with actual quantities AND update display items
+            int updatedCount = 0;
+            foreach (var kvp in lootManagerCurrencies)
+            {
+                CurrencyType type = kvp.Key;
+                int quantity = kvp.Value;
+                
+                CurrencyData currency = currencyDatabase.GetCurrency(type);
+                if (currency != null)
+                {
+                    currency.quantity = quantity;
+                    
+                    // Also update the spawned display items directly
+                    UpdateCurrency(type, quantity);
+                    updatedCount++;
+                    
+                    Debug.Log($"[CurrencyManager] Synced {type} = {quantity}");
+                }
+                else
+                {
+                    Debug.LogWarning($"[CurrencyManager] Currency {type} not found in CurrencyDatabase!");
+                }
+            }
+            
+            Debug.Log($"[CurrencyManager] Synced {updatedCount}/{lootManagerCurrencies.Count} currencies from LootManager");
         }
 
         /// <summary>
@@ -124,21 +182,44 @@ namespace Dexiled.UI.EquipmentScreen
             {
                 currency.quantity = newQuantity;
             }
+            else
+            {
+                Debug.LogWarning($"[CurrencyManager] Currency {currencyType} not found in database!");
+                return;
+            }
 
             // Update in appropriate section
             int typeIndex = (int)currencyType;
+            bool updated = false;
 
             if (typeIndex >= 0 && typeIndex <= 8)
             {
-                orbsSection?.UpdateCurrencyQuantity(currencyType, newQuantity);
+                if (orbsSection != null)
+                {
+                    orbsSection.UpdateCurrencyQuantity(currencyType, newQuantity);
+                    updated = true;
+                }
             }
             else if (typeIndex >= 9 && typeIndex <= 17)
             {
-                spiritsSection?.UpdateCurrencyQuantity(currencyType, newQuantity);
+                if (spiritsSection != null)
+                {
+                    spiritsSection.UpdateCurrencyQuantity(currencyType, newQuantity);
+                    updated = true;
+                }
             }
             else if (typeIndex >= 18 && typeIndex <= 27)
             {
-                fragmentsSection?.UpdateCurrencyQuantity(currencyType, newQuantity);
+                if (fragmentsSection != null)
+                {
+                    fragmentsSection.UpdateCurrencyQuantity(currencyType, newQuantity);
+                    updated = true;
+                }
+            }
+            
+            if (!updated)
+            {
+                Debug.LogWarning($"[CurrencyManager] Currency {currencyType} (index {typeIndex}) doesn't match any section!");
             }
         }
 

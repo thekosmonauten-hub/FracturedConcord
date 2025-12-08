@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using Dexiled.UI.EquipmentScreen;
+using TMPro;
 
 /// <summary>
 /// Unity UI version of Equipment Screen main controller
@@ -9,6 +11,11 @@ using System.Collections.Generic;
 /// </summary>
 public class EquipmentScreenUI : MonoBehaviour
 {
+    [Header("Player Details")]
+    [SerializeField] private TextMeshProUGUI playerNameText;
+    [SerializeField] private TextMeshProUGUI playerLevelText;
+    [SerializeField] private TextMeshProUGUI playerClassText;
+    
     [Header("Equipment Slots")]
     [SerializeField] private EquipmentSlotUI helmetSlot;
     [SerializeField] private EquipmentSlotUI amuletSlot;
@@ -23,6 +30,9 @@ public class EquipmentScreenUI : MonoBehaviour
     
     [Header("Inventory")]
     [SerializeField] private InventoryGridUI inventoryGrid;
+    
+    [Header("Currency")]
+    [SerializeField] private CurrencyManager currencyManager;
     [SerializeField] private InventoryGridUI stashGrid;
     
     [Header("Buttons")]
@@ -60,6 +70,39 @@ public class EquipmentScreenUI : MonoBehaviour
     {
         // Set initial tab state
         SetCurrencyTab("Orbs");
+        
+        // Update player details
+        UpdatePlayerDetails();
+        
+        // Configure grid modes
+        ConfigureGrids();
+    }
+    
+    /// <summary>
+    /// Configure inventory and stash grids with correct modes
+    /// </summary>
+    private void ConfigureGrids()
+    {
+        if (inventoryGrid != null)
+        {
+            inventoryGrid.gridMode = InventoryGridUI.GridMode.CharacterInventory;
+            Debug.Log("[EquipmentScreenUI] Configured inventoryGrid as CharacterInventory");
+        }
+        
+        if (stashGrid != null)
+        {
+            stashGrid.gridMode = InventoryGridUI.GridMode.GlobalStash;
+            Debug.Log("[EquipmentScreenUI] Configured stashGrid as GlobalStash");
+        }
+    }
+    
+    void OnEnable()
+    {
+        // Update player details when screen is shown
+        UpdatePlayerDetails();
+        
+        // Refresh currency display from LootManager
+        RefreshCurrencyDisplay();
     }
     
     void InitializeSlotMap()
@@ -126,9 +169,292 @@ public class EquipmentScreenUI : MonoBehaviour
     
     void OnEquipmentSlotClicked(EquipmentType slotType)
     {
-        Debug.Log($"[EquipmentScreenUI] Equipment slot clicked: {slotType}");
-        // TODO: Handle equipment slot click (equip/unequip)
+        Debug.Log($"<color=cyan>[EquipmentScreenUI] Equipment slot clicked: {slotType}</color>");
+        
+        var selectionManager = ItemSelectionManager.Instance;
+        if (selectionManager == null)
+        {
+            Debug.LogWarning("[EquipmentScreenUI] ItemSelectionManager not found!");
+            return;
+        }
+        
+        // Get the equipment manager
+        var equipmentManager = EquipmentManager.Instance;
+        if (equipmentManager == null)
+        {
+            Debug.LogWarning("[EquipmentScreenUI] EquipmentManager not found!");
+            return;
+        }
+        
+        bool hasSelection = selectionManager.HasSelection();
+        Debug.Log($"<color=cyan>[EquipmentScreenUI] Has selection: {hasSelection}</color>");
+        
+        // First, check if this slot has an equipped item and no selection
+        // If so, show the equipped tooltip
+        if (!hasSelection)
+        {
+            if (slotMap.TryGetValue(slotType, out var slot) && slot != null)
+            {
+                BaseItem equippedItem = slot.GetEquippedItem();
+                Debug.Log($"<color=cyan>[EquipmentScreenUI] Slot {slotType} equipped item: {(equippedItem != null ? equippedItem.itemName : "NULL")}</color>");
+                
+                if (equippedItem != null)
+                {
+                    Debug.Log($"<color=lime>[EquipmentScreenUI] ✅ Showing equipped tooltip for {equippedItem.itemName}</color>");
+                    // Show equipped tooltip in the fixed container
+                    ShowEquippedItemTooltip(equippedItem, slotType);
+                    return;
+                }
+                else
+                {
+                    Debug.Log($"<color=yellow>[EquipmentScreenUI] No item equipped in {slotType}, nothing to show</color>");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"<color=red>[EquipmentScreenUI] Slot {slotType} not found in slotMap!</color>");
+            }
+        }
+        else
+        {
+            Debug.Log($"<color=cyan>[EquipmentScreenUI] Has selection, proceeding with equip/unequip logic</color>");
+        }
+        
+        // Check if we have a selected item
+        if (selectionManager.HasSelection())
+        {
+            BaseItem selectedItem = selectionManager.GetSelectedItem();
+            
+            // Check if item can go in this slot
+            if (selectionManager.CanEquipToSlot(selectedItem, slotType))
+            {
+                // Equip the item
+                bool success = equipmentManager.EquipItem(selectedItem);
+                    
+                if (success)
+                {
+                    Debug.Log($"[EquipmentScreenUI] Successfully equipped {selectedItem.itemName} to {slotType}");
+                        
+                    // Remove from inventory if it was from inventory
+                    if (selectionManager.IsFromInventory())
+                    {
+                        int inventoryIndex = selectionManager.GetSelectedInventoryIndex();
+                        var charManager = CharacterManager.Instance;
+                        if (charManager != null && inventoryIndex >= 0 && inventoryIndex < charManager.inventoryItems.Count)
+                        {
+                            charManager.inventoryItems.RemoveAt(inventoryIndex);
+                        }
+                    }
+                    
+                    // Clear selection and refresh
+                    selectionManager.ClearSelection();
+                    RefreshAllDisplays();
+                }
+                else
+                {
+                    Debug.LogWarning($"[EquipmentScreenUI] Failed to equip {selectedItem.itemName}");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[EquipmentScreenUI] {selectedItem.GetDisplayName()} cannot be equipped in {slotType} slot!");
+            }
+        }
+        else
+        {
+            // No selection - unequip item in this slot
+            if (!slotMap.TryGetValue(slotType, out var slot) || slot == null)
+                return;
+            
+            BaseItem equippedItem = slot.GetEquippedItem();
+            if (equippedItem)
+            {
+                // Unequip and move to inventory
+                bool unequipped = equipmentManager.UnequipItem(slotType);
+                
+                if (unequipped)
+                {
+                    // Add to inventory
+                    var charManager = CharacterManager.Instance;
+                    if (charManager != null)
+                    {
+                        charManager.inventoryItems.Add(equippedItem);
+                        charManager.OnItemAdded?.Invoke(equippedItem);
+                    }
+                    
+                    Debug.Log($"[EquipmentScreenUI] Unequipped {equippedItem.itemName} from {slotType}");
+                    RefreshAllDisplays();
+                }
+            }
+        }
     }
+    
+    private void RefreshAllDisplays()
+    {
+        // Refresh inventory grid (character-specific)
+        if (inventoryGrid != null)
+        {
+            inventoryGrid.RefreshFromDataSource();
+        }
+        
+        // Refresh stash grid (global)
+        if (stashGrid != null)
+        {
+            stashGrid.RefreshFromDataSource();
+        }
+        
+        // Refresh equipment slots
+        RefreshEquipmentSlots();
+        
+        // Update player details
+        UpdatePlayerDetails();
+        
+        // Refresh currency display
+        RefreshCurrencyDisplay();
+    }
+    
+    /// <summary>
+    /// Refresh currency display from LootManager
+    /// </summary>
+    private void RefreshCurrencyDisplay()
+    {
+        if (currencyManager != null)
+        {
+            currencyManager.Refresh(); // This will call SyncFromLootManager() internally
+            Debug.Log("[EquipmentScreenUI] Currency display refreshed from LootManager");
+        }
+        else
+        {
+            Debug.LogWarning("[EquipmentScreenUI] CurrencyManager not assigned! Currencies will not display.");
+        }
+    }
+    
+    /// <summary>
+    /// Transfer item from inventory to stash
+    /// </summary>
+    public void TransferToStash(BaseItem item, int inventoryIndex)
+    {
+        if (item == null || StashManager.Instance == null || CharacterManager.Instance == null)
+        {
+            Debug.LogWarning("[EquipmentScreenUI] Cannot transfer item to stash - missing managers or item");
+            return;
+        }
+        
+        // Remove from inventory
+        if (inventoryIndex >= 0 && inventoryIndex < CharacterManager.Instance.inventoryItems.Count)
+        {
+            CharacterManager.Instance.inventoryItems.RemoveAt(inventoryIndex);
+        }
+        
+        // Add to stash
+        StashManager.Instance.AddItem(item);
+        
+        Debug.Log($"[EquipmentScreenUI] Transferred {item.GetDisplayName()} from inventory to stash");
+        RefreshAllDisplays();
+    }
+    
+    /// <summary>
+    /// Transfer item from stash to inventory
+    /// </summary>
+    public void TransferToInventory(BaseItem item, int stashIndex)
+    {
+        if (item == null || StashManager.Instance == null || CharacterManager.Instance == null)
+        {
+            Debug.LogWarning("[EquipmentScreenUI] Cannot transfer item to inventory - missing managers or item");
+            return;
+        }
+        
+        // Remove from stash
+        if (StashManager.Instance.RemoveItemAt(stashIndex))
+        {
+            // Add to inventory
+            CharacterManager.Instance.AddItem(item);
+            
+            Debug.Log($"[EquipmentScreenUI] Transferred {item.GetDisplayName()} from stash to inventory");
+            RefreshAllDisplays();
+        }
+    }
+    
+    /// <summary>
+    /// Update player name, level, and class from CharacterManager
+    /// </summary>
+    private void UpdatePlayerDetails()
+    {
+        var characterManager = CharacterManager.Instance;
+        if (characterManager == null || characterManager.currentCharacter == null)
+        {
+            Debug.LogWarning("[EquipmentScreenUI] CharacterManager or currentCharacter not found!");
+            
+            // Set default values if no character
+            if (playerNameText != null)
+                playerNameText.text = "No Character";
+            
+            if (playerLevelText != null)
+                playerLevelText.text = "Level: -";
+            
+            if (playerClassText != null)
+                playerClassText.text = "-";
+            
+            return;
+        }
+        
+        Character character = characterManager.currentCharacter;
+        
+        // Update player name
+        if (playerNameText != null)
+        {
+            playerNameText.text = character.characterName;
+        }
+        
+        // Update player level
+        if (playerLevelText != null)
+        {
+            playerLevelText.text = $"Level: {character.level}";
+        }
+        
+        // Update player class
+        if (playerClassText != null)
+        {
+            playerClassText.text = character.characterClass;
+        }
+        
+        Debug.Log($"[EquipmentScreenUI] Updated player details: {character.characterName}, Level {character.level}, {character.characterClass}");
+    }
+    
+    private void RefreshEquipmentSlots()
+    {
+        var equipmentManager = EquipmentManager.Instance;
+        if (equipmentManager == null)
+        {
+            Debug.LogWarning("[EquipmentScreenUI] EquipmentManager not found during refresh!");
+            return;
+        }
+        
+        Debug.Log("[EquipmentScreenUI] Refreshing all equipment slots...");
+        
+        foreach (var kvp in slotMap)
+        {
+            EquipmentType slotType = kvp.Key;
+            EquipmentSlotUI slotUI = kvp.Value;
+            
+            if (slotUI != null)
+            {
+                BaseItem equippedItem = equipmentManager.GetEquippedItem(slotType);
+                slotUI.SetEquippedItem(equippedItem);
+                
+                Debug.Log($"[EquipmentScreenUI] Refreshed {slotType}: {(equippedItem != null ? equippedItem.itemName : "Empty")}");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Public method to refresh equipment displays (can be called from other scripts)
+    /// </summary>
+    public void RefreshEquipmentDisplay()
+    {
+        RefreshAllDisplays();
+    }
+    
     
     void ShowEquipmentTooltip(EquipmentType slotType, Vector2 position)
     {
@@ -138,19 +464,41 @@ public class EquipmentScreenUI : MonoBehaviour
         if (!slotMap.TryGetValue(slotType, out var slot) || slot == null)
             return;
 
-        ItemData equipped = slot.GetEquippedItem();
+        BaseItem equipped = slot.GetEquippedItem();
         if (equipped == null)
         {
             ItemTooltipManager.Instance.HideTooltip();
             return;
         }
 
-        ItemTooltipManager.Instance.ShowEquipmentTooltip(equipped, position);
+        // Pass isEquipped=true to use the equipped tooltip variant (no icon)
+        ItemTooltipManager.Instance.ShowEquipmentTooltip(equipped, position, isEquipped: true);
+    }
+    
+    /// <summary>
+    /// Show equipped item tooltip in fixed container (called on click)
+    /// </summary>
+    void ShowEquippedItemTooltip(BaseItem item, EquipmentType slotType)
+    {
+        if (ItemTooltipManager.Instance == null || item == null)
+            return;
+        
+        Debug.Log($"[EquipmentScreenUI] Showing equipped tooltip for {item.itemName} in slot {slotType}");
+        
+        // Use the container-based tooltip display
+        ItemTooltipManager.Instance.ShowEquippedTooltip(item);
     }
     
     void OnReturnButtonClicked()
     {
         Debug.Log("[EquipmentScreenUI] Return button clicked");
+        
+        // Hide equipped tooltips when closing the screen
+        if (ItemTooltipManager.Instance != null)
+        {
+            ItemTooltipManager.Instance.HideEquippedTooltip();
+        }
+        
         // Return to game
         gameObject.SetActive(false);
     }
@@ -226,7 +574,7 @@ public class EquipmentScreenUI : MonoBehaviour
         button.colors = colors;
     }
     
-    public void EquipItem(ItemData item, EquipmentType slotType)
+    public void EquipItem(BaseItem item, EquipmentType slotType)
     {
         if (slotMap.ContainsKey(slotType) && slotMap[slotType] != null)
         {
@@ -244,7 +592,7 @@ public class EquipmentScreenUI : MonoBehaviour
         }
     }
     
-    public ItemData GetEquippedItem(EquipmentType slotType)
+    public BaseItem GetEquippedItem(EquipmentType slotType)
     {
         if (slotMap.ContainsKey(slotType) && slotMap[slotType] != null)
         {

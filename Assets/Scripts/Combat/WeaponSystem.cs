@@ -31,11 +31,14 @@ public class Weapon
     [Header("Basic Information")]
     public string weaponName;
     public WeaponType weaponType;
+    public WeaponItemType weaponItemType; // Store original weapon item type for weapon-type modifiers (axe, bow, sword, etc.)
     public float attackSpeed = 1f;
     
     [Header("Implicit Base Damage")]
     public float baseDamageMin = 0f;
     public float baseDamageMax = 0f;
+    [Tooltip("Rolled base damage (single value for card scaling)")]
+    public float rolledBaseDamage = 0f; // Rolled when weapon drops, used for card damage
     public DamageType baseDamageType = DamageType.Physical;
     
     [Header("Affixes")]
@@ -113,8 +116,19 @@ public class Weapon
     }
     
     // Get average total damage (for card scaling)
+    /// <summary>
+    /// Get weapon damage for card scaling.
+    /// Uses rolled base damage if available, otherwise averages min/max.
+    /// </summary>
     public float GetWeaponDamage()
     {
+        // If we have a rolled base damage (from generation), use it
+        if (rolledBaseDamage > 0f)
+        {
+            return rolledBaseDamage;
+        }
+        
+        // Fallback: average min/max (for legacy/test weapons)
         return (totalDamageMin + totalDamageMax) / 2f;
     }
     

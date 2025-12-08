@@ -7,12 +7,14 @@ public class EquipmentManager : MonoBehaviour
     [Header("Equipment Data")]
     public EquipmentData currentEquipment = new EquipmentData();
     
-    [Header("Character Reference")]
-    public Character currentCharacter;
-    
     [Header("Equipment Stats")]
     public Dictionary<string, float> totalEquipmentStats = new Dictionary<string, float>();
     private Dictionary<string, float> effigyStats = new Dictionary<string, float>();
+    
+    /// <summary>
+    /// Always get current character from CharacterManager (never cache!)
+    /// </summary>
+    private Character CurrentCharacter => CharacterManager.Instance?.GetCurrentCharacter();
     
     // Singleton pattern
     private static EquipmentManager _instance;
@@ -40,16 +42,6 @@ public class EquipmentManager : MonoBehaviour
         {
             _instance = this;
             DontDestroyOnLoad(gameObject);
-            
-            // Find CharacterManager if not assigned
-            if (currentCharacter == null)
-            {
-                CharacterManager charManager = FindFirstObjectByType<CharacterManager>();
-                if (charManager != null)
-                {
-                    currentCharacter = charManager.GetCurrentCharacter();
-                }
-            }
         }
         else if (_instance != this)
         {
@@ -59,36 +51,34 @@ public class EquipmentManager : MonoBehaviour
     
     private void Start()
     {
-        // Get character reference
-        if (currentCharacter == null)
-        {
-            CharacterManager charManager = FindFirstObjectByType<CharacterManager>();
-            if (charManager != null)
-            {
-                currentCharacter = charManager.GetCurrentCharacter();
-            }
-        }
-        
-        // Load equipment data
+        // Load equipment data and apply stats
+        // (Always gets current character from CharacterManager)
         LoadEquipmentData();
-        
-        // Apply equipment stats to character
         ApplyEquipmentStats();
     }
     
     // Equip an item
-    public bool EquipItem(ItemData item)
+    public bool EquipItem(BaseItem item)
     {
         if (item == null) return false;
         
         // Check if the item can be equipped in the specified slot
         EquipmentType targetSlot = item.equipmentType;
-        ItemData currentlyEquipped = GetEquippedItem(targetSlot);
+        BaseItem currentlyEquipped = GetEquippedItem(targetSlot);
         
-        // Unequip current item if any
+        // Unequip current item if any and return it to inventory
         if (currentlyEquipped != null)
         {
-            UnequipItem(targetSlot);
+            BaseItem unequippedItem = UnequipItem(targetSlot);
+            
+            // Add the old item back to inventory
+            var charManager = CharacterManager.Instance;
+            if (charManager != null && unequippedItem != null)
+            {
+                charManager.inventoryItems.Add(unequippedItem);
+                charManager.OnItemAdded?.Invoke(unequippedItem);
+                Debug.Log($"[EquipmentManager] Returned {unequippedItem.itemName} to inventory (replaced by {item.itemName})");
+            }
         }
         
         // Equip the new item
@@ -98,6 +88,9 @@ public class EquipmentManager : MonoBehaviour
         CalculateTotalEquipmentStats();
         ApplyEquipmentStats();
         
+        // Update Character.weapons for damage scaling
+        UpdateCharacterWeaponReferences();
+        
         // Save equipment data
         SaveEquipmentData();
         
@@ -106,9 +99,9 @@ public class EquipmentManager : MonoBehaviour
     }
     
     // Unequip an item
-    public ItemData UnequipItem(EquipmentType slot)
+    public BaseItem UnequipItem(EquipmentType slot)
     {
-        ItemData unequippedItem = GetEquippedItem(slot);
+        BaseItem unequippedItem = GetEquippedItem(slot);
         if (unequippedItem != null)
         {
             SetEquippedItem(slot, null);
@@ -127,7 +120,7 @@ public class EquipmentManager : MonoBehaviour
     }
     
     // Get equipped item for a slot
-    public ItemData GetEquippedItem(EquipmentType slot)
+    public BaseItem GetEquippedItem(EquipmentType slot)
     {
         switch (slot)
         {
@@ -157,7 +150,7 @@ public class EquipmentManager : MonoBehaviour
     }
     
     // Set equipped item for a slot
-    private void SetEquippedItem(EquipmentType slot, ItemData item)
+    private void SetEquippedItem(EquipmentType slot, BaseItem item)
     {
         switch (slot)
         {
@@ -198,6 +191,7 @@ public class EquipmentManager : MonoBehaviour
     public void CalculateTotalEquipmentStats()
     {
         totalEquipmentStats.Clear();
+        effigyStats.Clear();
         
         // Process all equipment slots
         EquipmentType[] allSlots = {
@@ -208,10 +202,12 @@ public class EquipmentManager : MonoBehaviour
         
         foreach (EquipmentType slot in allSlots)
         {
-            ItemData item = GetEquippedItem(slot);
-            if (item != null && item.stats != null)
+            BaseItem item = GetEquippedItem(slot);
+            if (item != null)
             {
-                foreach (var stat in item.stats)
+                // Get all modifier stats from BaseItem
+                Dictionary<string, float> itemStats = GetItemStats(item);
+                foreach (var stat in itemStats)
                 {
                     if (totalEquipmentStats.ContainsKey(stat.Key))
                     {
@@ -225,46 +221,310 @@ public class EquipmentManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"Total equipment stats calculated: {totalEquipmentStats.Count} stats");
+        // Process equipped effigies
+        CalculateEffigyStats();
+        
+        // Merge effigy stats into total equipment stats
+        foreach (var stat in effigyStats)
+        {
+            if (totalEquipmentStats.ContainsKey(stat.Key))
+            {
+                totalEquipmentStats[stat.Key] += stat.Value;
+            }
+            else
+            {
+                totalEquipmentStats[stat.Key] = stat.Value;
+            }
+        }
+        
+        Debug.Log($"Total equipment stats calculated: {totalEquipmentStats.Count} stats (including {effigyStats.Count} from effigies)");
+    }
+    
+    /// <summary>
+    /// Calculate stats from all equipped effigies
+    /// </summary>
+    private void CalculateEffigyStats()
+    {
+        effigyStats.Clear();
+        
+        Character character = CurrentCharacter;
+        if (character == null || character.equippedEffigies == null)
+        {
+            Debug.Log("[EquipmentManager] No character or equipped effigies to calculate stats from.");
+            return;
+        }
+        
+        Debug.Log($"[EquipmentManager] Calculating stats for {character.equippedEffigies.Count} equipped effigies.");
+        
+        foreach (Effigy effigy in character.equippedEffigies)
+        {
+            if (effigy == null)
+            {
+                Debug.LogWarning("[EquipmentManager] Encountered null effigy in equippedEffigies list. Skipping.");
+                continue;
+            }
+            
+            Dictionary<string, float> effigyStatValues = GetEffigyStats(effigy);
+            Debug.Log($"[EquipmentManager] Effigy '{effigy.effigyName}' contributes {effigyStatValues.Count} stats:");
+            foreach (var stat in effigyStatValues)
+            {
+                Debug.Log($"  - {stat.Key}: {stat.Value}");
+                if (effigyStats.ContainsKey(stat.Key))
+                {
+                    effigyStats[stat.Key] += stat.Value;
+                }
+                else
+                {
+                    effigyStats[stat.Key] = stat.Value;
+                }
+            }
+        }
+        Debug.Log($"[EquipmentManager] Total effigy stats aggregated: {effigyStats.Count} stats.");
+    }
+    
+    /// <summary>
+    /// Get all stats from a single effigy (implicit + rolled affixes)
+    /// </summary>
+    public Dictionary<string, float> GetEffigyStats(Effigy effigy)
+    {
+        Dictionary<string, float> stats = new Dictionary<string, float>();
+        
+        if (effigy == null) return stats;
+        
+        // Process implicit modifiers
+        if (effigy.implicitModifiers != null)
+        {
+            foreach (Affix implicitAffix in effigy.implicitModifiers)
+            {
+                if (implicitAffix?.modifiers == null) continue;
+                foreach (AffixModifier modifier in implicitAffix.modifiers)
+                {
+                    float value = modifier.isRolled ? modifier.rolledValue : modifier.minValue;
+                    if (stats.ContainsKey(modifier.statName))
+                        stats[modifier.statName] += value;
+                    else
+                        stats[modifier.statName] = value;
+                }
+            }
+        }
+        
+        // Process rolled prefixes
+        if (effigy.prefixes != null)
+        {
+            foreach (Affix prefix in effigy.prefixes)
+            {
+                if (prefix?.modifiers == null) continue;
+                foreach (AffixModifier modifier in prefix.modifiers)
+                {
+                    float value = modifier.isRolled ? modifier.rolledValue : modifier.minValue;
+                    if (stats.ContainsKey(modifier.statName))
+                        stats[modifier.statName] += value;
+                    else
+                        stats[modifier.statName] = value;
+                }
+            }
+        }
+        
+        // Process rolled suffixes
+        if (effigy.suffixes != null)
+        {
+            foreach (Affix suffix in effigy.suffixes)
+            {
+                if (suffix?.modifiers == null) continue;
+                foreach (AffixModifier modifier in suffix.modifiers)
+                {
+                    float value = modifier.isRolled ? modifier.rolledValue : modifier.minValue;
+                    if (stats.ContainsKey(modifier.statName))
+                        stats[modifier.statName] += value;
+                    else
+                        stats[modifier.statName] = value;
+                }
+            }
+        }
+        
+        return stats;
+    }
+    
+    /// <summary>
+    /// Helper method to get all stats from a BaseItem
+    /// </summary>
+    private Dictionary<string, float> GetItemStats(BaseItem item)
+    {
+        Dictionary<string, float> stats = new Dictionary<string, float>();
+        
+        if (item == null) return stats;
+        
+        // Process all affixes (implicit, prefixes, suffixes)
+        List<Affix> allAffixes = new List<Affix>();
+        allAffixes.AddRange(item.implicitModifiers);
+        allAffixes.AddRange(item.prefixes);
+        allAffixes.AddRange(item.suffixes);
+        
+        foreach (Affix affix in allAffixes)
+        {
+            foreach (AffixModifier modifier in affix.modifiers)
+            {
+                float value = modifier.minValue; // Use rolled value
+                
+                if (stats.ContainsKey(modifier.statName))
+                    stats[modifier.statName] += value;
+                else
+                    stats[modifier.statName] = value;
+            }
+        }
+        
+        return stats;
+    }
+    
+    /// <summary>
+    /// Update Character.weapons with equipped weapon data
+    /// This is critical for card damage scaling!
+    /// </summary>
+    private void UpdateCharacterWeaponReferences()
+    {
+        Character character = CurrentCharacter;
+        if (character == null)
+        {
+            Debug.LogWarning("[EquipmentManager] No current character to update weapons!");
+            return;
+        }
+        
+        // Get main hand and off hand
+        BaseItem mainHand = GetEquippedItem(EquipmentType.MainHand);
+        BaseItem offHand = GetEquippedItem(EquipmentType.OffHand);
+        
+        // Clear existing weapons
+        character.weapons.meleeWeapon = null;
+        character.weapons.projectileWeapon = null;
+        character.weapons.spellWeapon = null;
+        
+        // Assign main hand weapon
+        if (mainHand is WeaponItem mainWeapon)
+        {
+            Weapon weaponData = ConvertWeaponItemToWeapon(mainWeapon);
+            AssignWeaponByType(character, mainWeapon.weaponType, weaponData);
+            Debug.Log($"[EquipmentManager] Updated Character.weapons: MainHand = {mainWeapon.itemName} ({mainWeapon.weaponType})");
+        }
+        
+        // Assign off hand weapon (if dual wielding)
+        if (offHand is WeaponItem offWeapon)
+        {
+            Weapon weaponData = ConvertWeaponItemToWeapon(offWeapon);
+            AssignWeaponByType(character, offWeapon.weaponType, weaponData);
+            Debug.Log($"[EquipmentManager] Updated Character.weapons: OffHand = {offWeapon.itemName} ({offWeapon.weaponType})");
+        }
+        
+        Debug.Log($"[EquipmentManager] ✅ Character weapon data synced for damage scaling!");
+    }
+    
+    private void AssignWeaponByType(Character character, WeaponItemType weaponType, Weapon weaponData)
+    {
+        switch (weaponType)
+        {
+            case WeaponItemType.Sword:
+            case WeaponItemType.Axe:
+            case WeaponItemType.Mace:
+            case WeaponItemType.Dagger:
+            case WeaponItemType.Claw:
+            case WeaponItemType.RitualDagger:
+                character.weapons.meleeWeapon = weaponData;
+                break;
+            case WeaponItemType.Bow:
+                character.weapons.projectileWeapon = weaponData;
+                break;
+            case WeaponItemType.Wand:
+            case WeaponItemType.Staff:
+            case WeaponItemType.Sceptre:
+                character.weapons.spellWeapon = weaponData;
+                break;
+        }
+    }
+    
+    private Weapon ConvertWeaponItemToWeapon(WeaponItem weaponItem)
+    {
+        Weapon weapon = new Weapon
+        {
+            weaponName = weaponItem.itemName,
+            weaponType = ConvertWeaponItemTypeToWeaponType(weaponItem.weaponType),
+            weaponItemType = weaponItem.weaponType, // Store original weapon item type for weapon-type modifiers
+            attackSpeed = weaponItem.attackSpeed,
+            baseDamageMin = weaponItem.minDamage,
+            baseDamageMax = weaponItem.maxDamage,
+            rolledBaseDamage = weaponItem.rolledBaseDamage, // Transfer rolled value for card scaling
+            baseDamageType = weaponItem.primaryDamageType
+        };
+        
+        // Calculate total damage including affixes
+        weapon.CalculateTotalDamage();
+        
+        Debug.Log($"[EquipmentManager] Converted {weaponItem.itemName}: Base range {weapon.baseDamageMin}-{weapon.baseDamageMax}, Rolled: {weapon.rolledBaseDamage:F1}");
+        
+        return weapon;
+    }
+    
+    private WeaponType ConvertWeaponItemTypeToWeaponType(WeaponItemType itemType)
+    {
+        switch (itemType)
+        {
+            case WeaponItemType.Sword:
+            case WeaponItemType.Axe:
+            case WeaponItemType.Mace:
+            case WeaponItemType.Dagger:
+            case WeaponItemType.Claw:
+            case WeaponItemType.RitualDagger:
+                return WeaponType.Melee;
+            case WeaponItemType.Bow:
+                return WeaponType.Projectile;
+            case WeaponItemType.Wand:
+            case WeaponItemType.Staff:
+            case WeaponItemType.Sceptre:
+                return WeaponType.Spell;
+            default:
+                return WeaponType.Melee;
+        }
     }
     
     // Apply equipment stats to character
     public void ApplyEquipmentStats()
     {
-        if (currentCharacter == null) return;
+        Character character = CurrentCharacter;
+        if (character == null)
+        {
+            Debug.LogWarning("[EquipmentManager] No current character to apply equipment stats!");
+            return;
+        }
         
         // Reset character stats to base values
-        currentCharacter.CalculateDerivedStats();
+        character.CalculateDerivedStats();
+        
+        // Reset equipment-accumulated stats (these are added with +=, so need to be reset)
+        character.baseArmourFromItems = 0f;
+        character.baseEvasionFromItems = 0f;
+        character.baseEnergyShieldFromItems = 0f;
+        if (character.warrantStatModifiers != null)
+        {
+            character.warrantStatModifiers.Clear();
+        }
+        character.increasedDamage = 0f;
+        character.increasedEvasion = 0f;
         
         // Apply equipment modifiers
         DamageModifiers equipmentModifiers = new DamageModifiers();
 
+        // totalEquipmentStats already includes effigy stats (merged in CalculateTotalEquipmentStats)
+        // So we can use it directly without merging again
         Dictionary<string, float> combinedStats = new Dictionary<string, float>(totalEquipmentStats);
-        if (effigyStats != null)
-        {
-            foreach (var kvp in effigyStats)
-            {
-                if (combinedStats.ContainsKey(kvp.Key))
-                {
-                    combinedStats[kvp.Key] += kvp.Value;
-                }
-                else
-                {
-                    combinedStats[kvp.Key] = kvp.Value;
-                }
-            }
-        }
         
         // Process all equipment stats
         foreach (var stat in combinedStats)
         {
-            ApplyStatToCharacter(stat.Key, stat.Value, equipmentModifiers);
+            ApplyStatToCharacter(character, stat.Key, stat.Value, equipmentModifiers);
         }
         
         // Apply damage modifiers to character
-        currentCharacter.ApplyEquipmentModifiers(equipmentModifiers);
+        character.ApplyEquipmentModifiers(equipmentModifiers);
         
-        Debug.Log($"Applied equipment stats to character: {combinedStats.Count} stats");
+        Debug.Log($"[EquipmentManager] Applied equipment stats to {character.characterName}: {combinedStats.Count} stats");
     }
 
     public void SetEffigyStats(Dictionary<string, float> stats)
@@ -274,7 +534,7 @@ public class EquipmentManager : MonoBehaviour
     }
     
     // Apply a single stat to the character
-    private void ApplyStatToCharacter(string statName, float value, DamageModifiers equipmentModifiers)
+    private void ApplyStatToCharacter(Character character, string statName, float value, DamageModifiers equipmentModifiers)
     {
         // Handle different stat types
         switch (statName)
@@ -313,53 +573,83 @@ public class EquipmentManager : MonoBehaviour
                 equipmentModifiers.increasedChaosDamage.Add(value);
                 break;
                 
-            // Defense stats
+            // Defense stats - track base values separately for scaling with increased modifiers
             case "Armour":
-                currentCharacter.damageStats.physicalResistance += value;
+                character.baseArmourFromItems += value;
+                // Also add to physical resistance (legacy support)
+                character.damageStats.physicalResistance += value;
                 break;
             case "Evasion":
-                // Add evasion to character stats
+                character.baseEvasionFromItems += value;
                 break;
             case "EnergyShield":
-                // Add energy shield to character stats
+                character.baseEnergyShieldFromItems += value;
                 break;
                 
             // Attribute stats
             case "Strength":
-                currentCharacter.strength += (int)value;
+                character.strength += (int)value;
                 break;
             case "Dexterity":
-                currentCharacter.dexterity += (int)value;
+                character.dexterity += (int)value;
                 break;
             case "Intelligence":
-                currentCharacter.intelligence += (int)value;
+                character.intelligence += (int)value;
+                break;
+            case "AllAttributes":
+                // Single modifier that applies to all three attributes equally
+                character.strength += (int)value;
+                character.dexterity += (int)value;
+                character.intelligence += (int)value;
+                Debug.Log($"[EquipmentManager] Added {value:F0} to all attributes (Strength, Dexterity, Intelligence)");
                 break;
             case "IncreasedMaxLifePercent":
-                currentCharacter.maxHealth = Mathf.RoundToInt(currentCharacter.maxHealth * (1f + value / 100f));
-                currentCharacter.currentHealth = Mathf.Min(currentCharacter.currentHealth, currentCharacter.maxHealth);
-                currentCharacter.UpdateMaxGuard();
+                character.maxHealth = Mathf.RoundToInt(character.maxHealth * (1f + value / 100f));
+                character.currentHealth = Mathf.Min(character.currentHealth, character.maxHealth);
+                character.UpdateMaxGuard();
+                break;
+            case "maxHealth": // Flat max health (from effigies)
+                character.maxHealth += Mathf.RoundToInt(value);
+                character.currentHealth = Mathf.Min(character.currentHealth, character.maxHealth);
+                character.UpdateMaxGuard();
+                Debug.Log($"[EquipmentManager] Added {value:F0} flat max health. New max: {character.maxHealth}");
+                break;
+            case "lifeRegeneration":
+                if (character.warrantStatModifiers == null)
+                {
+                    character.warrantStatModifiers = new Dictionary<string, float>();
+                }
+                if (character.warrantStatModifiers.ContainsKey("lifeRegeneration"))
+                {
+                    character.warrantStatModifiers["lifeRegeneration"] += value;
+                }
+                else
+                {
+                    character.warrantStatModifiers["lifeRegeneration"] = value;
+                }
+                Debug.Log($"[EquipmentManager] Added {value:F0} life regeneration per turn. Total: {character.warrantStatModifiers["lifeRegeneration"]:F0}");
                 break;
             case "IncreasedDamagePercent":
-                currentCharacter.increasedDamage += value / 100f;
+                character.increasedDamage += value / 100f;
                 break;
             case "IncreasedEvasionPercent":
-                currentCharacter.increasedEvasion += value / 100f;
+                character.increasedEvasion += value / 100f;
                 break;
             case "DodgeChancePercent":
-                currentCharacter.dodgeChance += value;
+                character.dodgeChance += value;
                 break;
             case "GuardEffectivenessPercent":
-                currentCharacter.guardEffectivenessPercent += value;
+                character.guardEffectivenessPercent += value;
                 break;
             case "BuffDurationPercent":
-                currentCharacter.buffDurationIncreasedPercent += value;
+                character.buffDurationIncreasedPercent += value;
                 break;
             case "RandomAilmentChancePercent":
-                currentCharacter.randomAilmentChancePercent += value;
+                character.randomAilmentChancePercent += value;
                 break;
             case "DamageAfterGuardPercent":
-                currentCharacter.increasedDamageAfterGuardPercent += value;
-                currentCharacter.increasedDamage += value / 100f;
+                character.increasedDamageAfterGuardPercent += value;
+                character.increasedDamage += value / 100f;
                 break;
                 
             // Critical stats
@@ -383,9 +673,14 @@ public class EquipmentManager : MonoBehaviour
     // Save equipment data to PlayerPrefs
     public void SaveEquipmentData()
     {
-        if (currentCharacter == null) return;
+        Character character = CurrentCharacter;
+        if (character == null)
+        {
+            Debug.LogWarning("[EquipmentManager] No current character to save equipment data!");
+            return;
+        }
         
-        string prefix = $"Equipment_{currentCharacter.characterName}_";
+        string prefix = $"Equipment_{character.characterName}_";
         
         // Save equipped items (simplified - just save item names for now)
         SaveEquippedItem(prefix, "Helmet", currentEquipment.helmet);
@@ -399,15 +694,20 @@ public class EquipmentManager : MonoBehaviour
         SaveEquippedItem(prefix, "Belt", currentEquipment.belt);
         SaveEquippedItem(prefix, "Boots", currentEquipment.boots);
         
-        Debug.Log($"Saved equipment data for {currentCharacter.characterName}");
+        Debug.Log($"[EquipmentManager] Saved equipment data for {character.characterName}");
     }
     
     // Load equipment data from PlayerPrefs
     public void LoadEquipmentData()
     {
-        if (currentCharacter == null) return;
+        Character character = CurrentCharacter;
+        if (character == null)
+        {
+            Debug.LogWarning("[EquipmentManager] No current character to load equipment data!");
+            return;
+        }
         
-        string prefix = $"Equipment_{currentCharacter.characterName}_";
+        string prefix = $"Equipment_{character.characterName}_";
         
         // Load equipped items (simplified - just load item names for now)
         currentEquipment.helmet = LoadEquippedItem(prefix, "Helmet");
@@ -421,11 +721,11 @@ public class EquipmentManager : MonoBehaviour
         currentEquipment.belt = LoadEquippedItem(prefix, "Belt");
         currentEquipment.boots = LoadEquippedItem(prefix, "Boots");
         
-        Debug.Log($"Loaded equipment data for {currentCharacter.characterName}");
+        Debug.Log($"[EquipmentManager] Loaded equipment data for {character.characterName}");
     }
     
     // Helper method to save equipped item
-    private void SaveEquippedItem(string prefix, string slotName, ItemData item)
+    private void SaveEquippedItem(string prefix, string slotName, BaseItem item)
     {
         if (item != null)
         {
@@ -438,7 +738,7 @@ public class EquipmentManager : MonoBehaviour
     }
     
     // Helper method to load equipped item
-    private ItemData LoadEquippedItem(string prefix, string slotName)
+    private BaseItem LoadEquippedItem(string prefix, string slotName)
     {
         string itemName = PlayerPrefs.GetString(prefix + slotName, "");
         if (string.IsNullOrEmpty(itemName)) return null;

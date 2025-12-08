@@ -21,6 +21,8 @@ public class DamageModifiers
     public List<float> increasedColdDamage = new List<float>();
     public List<float> increasedLightningDamage = new List<float>();
     public List<float> increasedChaosDamage = new List<float>();
+    public List<float> increasedAttackDamage = new List<float>(); // For Attack cards only
+    public List<float> increasedSpellDamage = new List<float>(); // For Spell cards only
     
     [Header("More Damage (Multiplicative)")]
     public List<float> morePhysicalDamage = new List<float>();
@@ -30,7 +32,7 @@ public class DamageModifiers
     public List<float> moreChaosDamage = new List<float>();
     
     [Header("Critical Strike")]
-    public float criticalStrikeChance = 5f; // 5% base
+    public float criticalStrikeChance = 0f; // Base crit from card type (see CardTypeConstants)
     public float criticalStrikeMultiplier = 1.5f; // 150% base
     
     // Get total increased damage for a type
@@ -189,7 +191,8 @@ public class DamageCalculator : MonoBehaviour
     }
     
 	// Calculate card damage with attribute scaling, weapon scaling, and unified stat system
-	public static float CalculateCardDamage(Card card, Character character, Weapon equippedWeapon = null)
+	// Optional enemy parameter for conditional damage modifiers (vs Chilled, Shocked, Ignited)
+	public static float CalculateCardDamage(Card card, Character character, Weapon equippedWeapon = null, Enemy targetEnemy = null)
 	{
 		if (card == null || character == null)
 			return 0f;
@@ -199,21 +202,29 @@ public class DamageCalculator : MonoBehaviour
 		float scalingBonus = card.damageScaling != null ? card.damageScaling.CalculateScalingBonus(character) : 0f;
 		baseWithScaling += scalingBonus;
 
-		// 2) Weapon scaling (preserve existing behavior)
-		if (equippedWeapon != null)
+		// 2) Weapon scaling - use character.weapons for accurate equipped weapon data
+		if (card.scalesWithMeleeWeapon)
 		{
-			if (card.scalesWithMeleeWeapon && equippedWeapon.weaponType == WeaponType.Melee)
-			{
-				baseWithScaling += equippedWeapon.GetWeaponDamage();
-			}
-			else if (card.scalesWithProjectileWeapon && equippedWeapon.weaponType == WeaponType.Projectile)
-			{
-				baseWithScaling += equippedWeapon.GetWeaponDamage();
-			}
-			else if (card.scalesWithSpellWeapon && equippedWeapon.weaponType == WeaponType.Spell)
-			{
-				baseWithScaling += equippedWeapon.GetWeaponDamage();
-			}
+			float weaponDmg = character.weapons.GetWeaponDamage(WeaponType.Melee);
+			baseWithScaling += weaponDmg;
+			if (weaponDmg > 0)
+				Debug.Log($"[Weapon Scaling] Added {weaponDmg} melee weapon damage to {card.cardName}");
+		}
+		
+		if (card.scalesWithProjectileWeapon)
+		{
+			float weaponDmg = character.weapons.GetWeaponDamage(WeaponType.Projectile);
+			baseWithScaling += weaponDmg;
+			if (weaponDmg > 0)
+				Debug.Log($"[Weapon Scaling] Added {weaponDmg} projectile weapon damage to {card.cardName}");
+		}
+		
+		if (card.scalesWithSpellWeapon)
+		{
+			float weaponDmg = character.weapons.GetWeaponDamage(WeaponType.Spell);
+			baseWithScaling += weaponDmg;
+			if (weaponDmg > 0)
+				Debug.Log($"[Weapon Scaling] Added {weaponDmg} spell weapon damage to {card.cardName}");
 		}
 
 		// 3) Embossing stat scaling (flat, pre-increased)
@@ -227,23 +238,84 @@ public class DamageCalculator : MonoBehaviour
 		var totals = StatAggregator.BuildTotals(statsData);
 
 		// 5) Build damage context from card properties
+		// Check card tags for Projectile and AoE (for combo compatibility)
+		bool hasProjectileTag = card.tags != null && (card.tags.Contains("Projectile") || card.tags.Contains("projectile"));
+		bool hasAoETag = card.tags != null && (card.tags.Contains("AoE") || card.tags.Contains("aoe"));
+		
+		// Determine actual weapon type from equipped weapon for weapon-type modifiers
+		string actualWeaponType = "";
+		if (card.scalesWithMeleeWeapon && character.weapons.meleeWeapon != null)
+		{
+			// Map WeaponItemType to weaponType string for StatsDamageCalculator
+			switch (character.weapons.meleeWeapon.weaponItemType)
+			{
+				case WeaponItemType.Axe: actualWeaponType = "axe"; break;
+				case WeaponItemType.Sword: actualWeaponType = "sword"; break;
+				case WeaponItemType.Mace: actualWeaponType = "mace"; break;
+				case WeaponItemType.Dagger: actualWeaponType = "dagger"; break;
+				default: actualWeaponType = "onehanded"; break; // Fallback for other melee types
+			}
+		}
+		else if (card.scalesWithProjectileWeapon && character.weapons.projectileWeapon != null)
+		{
+			actualWeaponType = "bow";
+		}
+		else if (card.scalesWithSpellWeapon && character.weapons.spellWeapon != null)
+		{
+			actualWeaponType = "wand";
+		}
+		else
+		{
+			// Fallback to generic types based on card scaling
+			actualWeaponType = card.scalesWithMeleeWeapon ? "onehanded" :
+				(card.scalesWithProjectileWeapon ? "bow" :
+				(card.scalesWithSpellWeapon ? "wand" : ""));
+		}
+		
+		// Check target enemy status effects for conditional damage modifiers
+		bool targetChilled = false;
+		bool targetShocked = false;
+		bool targetIgnited = false;
+		bool targetIsElite = false;
+		
+		if (targetEnemy != null)
+		{
+			// Find the enemy's StatusEffectManager to check status effects
+			var enemyDisplays = Object.FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+			foreach (var display in enemyDisplays)
+			{
+				if (display != null && display.GetCurrentEnemy() == targetEnemy)
+				{
+					var statusManager = display.GetComponent<StatusEffectManager>();
+					if (statusManager != null)
+					{
+						targetChilled = statusManager.HasStatusEffect(StatusEffectType.Chill);
+						targetShocked = statusManager.HasStatusEffect(StatusEffectType.Shocked);
+						targetIgnited = statusManager.HasStatusEffect(StatusEffectType.Burn);
+					}
+					break;
+				}
+			}
+			
+			// Check if enemy is elite (Rare or Unique)
+			targetIsElite = targetEnemy.rarity == EnemyRarity.Rare || targetEnemy.rarity == EnemyRarity.Unique;
+		}
+		
 		var ctx = new DamageContext
 		{
 			damageType = card.primaryDamageType.ToString().ToLower(),
 			isAttack = card.cardType == CardType.Attack,
 			isSpell = card.cardType == CardType.Skill || card.cardType == CardType.Power, // treat skills/powers as spells for generic spell scaling
-			isProjectile = card.scalesWithProjectileWeapon,
-			isArea = card.isAoE,
+			isProjectile = card.scalesWithProjectileWeapon || hasProjectileTag, // Also check for Projectile tag
+			isArea = card.isAoE || hasAoETag, // Also check for AoE tag (for combo compatibility)
 			isMelee = card.scalesWithMeleeWeapon,
 			isRanged = card.scalesWithProjectileWeapon,
 			isDot = false,
-			weaponType = card.scalesWithMeleeWeapon ? "onehanded" :
-				(card.scalesWithProjectileWeapon ? "bow" :
-				(card.scalesWithSpellWeapon ? "wand" : "")),
-			targetChilled = false,
-			targetShocked = false,
-			targetIgnited = false,
-			targetIsElite = false
+			weaponType = actualWeaponType, // Use actual weapon item type for weapon-type modifiers
+			targetChilled = targetChilled,
+			targetShocked = targetShocked,
+			targetIgnited = targetIgnited,
+			targetIsElite = targetIsElite
 		};
 
 		// 6) Compute final damage via unified helpers
@@ -288,6 +360,21 @@ public class DamageCalculator : MonoBehaviour
         
         // Add attribute scaling for guard
         guardAmount += card.guardScaling.CalculateScalingBonus(character);
+        
+        // Apply guard effectiveness increased modifier from warrants/character stats
+        // Only apply if card has "Guard" tag or is a Guard card type
+        if (card.cardType == CardType.Guard || (card.tags != null && (card.tags.Contains("Guard") || card.tags.Contains("guard"))))
+        {
+            var statsData = new CharacterStatsData(character);
+            float guardEffectivenessIncreased = statsData.guardEffectivenessIncreased;
+            
+            if (guardEffectivenessIncreased > 0f)
+            {
+                // Apply as increased modifier: finalGuard = baseGuard * (1 + guardEffectivenessIncreased / 100)
+                float effectivenessMultiplier = 1f + (guardEffectivenessIncreased / 100f);
+                guardAmount *= effectivenessMultiplier;
+            }
+        }
         
         return guardAmount;
     }

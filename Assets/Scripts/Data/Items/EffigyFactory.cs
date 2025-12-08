@@ -7,7 +7,7 @@ public static class EffigyFactory
     /// <summary>
     /// Creates a runtime instance of an effigy blueprint, deep copying implicit modifiers and rolling new affixes.
     /// </summary>
-    public static Effigy CreateInstance(Effigy blueprint, AffixDatabase affixDatabase, ItemRarity? forcedRarity = null, int? seed = null)
+    public static Effigy CreateInstance(Effigy blueprint, EffigyAffixDatabase effigyAffixDatabase, ItemRarity? forcedRarity = null, int? seed = null, int? itemLevel = null)
     {
         if (blueprint == null)
         {
@@ -23,10 +23,23 @@ public static class EffigyFactory
             ? runtimeEffigy.effigyName
             : runtimeEffigy.displayAlias;
 
-        runtimeEffigy.implicitModifiers = CloneAffixList(blueprint.implicitModifiers);
+        // Don't clone implicitModifiers from blueprint - they will be generated based on shape
+        // This prevents duplicates if the blueprint already has an implicit stored
+        runtimeEffigy.implicitModifiers = new List<Affix>();
         runtimeEffigy.prefixes = new List<Affix>();
         runtimeEffigy.suffixes = new List<Affix>();
         runtimeEffigy.itemTags = new List<string>(blueprint.itemTags);
+        
+        // Set item level (for affix tier gating)
+        if (itemLevel.HasValue)
+        {
+            runtimeEffigy.itemLevel = itemLevel.Value;
+        }
+        else
+        {
+            // Default to requiredLevel if itemLevel not specified
+            runtimeEffigy.itemLevel = runtimeEffigy.requiredLevel;
+        }
 
         int implicitSeed = seed.HasValue
             ? seed.Value ^ (blueprint.effigyName?.GetHashCode() ?? 0)
@@ -35,14 +48,14 @@ public static class EffigyFactory
 
         ItemRarity effectiveRarity = forcedRarity ?? ItemRarity.Rare;
 
-        if (affixDatabase != null)
+        if (effigyAffixDatabase != null)
         {
             int affixSeed = seed ?? implicitSeed;
-            EffigyAffixGenerator.RollAffixes(runtimeEffigy, affixDatabase, effectiveRarity, affixSeed);
+            EffigyAffixGenerator.RollAffixes(runtimeEffigy, effigyAffixDatabase, effectiveRarity, affixSeed, runtimeEffigy.itemLevel);
         }
         else
         {
-            Debug.LogWarning("[EffigyFactory] AffixDatabase was null. Effigy will not receive rolled affixes.");
+            Debug.LogWarning("[EffigyFactory] EffigyAffixDatabase was null. Effigy will not receive rolled affixes.");
         }
 
         runtimeEffigy.rarity = runtimeEffigy.isUnique ? runtimeEffigy.GetCalculatedRarity() : ItemRarity.Rare;

@@ -54,7 +54,19 @@ public enum ModifierActionType
     ModifyHealthPercent = 21, // Modify health by percentage (for Unstable Corruption)
     MarkCardAsTemporal = 22, // Mark a card as Temporal (for Temporal Threads)
     EchoTemporalCards = 23, // Echo Temporal cards at turn start (for Temporal Threads)
-    TriggerChaosSurge = 24 // Trigger Chaos Surge effect (for Unstable Corruption)
+    TriggerChaosSurge = 24, // Trigger Chaos Surge effect (for Unstable Corruption)
+    
+    // Reliance Aura Complex Effects
+    SpreadStatusOnKill = 25, // Spread status effect to random enemy on kill (e.g., spread ignite)
+    ShatterOnKill = 26, // Deal damage to adjacent enemies on killing chilled/frozen enemy
+    CastSpellOnKill = 27, // Cast a spell on random enemy when killing shocked enemy
+    ApplyCrumble = 28, // Apply Crumble stack to enemy on hit
+    DealCrumbleDamage = 29, // Deal extra damage based on Crumble stacks
+    AddPoisonStacks = 30, // Add additional poison stacks on application
+    RollDamagePerTurn = 31, // Roll new damage value each turn (for Tempest Flux)
+    StackDamagePerTurn = 32, // Stack damage multiplier per turn (for Iron Ascent)
+    ModifyAilmentDurationAndEffect = 33, // Modify ailment duration and effectiveness (for Woundweaver Rite)
+    ScaleDiscardPower = 34 // Scale discard power based on discarded cards (for Echo of the Unburdened)
 }
 
 /// <summary>

@@ -407,10 +407,66 @@ public partial class EncounterManager : MonoBehaviour
                 character.MarkEncounterUnlocked(currentEncounterID);
             }
             
+            // Reset player state after combat (full HP, full mana, clear combat buffs)
+            ResetPlayerStateAfterCombat(character);
+            
+            // Save equipment to ensure persistence
+            if (EquipmentManager.Instance != null)
+            {
+                EquipmentManager.Instance.SaveEquipmentData();
+                Debug.Log("[EncounterManager] Equipment data saved after combat");
+            }
+            
             CharacterManager.Instance.SaveCharacter();
         }
         
         Debug.Log($"[EncounterManager] Completed encounter {currentEncounterID}: {encounter.encounterName}");
+    }
+    
+    /// <summary>
+    /// Reset player state after combat (restore HP/mana, clear combat-acquired buffs)
+    /// </summary>
+    private void ResetPlayerStateAfterCombat(Character character)
+    {
+        if (character == null) return;
+        
+        // Restore to full health
+        character.currentHealth = character.maxHealth;
+        Debug.Log($"[EncounterManager] Reset player HP to {character.maxHealth}");
+        
+        // Restore to full mana
+        character.mana = character.maxMana;
+        Debug.Log($"[EncounterManager] Reset player mana to {character.maxMana}");
+        
+        // Clear temporary combat buffs (e.g., "Temporary Dexterity")
+        // Clear momentum stacks using StackSystem singleton
+        if (StackSystem.Instance != null)
+        {
+            // Clear momentum
+            int momentumCleared = StackSystem.Instance.GetStacks(StackType.Momentum);
+            if (momentumCleared > 0)
+            {
+                StackSystem.Instance.ClearStacks(StackType.Momentum);
+                Debug.Log($"[EncounterManager] Cleared {momentumCleared} momentum stacks");
+            }
+            
+            // Clear other temporary combat stacks (if needed)
+            // Example: Flow, Potential, etc. - only clear if they're temporary
+            // Note: Agitate, Tolerance typically persist, so don't clear those
+        }
+        
+        // Clear temporary stat modifiers (if you have a system for this)
+        // Note: If you have temporary dexterity/strength stored elsewhere, clear those here
+        
+        // Reset stagger
+        character.currentStagger = 0f;
+        Debug.Log("[EncounterManager] Reset player stagger to 0");
+        
+        // Reset guard
+        character.currentGuard = 0f;
+        Debug.Log("[EncounterManager] Reset player guard to 0");
+        
+        Debug.Log("[EncounterManager] Player state reset complete");
     }
     
     /// <summary>

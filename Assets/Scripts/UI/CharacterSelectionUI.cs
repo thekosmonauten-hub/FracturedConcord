@@ -253,6 +253,16 @@ public class CharacterData
     // Warrants
     public List<WarrantInstanceData> ownedWarrants = new List<WarrantInstanceData>();
     
+    // Currencies (NEW)
+    public List<string> currencyTypes = new List<string>();
+    public List<int> currencyAmounts = new List<int>();
+    
+    // Inventory (NEW)
+    public List<SerializedItemData> inventoryItems = new List<SerializedItemData>();
+    
+    // Aura Experience System (NEW)
+    public List<AuraExperienceData> auraExperienceData = new List<AuraExperienceData>();
+    
     public CharacterData(string name, string characterClass, int level, int act)
     {
         this.characterName = name;
@@ -261,4 +271,52 @@ public class CharacterData
         this.act = act;
         this.saveDate = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm");
     }
+}
+
+/// <summary>
+/// Simplified item data for serialization (avoids ScriptableObject issues)
+/// </summary>
+[System.Serializable]
+public class SerializedItemData
+{
+    public string itemType; // "WeaponItem", "ArmourItem", "Effigy", etc.
+    public string itemName;
+    public string assetPath; // Path to the blueprint asset
+    public ItemRarity rarity;
+    
+    // Weapon-specific
+    public float rolledBaseDamage;
+    
+    // Affixes
+    public List<SerializedAffix> affixes = new List<SerializedAffix>();
+}
+
+/// <summary>
+/// Simplified affix data for serialization
+/// </summary>
+[System.Serializable]
+public class SerializedAffix
+{
+    public string affixName;
+    public string description;
+    public AffixType affixType;
+    public bool isRolled;
+    public float rolledValue;
+    public List<SerializedAffixModifier> modifiers = new List<SerializedAffixModifier>();
+}
+
+/// <summary>
+/// Simplified affix modifier for serialization
+/// </summary>
+[System.Serializable]
+public class SerializedAffixModifier
+{
+    public ModifierType modifierType;
+    public float minValue;
+    public float maxValue;
+    public bool isRolled;
+    public float rolledValue;
+    public bool isDualRange;
+    public float rolledFirstValue;
+    public float rolledSecondValue;
 }

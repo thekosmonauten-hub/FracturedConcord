@@ -734,8 +734,8 @@ public static void CheckCoolingRegret(Enemy boss)
 **Configuration:**
 ```
 Ability: Twin Snarl
-  Effect 1: DamageEffect (Physical, 15 damage)
-  Effect 2: DamageEffect (Chaos, 12 damage)
+  Effect 1: DamageEffect (Fire, 15 damage)
+  Effect 2: DamageEffect (Lightning, 12 damage)
 ```
 
 **Trigger:** OnAttack

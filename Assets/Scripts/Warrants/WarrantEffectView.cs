@@ -25,6 +25,8 @@ public class WarrantEffectView : WarrantNodeView, IPointerEnterHandler, IPointer
 
     private void OnEnable()
     {
+        // Refresh character reference when enabled (scene loaded/object activated)
+        RefreshCharacterReference();
         SyncLockState();
     }
 
@@ -47,14 +49,31 @@ public class WarrantEffectView : WarrantNodeView, IPointerEnterHandler, IPointer
         runtimeGraph = graph;
         tooltipManager = tooltip != null ? tooltip : ItemTooltipManager.Instance;
         
-        // Get character reference for skill points
-        if (characterRef == null)
-        {
-            var charManager = FindFirstObjectByType<CharacterManager>();
-            characterRef = charManager != null ? charManager.GetCurrentCharacter() : null;
-        }
+        // Refresh character reference (don't cache - always get latest)
+        RefreshCharacterReference();
         
         SyncLockState();
+    }
+    
+    /// <summary>
+    /// Refresh character reference from CharacterManager (always gets latest)
+    /// </summary>
+    private void RefreshCharacterReference()
+    {
+        var charManager = CharacterManager.Instance ?? FindFirstObjectByType<CharacterManager>();
+        if (charManager != null && charManager.HasCharacter())
+        {
+            characterRef = charManager.GetCurrentCharacter();
+            if (characterRef != null)
+            {
+                Debug.Log($"[WarrantEffectView] Refreshed character reference: {characterRef.characterName} (Level {characterRef.level}, Skill Points: {characterRef.skillPoints})");
+            }
+        }
+        else
+        {
+            characterRef = null;
+            Debug.LogWarning("[WarrantEffectView] Could not refresh character reference - CharacterManager not found or no character loaded.");
+        }
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -74,29 +93,51 @@ public class WarrantEffectView : WarrantNodeView, IPointerEnterHandler, IPointer
         if (boardState == null || runtimeGraph == null || string.IsNullOrEmpty(NodeId))
             return;
 
-        if (characterRef == null)
+        // Always refresh character reference to get latest skill points
+        var charManager = CharacterManager.Instance ?? FindFirstObjectByType<CharacterManager>();
+        if (charManager == null)
         {
-            var charManager = FindFirstObjectByType<CharacterManager>();
-            characterRef = charManager != null ? charManager.GetCurrentCharacter() : null;
+            Debug.LogWarning("[WarrantEffectView] Cannot unlock: CharacterManager not found.");
+            return;
         }
-
-        if (characterRef == null)
+        
+        if (!charManager.HasCharacter())
         {
-            Debug.LogWarning("[WarrantEffectView] Cannot unlock: No character reference found.");
+            Debug.LogWarning("[WarrantEffectView] Cannot unlock: No character loaded.");
+            return;
+        }
+        
+        // Get fresh character reference (don't cache - always get latest)
+        Character currentCharacter = charManager.GetCurrentCharacter();
+        if (currentCharacter == null)
+        {
+            Debug.LogWarning("[WarrantEffectView] Cannot unlock: Character is null.");
             return;
         }
 
-        int skillPoints = characterRef.skillPoints;
+        // Get current skill points from character
+        int skillPoints = currentCharacter.skillPoints;
+        Debug.Log($"[WarrantEffectView] Attempting to unlock {NodeId}. Current skill points: {skillPoints}");
+        
         if (boardState.TryUnlockNode(NodeId, runtimeGraph, ref skillPoints))
         {
-            characterRef.skillPoints = skillPoints;
+            // Update character's skill points
+            currentCharacter.skillPoints = skillPoints;
             
-            // Save character if manager exists
-            var charManager = FindFirstObjectByType<CharacterManager>();
-            charManager?.SaveCharacter();
+            // Update cached reference for consistency
+            characterRef = currentCharacter;
+            
+            // Save character
+            charManager.SaveCharacter();
             
             SyncLockState();
-            Debug.Log($"[WarrantEffectView] Unlocked node {NodeId}. Remaining skill points: {skillPoints}");
+            Debug.Log($"[WarrantEffectView] ✅ Unlocked node {NodeId}. Remaining skill points: {skillPoints}");
+            
+            // Refresh character warrant modifiers (unlocking effect nodes affects modifiers)
+            if (charManager != null && charManager.HasCharacter())
+            {
+                charManager.GetCurrentCharacter().RefreshWarrantModifiers();
+            }
         }
         else
         {
@@ -106,7 +147,7 @@ public class WarrantEffectView : WarrantNodeView, IPointerEnterHandler, IPointer
             }
             else if (skillPoints < 1)
             {
-                Debug.LogWarning($"[WarrantEffectView] Cannot unlock {NodeId}: Not enough skill points (need 1, have {skillPoints}).");
+                Debug.LogWarning($"[WarrantEffectView] ❌ Cannot unlock {NodeId}: Not enough skill points (need 1, have {skillPoints}). Character: {currentCharacter.characterName}, Level: {currentCharacter.level}");
             }
             else
             {

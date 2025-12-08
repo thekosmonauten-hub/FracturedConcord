@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aca233df5217fb4fa2f164daa81f834, type: 3}
+  m_Name: Iron Ascent
+  m_EditorClassIdentifier: Assembly-CSharp::RelianceAura
+  auraName: Iron Ascent
+  category: Physical
+  description: Casts an aura that causes your Physical damage to increase over a
+    duration.
+  icon: {fileID: 0}
+  themeColor: {r: 0.7, g: 0.7, b: 0.7, a: 1}
+  effectLevel1: 1% more physical damage per turn (Up to 10 turns)
+  effectLevel20: 3% more physical damage per turn (Up to 10 turns)
+  relianceCost: 100
+  embossingSlots: 1
+  modifierIds: []
+  requiredLevel: 1
+  unlockRequirement: 

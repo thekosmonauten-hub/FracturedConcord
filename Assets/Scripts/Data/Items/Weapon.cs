@@ -14,6 +14,8 @@ public class WeaponItem : BaseItem
     [Header("Damage")]
     public float minDamage = 10f;
     public float maxDamage = 15f;
+    [Tooltip("Rolled base damage value (set when item is generated)")]
+    public float rolledBaseDamage = 0f; // Rolled once when item drops
     public DamageType primaryDamageType = DamageType.Physical;
     public DamageType secondaryDamageType = DamageType.None;
     public float secondaryDamageMin = 0f;
@@ -134,52 +136,38 @@ public class WeaponItem : BaseItem
         return character.level >= requiredLevel;
     }
     
-    // Get total damage including all modifiers (calculated with proper formula)
-    // Now properly handles dual-range affixes!
+    /// <summary>
+    /// Get total damage with rolled values.
+    /// Now uses rolledBaseDamage and rolled affix values!
+    /// </summary>
     public float GetTotalMinDamage()
     {
-        // Start with base minimum damage
-        float totalDamage = minDamage;
+        // Use rolled base damage if available, otherwise use minDamage
+        float totalDamage = rolledBaseDamage > 0f ? rolledBaseDamage : minDamage;
         
-        // Add MINIMUM damage from dual-range affixes (e.g., "Adds (34-47) to (72-84)" uses 34-47 for min)
-        var (physicalMin, _) = GetDualModifierValue("addedPhysicalDamage");
-        var (fireMin, _) = GetDualModifierValue("addedFireDamage");
-        var (coldMin, _) = GetDualModifierValue("addedColdDamage");
-        var (lightningMin, _) = GetDualModifierValue("addedLightningDamage");
-        var (chaosMin, _) = GetDualModifierValue("addedChaosDamage");
-        
-        totalDamage += physicalMin + fireMin + coldMin + lightningMin + chaosMin;
+        // Add ROLLED damage from affixes (all affixes now roll to single values)
+        totalDamage += GetModifierValue("addedPhysicalDamage");
+        totalDamage += GetModifierValue("addedFireDamage");
+        totalDamage += GetModifierValue("addedColdDamage");
+        totalDamage += GetModifierValue("addedLightningDamage");
+        totalDamage += GetModifierValue("addedChaosDamage");
         
         // Apply LOCAL increased damage multipliers (% on the weapon itself)
-        float increasedDamage = GetModifierValue("increasedPhysicalDamage") + GetModifierValue("increasedFireDamage") + 
-                               GetModifierValue("increasedColdDamage") + GetModifierValue("increasedLightningDamage") + 
+        float increasedDamage = GetModifierValue("increasedPhysicalDamage") + 
+                               GetModifierValue("increasedFireDamage") + 
+                               GetModifierValue("increasedColdDamage") + 
+                               GetModifierValue("increasedLightningDamage") + 
                                GetModifierValue("increasedChaosDamage");
-        totalDamage *= (1f + increasedDamage / 100f); // Convert percentage to multiplier
+        totalDamage *= (1f + increasedDamage / 100f);
         
         return Mathf.Ceil(totalDamage);
     }
     
     public float GetTotalMaxDamage()
     {
-        // Start with base maximum damage
-        float totalDamage = maxDamage;
-        
-        // Add MAXIMUM damage from dual-range affixes (e.g., "Adds (34-47) to (72-84)" uses 72-84 for max)
-        var (_, physicalMax) = GetDualModifierValue("addedPhysicalDamage");
-        var (_, fireMax) = GetDualModifierValue("addedFireDamage");
-        var (_, coldMax) = GetDualModifierValue("addedColdDamage");
-        var (_, lightningMax) = GetDualModifierValue("addedLightningDamage");
-        var (_, chaosMax) = GetDualModifierValue("addedChaosDamage");
-        
-        totalDamage += physicalMax + fireMax + coldMax + lightningMax + chaosMax;
-        
-        // Apply LOCAL increased damage multipliers (% on the weapon itself)
-        float increasedDamage = GetModifierValue("increasedPhysicalDamage") + GetModifierValue("increasedFireDamage") + 
-                               GetModifierValue("increasedColdDamage") + GetModifierValue("increasedLightningDamage") + 
-                               GetModifierValue("increasedChaosDamage");
-        totalDamage *= (1f + increasedDamage / 100f); // Convert percentage to multiplier
-        
-        return Mathf.Ceil(totalDamage);
+        // For rolled affixes, min and max are the same (single value)
+        // This method exists for backward compatibility
+        return GetTotalMinDamage();
     }
     
     public float GetTotalAttackSpeed()

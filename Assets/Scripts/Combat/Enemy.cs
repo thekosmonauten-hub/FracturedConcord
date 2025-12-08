@@ -29,7 +29,7 @@ public class Enemy
     [Header("Stagger System")]
     public float staggerThreshold = 100f; // Amount of stagger needed to trigger stun
     public float currentStagger = 0f; // Current stagger meter value
-    public float staggerDecayPerTurn = 0f; // How much stagger decays per turn (0 = no decay)
+    public float staggerDecayPerTurn = 3f; // How much stagger decays per turn (reduced to allow buildup)
     
     [Header("Guard System")]
     public float currentGuard = 0f; // Current guard amount

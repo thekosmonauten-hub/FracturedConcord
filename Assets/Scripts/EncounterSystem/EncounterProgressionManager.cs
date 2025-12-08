@@ -210,6 +210,20 @@ public class EncounterProgressionManager
             return true;
         }
         
+        // IMPORTANT: Completed encounters should ALWAYS be unlocked (allow replaying)
+        var progData = GetProgression(encounterID);
+        if (progData != null && progData.isCompleted)
+        {
+            // Ensure completed encounters are marked as unlocked
+            if (!progData.isUnlocked)
+            {
+                Debug.Log($"[EncounterProgressionManager] Encounter {encounterID} is completed but not unlocked. Fixing...");
+                progData.MarkUnlocked();
+            }
+            Debug.Log($"[EncounterProgressionManager] IsUnlocked({encounterID}) - COMPLETED encounter, returning TRUE (allow replay)");
+            return true;
+        }
+        
         if (progression.TryGetValue(encounterID, out var data))
         {
             Debug.Log($"[EncounterProgressionManager] IsUnlocked({encounterID}) - Found in progression: Unlocked={data.isUnlocked}, Completed={data.isCompleted}");

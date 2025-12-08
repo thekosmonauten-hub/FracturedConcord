@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aca233df5217fb4fa2f164daa81f834, type: 3}
+  m_Name: Shadowleaf Drift
+  m_EditorClassIdentifier: Assembly-CSharp::RelianceAura
+  auraName: Shadowleaf Drift
+  category: Evasion
+  description: Casts an aura that grants evasion
+  icon: {fileID: 0}
+  themeColor: {r: 0.3, g: 0.8, b: 0.3, a: 1}
+  effectLevel1: 60 evasion, +30% More evasion
+  effectLevel20: 960 evasion, +39% More evasion
+  relianceCost: 100
+  embossingSlots: 1
+  modifierIds: []
+  requiredLevel: 1
+  unlockRequirement: 

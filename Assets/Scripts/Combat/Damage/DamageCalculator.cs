@@ -43,6 +43,7 @@ public static class StatsDamageCalculator
 			case "mace": inc += s.increasedMaceDamage; break;
 			case "sword": inc += s.increasedSwordDamage; break;
 			case "wand": inc += s.increasedWandDamage; break;
+			case "dagger": inc += s.increasedDaggerDamage; break;
 			case "onehanded": inc += s.increasedOneHandedDamage; break;
 			case "twohanded": inc += s.increasedTwoHandedDamage; break;
 		}

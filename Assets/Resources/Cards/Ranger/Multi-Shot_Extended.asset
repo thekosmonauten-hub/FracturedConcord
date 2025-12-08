@@ -109,6 +109,8 @@ MonoBehaviour:
   tags:
   - Attack
   - Physical
+  - Projectile
+  - AoE
   delayTurns: 0
   isDelayed: 0
   canPrepare: 0

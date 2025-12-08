@@ -17,6 +17,7 @@ MonoBehaviour:
   itemIcon: {fileID: 21300000, guid: 4b52d7cda391f344fa0285e9a6554024, type: 3}
   rarity: 0
   requiredLevel: 1
+  itemLevel: -1
   itemType: 0
   equipmentType: 0
   isStackable: 0
@@ -27,12 +28,14 @@ MonoBehaviour:
   suffixes: []
   isUnique: 0
   itemTags: []
+  generatedName: 
   effigyName: S_4
   icon: {fileID: 21300000, guid: 4b52d7cda391f344fa0285e9a6554024, type: 3}
   element: 0
   sizeTier: 1
+  shapeCategory: 4
   shapeWidth: 3
   shapeHeight: 2
   shapeMask: 000101010100
+  ghostPickupPoint: {x: 1, y: 1}
   displayAlias: Sinuous Carving
-  modifiers: []

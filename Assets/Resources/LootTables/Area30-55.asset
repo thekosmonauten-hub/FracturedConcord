@@ -134,4 +134,6 @@ MonoBehaviour:
     dropChance: 0.07
     minQuantity: 1
     maxQuantity: 3
+  effigyDrops: []
+  nameGenerationData: {fileID: 11400000, guid: 6d52d0f465e43ae48bb66463b328a4f1, type: 2}
   enableDebugLogs: 0

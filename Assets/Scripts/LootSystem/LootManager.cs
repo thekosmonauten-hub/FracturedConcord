@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Dexiled.Data.Items;
+using System.Linq;
 
 /// <summary>
 /// Manages loot generation and reward distribution
@@ -29,6 +30,10 @@ public class LootManager : MonoBehaviour
     [Header("Default Loot Tables")]
     [Tooltip("Default loot table for encounters without specific tables")]
     public LootTable defaultLootTable;
+    
+    [Header("Name Generation")]
+    [Tooltip("Data for generating Magic and Rare item names")]
+    public NameGenerationData nameGenerationData;
     
     [Header("Currency Storage")]
     private Dictionary<CurrencyType, int> playerCurrencies = new Dictionary<CurrencyType, int>();
@@ -304,8 +309,26 @@ public class LootManager : MonoBehaviour
         baseItem.itemType = data.itemType;
         baseItem.equipmentType = data.equipmentType;
         baseItem.requiredLevel = data.requiredLevel;
+        
+        // Generate display name for Magic/Rare items after affixes are added
+        GenerateItemName(baseItem);
 
         return baseItem;
+    }
+    
+    /// <summary>
+    /// Generate display name for Magic and Rare items
+    /// </summary>
+    private void GenerateItemName(BaseItem item)
+    {
+        if (item == null) return;
+        
+        // Only generate names for Magic and Rare items
+        if (item.rarity == ItemRarity.Magic || item.rarity == ItemRarity.Rare)
+        {
+            item.generatedName = ItemNameGenerator.GenerateItemName(item, nameGenerationData);
+            Debug.Log($"[LootManager] Generated name for {item.rarity} item: '{item.generatedName}'");
+        }
     }
 
     /// <summary>
@@ -361,14 +384,32 @@ public class LootManager : MonoBehaviour
     {
         return new Dictionary<CurrencyType, int>(playerCurrencies);
     }
+    
+    /// <summary>
+    /// Set a specific currency amount (used when loading from save data)
+    /// </summary>
+    public void SetCurrency(CurrencyType currencyType, int amount)
+    {
+        playerCurrencies[currencyType] = amount;
+        Debug.Log($"[LootManager] Set {currencyType} to {amount}");
+    }
+    
+    /// <summary>
+    /// Clear all currencies (used when loading a new character)
+    /// </summary>
+    public void ClearAllCurrencies()
+    {
+        playerCurrencies.Clear();
+        Debug.Log("[LootManager] Cleared all currencies");
+    }
 
     /// <summary>
     /// Load player currencies from save data
+    /// Currencies are now loaded from CharacterData via Character.FromCharacterData()
     /// </summary>
     private void LoadPlayerCurrencies()
     {
-        // TODO: Load from save system
-        // For now, initialize with 0 for all currencies
+        // Initialize with 0 for all currency types
         if (currencyDatabase != null)
         {
             foreach (var currencyData in currencyDatabase.currencies)
@@ -380,16 +421,17 @@ public class LootManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"[LootManager] Loaded {playerCurrencies.Count} currency types");
+        Debug.Log($"[LootManager] Initialized {playerCurrencies.Count} currency types (will be loaded from CharacterData)");
     }
 
     /// <summary>
     /// Save player currencies to save data
+    /// Currencies are now saved as part of CharacterData via Character.ToCharacterData()
     /// </summary>
     private void SavePlayerCurrencies()
     {
-        // TODO: Save to persistent storage
-        // For now, just keep in memory
-        Debug.Log($"[LootManager] Saved {playerCurrencies.Count} currency types");
+        // Currencies are now persisted as part of CharacterData
+        // This method is called after rewards are applied, but actual save happens via CharacterManager.SaveCharacter()
+        Debug.Log($"[LootManager] Currencies will be saved with CharacterData");
     }
 }

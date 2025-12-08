@@ -21,6 +21,8 @@ public enum StackType
     EchoOfAgonyNextCardDuplicate, // Added for Echo of Agony
     FutureEchoCardQueue, // Added for Future Echo
     HourglassParadoxBonus, // Added for Hourglass Paradox
-    EchoingWillEchoCount // Added for Echoing Will
+    EchoingWillEchoCount, // Added for Echoing Will
+    Aggression, // Charge gained from Attack cards (affected by attackSpeed and aggressionGainIncreased)
+    Focus // Charge gained from Skill cards (affected by castSpeed and focusGainIncreased)
 }
 

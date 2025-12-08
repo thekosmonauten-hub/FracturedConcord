@@ -39,7 +39,8 @@ public class TooltipDamageTest : MonoBehaviour
         // Test the calculation
         float totalMinDamage = testItem.GetTotalMinDamage();
         float totalMaxDamage = testItem.GetTotalMaxDamage();
-        float averageDamage = testItem.GetCalculatedTotalDamage();
+        (float min, float max) = testItem.GetCalculatedTotalDamage();
+        float averageDamage = (min + max) / 2f;
         
         // Expected: (8 + 6) * 1.4 = 19.6 → 20 (rounded up)
         float expectedDamage = Mathf.Ceil((8f + 6f) * 1.4f);
@@ -97,7 +98,8 @@ public class TooltipDamageTest : MonoBehaviour
         // Test the calculation
         float totalMinDamage = itemData.GetTotalMinDamage();
         float totalMaxDamage = itemData.GetTotalMaxDamage();
-        float averageDamage = itemData.GetCalculatedTotalDamage();
+        (float min, float max) = itemData.GetCalculatedTotalDamage();
+        float averageDamage = (min + max) / 2f;
         
         Debug.Log($"Weapon: {itemData.itemName}");
         Debug.Log($"Original base damage: {itemData.baseDamageMin}-{itemData.baseDamageMax}");

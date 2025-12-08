@@ -17,6 +17,7 @@ MonoBehaviour:
   itemIcon: {fileID: 21300000, guid: 14d20bcd0458d754abd685e685c18716, type: 3}
   rarity: 0
   requiredLevel: 1
+  itemLevel: -1
   itemType: 0
   equipmentType: 0
   isStackable: 0
@@ -27,12 +28,14 @@ MonoBehaviour:
   suffixes: []
   isUnique: 0
   itemTags: []
+  generatedName: 
   effigyName: Line_5
   icon: {fileID: 0}
   element: 0
   sizeTier: 1
+  shapeCategory: 3
   shapeWidth: 2
   shapeHeight: 4
   shapeMask: 0100010001000100
+  ghostPickupPoint: {x: 0, y: 2}
   displayAlias: Threaded One
-  modifiers: []

@@ -247,6 +247,7 @@ MonoBehaviour:
   normalColor: {r: 0.12, g: 0.14, b: 0.16, a: 1}
   hoverColor: {r: 0.2, g: 0.22, b: 0.24, a: 1}
   occupiedColor: {r: 0.3, g: 0.4, b: 0.5, a: 1}
+  selectedColor: {r: 0.9, g: 0.7, b: 0.2, a: 1}
 --- !u!1 &8848065577712875745
 GameObject:
   m_ObjectHideFlags: 0
@@ -281,8 +282,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0.00000029802322, y: -20.2004}
-  m_SizeDelta: {x: 90.6847, y: 39.6314}
+  m_AnchoredPosition: {x: 0.00000029802322, y: -10.329796}
+  m_SizeDelta: {x: 90.6847, y: 21.5249}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5771914446268147593
 CanvasRenderer:

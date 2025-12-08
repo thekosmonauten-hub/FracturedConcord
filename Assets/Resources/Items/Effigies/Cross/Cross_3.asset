@@ -17,13 +17,14 @@ MonoBehaviour:
   itemIcon: {fileID: 21300000, guid: 542a9511b3b76f9489c79e5d45e71c40, type: 3}
   rarity: 0
   requiredLevel: 1
+  itemLevel: -1
   itemType: 0
   equipmentType: 0
   isStackable: 0
   maxStackSize: 1
   quality: 0
   implicitModifiers:
-  - name: +# to All Attributes
+  - name: +3 to All Attributes
     description: 
     affixType: 0
     tier: 0
@@ -44,6 +45,8 @@ MonoBehaviour:
       secondRangeMax: 0
       rolledFirstValue: 0
       rolledSecondValue: 0
+      rolledValue: 0
+      isRolled: 0
     requiredTags: []
     compatibleTags: []
     weight: 0
@@ -58,11 +61,14 @@ MonoBehaviour:
   suffixes: []
   isUnique: 0
   itemTags: []
+  generatedName: 
   effigyName: Cross_3
   icon: {fileID: 21300000, guid: 542a9511b3b76f9489c79e5d45e71c40, type: 3}
   element: 2
   sizeTier: 2
+  shapeCategory: 1
   shapeWidth: 3
   shapeHeight: 3
   shapeMask: 000100010101000100
+  ghostPickupPoint: {x: 1, y: 1}
   displayAlias: Penance Cross

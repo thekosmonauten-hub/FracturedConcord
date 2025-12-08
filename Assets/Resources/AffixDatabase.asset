@@ -38,6 +38,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -71,6 +73,8 @@ MonoBehaviour:
           secondRangeMax: 9
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -104,6 +108,8 @@ MonoBehaviour:
           secondRangeMax: 14
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -137,6 +143,8 @@ MonoBehaviour:
           secondRangeMax: 21
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -170,6 +178,8 @@ MonoBehaviour:
           secondRangeMax: 31
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -203,6 +213,8 @@ MonoBehaviour:
           secondRangeMax: 44
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -236,6 +248,8 @@ MonoBehaviour:
           secondRangeMax: 62
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -269,6 +283,8 @@ MonoBehaviour:
           secondRangeMax: 71
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -302,6 +318,8 @@ MonoBehaviour:
           secondRangeMax: 84
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -339,6 +357,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -372,6 +392,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -405,6 +427,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -438,6 +462,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -471,6 +497,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -504,6 +532,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -537,6 +567,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -570,6 +602,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -603,6 +637,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -640,6 +676,8 @@ MonoBehaviour:
           secondRangeMax: 10
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -673,6 +711,8 @@ MonoBehaviour:
           secondRangeMax: 20
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -706,6 +746,8 @@ MonoBehaviour:
           secondRangeMax: 35
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -739,6 +781,8 @@ MonoBehaviour:
           secondRangeMax: 55
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -772,6 +816,8 @@ MonoBehaviour:
           secondRangeMax: 82
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -805,6 +851,8 @@ MonoBehaviour:
           secondRangeMax: 115
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -838,6 +886,8 @@ MonoBehaviour:
           secondRangeMax: 155
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -871,6 +921,8 @@ MonoBehaviour:
           secondRangeMax: 178
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -904,6 +956,8 @@ MonoBehaviour:
           secondRangeMax: 210
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -941,6 +995,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -974,6 +1030,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1007,6 +1065,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1040,6 +1100,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1073,6 +1135,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1106,6 +1170,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1139,6 +1205,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1172,6 +1240,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1205,6 +1275,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1242,6 +1314,8 @@ MonoBehaviour:
           secondRangeMax: 9
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1275,6 +1349,8 @@ MonoBehaviour:
           secondRangeMax: 18
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1308,6 +1384,8 @@ MonoBehaviour:
           secondRangeMax: 32
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1341,6 +1419,8 @@ MonoBehaviour:
           secondRangeMax: 50
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1374,6 +1454,8 @@ MonoBehaviour:
           secondRangeMax: 74
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1407,6 +1489,8 @@ MonoBehaviour:
           secondRangeMax: 105
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1440,6 +1524,8 @@ MonoBehaviour:
           secondRangeMax: 140
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1473,6 +1559,8 @@ MonoBehaviour:
           secondRangeMax: 161
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1506,6 +1594,8 @@ MonoBehaviour:
           secondRangeMax: 189
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1543,6 +1633,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1576,6 +1668,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1609,6 +1703,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1642,6 +1738,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1675,6 +1773,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1708,6 +1808,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1741,6 +1843,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1774,6 +1878,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1807,6 +1913,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1844,6 +1952,8 @@ MonoBehaviour:
           secondRangeMax: 25
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1877,6 +1987,8 @@ MonoBehaviour:
           secondRangeMax: 52
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1910,6 +2022,8 @@ MonoBehaviour:
           secondRangeMax: 88
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1943,6 +2057,8 @@ MonoBehaviour:
           secondRangeMax: 130
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -1976,6 +2092,8 @@ MonoBehaviour:
           secondRangeMax: 178
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2009,6 +2127,8 @@ MonoBehaviour:
           secondRangeMax: 234
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2042,6 +2162,8 @@ MonoBehaviour:
           secondRangeMax: 280
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2075,6 +2197,8 @@ MonoBehaviour:
           secondRangeMax: 315
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2108,6 +2232,8 @@ MonoBehaviour:
           secondRangeMax: 344
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2145,6 +2271,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2178,6 +2306,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2211,6 +2341,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2244,6 +2376,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2277,6 +2411,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2310,6 +2446,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2343,6 +2481,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2376,6 +2516,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2409,6 +2551,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2446,6 +2590,8 @@ MonoBehaviour:
           secondRangeMax: 10
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2479,6 +2625,8 @@ MonoBehaviour:
           secondRangeMax: 20
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2512,6 +2660,8 @@ MonoBehaviour:
           secondRangeMax: 35
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2545,6 +2695,8 @@ MonoBehaviour:
           secondRangeMax: 55
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2578,6 +2730,8 @@ MonoBehaviour:
           secondRangeMax: 82
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2611,6 +2765,8 @@ MonoBehaviour:
           secondRangeMax: 115
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2644,6 +2800,8 @@ MonoBehaviour:
           secondRangeMax: 155
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2677,6 +2835,8 @@ MonoBehaviour:
           secondRangeMax: 178
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2710,6 +2870,8 @@ MonoBehaviour:
           secondRangeMax: 210
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2747,6 +2909,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2780,6 +2944,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2813,6 +2979,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2846,6 +3014,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2879,6 +3049,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2912,6 +3084,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2945,6 +3119,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -2978,6 +3154,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -3011,6 +3189,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -3048,6 +3228,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -3081,6 +3263,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -3114,6 +3298,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -3147,6 +3333,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -3180,6 +3368,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -3213,6 +3403,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -3250,6 +3442,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -3285,6 +3479,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -3320,6 +3516,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -3355,6 +3553,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -3390,6 +3590,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -3425,6 +3627,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -3460,6 +3664,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -3495,6 +3701,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -3530,6 +3738,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -3570,6 +3780,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         - statName: attackSpeed
           minValue: 10
           maxValue: 14
@@ -3586,6 +3798,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -3624,6 +3838,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         - statName: criticalChance
           minValue: 10
           maxValue: 15
@@ -3640,6 +3856,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -3678,6 +3896,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         - statName: castSpeed
           minValue: 10
           maxValue: 14
@@ -3694,6 +3914,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -3734,6 +3956,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         - statName: addedPhysicalDamage
           minValue: 20
           maxValue: 32.5
@@ -3750,6 +3974,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -3788,6 +4014,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         - statName: chanceToShock
           minValue: 22.5
           maxValue: 35
@@ -3804,6 +4032,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -3842,6 +4072,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         - statName: maxMana
           minValue: 18.5
           maxValue: 26.5
@@ -3858,6 +4090,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -3898,6 +4132,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -3943,6 +4179,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -3988,6 +4226,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4033,6 +4273,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4078,6 +4320,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4123,6 +4367,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4168,6 +4414,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4213,6 +4461,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4258,6 +4508,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4307,6 +4559,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4352,6 +4606,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4397,6 +4653,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4442,6 +4700,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4487,6 +4747,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4532,6 +4794,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4577,6 +4841,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4622,6 +4888,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4667,6 +4935,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4716,6 +4986,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4761,6 +5033,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4806,6 +5080,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4851,6 +5127,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4896,6 +5174,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4941,6 +5221,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -4986,6 +5268,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -5031,6 +5315,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -5076,6 +5362,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -5125,6 +5413,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -5158,6 +5448,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -5191,6 +5483,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -5224,6 +5518,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -5257,6 +5553,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -5290,6 +5588,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -5323,6 +5623,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -5356,6 +5658,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -5389,6 +5693,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -5426,6 +5732,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -5461,6 +5769,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -5496,6 +5806,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -5531,6 +5843,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -5566,6 +5880,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -5601,6 +5917,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -5636,6 +5954,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -5671,6 +5991,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -5706,6 +6028,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - caster
@@ -5745,6 +6069,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -5778,6 +6104,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -5811,6 +6139,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -5844,6 +6174,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -5877,6 +6209,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -5914,6 +6248,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -5949,6 +6285,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -5984,6 +6322,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -6023,6 +6363,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -6056,6 +6398,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -6089,6 +6433,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -6122,6 +6468,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -6155,6 +6503,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -6188,6 +6538,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -6221,6 +6573,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -6254,6 +6608,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -6287,6 +6643,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -6324,6 +6682,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6357,6 +6717,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6390,6 +6752,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6423,6 +6787,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6456,6 +6822,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6489,6 +6857,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6522,6 +6892,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6555,6 +6927,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6588,6 +6962,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6625,6 +7001,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6658,6 +7036,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6691,6 +7071,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6724,6 +7106,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6757,6 +7141,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6790,6 +7176,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6823,6 +7211,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6856,6 +7246,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6889,6 +7281,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6926,6 +7320,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6959,6 +7355,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -6992,6 +7390,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7025,6 +7425,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7058,6 +7460,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7091,6 +7495,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7124,6 +7530,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7157,6 +7565,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7190,6 +7600,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7227,6 +7639,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7260,6 +7674,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7293,6 +7709,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7326,6 +7744,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7359,6 +7779,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7392,6 +7814,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7425,6 +7849,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7458,6 +7884,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7491,6 +7919,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7528,6 +7958,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7561,6 +7993,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7594,6 +8028,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7627,6 +8063,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7660,6 +8098,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7693,6 +8133,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7726,6 +8168,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7759,6 +8203,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7792,6 +8238,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7829,6 +8277,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7862,6 +8312,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7895,6 +8347,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7928,6 +8382,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7961,6 +8417,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -7994,6 +8452,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8027,6 +8487,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8060,6 +8522,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8093,6 +8557,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8130,6 +8596,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8163,6 +8631,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8196,6 +8666,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8229,6 +8701,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8262,6 +8736,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8295,6 +8771,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8328,6 +8806,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8361,6 +8841,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8394,6 +8876,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8431,6 +8915,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8464,6 +8950,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8497,6 +8985,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8530,6 +9020,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8563,6 +9055,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8596,6 +9090,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8629,6 +9125,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8662,6 +9160,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8695,6 +9195,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8732,6 +9234,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8765,6 +9269,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8798,6 +9304,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8831,6 +9339,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8864,6 +9374,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8897,6 +9409,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8930,6 +9444,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8963,6 +9479,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -8996,6 +9514,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9033,6 +9553,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9066,6 +9588,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9099,6 +9623,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9132,6 +9658,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9165,6 +9693,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9198,6 +9728,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9231,6 +9763,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9264,6 +9798,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9297,6 +9833,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9334,6 +9872,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9367,6 +9907,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9400,6 +9942,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9433,6 +9977,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9466,6 +10012,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9499,6 +10047,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9532,6 +10082,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9565,6 +10117,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9598,6 +10152,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9635,6 +10191,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9668,6 +10226,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9701,6 +10261,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9734,6 +10296,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9767,6 +10331,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9800,6 +10366,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9833,6 +10401,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9866,6 +10436,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9899,6 +10471,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9936,6 +10510,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -9969,6 +10545,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10002,6 +10580,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10035,6 +10615,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10068,6 +10650,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10101,6 +10685,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10134,6 +10720,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10167,6 +10755,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10200,6 +10790,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10237,6 +10829,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10270,6 +10864,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10303,6 +10899,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10336,6 +10934,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10369,6 +10969,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10402,6 +11004,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10435,6 +11039,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10468,6 +11074,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10501,6 +11109,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10538,6 +11148,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10571,6 +11183,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10604,6 +11218,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10637,6 +11253,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10670,6 +11288,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10703,6 +11323,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10736,6 +11358,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10769,6 +11393,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10802,6 +11428,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10839,6 +11467,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10872,6 +11502,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -10909,6 +11541,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -10942,6 +11576,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -10975,6 +11611,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -11008,6 +11646,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -11041,6 +11681,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -11074,6 +11716,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -11107,6 +11751,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -11140,6 +11786,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -11173,6 +11821,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -11210,6 +11860,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -11243,6 +11895,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -11276,6 +11930,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -11309,6 +11965,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -11342,6 +12000,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -11375,6 +12035,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -11408,6 +12070,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -11445,6 +12109,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -11478,6 +12144,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -11511,6 +12179,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -11544,6 +12214,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         compatibleTags:
@@ -11581,6 +12253,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - ranged
@@ -11616,6 +12290,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - weapon
         - ranged
@@ -11656,6 +12332,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -11699,6 +12377,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -11742,6 +12422,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -11785,6 +12467,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -11828,6 +12512,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -11871,6 +12557,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -11914,6 +12602,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -11961,6 +12651,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12004,6 +12696,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12047,6 +12741,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12090,6 +12786,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12133,6 +12831,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12176,6 +12876,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12219,6 +12921,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12262,6 +12966,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12305,6 +13011,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12352,6 +13060,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12395,6 +13105,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12438,6 +13150,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12481,6 +13195,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12524,6 +13240,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12567,6 +13285,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12610,6 +13330,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12653,6 +13375,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12696,6 +13420,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12743,6 +13469,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12786,6 +13514,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12829,6 +13559,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12872,6 +13604,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12915,6 +13649,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -12958,6 +13694,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13001,6 +13739,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13044,6 +13784,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13087,6 +13829,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13135,6 +13879,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         - statName: PreparationSpeed
           minValue: 8.5
           maxValue: 13
@@ -13151,6 +13897,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         - armour_base
@@ -13191,6 +13939,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         - statName: lifeRegeneration
           minValue: 21.5
           maxValue: 32
@@ -13207,6 +13957,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13255,6 +14007,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13300,6 +14054,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13345,6 +14101,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13390,6 +14148,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13435,6 +14195,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13480,6 +14242,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13525,6 +14289,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13570,6 +14336,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13615,6 +14383,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13664,6 +14434,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13709,6 +14481,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13754,6 +14528,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13799,6 +14575,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13844,6 +14622,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13889,6 +14669,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13934,6 +14716,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -13979,6 +14763,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14024,6 +14810,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14073,6 +14861,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14118,6 +14908,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14163,6 +14955,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14208,6 +15002,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14253,6 +15049,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14298,6 +15096,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14343,6 +15143,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14388,6 +15190,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14433,6 +15237,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14482,6 +15288,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14523,6 +15331,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14564,6 +15374,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14605,6 +15417,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14646,6 +15460,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14687,6 +15503,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14728,6 +15546,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14769,6 +15589,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14810,6 +15632,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14855,6 +15679,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14896,6 +15722,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14937,6 +15765,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -14978,6 +15808,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15019,6 +15851,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15060,6 +15894,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15101,6 +15937,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15142,6 +15980,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15183,6 +16023,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15228,6 +16070,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15269,6 +16113,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15310,6 +16156,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15351,6 +16199,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15392,6 +16242,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15433,6 +16285,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15474,6 +16328,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15515,6 +16371,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15556,6 +16414,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15601,6 +16461,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15642,6 +16504,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15683,6 +16547,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15724,6 +16590,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15765,6 +16633,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15806,6 +16676,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15847,6 +16719,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15888,6 +16762,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15929,6 +16805,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -15974,6 +16852,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -16007,6 +16887,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -16040,6 +16922,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -16073,6 +16957,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -16106,6 +16992,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -16139,6 +17027,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -16172,6 +17062,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -16205,6 +17097,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -16238,6 +17132,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -16275,6 +17171,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -16316,6 +17214,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -16357,6 +17257,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -16398,6 +17300,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -16439,6 +17343,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -16484,6 +17390,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -16525,6 +17433,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -16566,6 +17476,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -16611,6 +17523,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -16654,6 +17568,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -16701,6 +17617,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -16734,6 +17652,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -16767,6 +17687,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -16800,6 +17722,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -16833,6 +17757,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -16866,6 +17792,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -16899,6 +17827,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -16932,6 +17862,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -16965,6 +17897,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -17002,6 +17936,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -17045,6 +17981,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -17093,6 +18031,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -17136,6 +18076,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -17179,6 +18121,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -17222,6 +18166,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -17265,6 +18211,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -17308,6 +18256,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -17351,6 +18301,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -17398,6 +18350,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17431,6 +18385,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17464,6 +18420,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17497,6 +18455,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17530,6 +18490,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17563,6 +18525,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17600,6 +18564,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17633,6 +18599,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17666,6 +18634,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17703,6 +18673,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17736,6 +18708,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17769,6 +18743,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17802,6 +18778,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17835,6 +18813,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17868,6 +18848,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17901,6 +18883,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17934,6 +18918,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -17967,6 +18953,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -18004,6 +18992,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         - statName: maxMana
           minValue: 11.5
           maxValue: 18
@@ -18020,6 +19010,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -18027,6 +19019,390 @@ MonoBehaviour:
         weight: 1000
         handedness: 0
         minLevel: 30
+        minValue: 0
+        maxValue: 0
+        hasRange: 0
+        rolledValue: 0
+        isRolled: 0
+  - categoryName: Maximum Mana
+    subCategories:
+    - subCategoryName: Maximum Mana
+      affixes:
+      - name: Mana-Touched
+        description: +1-1 to Maximum Mana
+        affixType: 0
+        tier: 9
+        modifiers:
+        - statName: maxMana
+          minValue: 1
+          maxValue: 1
+          modifierType: 0
+          damageType: 0
+          scope: 1
+          description: 
+          originalMinValue: 1
+          originalMaxValue: 1
+          isDualRange: 0
+          firstRangeMin: 0
+          firstRangeMax: 0
+          secondRangeMin: 0
+          secondRangeMax: 0
+          rolledFirstValue: 0
+          rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
+        requiredTags: []
+        compatibleTags:
+        - jewellery
+        - accessory
+        - amulet
+        - ring
+        - belt
+        weight: 100
+        handedness: 0
+        minLevel: 1
+        minValue: 0
+        maxValue: 0
+        hasRange: 0
+        rolledValue: 0
+        isRolled: 0
+      - name: Mana-Blessed
+        description: +1-1 to Maximum Mana
+        affixType: 0
+        tier: 8
+        modifiers:
+        - statName: maxMana
+          minValue: 1
+          maxValue: 1
+          modifierType: 0
+          damageType: 0
+          scope: 1
+          description: 
+          originalMinValue: 1
+          originalMaxValue: 1
+          isDualRange: 0
+          firstRangeMin: 0
+          firstRangeMax: 0
+          secondRangeMin: 0
+          secondRangeMax: 0
+          rolledFirstValue: 0
+          rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
+        requiredTags: []
+        compatibleTags:
+        - jewellery
+        - accessory
+        - amulet
+        - ring
+        - belt
+        weight: 100
+        handedness: 0
+        minLevel: 1
+        minValue: 0
+        maxValue: 0
+        hasRange: 0
+        rolledValue: 0
+        isRolled: 0
+      - name: Mana-Infused
+        description: +2-3 to Maximum Mana
+        affixType: 0
+        tier: 7
+        modifiers:
+        - statName: maxMana
+          minValue: 2
+          maxValue: 3
+          modifierType: 0
+          damageType: 0
+          scope: 1
+          description: 
+          originalMinValue: 2
+          originalMaxValue: 3
+          isDualRange: 0
+          firstRangeMin: 0
+          firstRangeMax: 0
+          secondRangeMin: 0
+          secondRangeMax: 0
+          rolledFirstValue: 0
+          rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
+        requiredTags: []
+        compatibleTags:
+        - jewellery
+        - accessory
+        - amulet
+        - ring
+        - belt
+        weight: 100
+        handedness: 0
+        minLevel: 2
+        minValue: 0
+        maxValue: 0
+        hasRange: 0
+        rolledValue: 0
+        isRolled: 0
+      - name: Mana-Flowing
+        description: +3-5 to Maximum Mana
+        affixType: 0
+        tier: 6
+        modifiers:
+        - statName: maxMana
+          minValue: 3
+          maxValue: 5
+          modifierType: 0
+          damageType: 0
+          scope: 1
+          description: 
+          originalMinValue: 3
+          originalMaxValue: 5
+          isDualRange: 0
+          firstRangeMin: 0
+          firstRangeMax: 0
+          secondRangeMin: 0
+          secondRangeMax: 0
+          rolledFirstValue: 0
+          rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
+        requiredTags: []
+        compatibleTags:
+        - jewellery
+        - accessory
+        - amulet
+        - ring
+        - belt
+        weight: 100
+        handedness: 0
+        minLevel: 3
+        minValue: 0
+        maxValue: 0
+        hasRange: 0
+        rolledValue: 0
+        isRolled: 0
+      - name: Mana-Rich
+        description: +4-7 to Maximum Mana
+        affixType: 0
+        tier: 5
+        modifiers:
+        - statName: maxMana
+          minValue: 4
+          maxValue: 7
+          modifierType: 0
+          damageType: 0
+          scope: 1
+          description: 
+          originalMinValue: 4
+          originalMaxValue: 7
+          isDualRange: 0
+          firstRangeMin: 0
+          firstRangeMax: 0
+          secondRangeMin: 0
+          secondRangeMax: 0
+          rolledFirstValue: 0
+          rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
+        requiredTags: []
+        compatibleTags:
+        - jewellery
+        - accessory
+        - amulet
+        - ring
+        - belt
+        weight: 100
+        handedness: 0
+        minLevel: 4
+        minValue: 0
+        maxValue: 0
+        hasRange: 0
+        rolledValue: 0
+        isRolled: 0
+      - name: Mana-Weaver
+        description: +6-9 to Maximum Mana
+        affixType: 0
+        tier: 4
+        modifiers:
+        - statName: maxMana
+          minValue: 6
+          maxValue: 9
+          modifierType: 0
+          damageType: 0
+          scope: 1
+          description: 
+          originalMinValue: 6
+          originalMaxValue: 9
+          isDualRange: 0
+          firstRangeMin: 0
+          firstRangeMax: 0
+          secondRangeMin: 0
+          secondRangeMax: 0
+          rolledFirstValue: 0
+          rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
+        requiredTags: []
+        compatibleTags:
+        - jewellery
+        - accessory
+        - amulet
+        - ring
+        - belt
+        weight: 100
+        handedness: 0
+        minLevel: 5
+        minValue: 0
+        maxValue: 0
+        hasRange: 0
+        rolledValue: 0
+        isRolled: 0
+      - name: Mana-Keeper
+        description: +8-12 to Maximum Mana
+        affixType: 0
+        tier: 3
+        modifiers:
+        - statName: maxMana
+          minValue: 8
+          maxValue: 12
+          modifierType: 0
+          damageType: 0
+          scope: 1
+          description: 
+          originalMinValue: 8
+          originalMaxValue: 12
+          isDualRange: 0
+          firstRangeMin: 0
+          firstRangeMax: 0
+          secondRangeMin: 0
+          secondRangeMax: 0
+          rolledFirstValue: 0
+          rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
+        requiredTags: []
+        compatibleTags:
+        - jewellery
+        - accessory
+        - amulet
+        - ring
+        - belt
+        weight: 100
+        handedness: 0
+        minLevel: 8
+        minValue: 0
+        maxValue: 0
+        hasRange: 0
+        rolledValue: 0
+        isRolled: 0
+      - name: Mana-Sage
+        description: +10-14 to Maximum Mana
+        affixType: 0
+        tier: 2
+        modifiers:
+        - statName: maxMana
+          minValue: 10
+          maxValue: 14
+          modifierType: 0
+          damageType: 0
+          scope: 1
+          description: 
+          originalMinValue: 10
+          originalMaxValue: 14
+          isDualRange: 0
+          firstRangeMin: 0
+          firstRangeMax: 0
+          secondRangeMin: 0
+          secondRangeMax: 0
+          rolledFirstValue: 0
+          rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
+        requiredTags: []
+        compatibleTags:
+        - jewellery
+        - accessory
+        - amulet
+        - ring
+        - belt
+        weight: 100
+        handedness: 0
+        minLevel: 10
+        minValue: 0
+        maxValue: 0
+        hasRange: 0
+        rolledValue: 0
+        isRolled: 0
+      - name: Mana-Master
+        description: +12-17 to Maximum Mana
+        affixType: 0
+        tier: 1
+        modifiers:
+        - statName: maxMana
+          minValue: 12
+          maxValue: 17
+          modifierType: 0
+          damageType: 0
+          scope: 1
+          description: 
+          originalMinValue: 12
+          originalMaxValue: 17
+          isDualRange: 0
+          firstRangeMin: 0
+          firstRangeMax: 0
+          secondRangeMin: 0
+          secondRangeMax: 0
+          rolledFirstValue: 0
+          rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
+        requiredTags: []
+        compatibleTags:
+        - jewellery
+        - accessory
+        - amulet
+        - ring
+        - belt
+        weight: 100
+        handedness: 0
+        minLevel: 12
+        minValue: 0
+        maxValue: 0
+        hasRange: 0
+        rolledValue: 0
+        isRolled: 0
+      - name: Mana-Transcendent
+        description: +15-20 to Maximum Mana
+        affixType: 0
+        tier: 0
+        modifiers:
+        - statName: maxMana
+          minValue: 15
+          maxValue: 20
+          modifierType: 0
+          damageType: 0
+          scope: 1
+          description: 
+          originalMinValue: 15
+          originalMaxValue: 20
+          isDualRange: 0
+          firstRangeMin: 0
+          firstRangeMax: 0
+          secondRangeMin: 0
+          secondRangeMax: 0
+          rolledFirstValue: 0
+          rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
+        requiredTags: []
+        compatibleTags:
+        - jewellery
+        - accessory
+        - amulet
+        - ring
+        - belt
+        weight: 100
+        handedness: 0
+        minLevel: 15
         minValue: 0
         maxValue: 0
         hasRange: 0
@@ -18058,6 +19434,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18103,6 +19481,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18148,6 +19528,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18193,6 +19575,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18238,6 +19622,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18283,6 +19669,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18328,6 +19716,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18373,6 +19763,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18418,6 +19810,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18467,6 +19861,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18512,6 +19908,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18557,6 +19955,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18602,6 +20002,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18647,6 +20049,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18692,6 +20096,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18737,6 +20143,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18782,6 +20190,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18827,6 +20237,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18876,6 +20288,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18921,6 +20335,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -18966,6 +20382,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -19011,6 +20429,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -19056,6 +20476,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -19101,6 +20523,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -19146,6 +20570,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -19191,6 +20617,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -19236,6 +20664,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -19285,6 +20715,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -19320,6 +20752,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -19355,6 +20789,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -19394,6 +20830,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -19427,6 +20865,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -19460,6 +20900,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -19497,6 +20939,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -19530,6 +20974,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -19563,6 +21009,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -19596,6 +21044,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -19629,6 +21079,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -19662,6 +21114,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -19695,6 +21149,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -19728,6 +21184,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -19761,6 +21219,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - shield
         compatibleTags:
@@ -19798,6 +21258,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -19831,6 +21293,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -19868,6 +21332,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -19901,6 +21367,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -19934,6 +21402,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -19967,6 +21437,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -20000,6 +21472,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -20033,6 +21507,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -20066,6 +21542,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -20099,6 +21577,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -20132,6 +21612,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - boots
         compatibleTags:
@@ -20169,6 +21651,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -20212,6 +21696,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -20259,6 +21745,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -20292,6 +21780,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -20329,6 +21819,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -20362,6 +21854,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -20399,6 +21893,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -20432,6 +21928,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -20469,6 +21967,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -20502,6 +22002,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -20539,6 +22041,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -20572,6 +22076,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         compatibleTags:
@@ -20609,6 +22115,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -20644,6 +22152,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -20679,6 +22189,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -20714,6 +22226,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -20749,6 +22263,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -20784,6 +22300,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -20823,6 +22341,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -20858,6 +22378,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -20893,6 +22415,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -20928,6 +22452,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -20963,6 +22489,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -20998,6 +22526,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21037,6 +22567,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21072,6 +22604,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21107,6 +22641,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21142,6 +22678,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21177,6 +22715,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21212,6 +22752,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21251,6 +22793,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21286,6 +22830,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21321,6 +22867,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21356,6 +22904,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21391,6 +22941,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21426,6 +22978,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21465,6 +23019,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21500,6 +23056,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21535,6 +23093,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21570,6 +23130,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21605,6 +23167,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21640,6 +23204,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21679,6 +23245,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21714,6 +23282,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21749,6 +23319,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21784,6 +23356,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21819,6 +23393,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21854,6 +23430,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21893,6 +23471,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21928,6 +23508,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21963,6 +23545,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -21998,6 +23582,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -22033,6 +23619,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - jewelry
         - weapon
@@ -22072,6 +23660,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -22115,6 +23705,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour
@@ -22158,6 +23750,8 @@ MonoBehaviour:
           secondRangeMax: 0
           rolledFirstValue: 0
           rolledSecondValue: 0
+          rolledValue: 0
+          isRolled: 0
         requiredTags:
         - helmet
         - body_armour

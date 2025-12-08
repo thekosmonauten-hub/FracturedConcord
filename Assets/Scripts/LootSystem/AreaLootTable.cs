@@ -22,7 +22,7 @@ public class AreaLootTable : ScriptableObject
     [Header("Drop Rates")]
     [Tooltip("Chance for any item to drop (0.0 to 1.0)")]
     [Range(0f, 1f)]
-    public float baseDropChance = 0.15f;
+    public float baseDropChance = 0.50f; // Increased from 0.15f to 0.50f
     
     [Header("Item Type Weights")]
     [Tooltip("Relative chance for each item type to drop")]
@@ -51,42 +51,46 @@ public class AreaLootTable : ScriptableObject
     [Tooltip("Currency drop configuration with individual drop chances")]
     public CurrencyDropWeight[] currencyDrops = new CurrencyDropWeight[]
     {
-        // Based on 1-9Loot.asset currency distribution
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfGeneration, dropChance = 0.15f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfInfusion, dropChance = 0.15f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfPerfection, dropChance = 0.07f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfPerpetuity, dropChance = 0.06f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfRedundancy, dropChance = 0.03f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfTheVoid, dropChance = 0.02f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfMutation, dropChance = 0.06f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfProliferation, dropChance = 0.12f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfAmnesia, dropChance = 0.04f },
+        // Currency drop rates (REDUCED by ~75% from original values)
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfGeneration, dropChance = 0.04f },
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfInfusion, dropChance = 0.04f },
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfPerfection, dropChance = 0.02f },
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfPerpetuity, dropChance = 0.015f },
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfRedundancy, dropChance = 0.01f },
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfTheVoid, dropChance = 0.005f },
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfMutation, dropChance = 0.015f },
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfProliferation, dropChance = 0.03f },
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfAmnesia, dropChance = 0.01f },
         
-        // Spirits (area 1-9 rates)
-        new CurrencyDropWeight { currencyType = CurrencyType.FireSpirit, dropChance = 0.10f },
-        new CurrencyDropWeight { currencyType = CurrencyType.ColdSpirit, dropChance = 0.10f },
-        new CurrencyDropWeight { currencyType = CurrencyType.LightningSpirit, dropChance = 0.10f },
-        new CurrencyDropWeight { currencyType = CurrencyType.ChaosSpirit, dropChance = 0.08f },
-        new CurrencyDropWeight { currencyType = CurrencyType.PhysicalSpirit, dropChance = 0.10f },
-        new CurrencyDropWeight { currencyType = CurrencyType.LifeSpirit, dropChance = 0.10f },
-        new CurrencyDropWeight { currencyType = CurrencyType.DefenseSpirit, dropChance = 0.10f },
-        new CurrencyDropWeight { currencyType = CurrencyType.CritSpirit, dropChance = 0.08f },
-        new CurrencyDropWeight { currencyType = CurrencyType.DivineSpirit, dropChance = 0.03f },
+        // Spirits (REDUCED by ~75%)
+        new CurrencyDropWeight { currencyType = CurrencyType.FireSpirit, dropChance = 0.025f },
+        new CurrencyDropWeight { currencyType = CurrencyType.ColdSpirit, dropChance = 0.025f },
+        new CurrencyDropWeight { currencyType = CurrencyType.LightningSpirit, dropChance = 0.025f },
+        new CurrencyDropWeight { currencyType = CurrencyType.ChaosSpirit, dropChance = 0.02f },
+        new CurrencyDropWeight { currencyType = CurrencyType.PhysicalSpirit, dropChance = 0.025f },
+        new CurrencyDropWeight { currencyType = CurrencyType.LifeSpirit, dropChance = 0.025f },
+        new CurrencyDropWeight { currencyType = CurrencyType.DefenseSpirit, dropChance = 0.025f },
+        new CurrencyDropWeight { currencyType = CurrencyType.CritSpirit, dropChance = 0.02f },
+        new CurrencyDropWeight { currencyType = CurrencyType.DivineSpirit, dropChance = 0.01f },
         
-        // Seals (area 1-9 rates)
-        new CurrencyDropWeight { currencyType = CurrencyType.TranspositionSeal, dropChance = 0.05f },
-        new CurrencyDropWeight { currencyType = CurrencyType.ChaosSeal, dropChance = 0.07f },
-        new CurrencyDropWeight { currencyType = CurrencyType.MemorySeal, dropChance = 0.03f },
-        new CurrencyDropWeight { currencyType = CurrencyType.InscriptionSeal, dropChance = 0.05f },
-        new CurrencyDropWeight { currencyType = CurrencyType.AdaptationSeal, dropChance = 0.05f },
-        new CurrencyDropWeight { currencyType = CurrencyType.CorrectionSeal, dropChance = 0.05f },
-        new CurrencyDropWeight { currencyType = CurrencyType.EtchingSeal, dropChance = 0.07f }
+        // Seals (REDUCED by ~75%)
+        new CurrencyDropWeight { currencyType = CurrencyType.TranspositionSeal, dropChance = 0.0125f },
+        new CurrencyDropWeight { currencyType = CurrencyType.ChaosSeal, dropChance = 0.0175f },
+        new CurrencyDropWeight { currencyType = CurrencyType.MemorySeal, dropChance = 0.01f },
+        new CurrencyDropWeight { currencyType = CurrencyType.InscriptionSeal, dropChance = 0.0125f },
+        new CurrencyDropWeight { currencyType = CurrencyType.AdaptationSeal, dropChance = 0.0125f },
+        new CurrencyDropWeight { currencyType = CurrencyType.CorrectionSeal, dropChance = 0.0125f },
+        new CurrencyDropWeight { currencyType = CurrencyType.EtchingSeal, dropChance = 0.0175f }
     };
 
     [Header("Effigy Drops")]
     [Tooltip("Optional effigy drops evaluated against area level")]
     public EffigyDropWeight[] effigyDrops = new EffigyDropWeight[0];
 
+    [Header("Name Generation")]
+    [Tooltip("Data for generating Magic and Rare item names")]
+    public NameGenerationData nameGenerationData;
+    
     [Header("Debug")]
     [Tooltip("Show debug logs when generating loot")]
     public bool enableDebugLogs = false;
@@ -289,6 +293,10 @@ public class AreaLootTable : ScriptableObject
         copy.handedness = original.handedness;
         copy.minDamage = original.minDamage;
         copy.maxDamage = original.maxDamage;
+        
+        // ROLL base damage between min and max (whole numbers only)
+        copy.rolledBaseDamage = Random.Range((int)original.minDamage, (int)original.maxDamage + 1); // +1 to make maxDamage inclusive
+        
         copy.attackSpeed = original.attackSpeed;
         copy.criticalStrikeChance = original.criticalStrikeChance;
         copy.criticalStrikeMultiplier = original.criticalStrikeMultiplier;
@@ -296,6 +304,11 @@ public class AreaLootTable : ScriptableObject
         copy.requiredStrength = original.requiredStrength;
         copy.requiredDexterity = original.requiredDexterity;
         copy.requiredIntelligence = original.requiredIntelligence;
+        
+        if (enableDebugLogs)
+        {
+            Debug.Log($"[AreaLoot] Rolled weapon damage: {copy.itemName} → {copy.rolledBaseDamage:F1} (from {original.minDamage}-{original.maxDamage})");
+        }
         
         return copy;
     }
@@ -356,6 +369,12 @@ public class AreaLootTable : ScriptableObject
         copy.itemIcon = original.itemIcon;
         copy.rarity = original.rarity;
         copy.requiredLevel = original.requiredLevel;
+        
+        // Set itemLevel based on area level (for affix tier gating)
+        // Item level determines which affix tiers can roll
+        var (minLevel, maxLevel) = GetValidLevelRange();
+        copy.itemLevel = Random.Range(minLevel, maxLevel + 1);
+        
         copy.itemType = original.itemType;
         copy.equipmentType = original.equipmentType;
         copy.isStackable = original.isStackable;
@@ -398,7 +417,11 @@ public class AreaLootTable : ScriptableObject
         ItemRarity targetRarity = SelectRandomRarity();
         
         // Generate affixes using existing system
-        AffixDatabase_Modern.Instance.GenerateRandomAffixes(item, areaLevel, GetMagicChance(), GetRareChance());
+        // Use item.itemLevel (not areaLevel) to determine which affix tiers can roll
+        AffixDatabase_Modern.Instance.GenerateRandomAffixes(item, item.itemLevel, GetMagicChance(), GetRareChance());
+        
+        // Generate display name for Magic/Rare items
+        GenerateItemName(item);
         
         if (enableDebugLogs)
         {
@@ -421,11 +444,34 @@ public class AreaLootTable : ScriptableObject
         }
         
         // Generate affixes with forced rarity
-        AffixDatabase_Modern.Instance.GenerateRandomAffixes(item, areaLevel, forcedRarity);
+        // Use item.itemLevel (not areaLevel) to determine which affix tiers can roll
+        AffixDatabase_Modern.Instance.GenerateRandomAffixes(item, item.itemLevel, forcedRarity);
+        
+        // Generate display name for Magic/Rare items
+        GenerateItemName(item);
         
         if (enableDebugLogs)
         {
             Debug.Log($"[AreaLoot] Applied {item.prefixes.Count} prefixes, {item.suffixes.Count} suffixes to {item.itemName} [Forced {forcedRarity}]");
+        }
+    }
+    
+    /// <summary>
+    /// Generate display name for Magic and Rare items
+    /// </summary>
+    private void GenerateItemName(BaseItem item)
+    {
+        if (item == null) return;
+        
+        // Only generate names for Magic and Rare items
+        if (item.rarity == ItemRarity.Magic || item.rarity == ItemRarity.Rare)
+        {
+            item.generatedName = ItemNameGenerator.GenerateItemName(item, nameGenerationData);
+            
+            if (enableDebugLogs && !string.IsNullOrEmpty(item.generatedName))
+            {
+                Debug.Log($"[AreaLoot] Generated name for {item.rarity} item: '{item.generatedName}'");
+            }
         }
     }
     
@@ -595,7 +641,7 @@ public class AreaLootTable : ScriptableObject
             {
                 if (Random.Range(0f, 1f) <= chance)
                 {
-                    Effigy instance = EffigyFactory.CreateInstance(drop.effigyBlueprint, AffixDatabase.Instance);
+                    Effigy instance = EffigyFactory.CreateInstance(drop.effigyBlueprint, EffigyAffixDatabase.Instance);
                     if (instance != null)
                     {
                         effigyRewards.Add(new LootReward

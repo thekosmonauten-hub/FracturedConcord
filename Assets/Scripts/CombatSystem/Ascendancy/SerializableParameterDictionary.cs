@@ -146,5 +146,43 @@ public class SerializableParameterDictionary
             return runtimeDict.Keys;
         }
     }
+    
+    /// <summary>
+    /// Set a parameter value
+    /// </summary>
+    public void SetParameter(string key, object value)
+    {
+        if (runtimeDict == null)
+        {
+            BuildRuntimeDict();
+        }
+        
+        // Find or create entry
+        ParameterEntry entry = entries.Find(e => e != null && e.key == key);
+        if (entry == null)
+        {
+            entry = new ParameterEntry
+            {
+                key = key,
+                value = new ParameterValue()
+            };
+            entries.Add(entry);
+        }
+        
+        entry.value.SetValue(value);
+        runtimeDict[key] = value;
+    }
+    
+    /// <summary>
+    /// Get all parameters as key-value pairs
+    /// </summary>
+    public Dictionary<string, object> GetAllParameters()
+    {
+        if (runtimeDict == null)
+        {
+            BuildRuntimeDict();
+        }
+        return new Dictionary<string, object>(runtimeDict);
+    }
 }
 

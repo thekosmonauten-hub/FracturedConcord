@@ -92,6 +92,10 @@ public class WarrantBoardStateController : MonoBehaviour
             return false;
 
         ActivePage.SetAssignment(nodeId, warrantId);
+        
+        // Refresh character warrant modifiers
+        RefreshCharacterWarrantModifiers();
+        
         return true;
     }
 
@@ -103,7 +107,15 @@ public class WarrantBoardStateController : MonoBehaviour
         if (ActivePage == null)
             return false;
 
-        return ActivePage.RemoveAssignment(nodeId);
+        bool removed = ActivePage.RemoveAssignment(nodeId);
+        
+        if (removed)
+        {
+            // Refresh character warrant modifiers
+            RefreshCharacterWarrantModifiers();
+        }
+        
+        return removed;
     }
 
     public string GetWarrantAtNode(string nodeId)
@@ -235,10 +247,30 @@ public class WarrantBoardStateController : MonoBehaviour
             {
                 skillPoints -= 1;
             }
+            
+            // Refresh character warrant modifiers (unlocking nodes may affect effect nodes)
+            RefreshCharacterWarrantModifiers();
+            
             return true;
         }
 
         return false;
+    }
+    
+    /// <summary>
+    /// Refresh character warrant modifiers after board changes
+    /// </summary>
+    private void RefreshCharacterWarrantModifiers()
+    {
+        var charManager = CharacterManager.Instance ?? FindFirstObjectByType<CharacterManager>();
+        if (charManager != null && charManager.HasCharacter())
+        {
+            Character character = charManager.GetCurrentCharacter();
+            if (character != null)
+            {
+                character.RefreshWarrantModifiers();
+            }
+        }
     }
 
     /// <summary>

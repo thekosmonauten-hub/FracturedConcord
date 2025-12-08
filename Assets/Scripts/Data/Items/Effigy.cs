@@ -60,6 +60,9 @@ public class Effigy : BaseItem
     public EffigySizeTier sizeTier = EffigySizeTier.Tiny;
     
     [Header("Shape Definition")]
+    [Tooltip("Explicit shape category. If Unknown, will auto-detect from name.")]
+    public EffigyShapeCategory shapeCategory = EffigyShapeCategory.Unknown;
+    
     [Tooltip("Width of the effigy shape (in grid cells)")]
     public int shapeWidth = 1;
     
@@ -68,6 +71,9 @@ public class Effigy : BaseItem
     
     [Tooltip("Shape mask: true = occupied cell, false = empty cell. Row-major order.")]
     public bool[] shapeMask;
+    
+    [Tooltip("Ghost pickup point: The cell (x, y) that should align with the mouse cursor when dragging. (-1, -1) means auto-calculate from center of occupied cells.")]
+    public Vector2Int ghostPickupPoint = new Vector2Int(-1, -1);
     
     [Header("Presentation")]
     [Tooltip("Optional player-facing name (e.g., Shape alias). Falls back to effigyName when empty.")]
@@ -199,6 +205,12 @@ public class Effigy : BaseItem
         // Update size tier when shape changes
         UpdateSizeTier();
         
+        // Auto-detect shape category if Unknown
+        if (shapeCategory == EffigyShapeCategory.Unknown)
+        {
+            shapeCategory = DetectShapeCategoryFromName();
+        }
+        
         // Sync itemName with effigyName for BaseItem compatibility
         if (!string.IsNullOrEmpty(displayAlias))
         {
@@ -208,6 +220,40 @@ public class Effigy : BaseItem
         {
             itemName = effigyName;
         }
+    }
+    
+    /// <summary>
+    /// Auto-detect shape category from name/displayAlias
+    /// </summary>
+    public EffigyShapeCategory DetectShapeCategoryFromName()
+    {
+        string reference = !string.IsNullOrEmpty(displayAlias) ? displayAlias : effigyName;
+        if (string.IsNullOrEmpty(reference))
+            reference = name;
+
+        string token = reference.Replace("_", string.Empty).Replace(" ", string.Empty);
+        string lower = token.ToLowerInvariant();
+
+        if (lower.Contains("cross"))
+            return EffigyShapeCategory.Cross;
+        if (lower.Contains("square") || lower.StartsWith("sq"))
+            return EffigyShapeCategory.Square;
+        if (lower.Contains("smalll"))
+            return EffigyShapeCategory.SmallL;
+        if (lower.Contains("line"))
+            return EffigyShapeCategory.Line;
+        if (lower.Contains("single") || lower.Contains("solo"))
+            return EffigyShapeCategory.Single;
+        if (lower.StartsWith("t"))
+            return EffigyShapeCategory.TShape;
+        if (lower.StartsWith("z"))
+            return EffigyShapeCategory.ZShape;
+        if (lower.StartsWith("s") && !lower.StartsWith("sq") && !lower.Contains("small"))
+            return EffigyShapeCategory.SShape;
+        if (lower.StartsWith("l") && !lower.Contains("smalll") && !lower.Contains("line"))
+            return EffigyShapeCategory.LShape;
+
+        return EffigyShapeCategory.Unknown;
     }
 
     public override bool CanAddPrefix()
@@ -236,33 +282,14 @@ public class Effigy : BaseItem
 
     public EffigyShapeCategory GetShapeCategory()
     {
-        string reference = !string.IsNullOrEmpty(displayAlias) ? displayAlias : effigyName;
-        if (string.IsNullOrEmpty(reference))
-            reference = name;
-
-        string token = reference.Replace("_", string.Empty).Replace(" ", string.Empty);
-        string lower = token.ToLowerInvariant();
-
-        if (lower.Contains("cross"))
-            return EffigyShapeCategory.Cross;
-        if (lower.Contains("square") || lower.StartsWith("sq"))
-            return EffigyShapeCategory.Square;
-        if (lower.Contains("smalll"))
-            return EffigyShapeCategory.SmallL;
-        if (lower.Contains("line"))
-            return EffigyShapeCategory.Line;
-        if (lower.Contains("single") || lower.Contains("solo"))
-            return EffigyShapeCategory.Single;
-        if (lower.StartsWith("t"))
-            return EffigyShapeCategory.TShape;
-        if (lower.StartsWith("z"))
-            return EffigyShapeCategory.ZShape;
-        if (lower.StartsWith("s"))
-            return EffigyShapeCategory.SShape;
-        if (lower.StartsWith("l"))
-            return EffigyShapeCategory.LShape;
-
-        return EffigyShapeCategory.Unknown;
+        // Prioritize explicit shapeCategory field
+        if (shapeCategory != EffigyShapeCategory.Unknown)
+        {
+            return shapeCategory;
+        }
+        
+        // Fall back to auto-detection from name
+        return DetectShapeCategoryFromName();
     }
 }
 

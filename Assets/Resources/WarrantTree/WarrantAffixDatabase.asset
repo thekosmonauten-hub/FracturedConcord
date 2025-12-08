@@ -17,8 +17,8 @@ MonoBehaviour:
     displayName: Increased Elemental Damage
     statKey: increasedElementalDamage
     isFlat: 0
-    minPercent: 4
-    maxPercent: 8
+    minPercent: 6
+    maxPercent: 12
     tags:
     - elemental
     - damage
@@ -31,8 +31,8 @@ MonoBehaviour:
     displayName: Increased Physical Damage
     statKey: increasedPhysicalDamage
     isFlat: 0
-    minPercent: 4
-    maxPercent: 8
+    minPercent: 6
+    maxPercent: 12
     tags:
     - physical
     - damage
@@ -643,7 +643,7 @@ MonoBehaviour:
     groupId: statusAvoidance
   - affixId: MaxMana_rare
     displayName: Flat Max mana
-    statKey: maxmana
+    statKey: maxManaFlat
     isFlat: 1
     minPercent: 2
     maxPercent: 4

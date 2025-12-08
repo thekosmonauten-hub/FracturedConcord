@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using Dexiled.Data.Items;
 
 /// <summary>
 /// Manages area-based loot generation and integrates with existing loot systems
@@ -10,6 +11,10 @@ public class AreaLootManager : MonoBehaviour
     [Header("Configuration")]
     [Tooltip("Default loot table to use if no specific table is found")]
     public AreaLootTable defaultLootTable;
+    
+    [Header("Name Generation")]
+    [Tooltip("Data for generating Magic and Rare item names")]
+    public NameGenerationData nameGenerationData;
     
     [Header("Area-Specific Loot Tables")]
     [Tooltip("Loot tables configured for specific area level ranges")]

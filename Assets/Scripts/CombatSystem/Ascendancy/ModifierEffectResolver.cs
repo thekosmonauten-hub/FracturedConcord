@@ -220,6 +220,15 @@ public static class ModifierEffectResolver
             }
         }
 
+        // Check if this is a Reliance Aura action type and route to RelianceAuraModifierEffectResolver
+        if (action.actionType >= ModifierActionType.SpreadStatusOnKill && 
+            action.actionType <= ModifierActionType.ScaleDiscardPower)
+        {
+            // Route to Reliance Aura resolver
+            RelianceAuraModifierEffectResolver.ResolveAction(action, eventContext, character, modifierState, null);
+            return;
+        }
+        
         switch (action.actionType)
         {
             case ModifierActionType.AddStack:

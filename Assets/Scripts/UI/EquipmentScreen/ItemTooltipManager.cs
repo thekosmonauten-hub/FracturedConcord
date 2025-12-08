@@ -22,6 +22,11 @@ public class ItemTooltipManager : MonoBehaviour
     [SerializeField] private GameObject cardTooltipPrefab;
     [SerializeField] private GameObject currencyTooltipPrefab;
     [SerializeField] private GameObject warrantTooltipPrefab;
+    
+    [Header("Equipped Item Tooltip Containers (Scene Objects)")]
+    [Tooltip("Pre-existing GameObjects in scene to display equipped tooltips")]
+    [SerializeField] private GameObject weaponTooltipEquippedContainer;
+    [SerializeField] private GameObject equipmentTooltipEquippedContainer;
 
     [Header("Positioning")]
     [SerializeField] private float cursorHorizontalOffset = 32f;
@@ -32,6 +37,10 @@ public class ItemTooltipManager : MonoBehaviour
     private const float minHorizontalGap = 52f; // cursorHorizontalOffset (32f) + extra gap (20f)
 
     private GameObject activeTooltip;
+    
+    // Track equipped tooltip state for sticky behavior
+    private bool isEquippedTooltipShowing = false;
+    private GameObject currentEquippedTooltipContainer = null;
 
     /// <summary>
     /// Ensure singleton style access (scene scoped).
@@ -61,7 +70,7 @@ public class ItemTooltipManager : MonoBehaviour
     /// <summary>
     /// Show tooltip for a weapon item.
     /// </summary>
-    public void ShowWeaponTooltip(WeaponItem weapon, Vector2 screenPosition)
+    public void ShowWeaponTooltip(WeaponItem weapon, Vector2 screenPosition, bool isEquipped = false)
     {
         if (weapon == null)
         {
@@ -69,23 +78,31 @@ public class ItemTooltipManager : MonoBehaviour
             return;
         }
 
-        ShowTooltipInternal(weaponTooltipPrefab, screenPosition, tooltip =>
+        // Use pre-existing container for equipped items, otherwise instantiate
+        if (isEquipped && weaponTooltipEquippedContainer != null)
         {
-            var view = tooltip.GetComponent<WeaponTooltipView>();
-            if (view == null)
+            ShowTooltipInContainer(weaponTooltipEquippedContainer, weapon);
+        }
+        else
+        {
+            ShowTooltipInternal(weaponTooltipPrefab, screenPosition, tooltip =>
             {
-                Debug.LogWarning("[ItemTooltipManager] WeaponTooltipPrefab missing WeaponTooltipView component.");
-                return;
-            }
+                var view = tooltip.GetComponent<WeaponTooltipView>();
+                if (view == null)
+                {
+                    Debug.LogWarning("[ItemTooltipManager] WeaponTooltipPrefab missing WeaponTooltipView component.");
+                    return;
+                }
 
-            view.SetData(weapon);
-        });
+                view.SetData(weapon);
+            });
+        }
     }
 
     /// <summary>
     /// Show tooltip for general equipment (armour, jewellery, off-hand, etc).
     /// </summary>
-    public void ShowEquipmentTooltip(BaseItem item, Vector2 screenPosition)
+    public void ShowEquipmentTooltip(BaseItem item, Vector2 screenPosition, bool isEquipped = false)
     {
         if (item == null)
         {
@@ -95,7 +112,7 @@ public class ItemTooltipManager : MonoBehaviour
 
         if (item is WeaponItem weaponItem)
         {
-            ShowWeaponTooltip(weaponItem, screenPosition);
+            ShowWeaponTooltip(weaponItem, screenPosition, isEquipped);
             return;
         }
 
@@ -105,17 +122,25 @@ public class ItemTooltipManager : MonoBehaviour
             return;
         }
 
-        ShowTooltipInternal(equipmentTooltipPrefab, screenPosition, tooltip =>
+        // Use pre-existing container for equipped items, otherwise instantiate
+        if (isEquipped && equipmentTooltipEquippedContainer != null)
         {
-            var view = tooltip.GetComponent<EquipmentTooltipView>();
-            if (view == null)
+            ShowTooltipInContainer(equipmentTooltipEquippedContainer, item);
+        }
+        else
+        {
+            ShowTooltipInternal(equipmentTooltipPrefab, screenPosition, tooltip =>
             {
-                Debug.LogWarning("[ItemTooltipManager] EquipmentTooltipPrefab missing EquipmentTooltipView component.");
-                return;
-            }
+                var view = tooltip.GetComponent<EquipmentTooltipView>();
+                if (view == null)
+                {
+                    Debug.LogWarning("[ItemTooltipManager] EquipmentTooltipPrefab missing EquipmentTooltipView component.");
+                    return;
+                }
 
-            view.SetData(item);
-        });
+                view.SetData(item);
+            });
+        }
     }
 
     /// <summary>
@@ -234,6 +259,8 @@ public class ItemTooltipManager : MonoBehaviour
 
     /// <summary>
     /// Hide the currently active tooltip (if any).
+    /// Equipped tooltips are sticky and won't be hidden by this method.
+    /// Use HideEquippedTooltip() to explicitly hide equipped tooltips.
     /// </summary>
     public void HideTooltip()
     {
@@ -244,6 +271,141 @@ public class ItemTooltipManager : MonoBehaviour
 
         Destroy(activeTooltip);
         activeTooltip = null;
+        
+        // Don't hide equipped tooltip containers here - they're sticky!
+        // Only hide dynamic tooltips (hover tooltips)
+    }
+    
+    /// <summary>
+    /// Hide equipped tooltip containers (don't destroy, just deactivate)
+    /// This is called explicitly when needed, not automatically on hover changes.
+    /// </summary>
+    public void HideEquippedTooltip()
+    {
+        if (weaponTooltipEquippedContainer != null)
+        {
+            weaponTooltipEquippedContainer.SetActive(false);
+        }
+        
+        if (equipmentTooltipEquippedContainer != null)
+        {
+            equipmentTooltipEquippedContainer.SetActive(false);
+        }
+        
+        isEquippedTooltipShowing = false;
+        currentEquippedTooltipContainer = null;
+    }
+    
+    /// <summary>
+    /// Internal method to hide all equipped containers (used when switching equipped tooltips)
+    /// </summary>
+    private void HideEquippedTooltipContainers()
+    {
+        if (weaponTooltipEquippedContainer != null)
+        {
+            weaponTooltipEquippedContainer.SetActive(false);
+        }
+        
+        if (equipmentTooltipEquippedContainer != null)
+        {
+            equipmentTooltipEquippedContainer.SetActive(false);
+        }
+    }
+    
+    /// <summary>
+    /// Show equipped item tooltip (public method for click handling)
+    /// Equipped tooltips are sticky and remain visible when hovering other items.
+    /// </summary>
+    public void ShowEquippedTooltip(BaseItem item)
+    {
+        if (item == null)
+        {
+            Debug.LogWarning("[ItemTooltipManager] ShowEquippedTooltip called with null item.");
+            HideEquippedTooltip();
+            return;
+        }
+        
+        // Determine which container to use
+        GameObject container = null;
+        
+        if (item is WeaponItem)
+        {
+            container = weaponTooltipEquippedContainer;
+            Debug.Log($"<color=cyan>[ItemTooltipManager] Using weapon container for: {item.itemName}</color>");
+        }
+        else
+        {
+            container = equipmentTooltipEquippedContainer;
+            Debug.Log($"<color=cyan>[ItemTooltipManager] Using equipment container for: {item.itemName}</color>");
+        }
+        
+        if (container == null)
+        {
+            Debug.LogError($"<color=red>[ItemTooltipManager] No equipped tooltip container assigned for {item.itemType}!</color>");
+            Debug.LogError($"<color=red>Please assign containers in ItemTooltipManager Inspector!</color>");
+            return;
+        }
+        
+        ShowTooltipInContainer(container, item);
+        
+        // Mark as showing for sticky behavior
+        isEquippedTooltipShowing = true;
+        currentEquippedTooltipContainer = container;
+    }
+    
+    /// <summary>
+    /// Show tooltip in a pre-existing container (for equipped items)
+    /// </summary>
+    private void ShowTooltipInContainer(GameObject container, BaseItem item)
+    {
+        if (container == null || item == null)
+        {
+            Debug.LogWarning("[ItemTooltipManager] ShowTooltipInContainer called with null container or item.");
+            return;
+        }
+        
+        // Hide any active dynamic tooltip
+        if (activeTooltip != null)
+        {
+            Destroy(activeTooltip);
+            activeTooltip = null;
+        }
+        
+        // Hide all equipped containers first
+        HideEquippedTooltipContainers();
+        
+        // Activate and populate the target container
+        container.SetActive(true);
+        
+        Debug.Log($"<color=lime>[ItemTooltipManager] Activating container: {container.name}</color>");
+        Debug.Log($"<color=lime>[ItemTooltipManager] Container active: {container.activeSelf}</color>");
+        
+        // Try to find WeaponTooltipView first
+        var weaponView = container.GetComponent<WeaponTooltipView>();
+        if (weaponView != null && item is WeaponItem weaponItem)
+        {
+            Debug.Log($"<color=lime>[ItemTooltipManager] Found WeaponTooltipView, setting data for: {weaponItem.itemName}</color>");
+            weaponView.SetData(weaponItem);
+            Debug.Log($"<color=lime>[ItemTooltipManager] ✅ Populated WeaponTooltipView with {weaponItem.itemName}</color>");
+            return;
+        }
+        
+        // Try EquipmentTooltipView
+        var equipmentView = container.GetComponent<EquipmentTooltipView>();
+        if (equipmentView != null)
+        {
+            Debug.Log($"<color=lime>[ItemTooltipManager] Found EquipmentTooltipView, setting data for: {item.itemName}</color>");
+            equipmentView.SetData(item);
+            Debug.Log($"<color=lime>[ItemTooltipManager] ✅ Populated EquipmentTooltipView with {item.itemName}</color>");
+            return;
+        }
+        
+        Debug.LogError($"<color=red>[ItemTooltipManager] Container {container.name} has no tooltip view component!</color>");
+        Debug.LogError($"<color=red>Available components on {container.name}:</color>");
+        foreach (var comp in container.GetComponents<Component>())
+        {
+            Debug.LogError($"  - {comp.GetType().Name}");
+        }
     }
 
     private void ShowTooltipInternal(GameObject prefab, Vector2 screenPosition, System.Action<GameObject> configure)

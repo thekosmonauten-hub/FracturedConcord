@@ -23,6 +23,8 @@ MonoBehaviour:
   totalWaves: 5
   maxEnemiesPerWave: 3
   randomizeEnemyCount: 1
-  uniqueEnemy: {fileID: 0}
+  uniqueEnemy: {fileID: 11400000, guid: 59b535e788f64e54db06c734c0d563e0, type: 2}
+  encounterEnemyPool: []
+  useExclusiveEnemyPool: 0
   lootTable: {fileID: 0}
   areaLootTable: {fileID: 11400000, guid: 71fa0aa49a604424d80f723da5fd4de3, type: 2}

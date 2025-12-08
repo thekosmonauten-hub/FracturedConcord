@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aca233df5217fb4fa2f164daa81f834, type: 3}
+  m_Name: Law of Pale Venin
+  m_EditorClassIdentifier: Assembly-CSharp::RelianceAura
+  auraName: Law of Pale Venin
+  category: Ailment
+  description: A lingering poison-law infects your attacks; applying an additional
+    stack of poison.
+  icon: {fileID: 0}
+  themeColor: {r: 0.5, g: 0.2, b: 0.8, a: 1}
+  effectLevel1: 25% chance to poison on hit, +1 Poison stacks applied.
+  effectLevel20: 40% chance to poison on hit, +1 Poison stacks applied.
+  relianceCost: 65
+  embossingSlots: 1
+  modifierIds: []
+  requiredLevel: 1
+  unlockRequirement: 

@@ -135,9 +135,9 @@ public class EffigyStorageUI : MonoBehaviour
     }
     
     /// <summary>
-    /// Load all effigies from Resources folder and place them in grid
+    /// Load effigies from character's owned effigies (no blueprints for new characters)
     /// </summary>
-    void LoadEffigiesFromResources()
+    public void LoadEffigiesFromResources()
     {
         storedEffigies.Clear();
         
@@ -153,25 +153,8 @@ public class EffigyStorageUI : MonoBehaviour
         }
         else
         {
-            Effigy[] allEffigies = Resources.LoadAll<Effigy>("Items/Effigies");
-            if (allEffigies.Length == 0)
-            {
-                Debug.LogWarning("[EffigyStorageUI] No effigies found in Resources/Items/Effigies - grid will be empty");
-                PopulateGrid();
-                return;
-            }
-            
-            AffixDatabase database = AffixDatabase.Instance;
-            foreach (Effigy effigyBlueprint in allEffigies)
-            {
-                Effigy runtimeEffigy = EffigyFactory.CreateInstance(effigyBlueprint, database);
-                if (runtimeEffigy != null)
-                {
-                    storedEffigies.Add(runtimeEffigy);
-                }
-            }
-            
-            Debug.Log($"[EffigyStorageUI] Loaded {storedEffigies.Count} fallback effigies from Resources");
+            // New characters start with empty effigy storage - no blueprints
+            Debug.Log("[EffigyStorageUI] Character has no owned effigies - storage will be empty");
         }
         
         PopulateGrid();
@@ -497,10 +480,103 @@ public class EffigyStorageSlotUI : MonoBehaviour, IPointerDownHandler, IPointerE
             // Get parent storage reference
             EffigyStorageUI storage = GetComponentInParent<EffigyStorageUI>();
             
+            // Detect which cell within the effigy shape was clicked
+            Vector2Int clickedCell = DetectClickedCell(eventData);
+            
             SetDragging(true); // Dim the slot while dragging
-            targetGrid.StartDragFromStorage(storedEffigy, this, storage);
-            Debug.Log($"[EffigyStorageSlotUI] Started dragging {storedEffigy.effigyName} from storage");
+            targetGrid.StartDragFromStorage(storedEffigy, this, storage, clickedCell);
+            Debug.Log($"[EffigyStorageSlotUI] Started dragging {storedEffigy.effigyName} from storage, clicked cell: ({clickedCell.x}, {clickedCell.y})");
         }
+    }
+    
+    /// <summary>
+    /// Detect which cell within the effigy shape was clicked based on mouse position
+    /// Returns the cell coordinates relative to the effigy's shape (0,0) origin
+    /// Returns (-1, -1) if no occupied cell was clicked or preview is not available
+    /// </summary>
+    Vector2Int DetectClickedCell(PointerEventData eventData)
+    {
+        if (storedEffigy == null || previewRoot == null || !previewRoot.gameObject.activeSelf)
+        {
+            return new Vector2Int(-1, -1);
+        }
+        
+        // Convert mouse position to local coordinates relative to the preview root
+        RectTransform previewRect = previewRoot;
+        RectTransform slotRect = transform as RectTransform;
+        
+        if (previewRect == null || slotRect == null)
+            return new Vector2Int(-1, -1);
+        
+        // Convert mouse position directly to preview root's local space
+        Vector2 mouseInPreview;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            previewRect, 
+            eventData.position, 
+            eventData.pressEventCamera, 
+            out mouseInPreview
+        );
+        
+        // Preview root uses center anchor (0.5, 0.5), but preview cells use top-left anchor (0, 1)
+        // So we need to convert from center-anchored coordinates to top-left-anchored coordinates
+        // In center-anchored: (0,0) is center, positive X is right, positive Y is up
+        // In top-left-anchored: (0,0) is top-left, positive X is right, positive Y is down
+        float previewWidth = previewRect.rect.width;
+        float previewHeight = previewRect.rect.height;
+        
+        // Convert from center-anchored to top-left-anchored coordinates
+        float previewLocalX = mouseInPreview.x + previewWidth * 0.5f;
+        float previewLocalY = previewHeight * 0.5f - mouseInPreview.y; // Invert Y (up becomes down)
+        
+        // Get the preview cell size and spacing (same calculation as in RenderPreview)
+        float padding = 6f;
+        float labelReserve = 18f;
+        float spacing = 2f;
+        float availableWidth = Mathf.Max(0f, slotRect.rect.width - padding * 2f);
+        float availableHeight = Mathf.Max(0f, slotRect.rect.height - padding * 2f - labelReserve);
+        
+        int shapeWidth = Mathf.Max(1, storedEffigy.shapeWidth);
+        int shapeHeight = Mathf.Max(1, storedEffigy.shapeHeight);
+        
+        float cellWidth = (availableWidth - spacing * (shapeWidth - 1)) / shapeWidth;
+        float cellHeight = (availableHeight - spacing * (shapeHeight - 1)) / shapeHeight;
+        float miniCellSize = Mathf.Max(0f, Mathf.Min(cellWidth, cellHeight));
+        
+        // Calculate which cell the mouse is over
+        // In preview space with top-left origin:
+        // Cell (x, y) position: x = cellX * (miniCellSize + spacing), y = cellY * (miniCellSize + spacing)
+        int cellX = Mathf.FloorToInt(previewLocalX / (miniCellSize + spacing));
+        int cellY = Mathf.FloorToInt(previewLocalY / (miniCellSize + spacing));
+        
+        // Clamp to valid range
+        cellX = Mathf.Clamp(cellX, 0, shapeWidth - 1);
+        cellY = Mathf.Clamp(cellY, 0, shapeHeight - 1);
+        
+        // Check if this cell is actually occupied
+        if (storedEffigy.IsCellOccupied(cellX, cellY))
+        {
+            return new Vector2Int(cellX, cellY);
+        }
+        
+        // If the clicked cell is not occupied, we need to find a valid occupied cell
+        // Since storage shows effigies in a single cell, the click position doesn't map precisely
+        // to individual shape cells. We'll use a smart fallback strategy.
+        List<Vector2Int> occupiedCells = storedEffigy.GetOccupiedCells();
+        if (occupiedCells.Count == 0)
+            return new Vector2Int(-1, -1);
+        
+        // Strategy: Find the first occupied cell in reading order (top-to-bottom, left-to-right)
+        // This ensures consistent behavior for shapes like Cross, S, T where (0,0) might be empty
+        // Sort by Y first (top to bottom), then by X (left to right)
+        occupiedCells.Sort((a, b) => 
+        {
+            if (a.y != b.y) return a.y.CompareTo(b.y);
+            return a.x.CompareTo(b.x);
+        });
+        
+        // Return the first occupied cell in reading order
+        // This is predictable and works for all shapes, including Cross where center is occupied but corners are empty
+        return occupiedCells[0];
     }
 
     public void OnPointerEnter(PointerEventData eventData)

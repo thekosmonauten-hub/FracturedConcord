@@ -61,6 +61,15 @@ public class CharacterManager : MonoBehaviour
     // Load a character by name
     public void LoadCharacter(string characterName)
     {
+        // Clear currencies before loading new character (prevent currency bleed between characters)
+        if (LootManager.Instance != null)
+        {
+            LootManager.Instance.ClearAllCurrencies();
+        }
+        
+        // Clear inventory before loading new character
+        inventoryItems.Clear();
+        
         List<CharacterData> characterDataList = CharacterSaveSystem.Instance.LoadCharacters();
         CharacterData characterData = characterDataList.Find(c => c.characterName == characterName);
         
@@ -95,8 +104,22 @@ public class CharacterManager : MonoBehaviour
                 CardExperienceManager.Instance.LoadFromCharacter(currentCharacter);
             }
             
+            // Load aura experience data
+            if (AuraExperienceManager.Instance != null)
+            {
+                AuraExperienceManager.Instance.LoadFromCharacter(currentCharacter);
+            }
+            
             OnCharacterLoaded?.Invoke(currentCharacter);
             Debug.Log($"Loaded character: {currentCharacter.characterName}");
+            
+            // Refresh warrant modifiers after loading character
+            // Note: This may fail if warrant board components aren't loaded yet (e.g., not in WarrantTree scene)
+            // That's okay - modifiers will be refreshed when the warrant board is accessed
+            if (currentCharacter != null)
+            {
+                currentCharacter.RefreshWarrantModifiers();
+            }
         }
         else
         {
@@ -153,6 +176,12 @@ public class CharacterManager : MonoBehaviour
             if (CardExperienceManager.Instance != null)
             {
                 CardExperienceManager.Instance.SaveToCharacter(currentCharacter);
+            }
+            
+            // Save aura experience data
+            if (AuraExperienceManager.Instance != null)
+            {
+                AuraExperienceManager.Instance.SaveToCharacter(currentCharacter);
             }
             
             // Save to CharacterSaveSystem
@@ -279,6 +308,12 @@ public class CharacterManager : MonoBehaviour
             if (shareWithCards && CardExperienceManager.Instance != null)
             {
                 CardExperienceManager.Instance.ApplyCombatExperience(exp);
+            }
+            
+            // Also give experience to active auras
+            if (shareWithCards && AuraExperienceManager.Instance != null)
+            {
+                AuraExperienceManager.Instance.ApplyCombatExperience(exp);
             }
         }
     }

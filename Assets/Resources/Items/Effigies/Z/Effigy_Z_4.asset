@@ -17,6 +17,7 @@ MonoBehaviour:
   itemIcon: {fileID: -5816572233301552119, guid: 70aac9e8f53dea248b51559438b01bc3, type: 3}
   rarity: 0
   requiredLevel: 1
+  itemLevel: -1
   itemType: 0
   equipmentType: 0
   isStackable: 0
@@ -27,12 +28,14 @@ MonoBehaviour:
   suffixes: []
   isUnique: 0
   itemTags: []
+  generatedName: 
   effigyName: Z_4
   icon: {fileID: -5816572233301552119, guid: 70aac9e8f53dea248b51559438b01bc3, type: 3}
   element: 3
   sizeTier: 1
+  shapeCategory: 9
   shapeWidth: 3
   shapeHeight: 2
   shapeMask: 010100000101
+  ghostPickupPoint: {x: 1, y: 1}
   displayAlias: Discord Fragment
-  modifiers: []

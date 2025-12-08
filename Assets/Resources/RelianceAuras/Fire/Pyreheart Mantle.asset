@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aca233df5217fb4fa2f164daa81f834, type: 3}
+  m_Name: Pyreheart Mantle
+  m_EditorClassIdentifier: Assembly-CSharp::RelianceAura
+  auraName: Pyreheart Mantle
+  category: Fire
+  description: Casts an aura that adds fire damage to attacks and spells.
+  icon: {fileID: -6000790887732126241, guid: ffebb44cb4c918d4bb9b4c774a9193d3, type: 3}
+  themeColor: {r: 1, g: 0.3, b: 0.1, a: 1}
+  effectLevel1: 90 flat Fire damage
+  effectLevel20: 160 flat Fire damage
+  relianceCost: 100
+  embossingSlots: 1
+  modifierIds: []
+  requiredLevel: 1
+  unlockRequirement: 

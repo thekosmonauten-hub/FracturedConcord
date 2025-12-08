@@ -422,10 +422,40 @@ public class PlayerCombatDisplay : MonoBehaviour
     /// </summary>
     public void AddStatusEffect(StatusEffect effect)
     {
-        if (statusEffectManager != null)
+        if (statusEffectManager == null || effect == null)
+            return;
+        
+        // Phase 3.4: Status Avoidance - Check if player can avoid this status effect
+        // Only apply avoidance to debuffs (enemy-applied negative effects)
+        if (effect.isDebuff && CharacterManager.Instance != null && CharacterManager.Instance.HasCharacter())
         {
-            statusEffectManager.AddStatusEffect(effect);
+            Character playerCharacter = CharacterManager.Instance.GetCurrentCharacter();
+            if (playerCharacter != null)
+            {
+                var statsData = new CharacterStatsData(playerCharacter);
+                float statusAvoidance = statsData.statusAvoidance;
+                
+                if (statusAvoidance > 0f)
+                {
+                    // Roll for avoidance (0-100)
+                    float roll = Random.Range(0f, 100f);
+                    
+                    if (roll < statusAvoidance)
+                    {
+                        // Status effect avoided!
+                        Debug.Log($"[Status Avoidance] Player avoided {effect.effectName} (Roll: {roll:F1} < {statusAvoidance:F1}%)");
+                        return; // Don't apply the status effect
+                    }
+                    else
+                    {
+                        Debug.Log($"[Status Avoidance] Player failed to avoid {effect.effectName} (Roll: {roll:F1} >= {statusAvoidance:F1}%)");
+                    }
+                }
+            }
         }
+        
+        // Apply status effect normally (either not a debuff, or avoidance check failed)
+        statusEffectManager.AddStatusEffect(effect);
     }
 
     public void ApplyStackAdjustment(StackAdjustmentDefinition adjustment)

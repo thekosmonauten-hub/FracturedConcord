@@ -1,10 +1,14 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 public class EquipmentTooltipView : MonoBehaviour
 {
@@ -18,6 +22,13 @@ public class EquipmentTooltipView : MonoBehaviour
     [SerializeField] private List<TextMeshProUGUI> baseStatLabels = new List<TextMeshProUGUI>();
     [SerializeField] private TextMeshProUGUI requirementsLabel;
     
+    [Header("Pre-defined Stat Labels")]
+    [SerializeField] private TextMeshProUGUI qualityLabel;
+    [SerializeField] private TextMeshProUGUI armourLabel;
+    [SerializeField] private TextMeshProUGUI energyShieldLabel;
+    [SerializeField] private TextMeshProUGUI evasionLabel;
+    [SerializeField] private TextMeshProUGUI itemTypeLabel;
+    
     // Specific defense value labels (if they exist in prefab)
     private List<TextMeshProUGUI> defenceValueLabels = new List<TextMeshProUGUI>();
 
@@ -27,10 +38,43 @@ public class EquipmentTooltipView : MonoBehaviour
     [SerializeField] private List<TextMeshProUGUI> suffixLabels = new List<TextMeshProUGUI>();
 
     private bool cached;
+    private BaseItem currentItem;
+    private ItemData currentItemData;
+    private bool lastAltState = false;
 
     private void Awake()
     {
         CacheUIElements();
+    }
+    
+    private void Update()
+    {
+        // Check if ALT key state changed while tooltip is active
+        if (gameObject.activeSelf && (currentItem != null || currentItemData != null))
+        {
+            bool currentAltState = IsAltKeyHeld();
+            
+            if (currentAltState != lastAltState)
+            {
+                lastAltState = currentAltState;
+                
+                Debug.Log($"<color=yellow>[EquipmentTooltip] ALT state changed: {currentAltState} (showRanges: {currentAltState})</color>");
+                
+                // Refresh tooltip with new ALT state
+                if (currentItem != null)
+                {
+                    SetData(currentItem);
+                }
+                else if (currentItemData != null)
+                {
+                    SetData(currentItemData);
+                }
+                
+                // Force canvas update
+                Canvas.ForceUpdateCanvases();
+                UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+            }
+        }
     }
 
     public void SetData(BaseItem item)
@@ -38,11 +82,21 @@ public class EquipmentTooltipView : MonoBehaviour
         if (item == null)
         {
             gameObject.SetActive(false);
+            currentItem = null;
+            currentItemData = null;
             return;
         }
 
         EnsureUIReferencesCached();
         gameObject.SetActive(true);
+        
+        // Cache current item for ALT-key updates
+        currentItem = item;
+        currentItemData = null;
+        
+        // Check if ALT key is held (show ranges instead of rolled values)
+        bool showRanges = IsAltKeyHeld();
+        lastAltState = showRanges;
 
         ItemRarity rarity = item.GetCalculatedRarity();
 
@@ -68,9 +122,9 @@ public class EquipmentTooltipView : MonoBehaviour
 
         ApplyBaseStats(item);
         ApplyRequirements(item);
-        ApplyAffixes(implicitLabel, item.implicitModifiers);
-        SetAffixTexts(prefixLabels, item.prefixes);
-        SetAffixTexts(suffixLabels, item.suffixes);
+        ApplyAffixes(implicitLabel, item.implicitModifiers, showRanges);
+        SetAffixTexts(prefixLabels, item.prefixes, showRanges);
+        SetAffixTexts(suffixLabels, item.suffixes, showRanges);
     }
 
     public void SetData(ItemData itemData)
@@ -78,6 +132,8 @@ public class EquipmentTooltipView : MonoBehaviour
         if (itemData == null)
         {
             gameObject.SetActive(false);
+            currentItem = null;
+            currentItemData = null;
             return;
         }
 
@@ -89,6 +145,14 @@ public class EquipmentTooltipView : MonoBehaviour
 
         EnsureUIReferencesCached();
         gameObject.SetActive(true);
+        
+        // Cache current item data for ALT-key updates
+        currentItemData = itemData;
+        currentItem = null;
+        
+        // Check if ALT key is held
+        bool showRanges = IsAltKeyHeld();
+        lastAltState = showRanges;
 
         ItemRarity rarity = itemData.rarity;
 
@@ -121,6 +185,12 @@ public class EquipmentTooltipView : MonoBehaviour
 
     private void ApplyBaseStats(BaseItem item)
     {
+        // Reset all pre-defined labels
+        ResetPredefinedLabels();
+        
+        // Set Item Type
+        SetItemTypeLabel(item);
+        
         // Handle Armour items specifically for defense values
         if (item is Armour armour)
         {
@@ -128,52 +198,155 @@ public class EquipmentTooltipView : MonoBehaviour
         }
         else
         {
-            // For non-armour items, use the generic approach
-            var lines = BuildBaseStatLines(item);
-
-            for (int i = 0; i < baseStatLabels.Count; i++)
-            {
-                var label = baseStatLabels[i];
-                if (label == null)
-                    continue;
-
-                // Skip defence value labels - they're handled separately
-                if (defenceValueLabels.Contains(label))
-                    continue;
-
-                if (i < lines.Count)
-                {
-                    label.text = lines[i];
-                    label.gameObject.SetActive(true);
-                }
-                else
-                {
-                    label.gameObject.SetActive(false);
-                }
-            }
+            // For non-armour items, populate other stats
+            ApplyOtherBaseStats(item);
+        }
+        
+        // Set Quality (applies to all items)
+        SetQualityLabel(item);
+    }
+    
+    /// <summary>
+    /// Reset all pre-defined stat labels to hidden/empty
+    /// </summary>
+    private void ResetPredefinedLabels()
+    {
+        if (qualityLabel != null)
+        {
+            qualityLabel.text = string.Empty;
+            qualityLabel.gameObject.SetActive(false);
+        }
+        if (armourLabel != null)
+        {
+            armourLabel.text = string.Empty;
+            armourLabel.gameObject.SetActive(false);
+        }
+        if (energyShieldLabel != null)
+        {
+            energyShieldLabel.text = string.Empty;
+            energyShieldLabel.gameObject.SetActive(false);
+        }
+        if (evasionLabel != null)
+        {
+            evasionLabel.text = string.Empty;
+            evasionLabel.gameObject.SetActive(false);
+        }
+        if (itemTypeLabel != null)
+        {
+            itemTypeLabel.text = string.Empty;
+            itemTypeLabel.gameObject.SetActive(false);
         }
     }
     
-    private void ApplyDefenceValues(Armour armour)
+    /// <summary>
+    /// Set the Item Type label based on item type
+    /// </summary>
+    private void SetItemTypeLabel(BaseItem item)
     {
-        // Build list of defense values that actually exist
-        List<string> defenceValues = new List<string>();
+        if (itemTypeLabel == null)
+            return;
+            
+        string typeText = string.Empty;
         
-        if (armour.armour > 0f) defenceValues.Add($"{armour.armour:F0} Armour");
-        if (armour.evasion > 0f) defenceValues.Add($"{armour.evasion:F0} Evasion");
-        if (armour.energyShield > 0f) defenceValues.Add($"{armour.energyShield:F0} Energy Shield");
-        if (armour.ward > 0f) defenceValues.Add($"{armour.ward:F0} Ward");
-        
-        // Populate defence value labels
-        for (int i = 0; i < defenceValueLabels.Count; i++)
+        switch (item)
         {
-            var label = defenceValueLabels[i];
+            case Armour armour:
+                typeText = $"{armour.armourSlot} - {armour.armourType}";
+                break;
+            case OffHandEquipment offHand:
+                typeText = $"{offHand.offHandSlot} - {offHand.offHandType}";
+                break;
+            case Jewellery jewellery:
+                typeText = $"{jewellery.jewellerySlot} - {jewellery.jewelleryType}";
+                break;
+            default:
+                if (item.itemTags != null && item.itemTags.Count > 0)
+                {
+                    typeText = $"Tags: {string.Join(", ", item.itemTags)}";
+                }
+                break;
+        }
+        
+        if (!string.IsNullOrWhiteSpace(typeText))
+        {
+            itemTypeLabel.text = typeText;
+            itemTypeLabel.gameObject.SetActive(true);
+        }
+        else
+        {
+            itemTypeLabel.gameObject.SetActive(false);
+        }
+    }
+    
+    /// <summary>
+    /// Set the Quality label
+    /// </summary>
+    private void SetQualityLabel(BaseItem item)
+    {
+        if (qualityLabel == null)
+            return;
+            
+        if (item.quality > 0)
+        {
+            qualityLabel.text = $"Quality: +{item.quality}%";
+            qualityLabel.gameObject.SetActive(true);
+        }
+        else
+        {
+            qualityLabel.gameObject.SetActive(false);
+        }
+    }
+    
+    /// <summary>
+    /// Apply other base stats (non-predefined) to generic labels
+    /// </summary>
+    private void ApplyOtherBaseStats(BaseItem item)
+    {
+        var lines = new List<string>();
+        
+        // Add description if exists
+        if (!string.IsNullOrWhiteSpace(item.description))
+        {
+            lines.Add(item.description);
+        }
+        
+        // Add item-specific stats that aren't in predefined labels
+        switch (item)
+        {
+            case OffHandEquipment offHand:
+                if (offHand.defence > 0f) lines.Add($"Defence: {offHand.defence}");
+                if (offHand.blockChance > 0f) lines.Add($"Block Chance: {offHand.blockChance:F1}%");
+                if (offHand.blockValue > 0f) lines.Add($"Block Value: {offHand.blockValue}");
+                if (offHand.attackSpeed != 1f) lines.Add($"Attack Speed: {offHand.attackSpeed:F2}");
+                if (offHand.criticalStrikeChance != 0f) lines.Add($"Critical Chance: {offHand.criticalStrikeChance:F1}%");
+                break;
+            case Jewellery jewellery:
+                if (jewellery.life > 0f) lines.Add($"+{jewellery.life} to Maximum Life");
+                if (jewellery.mana > 0f) lines.Add($"+{jewellery.mana} to Maximum Mana");
+                if (jewellery.energyShield > 0f) lines.Add($"+{jewellery.energyShield} to Energy Shield");
+                if (jewellery.ward > 0f) lines.Add($"+{jewellery.ward} to Ward");
+                break;
+            case Armour armour:
+                // Penalties for armour
+                if (armour.movementSpeedPenalty != 0f) lines.Add($"Movement Speed: {FormatSignedPercent(-armour.movementSpeedPenalty)}");
+                if (armour.attackSpeedPenalty != 0f) lines.Add($"Attack Speed: {FormatSignedPercent(-armour.attackSpeedPenalty)}");
+                break;
+        }
+        
+        // Populate generic base stat labels
+        for (int i = 0; i < baseStatLabels.Count; i++)
+        {
+            var label = baseStatLabels[i];
             if (label == null)
                 continue;
-                
-            if (i < defenceValues.Count)
+
+            // Skip defence value labels - they're handled separately
+            if (defenceValueLabels.Contains(label))
+                continue;
+
+            if (i < lines.Count)
             {
-                label.text = defenceValues[i];
+                label.text = lines[i];
                 label.gameObject.SetActive(true);
             }
             else
@@ -181,28 +354,73 @@ public class EquipmentTooltipView : MonoBehaviour
                 label.gameObject.SetActive(false);
             }
         }
-        
-        // Handle other base stat labels (description, slot/type, penalties, quality)
-        var lines = BuildBaseStatLines(armour);
-        // Remove defense values from lines since we handled them separately
-        lines.RemoveAll(line => line.Contains("Armour:") || line.Contains("Evasion:") || 
-                                line.Contains("Energy Shield:") || line.Contains("Ward:"));
-        
-        int lineIndex = 0;
-        foreach (var label in baseStatLabels)
+    }
+    
+    private void ApplyDefenceValues(Armour armour)
+    {
+        // Set pre-defined defense labels
+        if (armourLabel != null)
         {
+            if (armour.armour > 0f)
+            {
+                armourLabel.text = $"Armour: {armour.armour:F0}";
+                armourLabel.gameObject.SetActive(true);
+            }
+            else
+            {
+                armourLabel.gameObject.SetActive(false);
+            }
+        }
+        
+        if (evasionLabel != null)
+        {
+            if (armour.evasion > 0f)
+            {
+                evasionLabel.text = $"Evasion: {armour.evasion:F0}";
+                evasionLabel.gameObject.SetActive(true);
+            }
+            else
+            {
+                evasionLabel.gameObject.SetActive(false);
+            }
+        }
+        
+        if (energyShieldLabel != null)
+        {
+            if (armour.energyShield > 0f)
+            {
+                energyShieldLabel.text = $"Energy Shield: {armour.energyShield:F0}";
+                energyShieldLabel.gameObject.SetActive(true);
+            }
+            else
+            {
+                energyShieldLabel.gameObject.SetActive(false);
+            }
+        }
+        
+        // Handle Ward in generic labels (not pre-defined)
+        var lines = new List<string>();
+        if (armour.ward > 0f) lines.Add($"Ward: {armour.ward:F0}");
+        
+        // Add penalties
+        if (armour.movementSpeedPenalty != 0f) lines.Add($"Movement Speed: {FormatSignedPercent(-armour.movementSpeedPenalty)}");
+        if (armour.attackSpeedPenalty != 0f) lines.Add($"Attack Speed: {FormatSignedPercent(-armour.attackSpeedPenalty)}");
+        
+        // Populate generic base stat labels with remaining stats
+        for (int i = 0; i < baseStatLabels.Count; i++)
+        {
+            var label = baseStatLabels[i];
             if (label == null)
                 continue;
-                
-            // Skip defence value labels - already handled
+
+            // Skip defence value labels - they're handled separately
             if (defenceValueLabels.Contains(label))
                 continue;
-                
-            if (lineIndex < lines.Count)
+
+            if (i < lines.Count)
             {
-                label.text = lines[lineIndex];
+                label.text = lines[i];
                 label.gameObject.SetActive(true);
-                lineIndex++;
             }
             else
             {
@@ -213,8 +431,90 @@ public class EquipmentTooltipView : MonoBehaviour
 
     private void ApplyBaseStats(ItemData itemData)
     {
-        var lines = BuildBaseStatLines(itemData);
+        // Reset all pre-defined labels
+        ResetPredefinedLabels();
+        
+        // Set Item Type
+        if (itemTypeLabel != null)
+        {
+            itemTypeLabel.text = itemData.equipmentType.ToString();
+            itemTypeLabel.gameObject.SetActive(true);
+        }
+        
+        // Handle item-specific stats
+        switch (itemData.itemType)
+        {
+            case ItemType.Armour:
+                if (armourLabel != null && itemData.baseArmour > 0f)
+                {
+                    armourLabel.text = $"Armour: {itemData.baseArmour:F0}";
+                    armourLabel.gameObject.SetActive(true);
+                }
+                if (evasionLabel != null && itemData.baseEvasion > 0f)
+                {
+                    evasionLabel.text = $"Evasion: {itemData.baseEvasion:F0}";
+                    evasionLabel.gameObject.SetActive(true);
+                }
+                if (energyShieldLabel != null && itemData.baseEnergyShield > 0f)
+                {
+                    energyShieldLabel.text = $"Energy Shield: {itemData.baseEnergyShield:F0}";
+                    energyShieldLabel.gameObject.SetActive(true);
+                }
+                break;
+        }
+        
+        // Set Quality if available
+        // Note: ItemData doesn't have quality field, so this might not apply
+        // But we'll leave it for consistency
+        
+        // Populate other stats in generic labels
+        var lines = new List<string>();
+        
+        if (itemData.itemType == ItemType.Weapon)
+        {
+            // Check if source item has rolled damage
+            bool hasRolledDamage = false;
+            float rolledBaseDamage = 0f;
+            
+            if (itemData.sourceItem is WeaponItem weaponSource)
+            {
+                hasRolledDamage = weaponSource.rolledBaseDamage > 0f;
+                rolledBaseDamage = weaponSource.rolledBaseDamage;
+            }
+            
+            if (hasRolledDamage)
+            {
+                lines.Add($"Base Damage: {rolledBaseDamage:F0}");
+                int rolledTotal = Mathf.RoundToInt(itemData.GetTotalMinDamage());
+                lines.Add($"Total Damage: {rolledTotal}");
+            }
+            else
+            {
+                if (itemData.baseDamageMin > 0f || itemData.baseDamageMax > 0f)
+                    lines.Add($"Base Damage: {itemData.baseDamageMin:F0}-{itemData.baseDamageMax:F0}");
 
+                float totalMin = itemData.GetTotalMinDamage();
+                float totalMax = itemData.GetTotalMaxDamage();
+                if (totalMin > 0f || totalMax > 0f)
+                    lines.Add($"Total Damage: {totalMin:F0}-{totalMax:F0}");
+            }
+
+            if (itemData.attackSpeed > 0f)
+                lines.Add($"Attack Speed: {itemData.attackSpeed:F2}");
+
+            if (itemData.criticalStrikeChance > 0f)
+                lines.Add($"Critical Strike Chance: {itemData.criticalStrikeChance:F1}%");
+        }
+        
+        if (itemData.stats != null && itemData.stats.Count > 0)
+        {
+            foreach (var kvp in itemData.stats)
+            {
+                lines.Add($"{kvp.Key}: {kvp.Value}");
+            }
+        }
+        
+        // Populate generic labels
         for (int i = 0; i < baseStatLabels.Count; i++)
         {
             var label = baseStatLabels[i];
@@ -296,13 +596,36 @@ public class EquipmentTooltipView : MonoBehaviour
         switch (itemData.itemType)
         {
             case ItemType.Weapon:
-                if (itemData.baseDamageMin > 0f || itemData.baseDamageMax > 0f)
-                    lines.Add($"Base Damage: {itemData.baseDamageMin:F0}-{itemData.baseDamageMax:F0}");
+                // Check if source item has rolled damage
+                bool hasRolledDamage = false;
+                float rolledBaseDamage = 0f;
+                
+                if (itemData.sourceItem is WeaponItem weaponSource)
+                {
+                    hasRolledDamage = weaponSource.rolledBaseDamage > 0f;
+                    rolledBaseDamage = weaponSource.rolledBaseDamage;
+                }
+                
+                if (hasRolledDamage)
+                {
+                    // Show rolled base damage (single value)
+                    lines.Add($"Base Damage: {rolledBaseDamage:F0}");
+                    
+                    // Total damage (single value, affixes are rolled too)
+                    int rolledTotal = Mathf.RoundToInt(itemData.GetTotalMinDamage());
+                    lines.Add($"Total Damage: {rolledTotal}");
+                }
+                else
+                {
+                    // Fallback: Show range (for items without rolled damage)
+                    if (itemData.baseDamageMin > 0f || itemData.baseDamageMax > 0f)
+                        lines.Add($"Base Damage: {itemData.baseDamageMin:F0}-{itemData.baseDamageMax:F0}");
 
-                float totalMin = itemData.GetTotalMinDamage();
-                float totalMax = itemData.GetTotalMaxDamage();
-                if (totalMin > 0f || totalMax > 0f)
-                    lines.Add($"Total Damage: {totalMin:F0}-{totalMax:F0}");
+                    float totalMin = itemData.GetTotalMinDamage();
+                    float totalMax = itemData.GetTotalMaxDamage();
+                    if (totalMin > 0f || totalMax > 0f)
+                        lines.Add($"Total Damage: {totalMin:F0}-{totalMax:F0}");
+                }
 
                 if (itemData.attackSpeed > 0f)
                     lines.Add($"Attack Speed: {itemData.attackSpeed:F2}");
@@ -427,7 +750,7 @@ public class EquipmentTooltipView : MonoBehaviour
         requirementsLabel.gameObject.SetActive(hasRequirements);
     }
 
-    private void ApplyAffixes(TextMeshProUGUI target, List<Affix> affixes)
+    private void ApplyAffixes(TextMeshProUGUI target, List<Affix> affixes, bool showRanges = false)
     {
         if (target == null)
             return;
@@ -452,29 +775,43 @@ public class EquipmentTooltipView : MonoBehaviour
             }
         }
 
-        string text = BuildAffixBlock(filteredAffixes);
+        string text = BuildAffixBlock(filteredAffixes, showRanges, isImplicit: true);
         bool hasAffix = !string.IsNullOrEmpty(text);
-        target.text = hasAffix ? text : "None";
-        target.gameObject.SetActive(true);
+        
+        if (hasAffix)
+        {
+            target.text = text;
+            target.color = Color.white; // Base color, text has inline color tags
+            target.gameObject.SetActive(true);
+        }
+        else
+        {
+            // Hide instead of showing "None"
+            target.gameObject.SetActive(false);
+        }
     }
 
-    private void ApplyAffixes(TextMeshProUGUI target, List<string> affixLines)
+    private void ApplyAffixes(TextMeshProUGUI target, List<string> affixLines, bool showRanges = false)
     {
         if (target == null)
             return;
 
         if (affixLines == null || affixLines.Count == 0)
         {
-            target.text = "None";
-            target.gameObject.SetActive(true);
+            // Hide instead of showing "None"
+            target.gameObject.SetActive(false);
             return;
         }
+        
+        // Note: String affixes don't have rolling info, display as-is
+        // This is for ItemData compatibility where affixes are already strings
 
         target.text = string.Join("\n", affixLines);
+        target.color = Color.white; // Base color
         target.gameObject.SetActive(true);
     }
 
-    private string BuildAffixBlock(List<Affix> affixes)
+    private string BuildAffixBlock(List<Affix> affixes, bool showRanges = false, bool isImplicit = false)
     {
         if (affixes == null || affixes.Count == 0)
             return string.Empty;
@@ -482,7 +819,10 @@ public class EquipmentTooltipView : MonoBehaviour
         var builder = new StringBuilder();
         for (int i = 0; i < affixes.Count; i++)
         {
-            string formatted = TooltipFormattingUtils.FormatAffix(affixes[i]);
+            string formatted = isImplicit
+                ? TooltipFormattingUtils.FormatImplicit(affixes[i], showRanges)
+                : TooltipFormattingUtils.FormatAffix(affixes[i], showRanges);
+                
             if (string.IsNullOrEmpty(formatted))
                 continue;
 
@@ -495,7 +835,7 @@ public class EquipmentTooltipView : MonoBehaviour
         return builder.ToString();
     }
 
-    private void SetAffixTexts(IEnumerable<TextMeshProUGUI> targets, IList<Affix> affixes)
+    private void SetAffixTexts(IEnumerable<TextMeshProUGUI> targets, IList<Affix> affixes, bool showRanges = false)
     {
         if (targets == null)
             return;
@@ -508,8 +848,9 @@ public class EquipmentTooltipView : MonoBehaviour
 
             if (affixes != null && index < affixes.Count)
             {
-                string text = TooltipFormattingUtils.FormatAffix(affixes[index]);
+                string text = TooltipFormattingUtils.FormatAffix(affixes[index], showRanges);
                 label.text = string.IsNullOrEmpty(text) ? "—" : text;
+                label.color = Color.white; // Base color, text has inline color tags
                 label.gameObject.SetActive(true);
             }
             else
@@ -565,6 +906,27 @@ public class EquipmentTooltipView : MonoBehaviour
             statsContainer = transform.Find("Content/BaseWeaponStats");
         }
         
+        // Find pre-defined stat labels
+        qualityLabel ??= FindLabel("Content/BaseItemStats/QualityLabel");
+        if (qualityLabel == null)
+            qualityLabel = FindLabel("Content/BaseWeaponStats/QualityLabel");
+            
+        armourLabel ??= FindLabel("Content/BaseItemStats/ArmourLabel");
+        if (armourLabel == null)
+            armourLabel = FindLabel("Content/BaseWeaponStats/ArmourLabel");
+            
+        energyShieldLabel ??= FindLabel("Content/BaseItemStats/EnergyShieldLabel");
+        if (energyShieldLabel == null)
+            energyShieldLabel = FindLabel("Content/BaseWeaponStats/EnergyShieldLabel");
+            
+        evasionLabel ??= FindLabel("Content/BaseItemStats/EvasionLabel");
+        if (evasionLabel == null)
+            evasionLabel = FindLabel("Content/BaseWeaponStats/EvasionLabel");
+            
+        itemTypeLabel ??= FindLabel("Content/BaseItemStats/ItemTypeLabel");
+        if (itemTypeLabel == null)
+            itemTypeLabel = FindLabel("Content/BaseWeaponStats/ItemTypeLabel");
+        
         baseStatLabels ??= new List<TextMeshProUGUI>();
         baseStatLabels.Clear();
         defenceValueLabels.Clear();
@@ -578,6 +940,14 @@ public class EquipmentTooltipView : MonoBehaviour
                     continue;
 
                 string childName = child.name;
+                
+                // Skip pre-defined labels - they're handled separately
+                if (childName == "QualityLabel" || childName == "ArmourLabel" || 
+                    childName == "EnergyShieldLabel" || childName == "EvasionLabel" || 
+                    childName == "ItemTypeLabel")
+                {
+                    continue;
+                }
                 
                 if (childName == "Requirements")
                 {
@@ -650,6 +1020,33 @@ public class EquipmentTooltipView : MonoBehaviour
     private string FormatSignedPercent(float value)
     {
         return value.ToString("+0;-0", CultureInfo.InvariantCulture) + "%";
+    }
+    
+    /// <summary>
+    /// Check if ALT key is held (supports both old and new Input System)
+    /// </summary>
+    private bool IsAltKeyHeld()
+    {
+#if ENABLE_INPUT_SYSTEM
+        var keyboard = Keyboard.current;
+        if (keyboard != null)
+        {
+            bool isPressed = keyboard.leftAltKey.isPressed || keyboard.rightAltKey.isPressed;
+            // Debug: Log when state changes
+            if (gameObject.activeSelf && (currentItem != null || currentItemData != null))
+            {
+                if (isPressed != lastAltState)
+                {
+                    Debug.Log($"<color=cyan>[EquipmentTooltip] Input System ALT detected: {isPressed}</color>");
+                }
+            }
+            return isPressed;
+        }
+        Debug.LogWarning("[EquipmentTooltip] Keyboard.current is null!");
+        return false;
+#else
+        return UnityEngine.Input.GetKey(KeyCode.LeftAlt) || UnityEngine.Input.GetKey(KeyCode.RightAlt);
+#endif
     }
 }
 

@@ -3180,6 +3180,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AreaLootManager
   defaultLootTable: {fileID: 11400000, guid: 31cdd30eee385cb4da36c49186baaa43, type: 2}
+  nameGenerationData: {fileID: 11400000, guid: 6d52d0f465e43ae48bb66463b328a4f1, type: 2}
   areaLootTableRanges: []
   actLootTables:
   - actName: Act 1
@@ -8970,6 +8971,7 @@ MonoBehaviour:
         attackSpeed: 1
         baseDamageMin: 0
         baseDamageMax: 0
+        rolledBaseDamage: 0
         baseDamageType: 1
         affixes: []
         totalDamageMin: 0
@@ -8980,6 +8982,7 @@ MonoBehaviour:
         attackSpeed: 1
         baseDamageMin: 0
         baseDamageMax: 0
+        rolledBaseDamage: 0
         baseDamageType: 1
         affixes: []
         totalDamageMin: 0
@@ -8990,6 +8993,7 @@ MonoBehaviour:
         attackSpeed: 1
         baseDamageMin: 0
         baseDamageMax: 0
+        rolledBaseDamage: 0
         baseDamageType: 1
         affixes: []
         totalDamageMin: 0

@@ -1222,8 +1222,38 @@ weapon, attack, melee, ranged, spell, damage, elemental, physical, fire, cold, l
             return (min, max);
         }
         
+        // Pattern 6: "+X-Y% chance to [Status] on Hit" - status effect chance (e.g., "+5-7% chance to Shock on Hit")
+        var statusChanceMatch = System.Text.RegularExpressions.Regex.Match(description, @"\+(\d+)-(\d+)%\s+chance\s+to\s+(?:apply\s+)?(\w+)\s+on\s+Hit", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        if (statusChanceMatch.Success)
+        {
+            int min = int.Parse(statusChanceMatch.Groups[1].Value);
+            int max = int.Parse(statusChanceMatch.Groups[2].Value);
+            Debug.Log($"Found status effect chance range: {min}-{max}% (effect: {statusChanceMatch.Groups[3].Value})");
+            return (min, max);
+        }
+        
+        // Pattern 7: "+X-Y% Chance to [Status]" - alternative format (e.g., "+5-7% Chance to Shock")
+        var statusChanceAltMatch = System.Text.RegularExpressions.Regex.Match(description, @"\+(\d+)-(\d+)%\s+Chance\s+to\s+(\w+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        if (statusChanceAltMatch.Success)
+        {
+            int min = int.Parse(statusChanceAltMatch.Groups[1].Value);
+            int max = int.Parse(statusChanceAltMatch.Groups[2].Value);
+            Debug.Log($"Found status effect chance range (alt format): {min}-{max}% (effect: {statusChanceAltMatch.Groups[3].Value})");
+            return (min, max);
+        }
+        
+        // Pattern 8: "+X-Y% chance to cause [Status]" - another format (e.g., "+2-3% chance to cause Bleeding")
+        var statusCauseMatch = System.Text.RegularExpressions.Regex.Match(description, @"\+(\d+)-(\d+)%\s+chance\s+to\s+cause\s+(\w+)\s+on\s+Hit", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        if (statusCauseMatch.Success)
+        {
+            int min = int.Parse(statusCauseMatch.Groups[1].Value);
+            int max = int.Parse(statusCauseMatch.Groups[2].Value);
+            Debug.Log($"Found status effect chance range (cause format): {min}-{max}% (effect: {statusCauseMatch.Groups[3].Value})");
+            return (min, max);
+        }
+        
         // No range found, return default values
-        Debug.Log("No damage range found");
+        Debug.LogWarning($"No range found in description: '{description}'");
         return (0, 0);
     }
     

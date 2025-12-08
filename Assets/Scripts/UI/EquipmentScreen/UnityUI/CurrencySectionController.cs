@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Dexiled.Data.Items;
 
@@ -123,6 +124,15 @@ namespace Dexiled.UI.EquipmentScreen
             if (item != null)
             {
                 item.UpdateQuantity(newQuantity);
+                Debug.Log($"[CurrencySectionController] Updated {category} {currencyType} to {newQuantity}");
+            }
+            else
+            {
+                // Debug: Log what currencies we have
+                string availableTypes = string.Join(", ", spawnedCurrencyItems
+                    .Where(c => c.GetCurrencyData() != null)
+                    .Select(c => c.GetCurrencyData().currencyType.ToString()));
+                Debug.LogWarning($"[CurrencySectionController] {category} section: Currency {currencyType} not found! Available: {availableTypes}");
             }
         }
 

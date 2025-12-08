@@ -14,6 +14,7 @@ public class EffigyShapeEditor : Editor
     
     private bool showShapeEditor = true;
     private bool showPresets = true;
+    private bool setPickupPointMode = false;
     
     public override void OnInspectorGUI()
     {
@@ -110,6 +111,41 @@ public class EffigyShapeEditor : Editor
         
         EditorGUILayout.Space(5);
         
+        // Ghost pickup point controls
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("Ghost Pickup Point:", GUILayout.Width(140));
+        Vector2Int pickupPoint = effigy.ghostPickupPoint;
+        if (pickupPoint.x < 0 || pickupPoint.y < 0)
+        {
+            EditorGUILayout.LabelField("Auto (center of occupied cells)", EditorStyles.helpBox);
+        }
+        else
+        {
+            EditorGUILayout.LabelField($"Cell ({pickupPoint.x}, {pickupPoint.y})", EditorStyles.helpBox);
+        }
+        if (GUILayout.Button("Clear", GUILayout.Width(60)))
+        {
+            effigy.ghostPickupPoint = new Vector2Int(-1, -1);
+            EditorUtility.SetDirty(effigy);
+        }
+        EditorGUILayout.EndHorizontal();
+        
+        // Toggle for "Set Pickup Point" mode
+        EditorGUILayout.BeginHorizontal();
+        setPickupPointMode = EditorGUILayout.Toggle("Set Pickup Point Mode", setPickupPointMode);
+        if (setPickupPointMode)
+        {
+            EditorGUILayout.HelpBox("Click any cell below to set it as the pickup point", MessageType.Info);
+        }
+        EditorGUILayout.EndHorizontal();
+        
+        if (!setPickupPointMode)
+        {
+            EditorGUILayout.HelpBox("Enable 'Set Pickup Point Mode' above, then click a cell to set it as the ghost pickup point.", MessageType.Info);
+        }
+        
+        EditorGUILayout.Space(5);
+        
         // Visual grid
         if (effigy.shapeMask != null && effigy.shapeMask.Length == effigy.shapeWidth * effigy.shapeHeight)
         {
@@ -121,16 +157,40 @@ public class EffigyShapeEditor : Editor
                 {
                     int index = y * effigy.shapeWidth + x;
                     bool isOccupied = effigy.shapeMask[index];
+                    bool isPickupPoint = effigy.ghostPickupPoint.x == x && effigy.ghostPickupPoint.y == y;
                     
                     // Draw button
                     Color originalColor = GUI.color;
-                    GUI.color = isOccupied ? new Color(0.2f, 0.8f, 0.2f) : new Color(0.3f, 0.3f, 0.3f);
-                    
-                    if (GUILayout.Button("", GUILayout.Width(CELL_SIZE), GUILayout.Height(CELL_SIZE)))
+                    if (isPickupPoint)
                     {
-                        // Toggle cell
-                        effigy.shapeMask[index] = !effigy.shapeMask[index];
-                        UpdateSizeTier(effigy);
+                        // Highlight pickup point with yellow/orange
+                        GUI.color = new Color(1f, 0.8f, 0.2f); // Orange-yellow
+                    }
+                    else
+                    {
+                        GUI.color = isOccupied ? new Color(0.2f, 0.8f, 0.2f) : new Color(0.3f, 0.3f, 0.3f);
+                    }
+                    
+                    Rect buttonRect = GUILayoutUtility.GetRect(CELL_SIZE, CELL_SIZE, GUILayout.Width(CELL_SIZE), GUILayout.Height(CELL_SIZE));
+                    
+                    if (GUI.Button(buttonRect, isPickupPoint ? "★" : ""))
+                    {
+                        if (setPickupPointMode)
+                        {
+                            // In "Set Pickup Point" mode: set the pickup point
+                            effigy.ghostPickupPoint = new Vector2Int(x, y);
+                            EditorUtility.SetDirty(effigy);
+                            UnityEditor.AssetDatabase.SaveAssets();
+                            Debug.Log($"[EffigyShapeEditor] ✓ Set ghost pickup point for '{effigy.name}' to cell ({x}, {y})");
+                            GUI.changed = true;
+                            Repaint();
+                        }
+                        else
+                        {
+                            // Normal mode: toggle cell
+                            effigy.shapeMask[index] = !effigy.shapeMask[index];
+                            UpdateSizeTier(effigy);
+                        }
                     }
                     
                     GUI.color = originalColor;

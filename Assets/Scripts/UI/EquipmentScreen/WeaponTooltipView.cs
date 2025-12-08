@@ -4,6 +4,9 @@ using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 public class WeaponTooltipView : MonoBehaviour
 {
@@ -26,10 +29,43 @@ public class WeaponTooltipView : MonoBehaviour
     [SerializeField] private List<TextMeshProUGUI> suffixLabels = new List<TextMeshProUGUI>();
 
     private bool cached;
+    private WeaponItem currentWeapon;
+    private ItemData currentItemData;
+    private bool lastAltState = false;
 
     private void Awake()
     {
         CacheUIElements();
+    }
+    
+    private void Update()
+    {
+        // Check if ALT key state changed while tooltip is active
+        if (gameObject.activeSelf && (currentWeapon != null || currentItemData != null))
+        {
+            bool currentAltState = IsAltKeyHeld();
+            
+            if (currentAltState != lastAltState)
+            {
+                lastAltState = currentAltState;
+                
+                Debug.Log($"<color=yellow>[WeaponTooltip] ALT state changed: {currentAltState} (showRanges: {currentAltState})</color>");
+                
+                // Refresh tooltip with new ALT state
+                if (currentWeapon != null)
+                {
+                    SetData(currentWeapon);
+                }
+                else if (currentItemData != null)
+                {
+                    SetData(currentItemData);
+                }
+                
+                // Force canvas update
+                Canvas.ForceUpdateCanvases();
+                UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+            }
+        }
     }
 
     public void SetData(WeaponItem weapon)
@@ -37,11 +73,21 @@ public class WeaponTooltipView : MonoBehaviour
         if (weapon == null)
         {
             gameObject.SetActive(false);
+            currentWeapon = null;
+            currentItemData = null;
             return;
         }
 
         EnsureUIReferencesCached();
         gameObject.SetActive(true);
+        
+        // Cache current weapon for ALT-key updates
+        currentWeapon = weapon;
+        currentItemData = null;
+        
+        // Check if ALT key is held (show ranges instead of rolled values)
+        bool showRanges = IsAltKeyHeld();
+        lastAltState = showRanges;
 
         ItemRarity rarity = weapon.GetCalculatedRarity();
         string displayName = weapon.GetDisplayName();
@@ -67,52 +113,105 @@ public class WeaponTooltipView : MonoBehaviour
 
         if (damageLabel != null)
         {
-            float baseMin = weapon.minDamage;
-            float baseMax = weapon.maxDamage;
-            float totalMin = weapon.GetTotalMinDamage();
-            float totalMax = weapon.GetTotalMaxDamage();
-            damageLabel.text = $"Damage: {baseMin:F0}-{baseMax:F0}  (Total {totalMin:F0}-{totalMax:F0})";
+            if (showRanges)
+            {
+                // ALT held: Show breakdown with base and total (separate lines)
+                if (weapon.rolledBaseDamage > 0f)
+                {
+                    int rolledBase = Mathf.RoundToInt(weapon.rolledBaseDamage);
+                    int rolledTotal = Mathf.RoundToInt(weapon.GetTotalMinDamage());
+                    damageLabel.text = $"Dmg: {rolledBase} base\n     ({rolledTotal} total)";
+                }
+                else
+                {
+                    // No rolled value, show range
+                    float baseMin = weapon.minDamage;
+                    float baseMax = weapon.maxDamage;
+                    float totalMin = weapon.GetTotalMinDamage();
+                    float totalMax = weapon.GetTotalMaxDamage();
+                    damageLabel.text = $"Dmg: {baseMin:F0}-{baseMax:F0} base\n     ({totalMin:F0}-{totalMax:F0} total)";
+                }
+            }
+            else
+            {
+                // Normal: Only show total
+                int rolledTotal = Mathf.RoundToInt(weapon.GetTotalMinDamage());
+                damageLabel.text = $"Dmg: {rolledTotal}";
+            }
         }
 
         if (attackSpeedLabel != null)
         {
             float totalSpeed = weapon.GetTotalAttackSpeed();
-            attackSpeedLabel.text = $"Attack Speed: {weapon.attackSpeed:F2} aps  (Total {totalSpeed:F2})";
+            
+            if (showRanges)
+            {
+                // ALT held: Show base and total (separate lines)
+                attackSpeedLabel.text = $"AS: {weapon.attackSpeed:F2} base\n    ({totalSpeed:F2} total)";
+            }
+            else
+            {
+                // Normal: Only show total
+                attackSpeedLabel.text = $"AS: {totalSpeed:F2}";
+            }
         }
 
         if (critChanceLabel != null)
         {
             float totalCrit = weapon.GetTotalCriticalStrikeChance();
-            critChanceLabel.text = $"Critical Chance: {weapon.criticalStrikeChance:F1}%  (Total {totalCrit:F1}%)";
+            
+            if (showRanges)
+            {
+                // ALT held: Show base and total (separate lines)
+                critChanceLabel.text = $"Crit: {weapon.criticalStrikeChance:F1}% base\n      ({totalCrit:F1}% total)";
+            }
+            else
+            {
+                // Normal: Only show total
+                critChanceLabel.text = $"Crit: {totalCrit:F1}%";
+            }
         }
 
         if (weaponTypeLabel != null)
         {
-            weaponTypeLabel.text = $"{weapon.handedness} {weapon.weaponType}";
+            // Format handedness and weapon type as compact notation
+            string handedness = weapon.handedness == WeaponHandedness.OneHanded ? "1H" : "2H";
+            string weaponType = FormatWeaponType(weapon.weaponType);
+            weaponTypeLabel.text = $"{handedness}-{weaponType}";
         }
 
         if (requirementsLabel != null)
         {
-            string requirements = TooltipFormattingUtils.FormatRequirements(
+            string requirements = TooltipFormattingUtils.FormatRequirementsCompact(
                 weapon.requiredLevel,
                 weapon.requiredStrength,
                 weapon.requiredDexterity,
                 weapon.requiredIntelligence);
 
-            requirementsLabel.text = $"Requirements:\n{requirements}";
+            requirementsLabel.text = requirements;
             requirementsLabel.gameObject.SetActive(true);
         }
 
         if (implicitLabel != null)
         {
-            string text = BuildAffixBlock(weapon.implicitModifiers);
+            string text = BuildAffixBlock(weapon.implicitModifiers, showRanges, isImplicit: true);
             bool hasImplicit = !string.IsNullOrEmpty(text);
-            implicitLabel.text = hasImplicit ? text : "None";
-            implicitLabel.gameObject.SetActive(true);
+            
+            if (hasImplicit)
+            {
+                implicitLabel.text = text;
+                implicitLabel.color = Color.white; // Base color, text has inline color tags
+                implicitLabel.gameObject.SetActive(true);
+            }
+            else
+            {
+                // Hide label instead of showing "None"
+                implicitLabel.gameObject.SetActive(false);
+            }
         }
 
-        SetAffixTexts(prefixLabels, weapon.prefixes);
-        SetAffixTexts(suffixLabels, weapon.suffixes);
+        SetAffixTexts(prefixLabels, weapon.prefixes, showRanges);
+        SetAffixTexts(suffixLabels, weapon.suffixes, showRanges);
     }
 
     public void SetData(ItemData itemData)
@@ -120,6 +219,8 @@ public class WeaponTooltipView : MonoBehaviour
         if (itemData == null)
         {
             gameObject.SetActive(false);
+            currentWeapon = null;
+            currentItemData = null;
             return;
         }
 
@@ -140,11 +241,21 @@ public class WeaponTooltipView : MonoBehaviour
             {
                 gameObject.SetActive(false);
             }
+            currentWeapon = null;
+            currentItemData = null;
             return;
         }
 
         EnsureUIReferencesCached();
         gameObject.SetActive(true);
+        
+        // Cache current item data for ALT-key updates
+        currentItemData = itemData;
+        currentWeapon = null;
+        
+        // Check if ALT key is held
+        bool showRanges = IsAltKeyHeld();
+        lastAltState = showRanges;
 
         ItemRarity rarity = itemData.rarity;
         string displayName = string.IsNullOrWhiteSpace(itemData.itemName) ? "Unnamed Weapon" : itemData.itemName;
@@ -170,13 +281,43 @@ public class WeaponTooltipView : MonoBehaviour
 
         if (damageLabel != null)
         {
+            // Check if source item has rolled damage
+            bool hasRolledDamage = false;
+            float rolledBaseDamage = 0f;
+            
+            if (itemData.sourceItem is WeaponItem weaponSource)
+            {
+                hasRolledDamage = weaponSource.rolledBaseDamage > 0f;
+                rolledBaseDamage = weaponSource.rolledBaseDamage;
+            }
+            
             float baseMin = itemData.baseDamageMin;
             float baseMax = itemData.baseDamageMax;
             float totalMin = itemData.GetTotalMinDamage();
             float totalMax = itemData.GetTotalMaxDamage();
+            
             if (baseMin > 0f || baseMax > 0f || totalMin > 0f || totalMax > 0f)
             {
-                damageLabel.text = $"Damage: {baseMin:F0}-{baseMax:F0}  (Total {totalMin:F0}-{totalMax:F0})";
+                if (showRanges)
+                {
+                    // ALT held: Show breakdown (separate lines)
+                    if (hasRolledDamage)
+                    {
+                        int rolledBase = Mathf.RoundToInt(rolledBaseDamage);
+                        int rolledTotal = Mathf.RoundToInt(totalMin);
+                        damageLabel.text = $"Dmg: {rolledBase} base\n     ({rolledTotal} total)";
+                    }
+                    else
+                    {
+                        damageLabel.text = $"Dmg: {baseMin:F0}-{baseMax:F0} base\n     ({totalMin:F0}-{totalMax:F0} total)";
+                    }
+                }
+                else
+                {
+                    // Normal: Only show total
+                    int rolledTotal = Mathf.RoundToInt(totalMin);
+                    damageLabel.text = $"Dmg: {rolledTotal}";
+                }
                 damageLabel.gameObject.SetActive(true);
             }
             else
@@ -189,7 +330,16 @@ public class WeaponTooltipView : MonoBehaviour
         {
             if (itemData.attackSpeed > 0f)
             {
-                attackSpeedLabel.text = $"Attack Speed: {itemData.attackSpeed:F2} aps";
+                if (showRanges)
+                {
+                    // ALT held: Show base (separate line)
+                    attackSpeedLabel.text = $"AS: {itemData.attackSpeed:F2} base";
+                }
+                else
+                {
+                    // Normal: Only show value
+                    attackSpeedLabel.text = $"AS: {itemData.attackSpeed:F2}";
+                }
                 attackSpeedLabel.gameObject.SetActive(true);
             }
             else
@@ -202,7 +352,16 @@ public class WeaponTooltipView : MonoBehaviour
         {
             if (itemData.criticalStrikeChance > 0f)
             {
-                critChanceLabel.text = $"Critical Chance: {itemData.criticalStrikeChance:F1}%";
+                if (showRanges)
+                {
+                    // ALT held: Show base (separate line)
+                    critChanceLabel.text = $"Crit: {itemData.criticalStrikeChance:F1}% base";
+                }
+                else
+                {
+                    // Normal: Only show value
+                    critChanceLabel.text = $"Crit: {itemData.criticalStrikeChance:F1}%";
+                }
                 critChanceLabel.gameObject.SetActive(true);
             }
             else
@@ -213,21 +372,22 @@ public class WeaponTooltipView : MonoBehaviour
 
         if (weaponTypeLabel != null)
         {
-            weaponTypeLabel.text = itemData.equipmentType.ToString();
+            // Format as compact notation (e.g., "1H-Axe", "2H-Sword")
+            string type = itemData.equipmentType.ToString();
+            weaponTypeLabel.text = type;
             weaponTypeLabel.gameObject.SetActive(true);
         }
 
         if (requirementsLabel != null)
         {
-            string requirements = TooltipFormattingUtils.FormatRequirements(
+            string requirements = TooltipFormattingUtils.FormatRequirementsCompact(
                 itemData.requiredLevel,
                 itemData.requiredStrength,
                 itemData.requiredDexterity,
                 itemData.requiredIntelligence);
 
-            bool hasRequirements = !string.IsNullOrWhiteSpace(requirements);
-            requirementsLabel.text = hasRequirements ? $"Requirements:\n{requirements}" : string.Empty;
-            requirementsLabel.gameObject.SetActive(hasRequirements);
+            requirementsLabel.text = requirements;
+            requirementsLabel.gameObject.SetActive(true);
         }
 
         ApplyAffixStrings(implicitLabel, itemData.implicitModifiers);
@@ -235,7 +395,7 @@ public class WeaponTooltipView : MonoBehaviour
         SetAffixTexts(suffixLabels, itemData.suffixModifiers);
     }
 
-    private void SetAffixTexts(IEnumerable<TextMeshProUGUI> targets, IList<Affix> affixes)
+    private void SetAffixTexts(IEnumerable<TextMeshProUGUI> targets, IList<Affix> affixes, bool showRanges = false)
     {
         if (targets == null)
             return;
@@ -248,8 +408,9 @@ public class WeaponTooltipView : MonoBehaviour
 
             if (affixes != null && index < affixes.Count)
             {
-                string text = TooltipFormattingUtils.FormatAffix(affixes[index]);
+                string text = TooltipFormattingUtils.FormatAffix(affixes[index], showRanges);
                 label.text = string.IsNullOrEmpty(text) ? "—" : text;
+                label.color = Color.white; // Base color, text has inline color tags
                 label.gameObject.SetActive(true);
             }
             else
@@ -302,7 +463,7 @@ public class WeaponTooltipView : MonoBehaviour
         target.gameObject.SetActive(true);
     }
 
-    private string BuildAffixBlock(List<Affix> affixes)
+    private string BuildAffixBlock(List<Affix> affixes, bool showRanges = false, bool isImplicit = false)
     {
         if (affixes == null || affixes.Count == 0)
             return string.Empty;
@@ -310,7 +471,10 @@ public class WeaponTooltipView : MonoBehaviour
         var builder = new StringBuilder();
         for (int i = 0; i < affixes.Count; i++)
         {
-            string formatted = TooltipFormattingUtils.FormatAffix(affixes[i]);
+            string formatted = isImplicit 
+                ? TooltipFormattingUtils.FormatImplicit(affixes[i], showRanges)
+                : TooltipFormattingUtils.FormatAffix(affixes[i], showRanges);
+                
             if (string.IsNullOrEmpty(formatted))
                 continue;
 
@@ -413,6 +577,42 @@ public class WeaponTooltipView : MonoBehaviour
         }
 
         return list;
+    }
+    
+    /// <summary>
+    /// Check if ALT key is held (supports both old and new Input System)
+    /// </summary>
+    private bool IsAltKeyHeld()
+    {
+#if ENABLE_INPUT_SYSTEM
+        var keyboard = Keyboard.current;
+        if (keyboard != null)
+        {
+            bool isPressed = keyboard.leftAltKey.isPressed || keyboard.rightAltKey.isPressed;
+            // Debug: Log every frame when tooltip is active (remove this later)
+            if (gameObject.activeSelf && (currentWeapon != null || currentItemData != null))
+            {
+                // Only log when state changes to avoid spam
+                if (isPressed != lastAltState)
+                {
+                    Debug.Log($"<color=cyan>[WeaponTooltip] Input System ALT detected: {isPressed}</color>");
+                }
+            }
+            return isPressed;
+        }
+        Debug.LogWarning("[WeaponTooltip] Keyboard.current is null!");
+        return false;
+#else
+        return UnityEngine.Input.GetKey(KeyCode.LeftAlt) || UnityEngine.Input.GetKey(KeyCode.RightAlt);
+#endif
+    }
+    
+    /// <summary>
+    /// Format weapon type to compact notation (e.g., Axe, Sword, Bow)
+    /// </summary>
+    private string FormatWeaponType(WeaponItemType weaponType)
+    {
+        return weaponType.ToString(); // Already short: Axe, Sword, Bow, etc.
     }
 }
 

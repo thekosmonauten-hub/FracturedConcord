@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using System.Collections.Generic;
 
 /// <summary>
@@ -42,6 +43,8 @@ public class EffigyGridUI : MonoBehaviour
     private EffigyStorageSlotUI sourceStorageSlot = null; // Track source to restore or remove
     private EffigyStorageUI sourceStorage = null; // Track storage to remove effigy from
     private Vector2Int originalGridPosition = new Vector2Int(-1, -1); // Track original position for repositioning
+    private Vector2 dragCentroidOffset = Vector2.zero; // Store the centroid offset in pixel space for proper centering
+    private Vector2Int pickupPoint = new Vector2Int(-1, -1); // Store the pickup point cell coordinates for placement calculation
     
     void Awake()
     {
@@ -109,7 +112,7 @@ public class EffigyGridUI : MonoBehaviour
         Debug.Log($"[EffigyGridUI] Generated {gridCells.Count} cells ({GRID_WIDTH}x{GRID_HEIGHT})");
     }
     
-    public void StartDragFromStorage(Effigy effigy, EffigyStorageSlotUI sourceSlot = null, EffigyStorageUI storage = null)
+    public void StartDragFromStorage(Effigy effigy, EffigyStorageSlotUI sourceSlot = null, EffigyStorageUI storage = null, Vector2Int clickedCell = default)
     {
         draggedEffigy = effigy;
         isDraggingFromStorage = true;
@@ -117,16 +120,17 @@ public class EffigyGridUI : MonoBehaviour
         sourceStorageSlot = sourceSlot;
         sourceStorage = storage;
         
-        CreateDragVisual(effigy);
+        // Use clicked cell as pickup point if provided and valid, otherwise use effigy's ghostPickupPoint or centroid
+        CreateDragVisual(effigy, clickedCell);
         
-        Debug.Log($"[EffigyGridUI] Started dragging {effigy.effigyName} from storage");
+        Debug.Log($"[EffigyGridUI] Started dragging {effigy.effigyName} from storage, clicked cell: ({clickedCell.x}, {clickedCell.y})");
     }
     
     /// <summary>
     /// Create a visual representation of the effigy that follows the cursor
-    /// Centered on the effigy's actual occupied cells
+    /// Uses the clicked cell position as the pickup point if provided, otherwise uses centroid or ghostPickupPoint
     /// </summary>
-    void CreateDragVisual(Effigy effigy)
+    void CreateDragVisual(Effigy effigy, Vector2Int clickedCell = default)
     {
         if (effigy == null || effigy.shapeMask == null || effigy.shapeMask.Length == 0) return;
         
@@ -149,10 +153,8 @@ public class EffigyGridUI : MonoBehaviour
         int width = effigy.shapeWidth;
         int height = effigy.shapeHeight;
         
-        // Calculate center of actual occupied cells (not bounding box center)
-        Vector2 centerOffset = Vector2.zero;
+        // Count occupied cells first (needed for debug logging)
         int occupiedCount = 0;
-        
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
@@ -160,32 +162,168 @@ public class EffigyGridUI : MonoBehaviour
                 int index = y * width + x;
                 if (index < effigy.shapeMask.Length && effigy.shapeMask[index])
                 {
-                    centerOffset += new Vector2(x, y);
                     occupiedCount++;
                 }
             }
         }
         
-        if (occupiedCount > 0)
+        // Determine the pickup point (centroid) to use for positioning the ghost
+        // Priority: 1) effigy.ghostPickupPoint (if set and occupied - highest priority for designer control),
+        // 2) clickedCell (if valid and occupied), 3) first occupied cell in reading order, 4) calculated centroid
+        Vector2 centroid = Vector2.zero;
+        
+        // First check if effigy has an explicit ghostPickupPoint set (designer's explicit choice takes priority)
+        Vector2Int pickupPoint = effigy.ghostPickupPoint;
+        bool usePickupPoint = pickupPoint.x >= 0 && pickupPoint.y >= 0 &&
+                              pickupPoint.x < width && pickupPoint.y < height &&
+                              effigy.IsCellOccupied(pickupPoint.x, pickupPoint.y);
+        
+        if (usePickupPoint)
         {
-            centerOffset /= occupiedCount;
+            // Use the explicitly set pickup point as the centroid (designer's choice)
+            centroid = new Vector2(pickupPoint.x, pickupPoint.y);
+            this.pickupPoint = pickupPoint; // Store for placement calculation
+            Debug.Log($"[EffigyGridUI] Using explicit ghost pickup point: ({pickupPoint.x}, {pickupPoint.y})");
+        }
+        else
+        {
+            // Check if a clicked cell was provided and is valid
+            bool useClickedCell = clickedCell.x >= 0 && clickedCell.y >= 0 &&
+                                  clickedCell.x < width && clickedCell.y < height &&
+                                  effigy.IsCellOccupied(clickedCell.x, clickedCell.y);
+            
+            if (useClickedCell)
+            {
+                // Use the clicked cell as the pickup point
+                centroid = new Vector2(clickedCell.x, clickedCell.y);
+                this.pickupPoint = clickedCell; // Store for placement calculation
+                Debug.Log($"[EffigyGridUI] Using clicked cell as pickup point: ({clickedCell.x}, {clickedCell.y})");
+            }
+            else
+            {
+                // Get all occupied cells and find the first one in reading order (top-to-bottom, left-to-right)
+                // This ensures we always use an occupied cell, even for shapes like Cross where (0,0) is empty
+                List<Vector2Int> occupiedCells = effigy.GetOccupiedCells();
+                
+                if (occupiedCells.Count > 0)
+                {
+                    // Sort by Y first (top to bottom), then by X (left to right)
+                    occupiedCells.Sort((a, b) => 
+                    {
+                        if (a.y != b.y) return a.y.CompareTo(b.y);
+                        return a.x.CompareTo(b.x);
+                    });
+                    
+                    // Use the first occupied cell as the pickup point
+                    Vector2Int firstOccupied = occupiedCells[0];
+                    centroid = new Vector2(firstOccupied.x, firstOccupied.y);
+                    this.pickupPoint = firstOccupied; // Store for placement calculation
+                    Debug.Log($"[EffigyGridUI] Using first occupied cell in reading order as pickup point: ({firstOccupied.x}, {firstOccupied.y})");
+                }
+                else
+                {
+                    // Fallback: Calculate centroid: average of all occupied cell positions
+                    // Formula: centroid = (1/N) * sum of all tile positions
+                    List<Vector2> occupiedPositions = new List<Vector2>();
+                    
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            int index = y * width + x;
+                            if (index < effigy.shapeMask.Length && effigy.shapeMask[index])
+                            {
+                                occupiedPositions.Add(new Vector2(x, y));
+                            }
+                        }
+                    }
+                    
+                    if (occupiedPositions.Count > 0)
+                    {
+                        // Sum all positions
+                        foreach (var pos in occupiedPositions)
+                        {
+                            centroid += pos;
+                        }
+                        // Divide by count to get average (centroid)
+                        centroid /= occupiedPositions.Count;
+                    }
+                    else
+                    {
+                    // Fallback to bounding box center if no occupied cells found
+                    centroid = new Vector2((width - 1) / 2f, (height - 1) / 2f);
+                    this.pickupPoint = new Vector2Int(Mathf.RoundToInt(centroid.x), Mathf.RoundToInt(centroid.y)); // Store for placement calculation
+                }
+                
+                Debug.Log($"[EffigyGridUI] Calculated centroid from {occupiedPositions.Count} occupied cells: ({centroid.x:F2}, {centroid.y:F2})");
+            }
+        }
+        
+        // If pickup point wasn't set (shouldn't happen, but safety), use centroid rounded to nearest cell
+        if (pickupPoint.x < 0 || pickupPoint.y < 0)
+        {
+            pickupPoint = new Vector2Int(Mathf.RoundToInt(centroid.x), Mathf.RoundToInt(centroid.y));
+        }
         }
         
         // Set size to fit all cells
-        dragRect.sizeDelta = new Vector2(width * cellSize + (width - 1) * cellSpacing, 
-                                          height * cellSize + (height - 1) * cellSpacing);
+        float totalWidth = width * cellSize + (width - 1) * cellSpacing;
+        float totalHeight = height * cellSize + (height - 1) * cellSpacing;
         
-        // Pivot at center of occupied cells
-        dragRect.pivot = new Vector2(centerOffset.x / width, 
-                                      1f - (centerOffset.y / height));
+        // Keep top-left anchor to match cell positioning system
+        dragRect.anchorMin = new Vector2(0, 1);
+        dragRect.anchorMax = new Vector2(0, 1);
+        dragRect.pivot = new Vector2(0.5f, 0.5f);  // Center pivot for easier offset calculations
+        dragRect.sizeDelta = new Vector2(totalWidth, totalHeight);
         
-        // Position at mouse immediately
-        dragRect.position = Input.mousePosition;
+        // Convert centroid from tile-space to pixel-space offset
+        // With top-left anchor (0,1), cells are positioned as:
+        //   cellTopLeftX = x * (cellSize + cellSpacing)
+        //   cellTopLeftY = -y * (cellSize + cellSpacing)  (negative because Y goes down from top)
+        //   cellCenterX = cellTopLeftX + cellSize/2
+        //   cellCenterY = cellTopLeftY - cellSize/2
+        // The centroid cell center in pixel space (relative to dragRect top-left):
+        float centroidCellCenterX = centroid.x * (cellSize + cellSpacing) + cellSize * 0.5f;
+        float centroidCellCenterY = -centroid.y * (cellSize + cellSpacing) - cellSize * 0.5f;
+        
+        // Calculate offset from dragRect center (pivot at 0.5, 0.5) to centroid cell center
+        // dragRect center in local space (relative to top-left anchor) is at (totalWidth/2, -totalHeight/2)
+        // Note: Y is negative because with top-left anchor, positive Y goes down
+        float rectCenterX = totalWidth * 0.5f;
+        float rectCenterY = -totalHeight * 0.5f;
+        
+        dragCentroidOffset = new Vector2(
+            centroidCellCenterX - rectCenterX,      // X: centroid X - rect center X
+            centroidCellCenterY - rectCenterY      // Y: centroid Y - rect center Y
+        );
+        
+        // Get canvas scale for proper screen space conversion
+        Canvas canvas = dragCanvas != null ? dragCanvas : dragRect.GetComponentInParent<Canvas>();
+        float canvasScale = canvas != null ? canvas.scaleFactor : 1f;
+        
+        // Position at mouse, offset by centroid to center the shape under cursor
+        // Formula: ghost.position = mouseWorldPosition - (centroidOffset * canvasScale)
+        Vector3 mousePos = GetMousePosition();
+        Vector3 offset = new Vector3(dragCentroidOffset.x * canvasScale, dragCentroidOffset.y * canvasScale, 0);
+        dragRect.position = mousePos - offset;
+        
+        Debug.Log($"[EffigyGridUI] Ghost positioning - Centroid: ({centroid.x:F2}, {centroid.y:F2}), " +
+                  $"CellCenter: ({centroidCellCenterX:F2}, {centroidCellCenterY:F2}), " +
+                  $"RectCenter: ({rectCenterX:F2}, {rectCenterY:F2}), " +
+                  $"Offset: ({dragCentroidOffset.x:F2}, {dragCentroidOffset.y:F2}), " +
+                  $"MousePos: ({mousePos.x:F0}, {mousePos.y:F0}), " +
+                  $"FinalPos: ({dragRect.position.x:F0}, {dragRect.position.y:F0})");
+        
+        // Force update to ensure positioning is applied
+        Canvas.ForceUpdateCanvases();
         
         // Make slightly transparent
         CanvasGroup canvasGroup = dragVisual.AddComponent<CanvasGroup>();
-        canvasGroup.alpha = 0.8f;
+        canvasGroup.alpha = 0.9f; // 70% opacity for ghost effect
         canvasGroup.blocksRaycasts = false; // Allow mouse to pass through to grid
+        
+        // Ghost transparency value (70% opacity)
+        float ghostAlpha = 0.30f;
         
         Sprite[] spriteSet = EffigySpriteSet.GetSprites(effigy.effigyName);
         int spriteIndex = 0;
@@ -220,38 +358,67 @@ public class EffigyGridUI : MonoBehaviour
                 if (selectedSprite != null)
                 {
                     cellImage.sprite = selectedSprite;
-                    cellImage.color = Color.white;
+                    // Apply transparency to white color
+                    cellImage.color = new Color(1f, 1f, 1f, ghostAlpha);
                 }
                 else
                 {
                     float rarityBrightness = GetRarityBrightness(effigy.rarity);
-                    cellImage.color = elementColor * rarityBrightness;
+                    // Apply transparency to element color
+                    Color colorWithAlpha = elementColor * rarityBrightness;
+                    colorWithAlpha.a = ghostAlpha;
+                    cellImage.color = colorWithAlpha;
                 }
                 
                 Outline outline = cellObj.AddComponent<Outline>();
-                outline.effectColor = borderColor;
+                // Apply transparency to outline color as well
+                Color outlineColorWithAlpha = borderColor;
+                outlineColorWithAlpha.a = ghostAlpha;
+                outline.effectColor = outlineColorWithAlpha;
                 outline.effectDistance = new Vector2(2f, -2f);
                 
                 spriteIndex++;
             }
         }
         
-        Debug.Log($"[EffigyGridUI] Created drag visual for {effigy.effigyName} - Center: {centerOffset}, Pivot: {dragRect.pivot}, Occupied cells: {occupiedCount}, Size: {dragRect.sizeDelta}");
+        Debug.Log($"[EffigyGridUI] Created drag visual for {effigy.effigyName} - Centroid: ({centroid.x:F2}, {centroid.y:F2}), Offset: ({dragCentroidOffset.x:F2}, {dragCentroidOffset.y:F2}), Pivot: {dragRect.pivot}, Occupied cells: {occupiedCount}, Size: {dragRect.sizeDelta}");
+    }
+    
+    /// <summary>
+    /// Get mouse position using the new Input System
+    /// </summary>
+    Vector3 GetMousePosition()
+    {
+        if (Mouse.current != null)
+        {
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            return new Vector3(mousePos.x, mousePos.y, 0);
+        }
+        // Fallback to screen center if mouse is not available
+        return new Vector3(Screen.width / 2f, Screen.height / 2f, 0);
     }
     
     void LateUpdate()
     {
         // Update drag visual position to follow cursor (LateUpdate ensures it's last)
+        // Apply centroid offset to keep the shape centered under the mouse
         if (dragVisual != null && draggedEffigy != null)
         {
             RectTransform dragRect = dragVisual.GetComponent<RectTransform>();
             if (dragRect != null)
             {
-                dragRect.position = Input.mousePosition;
+                // Get canvas scale for proper screen space conversion
+                Canvas canvas = dragCanvas != null ? dragCanvas : dragRect.GetComponentInParent<Canvas>();
+                float canvasScale = canvas != null ? canvas.scaleFactor : 1f;
+                
+                // Position at mouse, offset by centroid to center the shape under cursor
+                // Formula: ghost.position = mouseWorldPosition - (centroidOffset * canvasScale)
+                Vector3 mousePos = GetMousePosition();
+                dragRect.position = mousePos - new Vector3(dragCentroidOffset.x * canvasScale, dragCentroidOffset.y * canvasScale, 0);
             }
             
             // Detect mouse release outside grid (for drag-out unequip)
-            if (!isDraggingFromStorage && Input.GetMouseButtonUp(0))
+            if (!isDraggingFromStorage && Mouse.current != null && Mouse.current.leftButton.wasReleasedThisFrame)
             {
                 bool isOutside = IsMouseOutsideGrid();
                 Debug.Log($"[EffigyGridUI] Mouse released (left-click), dragging: {draggedEffigy.effigyName}, outside grid: {isOutside}");
@@ -269,7 +436,9 @@ public class EffigyGridUI : MonoBehaviour
             }
             
             // Cancel drag with ESC or right-click (only for storage drags)
-            if (isDraggingFromStorage && (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1)))
+            bool escapePressed = Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame;
+            bool rightClickPressed = Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame;
+            if (isDraggingFromStorage && (escapePressed || rightClickPressed))
             {
                 Debug.Log("[EffigyGridUI] Drag cancelled");
                 ClearHighlight();
@@ -301,7 +470,7 @@ public class EffigyGridUI : MonoBehaviour
         Vector2 min = corners[0];
         Vector2 max = corners[2];
         
-        Vector2 mousePos = Input.mousePosition;
+        Vector2 mousePos = GetMousePosition();
         
         // Check if mouse is outside grid bounds
         return mousePos.x < min.x || mousePos.x > max.x || 
@@ -352,9 +521,9 @@ public class EffigyGridUI : MonoBehaviour
                 draggedEffigy = effigy;
                 isDraggingFromStorage = false;
                 originalGridPosition = new Vector2Int(x, y); // Remember original position
-                CreateDragVisual(effigy);
+                CreateDragVisual(effigy); // This will calculate and store the pickup point
                 RemoveEffigy(effigy); // Temporarily remove so we can drag it
-                Debug.Log($"[EffigyGridUI] Started dragging {effigy.effigyName} from grid at ({x}, {y})");
+                Debug.Log($"[EffigyGridUI] Started dragging {effigy.effigyName} from grid at ({x}, {y}), pickup point: ({pickupPoint.x}, {pickupPoint.y})");
             }
         }
         else
@@ -368,14 +537,19 @@ public class EffigyGridUI : MonoBehaviour
         if (draggedEffigy != null)
         {
             currentHoveredCell = new Vector2Int(x, y);
-            PreviewPlacement(draggedEffigy, x, y);
+            // Calculate placement position accounting for pickup point offset
+            // If pickup point is (px, py) and we want it at grid cell (x, y),
+            // then effigy origin should be at (x - px, y - py)
+            int placementX = x - pickupPoint.x;
+            int placementY = y - pickupPoint.y;
+            PreviewPlacement(draggedEffigy, placementX, placementY);
             return;
         }
 
         Effigy effigy = placedEffigies != null ? placedEffigies[y, x] : null;
         if (effigy != null && ItemTooltipManager.Instance != null)
         {
-            ItemTooltipManager.Instance.ShowEffigyTooltip(effigy, Input.mousePosition);
+            ItemTooltipManager.Instance.ShowEffigyTooltip(effigy, GetMousePosition());
         }
         else if (ItemTooltipManager.Instance != null)
         {
@@ -401,10 +575,15 @@ public class EffigyGridUI : MonoBehaviour
         // OnCellMouseUp only fires when released ON a cell
         // Mouse release outside grid is handled in LateUpdate()
         
-        // Try to place at hovered cell
+        // Try to place at hovered cell, accounting for pickup point offset
         if (currentHoveredCell.x >= 0 && currentHoveredCell.y >= 0)
         {
-            bool placed = TryPlaceEffigy(draggedEffigy, currentHoveredCell.x, currentHoveredCell.y);
+            // Calculate placement position accounting for pickup point offset
+            // If pickup point is (px, py) and we want it at grid cell (x, y),
+            // then effigy origin should be at (x - px, y - py)
+            int placementX = currentHoveredCell.x - pickupPoint.x;
+            int placementY = currentHoveredCell.y - pickupPoint.y;
+            bool placed = TryPlaceEffigy(draggedEffigy, placementX, placementY);
             
             if (placed)
             {
@@ -516,6 +695,17 @@ public class EffigyGridUI : MonoBehaviour
         }
         
         CreateEffigyVisual(effigy, gridX, gridY);
+        
+        // Sync equipped effigies to Character
+        SyncEquippedEffigiesToCharacter();
+        
+        // Notify EquipmentManager to recalculate and apply stats
+        if (EquipmentManager.Instance != null)
+        {
+            EquipmentManager.Instance.CalculateTotalEquipmentStats();
+            EquipmentManager.Instance.ApplyEquipmentStats();
+        }
+        
         return true;
     }
     
@@ -598,7 +788,57 @@ public class EffigyGridUI : MonoBehaviour
         // Add back to storage
         effigyStorage.AddEffigy(effigy);
         
+        // Sync equipped effigies to Character (effigy is already removed from grid by RemoveEffigy)
+        SyncEquippedEffigiesToCharacter();
+        
+        // Notify EquipmentManager to recalculate and apply stats
+        if (EquipmentManager.Instance != null)
+        {
+            EquipmentManager.Instance.CalculateTotalEquipmentStats();
+            EquipmentManager.Instance.ApplyEquipmentStats();
+        }
+        
         Debug.Log($"[EffigyGridUI] ✅ Successfully unequipped {effigy.effigyName} - returned to storage");
+    }
+    
+    /// <summary>
+    /// Sync equipped effigies from grid to Character.equippedEffigies
+    /// </summary>
+    private void SyncEquippedEffigiesToCharacter()
+    {
+        CharacterManager characterManager = CharacterManager.Instance;
+        if (characterManager == null || !characterManager.HasCharacter())
+        {
+            return;
+        }
+        
+        Character character = characterManager.GetCurrentCharacter();
+        if (character == null)
+        {
+            return;
+        }
+        
+        if (character.equippedEffigies == null)
+        {
+            character.equippedEffigies = new List<Effigy>();
+        }
+        
+        // Get unique placed effigies
+        HashSet<Effigy> uniqueEffigies = new HashSet<Effigy>();
+        for (int y = 0; y < GRID_HEIGHT; y++)
+        {
+            for (int x = 0; x < GRID_WIDTH; x++)
+            {
+                if (placedEffigies[y, x] != null)
+                    uniqueEffigies.Add(placedEffigies[y, x]);
+            }
+        }
+        
+        // Update Character.equippedEffigies
+        character.equippedEffigies.Clear();
+        character.equippedEffigies.AddRange(uniqueEffigies);
+        
+        Debug.Log($"[EffigyGridUI] Synced {character.equippedEffigies.Count} equipped effigies to Character");
     }
     
     void CreateEffigyVisual(Effigy effigy, int gridX, int gridY)

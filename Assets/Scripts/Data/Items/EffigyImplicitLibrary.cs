@@ -57,13 +57,47 @@ public static class EffigyImplicitLibrary
 
     private static Affix CreateCrossImplicit(Effigy effigy)
     {
-        float value = GetValueBySize(effigy, 3f, 5f, 7f);
+        // Use a range for rolling (1-2 for tiny, 3-5 for medium, 6-8 for large)
+        float minValue, maxValue;
+        switch (effigy.sizeTier)
+        {
+            case EffigySizeTier.Tiny:
+                minValue = 1f;
+                maxValue = 2f;
+                break;
+            case EffigySizeTier.Medium:
+                minValue = 3f;
+                maxValue = 5f;
+                break;
+            case EffigySizeTier.Large:
+                minValue = 6f;
+                maxValue = 8f;
+                break;
+            default:
+                minValue = 3f;
+                maxValue = 5f;
+                break;
+        }
+        
         var affix = CreateAffixShell("Sanctified Resonance");
-        AddFlatStat(affix, "Strength", value, $"+{value:0} Strength");
-        AddFlatStat(affix, "Dexterity", value, $"+{value:0} Dexterity");
-        AddFlatStat(affix, "Intelligence", value, $"+{value:0} Intelligence");
+        // Use "AllAttributes" stat name (single modifier) instead of three separate attribute modifiers
+        // This works the same way as "All Resistances" - rolls once and applies to all three attributes
+        AddFlatStatWithRange(affix, "AllAttributes", minValue, maxValue, $"+{minValue:0}-{maxValue:0} to All Attributes");
         FinaliseDescription(affix);
         return affix;
+    }
+    
+    private static void AddFlatStatWithRange(Affix affix, string statName, float minValue, float maxValue, string description)
+    {
+        var modifier = new AffixModifier(statName, minValue, maxValue, ModifierType.Flat, ModifierScope.Global)
+        {
+            description = description,
+            minValue = minValue,
+            maxValue = maxValue,
+            originalMinValue = minValue,
+            originalMaxValue = maxValue
+        };
+        affix.modifiers.Add(modifier);
     }
 
     private static Affix CreateLifeImplicit(Effigy effigy)
@@ -189,7 +223,54 @@ public static class EffigyImplicitLibrary
             return;
         }
 
-        affix.description = string.Join("\n", affix.modifiers.Select(m => m.description));
+        // Check if this uses "AllAttributes" stat name directly (new approach)
+        var allAttributesMod = affix.modifiers.FirstOrDefault(m => m.statName == "AllAttributes");
+        if (allAttributesMod != null)
+        {
+            // Use the modifier's description if available, otherwise create from range
+            if (!string.IsNullOrEmpty(allAttributesMod.description))
+            {
+                affix.description = allAttributesMod.description;
+            }
+            else
+            {
+                affix.description = $"+{allAttributesMod.minValue:0}-{allAttributesMod.maxValue:0} to All Attributes";
+            }
+            return;
+        }
+
+        // Check if this is an "All Attributes" affix (old approach with Strength, Dexterity, Intelligence)
+        bool hasStrength = affix.modifiers.Any(m => m.statName == "Strength");
+        bool hasDexterity = affix.modifiers.Any(m => m.statName == "Dexterity");
+        bool hasIntelligence = affix.modifiers.Any(m => m.statName == "Intelligence");
+        
+        if (hasStrength && hasDexterity && hasIntelligence)
+        {
+            // Use the first modifier's description (which should be the "All Attributes" one)
+            var firstMod = affix.modifiers.FirstOrDefault(m => !string.IsNullOrEmpty(m.description));
+            if (firstMod != null)
+            {
+                affix.description = firstMod.description;
+            }
+            else
+            {
+                // Fallback: create description from range
+                var strMod = affix.modifiers.FirstOrDefault(m => m.statName == "Strength");
+                if (strMod != null)
+                {
+                    affix.description = $"+{strMod.minValue:0}-{strMod.maxValue:0} to All Attributes";
+                }
+                else
+                {
+                    affix.description = string.Join("\n", affix.modifiers.Select(m => m.description));
+                }
+            }
+        }
+        else
+        {
+            // Normal affix - join all descriptions
+            affix.description = string.Join("\n", affix.modifiers.Select(m => m.description).Where(d => !string.IsNullOrEmpty(d)));
+        }
     }
 
     private static float GetValueBySize(Effigy effigy, float tiny, float medium, float large)

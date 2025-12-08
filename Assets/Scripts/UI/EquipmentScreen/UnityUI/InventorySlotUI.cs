@@ -7,9 +7,10 @@ using System;
 /// <summary>
 /// Unity UI version of inventory slot
 /// Handles individual slot behavior, visuals, and events
+/// Supports both click-to-equip and drag-and-drop
 /// </summary>
 public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, 
-    IPointerEnterHandler, IPointerExitHandler
+    IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [Header("References")]
     public Image background;
@@ -20,16 +21,22 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler,
     public Color normalColor = new Color(0.12f, 0.14f, 0.16f);
     public Color hoverColor = new Color(0.2f, 0.22f, 0.24f);
     public Color occupiedColor = new Color(0.3f, 0.4f, 0.5f);
+    public Color selectedColor = new Color(0.9f, 0.7f, 0.2f); // Gold/yellow for selection
     
     private bool hasSprite = false; // Track if background has a sprite
+    private bool isSelected = false;
     
     public event Action OnSlotClicked;
     public event Action OnSlotHovered;
+    public event Action<int, int> OnDragStarted; // (x, y)
+    public event Action<int, int, Vector2> OnDragging; // (x, y, screenPosition)
+    public event Action<int, int> OnDragEnded; // (x, y)
     
     private int posX;
     private int posY;
     private bool isOccupied = false;
     private Color currentColor; // Track current color for proper restoration
+    private BaseItem currentItem; // Store reference to current item
     
     void Start()
     {
@@ -65,9 +72,10 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler,
         posY = y;
     }
     
-    public void SetOccupied(bool occupied, Sprite icon = null, string itemName = null)
+    public void SetOccupied(bool occupied, Sprite icon = null, string itemName = null, BaseItem item = null)
     {
         isOccupied = occupied;
+        currentItem = item;
         
         if (occupied)
         {
@@ -125,8 +133,46 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler,
         OnSlotHovered?.Invoke();
     }
     
+    /// <summary>
+    /// Set selected state (visual feedback)
+    /// </summary>
+    public void SetSelected(bool selected)
+    {
+        isSelected = selected;
+        
+        if (selected)
+        {
+            // Highlight with selection color
+            if (hasSprite)
+                background.color = Color.white * selectedColor;
+            else
+                background.color = selectedColor;
+        }
+        else
+        {
+            // Restore normal colors
+            if (isOccupied)
+            {
+                if (hasSprite)
+                    background.color = Color.white * occupiedColor;
+                else
+                    background.color = occupiedColor;
+            }
+            else
+            {
+                if (hasSprite)
+                    background.color = Color.white * normalColor;
+                else
+                    background.color = normalColor;
+            }
+        }
+    }
+    
     public void OnPointerExit(PointerEventData eventData)
     {
+        // Don't change color if selected
+        if (isSelected) return;
+        
         // Restore to current state color (normalColor or occupiedColor)
         if (background != null)
         {
@@ -136,5 +182,67 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler,
                 background.color = currentColor;
         }
     }
+    
+    // ====================
+    // DRAG & DROP HANDLERS
+    // ====================
+    
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        // Only allow dragging occupied slots
+        if (!isOccupied || currentItem == null)
+            return;
+        
+        Debug.Log($"[InventorySlotUI] Begin drag: ({posX}, {posY})");
+        
+        // Notify parent
+        OnDragStarted?.Invoke(posX, posY);
+        
+        // Create drag visual
+        DragVisualHelper.Instance?.BeginDrag(currentItem, itemIcon != null ? itemIcon.sprite : null);
+    }
+    
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (!isOccupied || currentItem == null)
+            return;
+        
+        // Update drag visual position
+        DragVisualHelper.Instance?.UpdateDragPosition(eventData.position);
+        
+        // Notify parent for potential drop zone highlighting
+        OnDragging?.Invoke(posX, posY, eventData.position);
+    }
+    
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        if (!isOccupied || currentItem == null)
+            return;
+        
+        Debug.Log($"[InventorySlotUI] End drag: ({posX}, {posY})");
+        
+        // End drag visual
+        DragVisualHelper.Instance?.EndDrag();
+        
+        // Notify parent
+        OnDragEnded?.Invoke(posX, posY);
+    }
+    
+    /// <summary>
+    /// Get current item in this slot (for drag operations)
+    /// </summary>
+    public BaseItem GetCurrentItem()
+    {
+        return currentItem;
+    }
+    
+    /// <summary>
+    /// Get slot position
+    /// </summary>
+    public (int x, int y) GetPosition()
+    {
+        return (posX, posY);
+    }
 }
+
 

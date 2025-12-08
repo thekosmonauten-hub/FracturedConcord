@@ -17,6 +17,7 @@ MonoBehaviour:
   itemIcon: {fileID: 21300000, guid: c2c64428af56cbb4fba804f5e9d5edc9, type: 3}
   rarity: 0
   requiredLevel: 1
+  itemLevel: -1
   itemType: 0
   equipmentType: 0
   isStackable: 0
@@ -27,12 +28,14 @@ MonoBehaviour:
   suffixes: []
   isUnique: 0
   itemTags: []
+  generatedName: 
   effigyName: T_4
   icon: {fileID: 21300000, guid: c2c64428af56cbb4fba804f5e9d5edc9, type: 3}
   element: 3
   sizeTier: 1
+  shapeCategory: 8
   shapeWidth: 3
   shapeHeight: 2
   shapeMask: 000100010101
+  ghostPickupPoint: {x: 1, y: 1}
   displayAlias: Pathbinder
-  modifiers: []

@@ -390,7 +390,7 @@ public class CombatManager : MonoBehaviour
             }
             if (targetIdx >= 0 && targetIdx < total && active[targetIdx] != null && active[targetIdx].currentHealth > 0)
             {
-                dm.PlayerAttackEnemy(targetIdx, damage);
+                dm.PlayerAttackEnemy(targetIdx, damage, card);
                 Debug.Log($"{playerCharacter.characterName} played {card.cardName} for {damage:F1} damage on enemy index {targetIdx} (DisplayManager)");
             }
             else
@@ -482,7 +482,7 @@ public class CombatManager : MonoBehaviour
                 int idx = indices[n];
                 if (isAliveAt(idx))
                 {
-                    dm.PlayerAttackEnemy(idx, damage);
+                    dm.PlayerAttackEnemy(idx, damage, card);
                     targetsHit++;
                 }
             }
@@ -685,8 +685,16 @@ public class CombatManager : MonoBehaviour
     
     private Weapon GetEquippedWeapon()
     {
-        // For now, return the melee weapon if available
-        return playerCharacter.weapons.meleeWeapon;
+        // Return the first available weapon (prioritize main hand type)
+        // This is used as fallback - specific weapon types are accessed via character.weapons directly
+        if (playerCharacter.weapons.meleeWeapon != null)
+            return playerCharacter.weapons.meleeWeapon;
+        if (playerCharacter.weapons.spellWeapon != null)
+            return playerCharacter.weapons.spellWeapon;
+        if (playerCharacter.weapons.projectileWeapon != null)
+            return playerCharacter.weapons.projectileWeapon;
+        
+        return null;
     }
 
 	private CombatDisplayManager GetDisplayManager()

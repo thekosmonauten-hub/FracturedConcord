@@ -523,13 +523,18 @@ public class CharacterStatsData
         dexterity = character.dexterity;
         intelligence = character.intelligence;
         
-        // Copy combat resources
+        // Copy combat resources (base values, modifiers applied later)
         maxHealth = character.maxHealth;
         currentHealth = character.currentHealth;
-        maxEnergyShield = character.maxEnergyShield;
-        currentEnergyShield = character.currentEnergyShield;
         maxMana = character.maxMana;
         currentMana = character.mana;
+        
+        // Set base defense values from items (increased modifiers applied later in warrant stat modifiers section)
+        evasion = character.baseEvasionFromItems;
+        armour = Mathf.RoundToInt(character.baseArmourFromItems);
+        energyShield = Mathf.RoundToInt(character.baseEnergyShieldFromItems);
+        maxEnergyShield = energyShield;
+        currentEnergyShield = character.currentEnergyShield;
         maxReliance = character.maxReliance;
         currentReliance = character.reliance;
         currentGuard = character.currentGuard;
@@ -548,12 +553,70 @@ public class CharacterStatsData
             increasedColdDamage = character.damageModifiers.increasedColdDamage.Sum();
             increasedLightningDamage = character.damageModifiers.increasedLightningDamage.Sum();
             increasedChaosDamage = character.damageModifiers.increasedChaosDamage.Sum();
+            increasedAttackDamage = character.damageModifiers.increasedAttackDamage.Sum(); // For Attack cards only
+            increasedSpellDamage = character.damageModifiers.increasedSpellDamage.Sum(); // For Spell cards only
             
             addedPhysicalDamage = character.damageModifiers.addedPhysicalDamage;
             addedFireDamage = character.damageModifiers.addedFireDamage;
             addedColdDamage = character.damageModifiers.addedColdDamage;
             addedLightningDamage = character.damageModifiers.addedLightningDamage;
             addedChaosDamage = character.damageModifiers.addedChaosDamage;
+        }
+        
+        // Apply flat modifiers first (before percentage modifiers)
+        if (character.warrantFlatModifiers != null && character.warrantFlatModifiers.Count > 0)
+        {
+            if (character.warrantFlatModifiers.ContainsKey("maxHealthFlat"))
+            {
+                maxHealth += Mathf.RoundToInt(character.warrantFlatModifiers["maxHealthFlat"]);
+            }
+            if (character.warrantFlatModifiers.ContainsKey("maxManaFlat"))
+            {
+                maxMana += Mathf.RoundToInt(character.warrantFlatModifiers["maxManaFlat"]);
+            }
+        }
+        
+        // Apply warrant stat modifiers (non-damage stats like evasionIncreased, maxHealthIncreased, etc.)
+        if (character.warrantStatModifiers != null && character.warrantStatModifiers.Count > 0)
+        {
+            foreach (var kvp in character.warrantStatModifiers)
+            {
+                string statKey = kvp.Key;
+                float value = kvp.Value;
+                
+                // Special handling for maxHealthIncreased and maxManaIncreased - apply percentage to base (with flat modifiers already applied)
+                if (statKey == "maxHealthIncreased")
+                {
+                    maxHealth = Mathf.RoundToInt(maxHealth * (1f + value / 100f));
+                }
+                else if (statKey == "maxManaIncreased")
+                {
+                    maxMana = Mathf.RoundToInt(maxMana * (1f + value / 100f));
+                }
+                // Special handling for defense stats - apply increased modifiers to base values from items
+                else if (statKey == "evasionIncreased")
+                {
+                    // Apply increased modifier to base evasion from items
+                    evasion = character.baseEvasionFromItems * (1f + value / 100f);
+                }
+                else if (statKey == "armourIncreased")
+                {
+                    // Apply increased modifier to base armour from items
+                    armour = Mathf.RoundToInt(character.baseArmourFromItems * (1f + value / 100f));
+                }
+                else if (statKey == "energyShieldIncreased")
+                {
+                    // Apply increased modifier to base energy shield from items
+                    float newEnergyShield = character.baseEnergyShieldFromItems * (1f + value / 100f);
+                    energyShield = Mathf.RoundToInt(newEnergyShield);
+                    maxEnergyShield = energyShield;
+                }
+                else
+                {
+                    // Standard stat modifier application
+                    AddToStat(statKey, value);
+                }
+            }
         }
         
         // Copy resistances

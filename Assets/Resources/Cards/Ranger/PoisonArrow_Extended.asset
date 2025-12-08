@@ -16,7 +16,7 @@ MonoBehaviour:
   groupKey: PoisonArrow
   cardType: Attack
   playCost: 1
-  description: 'Deal {damage} choas damage and apply 2 Poison stacks to all enemies. '
+  description: 'Deal {damage} choas damage and apply 3 Poison stacks to all enemies. '
   rarity: 0
   element: 5
   category: 0
@@ -109,6 +109,8 @@ MonoBehaviour:
   tags:
   - Attack
   - Physical
+  - Projectile
+  - AoE
   delayTurns: 0
   isDelayed: 0
   canPrepare: 0

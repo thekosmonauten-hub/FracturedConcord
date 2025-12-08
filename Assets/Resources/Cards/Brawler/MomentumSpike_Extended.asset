@@ -111,6 +111,7 @@ MonoBehaviour:
   tags:
   - Attack
   - Physical
+  - Melee
   delayTurns: 0
   isDelayed: 0
   canPrepare: 0

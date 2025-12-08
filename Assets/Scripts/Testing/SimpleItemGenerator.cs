@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Dexiled.Data.Items;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -31,6 +33,10 @@ public class SimpleItemGenerator : MonoBehaviour
     
     [Tooltip("The item type to force when 'Force Item Type' is enabled")]
     public ItemType forcedItemType = ItemType.Weapon;
+    
+    [Header("Name Generation")]
+    [Tooltip("Data for generating Magic and Rare item names (optional - will use AreaLootManager's if not set)")]
+    public NameGenerationData nameGenerationData;
     
     [Header("Runtime Testing (Play Mode)")]
     [Tooltip("Press this key to generate a random item during play")]
@@ -134,6 +140,9 @@ public class SimpleItemGenerator : MonoBehaviour
             
             if (item != null)
             {
+                // Ensure name is generated (fallback if AreaLootTable didn't generate it)
+                EnsureNameGenerated(item);
+                
                 ItemRarity rarity = item.GetCalculatedRarity();
                 LogItemDetailed(item, i + 1);
                 
@@ -174,6 +183,7 @@ public class SimpleItemGenerator : MonoBehaviour
             
             if (item != null)
             {
+                EnsureNameGenerated(item);
                 LogItemDetailed(item, i + 1);
             }
         }
@@ -197,6 +207,7 @@ public class SimpleItemGenerator : MonoBehaviour
             
             if (item != null)
             {
+                EnsureNameGenerated(item);
                 LogItemDetailed(item, i + 1);
             }
         }
@@ -246,6 +257,8 @@ public class SimpleItemGenerator : MonoBehaviour
         
         if (item != null)
         {
+            EnsureNameGenerated(item);
+            
             string rarityText = forceRarity ? $" ({forcedRarity})" : "";
             string typeText = forceItemType ? $" [{forcedItemType}]" : "";
             Debug.Log($"<color=green>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>");
@@ -273,6 +286,8 @@ public class SimpleItemGenerator : MonoBehaviour
         
         if (item != null)
         {
+            EnsureNameGenerated(item);
+            
             Debug.Log($"<color=yellow>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>");
             LogItemDetailed(item, 1);
             Debug.Log($"<color=yellow>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>");
@@ -280,6 +295,238 @@ public class SimpleItemGenerator : MonoBehaviour
         else
         {
             Debug.LogError("Failed to generate Rare item (null result)");
+        }
+    }
+    
+    /// <summary>
+    /// Test weapon base damage rolling - generates 4 weapons directly from asset to verify rolling works
+    /// </summary>
+    [ContextMenu("Test Weapon Rolling (4 Weapons - Direct)")]
+    public void TestWeaponRolling()
+    {
+        Debug.Log($"<color=cyan>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>");
+        Debug.Log($"<color=cyan><b>TESTING WEAPON BASE DAMAGE ROLLING</b></color>");
+        Debug.Log($"<color=cyan>Creating 4 weapons directly to verify rolling logic...</color>");
+        Debug.Log($"<color=cyan>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>\n");
+        
+        // Load Worn Hatchet asset directly
+        WeaponItem wornHatchetAsset = Resources.Load<WeaponItem>("Items/Weapons/Axes/OneHanded/Worn Hatchet");
+        
+        if (wornHatchetAsset == null)
+        {
+            Debug.LogError("<color=red>❌ Could not load Worn Hatchet asset from Resources!</color>");
+            Debug.LogError("   Path should be: Assets/Resources/Items/Weapons/Axes/OneHanded/Worn Hatchet.asset");
+            Debug.LogError("   Make sure the file exists and is in a Resources folder!");
+            return;
+        }
+        
+        Debug.Log($"<color=green>✅ Loaded asset: {wornHatchetAsset.itemName} (Base: {wornHatchetAsset.minDamage}-{wornHatchetAsset.maxDamage})</color>\n");
+        
+        // Generate 4 weapon instances with rolled damage
+        List<WeaponItem> generatedWeapons = new List<WeaponItem>();
+        
+        for (int i = 0; i < 4; i++)
+        {
+            WeaponItem weapon = CreateWeaponWithRolling(wornHatchetAsset);
+            
+            if (weapon != null)
+            {
+                generatedWeapons.Add(weapon);
+                LogWeaponRollingDetails(weapon, i + 1);
+            }
+        }
+        
+        // Add all generated weapons to player inventory
+        if (generatedWeapons.Count > 0)
+        {
+            Debug.Log($"\n<color=lime>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>");
+            Debug.Log($"<color=lime><b>ADDING TO INVENTORY</b></color>");
+            
+            foreach (var weapon in generatedWeapons)
+            {
+                if (CharacterManager.Instance != null)
+                {
+                    CharacterManager.Instance.inventoryItems.Add(weapon);
+                    CharacterManager.Instance.OnItemAdded?.Invoke(weapon);
+                    Debug.Log($"<color=lime>✅ Added to inventory: {weapon.itemName} (Rolled: {weapon.rolledBaseDamage:F0})</color>");
+                }
+                else
+                {
+                    Debug.LogWarning($"<color=yellow>⚠️ CharacterManager.Instance is null, could not add {weapon.itemName} to inventory</color>");
+                }
+            }
+            
+            Debug.Log($"<color=lime>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>");
+        }
+        
+        Debug.Log($"\n<color=cyan>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>");
+        Debug.Log($"<color=cyan><b>ROLLING TEST COMPLETE</b></color>");
+        Debug.Log($"<color=cyan>Generated {generatedWeapons.Count} weapons with unique rolled values!</color>");
+        Debug.Log($"<color=cyan>Added {generatedWeapons.Count} weapons to inventory!</color>");
+        Debug.Log($"<color=cyan>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</color>");
+    }
+    
+    /// <summary>
+    /// Create a weapon instance with rolled base damage
+    /// </summary>
+    private WeaponItem CreateWeaponWithRolling(WeaponItem original)
+    {
+        WeaponItem copy = ScriptableObject.CreateInstance<WeaponItem>();
+        
+        // Copy base properties
+        copy.itemName = original.itemName;
+        copy.description = original.description;
+        copy.itemIcon = original.itemIcon;
+        copy.weaponType = original.weaponType;
+        copy.handedness = original.handedness;
+        copy.attackSpeed = original.attackSpeed;
+        copy.criticalStrikeChance = original.criticalStrikeChance;
+        copy.criticalStrikeMultiplier = original.criticalStrikeMultiplier;
+        copy.primaryDamageType = original.primaryDamageType;
+        copy.requiredLevel = original.requiredLevel;
+        copy.itemType = ItemType.Weapon;
+        copy.equipmentType = EquipmentType.MainHand;
+        
+        // Copy damage ranges
+        copy.minDamage = original.minDamage;
+        copy.maxDamage = original.maxDamage;
+        
+        // ⚔️ ROLL base damage between min and max (whole numbers only)
+        copy.rolledBaseDamage = UnityEngine.Random.Range((int)original.minDamage, (int)original.maxDamage + 1); // +1 to make maxDamage inclusive
+        
+        // Copy item tags
+        if (original.itemTags != null)
+        {
+            copy.itemTags = new List<string>(original.itemTags);
+        }
+        
+        // Initialize affix lists
+        copy.implicitModifiers = new List<Affix>();
+        copy.prefixes = new List<Affix>();
+        copy.suffixes = new List<Affix>();
+        
+        // Optionally add affixes for more realistic testing
+        if (AffixDatabase_Modern.Instance != null)
+        {
+            AffixDatabase_Modern.Instance.GenerateRandomAffixes(copy, original.requiredLevel, ItemRarity.Rare);
+        }
+        
+        // Generate name for Magic/Rare items
+        EnsureNameGenerated(copy);
+        
+        return copy;
+    }
+    
+    /// <summary>
+    /// Ensure item has a generated name (fallback if AreaLootTable didn't generate it)
+    /// </summary>
+    private void EnsureNameGenerated(BaseItem item)
+    {
+        if (item == null) return;
+        
+        // Only generate names for Magic and Rare items
+        if (item.rarity == ItemRarity.Magic || item.rarity == ItemRarity.Rare)
+        {
+            // If name already generated, skip
+            if (!string.IsNullOrEmpty(item.generatedName))
+            {
+                return;
+            }
+            
+            // Try to get nameGenerationData from various sources (in priority order)
+            NameGenerationData nameData = null;
+            
+            // 1. Use this generator's nameGenerationData (if assigned)
+            if (nameGenerationData != null)
+            {
+                nameData = nameGenerationData;
+            }
+            // 2. Fallback to AreaLootManager's nameGenerationData
+            else if (AreaLootManager.Instance != null && AreaLootManager.Instance.nameGenerationData != null)
+            {
+                nameData = AreaLootManager.Instance.nameGenerationData;
+            }
+            // 3. Fallback to LootManager's nameGenerationData
+            else if (LootManager.Instance != null && LootManager.Instance.nameGenerationData != null)
+            {
+                nameData = LootManager.Instance.nameGenerationData;
+            }
+            
+            // Generate name
+            item.generatedName = ItemNameGenerator.GenerateItemName(item, nameData);
+            
+            if (!string.IsNullOrEmpty(item.generatedName))
+            {
+                Debug.Log($"<color=lime>[SimpleItemGenerator] Generated name: '{item.generatedName}'</color>");
+            }
+            else if (nameData == null)
+            {
+                Debug.LogWarning($"<color=yellow>[SimpleItemGenerator] No NameGenerationData available. Item '{item.itemName}' will use default name.</color>");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Log weapon with focus on rolled damage
+    /// </summary>
+    private void LogWeaponRollingDetails(WeaponItem weapon, int index)
+    {
+        if (weapon == null) return;
+        
+        Debug.Log($"\n<color=lime><b>⚔️ Weapon #{index}: {weapon.itemName}</b></color>");
+        Debug.Log($"<color=white>Base Damage Range: {weapon.minDamage}-{weapon.maxDamage}</color>");
+        
+        if (weapon.rolledBaseDamage > 0f)
+        {
+            // Verify it's within range
+            bool isValid = weapon.rolledBaseDamage >= weapon.minDamage && 
+                          weapon.rolledBaseDamage <= weapon.maxDamage;
+            
+            string status = isValid ? "✅" : "❌ OUT OF RANGE!";
+            Debug.Log($"<color=lime>{status} Rolled Base Damage: {weapon.rolledBaseDamage:F0}</color> (for card scaling)");
+            
+            if (!isValid)
+            {
+                Debug.LogError($"<color=red>ERROR: Rolled value {weapon.rolledBaseDamage:F0} is outside range {weapon.minDamage}-{weapon.maxDamage}!</color>");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"<color=yellow>⚠️ Rolled Base Damage: NOT SET (0.00)</color>");
+            Debug.LogWarning($"   This weapon was not rolled properly! Check AreaLootTable.CreateWeaponCopy()");
+        }
+        
+        Debug.Log($"<color=orange>Final Damage: {weapon.GetTotalMinDamage()}-{weapon.GetTotalMaxDamage()}</color>");
+        Debug.Log($"<color=gray>Rarity: {weapon.GetCalculatedRarity()} | Affixes: {weapon.prefixes.Count}P + {weapon.suffixes.Count}S</color>");
+        
+        // Log rolled affix values
+        if (weapon.prefixes.Count > 0 || weapon.suffixes.Count > 0)
+        {
+            Debug.Log($"<color=cyan>Affix Details:</color>");
+            
+            foreach (var prefix in weapon.prefixes)
+            {
+                string rolledDesc = TooltipFormattingUtils.FormatAffix(prefix);
+                Debug.Log($"  <color=cyan>PREFIX: {rolledDesc}</color>");
+                
+                if (prefix.modifiers.Count > 0)
+                {
+                    var mod = prefix.modifiers[0];
+                    Debug.Log($"    isRolled: {mod.isRolled}, isDualRange: {mod.isDualRange}, rolledValue: {mod.rolledValue}");
+                }
+            }
+            
+            foreach (var suffix in weapon.suffixes)
+            {
+                string rolledDesc = TooltipFormattingUtils.FormatAffix(suffix);
+                Debug.Log($"  <color=magenta>SUFFIX: {rolledDesc}</color>");
+                
+                if (suffix.modifiers.Count > 0)
+                {
+                    var mod = suffix.modifiers[0];
+                    Debug.Log($"    isRolled: {mod.isRolled}, isDualRange: {mod.isDualRange}, rolledValue: {mod.rolledValue}");
+                }
+            }
         }
     }
     
@@ -299,7 +546,8 @@ public class SimpleItemGenerator : MonoBehaviour
         // Add damage/defense info
         if (item is WeaponItem weapon)
         {
-            summary += $" | Dmg: {weapon.GetTotalMinDamage()}-{weapon.GetTotalMaxDamage()}";
+            string rolledInfo = weapon.rolledBaseDamage > 0f ? $" (Rolled: {weapon.rolledBaseDamage:F1})" : "";
+            summary += $" | Dmg: {weapon.GetTotalMinDamage()}-{weapon.GetTotalMaxDamage()}{rolledInfo}";
         }
         else if (item is Armour armor)
         {
@@ -325,7 +573,15 @@ public class SimpleItemGenerator : MonoBehaviour
         // Log weapon-specific stats
         if (item is WeaponItem weapon)
         {
-            Debug.Log($"<color=orange>Base Damage: {weapon.minDamage}-{weapon.maxDamage}</color>");
+            Debug.Log($"<color=orange>Base Damage Range: {weapon.minDamage}-{weapon.maxDamage}</color>");
+            if (weapon.rolledBaseDamage > 0f)
+            {
+                Debug.Log($"<color=lime>✨ Rolled Base Damage: {weapon.rolledBaseDamage:F2}</color> (for card scaling)");
+            }
+            else
+            {
+                Debug.Log($"<color=yellow>⚠️ Rolled Base Damage: NOT SET (using average fallback)</color>");
+            }
             Debug.Log($"<color=orange>Final Damage: {weapon.GetTotalMinDamage()}-{weapon.GetTotalMaxDamage()}</color>");
             Debug.Log($"Crit Chance: {weapon.criticalStrikeChance}% | Attack Speed: {weapon.attackSpeed}");
         }
