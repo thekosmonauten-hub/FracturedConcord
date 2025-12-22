@@ -159,12 +159,18 @@ public static class WarrantModifierCollector
 
     /// <summary>
     /// Collect modifiers from a warrant (lightweight version, no runtime graph needed)
+    /// NOTE: This method is used when loading from saved state and doesn't have access to the runtime graph.
+    /// It collects ALL modifiers (both regular and Notable) because we can't determine effect nodes from saved state.
+    /// For the full collection with effect nodes, use CollectWarrantModifiers instead.
     /// </summary>
     private static void CollectWarrantModifiersLightweight(WarrantDefinition warrant, List<WarrantModifier> output, WarrantNotableDatabase notableDatabase)
     {
         if (warrant == null)
             return;
 
+        // NOTE: When loading from saved state, we include regular modifiers because we can't determine
+        // which effect nodes are within range. The full collection method (CollectWarrantModifiers) 
+        // properly separates socket-only (Notable) from effect node modifiers.
         // Add warrant's base modifiers (regular modifiers)
         if (warrant.modifiers != null)
         {
@@ -279,17 +285,9 @@ public static class WarrantModifierCollector
         if (warrant == null || socketNode == null)
             return;
         
-        // Add warrant's base modifiers (regular modifiers)
-        if (warrant.modifiers != null)
-        {
-            foreach (var modifier in warrant.modifiers)
-            {
-                if (modifier != null)
-                {
-                    output.Add(modifier);
-                }
-            }
-        }
+        // NOTE: Socket nodes should NOT receive regular modifiers - only Notable modifiers
+        // Regular modifiers are applied to effect nodes within range (see below)
+        // This ensures that socket nodes only get their Notable bonuses, not the base warrant modifiers
         
         // Add notable modifiers - check both notable object and notableId
         // First check if warrant has a notable object (legacy)

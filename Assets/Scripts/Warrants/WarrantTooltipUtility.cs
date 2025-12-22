@@ -262,7 +262,7 @@ public static class WarrantTooltipUtility
 
         var section = new WarrantTooltipSection
         {
-            header = string.Join(", ", defList.Select(d => string.IsNullOrWhiteSpace(d.displayName) ? d.warrantId : d.displayName))
+            header = string.Empty // Warrant names are now shown in the title, so no need to repeat here
         };
 
         FillSectionWithAggregatedModifiers(section, defList);
@@ -330,8 +330,33 @@ public static class WarrantTooltipUtility
                 if (!string.IsNullOrWhiteSpace(modifier.modifierId) && modifier.modifierId.StartsWith("__SOCKET_ONLY__"))
                     continue;
 
-                // Use case-insensitive key for grouping
-                var key = string.IsNullOrWhiteSpace(modifier.modifierId) ? modifier.displayName : modifier.modifierId;
+                // Create a robust grouping key that handles cases where modifierId might be empty
+                // or displayNames might differ slightly between warrants
+                string key = null;
+                
+                // First, try to use modifierId (most reliable for grouping)
+                if (!string.IsNullOrWhiteSpace(modifier.modifierId))
+                {
+                    // Strip __SOCKET_ONLY__ prefix if present
+                    key = modifier.modifierId.StartsWith("__SOCKET_ONLY__") 
+                        ? modifier.modifierId.Substring("__SOCKET_ONLY__".Length)
+                        : modifier.modifierId;
+                }
+                
+                // If modifierId is empty, use displayName as fallback
+                // Normalize it by removing spaces and converting to lowercase for consistent grouping
+                if (string.IsNullOrWhiteSpace(key) && !string.IsNullOrWhiteSpace(modifier.displayName))
+                {
+                    // Remove common prefixes and normalize
+                    key = modifier.displayName
+                        .Replace("Increased ", "", System.StringComparison.OrdinalIgnoreCase)
+                        .Replace("+", "", System.StringComparison.OrdinalIgnoreCase)
+                        .Replace("%", "", System.StringComparison.OrdinalIgnoreCase)
+                        .Replace(" ", "")
+                        .Trim();
+                }
+                
+                // Fallback to hash if both are empty (shouldn't happen)
                 if (string.IsNullOrWhiteSpace(key))
                     key = modifier.GetHashCode().ToString();
                 
