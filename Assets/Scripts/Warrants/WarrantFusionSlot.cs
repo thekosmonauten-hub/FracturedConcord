@@ -247,6 +247,17 @@ public class WarrantFusionSlot : MonoBehaviour, IPointerClickHandler, IDropHandl
             }
         }
         
+        // Remove warrant from locker immediately when dropped into fusion slot
+        if (parentUI != null)
+        {
+            var lockerGrid = parentUI.lockerGridRef;
+            if (lockerGrid != null)
+            {
+                lockerGrid.HandleWarrantAssigned(draggedItem);
+                Debug.Log($"[WarrantFusionSlot] Removed warrant '{warrant.warrantId}' from locker (dropped into fusion slot)");
+            }
+        }
+        
         // Assign the dropped warrant to this slot
         SetWarrantFromLocker(warrant, draggedItem);
         

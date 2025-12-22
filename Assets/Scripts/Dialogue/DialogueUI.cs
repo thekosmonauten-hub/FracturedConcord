@@ -261,6 +261,24 @@ public class DialogueUI : MonoBehaviour
         // Clear all paragraph text immediately to prevent showing previous dialogue
         ClearAllParagraphText();
         
+        // IMPORTANT: Set speaker name FIRST, before activating the panel
+        // This ensures the correct speaker name is shown immediately when the panel becomes visible
+        if (speakerNameText != null)
+        {
+            string newSpeakerName = !string.IsNullOrEmpty(node.speakerName) ? node.speakerName : "Unknown";
+            speakerNameText.text = newSpeakerName;
+            speakerNameText.ForceMeshUpdate();
+            
+            // Ensure speaker name GameObject is active and visible
+            if (!speakerNameText.gameObject.activeSelf)
+            {
+                speakerNameText.gameObject.SetActive(true);
+                ActivateParentChain(speakerNameText.gameObject);
+            }
+            
+            Debug.Log($"[DialogueUI] Set speaker name to: '{newSpeakerName}' for node '{node.nodeId}' (before panel activation)");
+        }
+        
         // currentNode is now accessed via DialogueManager, no need to store locally
         
         // IMPORTANT: Activate DialoguePanel immediately (before coroutine)
@@ -793,28 +811,8 @@ public class DialogueUI : MonoBehaviour
             typewriterCoroutineOnManager = null;
         }
         
-        // Update speaker info - ensure it's always updated when displaying a node
-        if (speakerNameText != null)
-        {
-            string newSpeakerName = node.speakerName ?? "Unknown";
-            speakerNameText.text = newSpeakerName;
-            
-            // Ensure speaker name GameObject is active and visible
-            if (!speakerNameText.gameObject.activeSelf)
-            {
-                speakerNameText.gameObject.SetActive(true);
-                ActivateParentChain(speakerNameText.gameObject);
-            }
-            
-            // Force text update
-            speakerNameText.ForceMeshUpdate();
-            
-            Debug.Log($"[DialogueUI] Updated speaker name to: '{newSpeakerName}' for node '{node.nodeId}'");
-        }
-        else
-        {
-            Debug.LogWarning("[DialogueUI] speakerNameText is null! Cannot display speaker name.");
-        }
+        // Speaker name was already set earlier (before panel activation) to prevent showing stale data
+        // This section is kept for portrait handling only
         
         if (speakerPortrait != null)
         {
@@ -884,7 +882,40 @@ public class DialogueUI : MonoBehaviour
                 Debug.LogError("[DialogueUI] DisplayNode: Continue button is null! Buttons won't work.");
             }
             
-            ShowCurrentParagraph();
+            // CRITICAL: Show first paragraph immediately (before waiting for frames)
+            // This ensures the dialogue doesn't appear empty when first opened
+            // Force canvas update to ensure paragraph GameObjects are ready
+            Canvas.ForceUpdateCanvases();
+            
+            // Verify paragraph GameObjects are resolved before showing
+            TextMeshProUGUI[] textsToUse = resolvedParagraphTexts != null ? resolvedParagraphTexts : paragraphTexts;
+            if (textsToUse == null || textsToUse.Length == 0)
+            {
+                Debug.LogWarning("[DialogueUI] DisplayNode: paragraphTexts array is null or empty! Paragraph GameObjects may not be assigned in Inspector. Attempting to resolve again...");
+                ResolveParagraphGameObjects();
+                textsToUse = resolvedParagraphTexts != null ? resolvedParagraphTexts : paragraphTexts;
+            }
+            
+            // Verify first paragraph GameObject exists
+            if (textsToUse != null && textsToUse.Length > 0 && textsToUse[0] != null)
+            {
+                Debug.Log($"[DialogueUI] DisplayNode: First paragraph GameObject found: '{textsToUse[0].gameObject.name}'. Showing first paragraph...");
+                ShowCurrentParagraph();
+            }
+            else
+            {
+                Debug.LogError("[DialogueUI] DisplayNode: First paragraph GameObject is null! Cannot display first paragraph. Check that paragraph GameObjects are assigned in Inspector.");
+                // Fallback: try to show using legacy dialogueText field
+                if (dialogueText != null && currentParagraphs != null && currentParagraphs.Count > 0)
+                {
+                    dialogueText.text = currentParagraphs[0];
+                    dialogueText.gameObject.SetActive(true);
+                    Debug.Log("[DialogueUI] DisplayNode: Using fallback dialogueText field to display first paragraph.");
+                }
+            }
+            
+            // Force another canvas update after showing paragraph to ensure it's visible
+            Canvas.ForceUpdateCanvases();
         }
         else if (!string.IsNullOrEmpty(node.dialogueText))
         {
@@ -1608,6 +1639,39 @@ public class DialogueUI : MonoBehaviour
             Canvas.ForceUpdateCanvases();
             Debug.Log("[DialogueUI] Cleared paragraph text via fallback search");
         }
+    }
+    
+    /// <summary>
+    /// Clears all dialogue UI elements (speaker name, paragraphs, choices) before starting a new dialogue.
+    /// This prevents showing stale data from previous dialogues.
+    /// </summary>
+    public void ClearDialogueUI()
+    {
+        // Clear speaker name immediately
+        if (speakerNameText != null)
+        {
+            speakerNameText.text = "";
+            speakerNameText.ForceMeshUpdate();
+            Debug.Log("[DialogueUI] Cleared speaker name text");
+        }
+        
+        // Clear speaker portrait
+        if (speakerPortrait != null)
+        {
+            speakerPortrait.sprite = null;
+            speakerPortrait.enabled = false;
+        }
+        
+        // Clear all paragraph text
+        ClearAllParagraphText();
+        
+        // Clear choices
+        ClearChoices();
+        
+        // Force canvas update to ensure changes are visible immediately
+        Canvas.ForceUpdateCanvases();
+        
+        Debug.Log("[DialogueUI] Cleared all dialogue UI elements (speaker name, paragraphs, choices)");
     }
     
     /// <summary>

@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Bandit Reclaimer
   description: A feral bandit leader who grafts beast parts onto their body, becoming
     more monster than human.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: -91301542472520391, guid: dfc45bf8b3d76df42a5fc065889c6f8f, type: 3}
   tier: 2
   rarity: 2
   category: 0
@@ -49,10 +49,9 @@ MonoBehaviour:
   - Bestial Graft
   - Predation Lineage
   abilities: []
-  bossAbilities:
-  - 11
+  bossAbilities: 0b000000
   summonPool: []
-  spiritTags: []
+  spiritTags: 
   guaranteedSpiritDrop: 0
   minGoldDrop: 57
   maxGoldDrop: 112
@@ -64,4 +63,3 @@ MonoBehaviour:
   excludeFromRandom: 1
   healthBarColor: {r: 0.7, g: 0.4, b: 0.3, a: 1}
   animatorController: {fileID: 0}
-

@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: River-Sworn Rotmass
   description: A bloated mass of decay and pestilence sworn to the corrupted creek,
     seeping poison with every movement.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: -5627291168705007400, guid: 78fc7cd0a8317684286236331516c3f5, type: 3}
   tier: 2
   rarity: 3
   category: 3
@@ -49,12 +49,9 @@ MonoBehaviour:
   - Bile Torrent
   - Seep
   abilities: []
-  bossAbilities:
-  - 2
-  - 3
+  bossAbilities: 0200000003000000
   summonPool: []
-  spiritTags:
-  - 3
+  spiritTags: 03000000
   guaranteedSpiritDrop: 0
   minGoldDrop: 62
   maxGoldDrop: 122
@@ -66,4 +63,3 @@ MonoBehaviour:
   excludeFromRandom: 1
   healthBarColor: {r: 0.3, g: 0.5, b: 0.3, a: 1}
   animatorController: {fileID: 0}
-

@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Momentum Spike
   groupKey: Momentum_Spike
   cardType: Attack
-  playCost: 2
+  playCost: 20
   description: Spend all Momentum. Deal {damage} damage per Momentum spent to all
     enemies.
   rarity: 1

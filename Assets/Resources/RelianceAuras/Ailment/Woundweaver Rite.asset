@@ -14,14 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RelianceAura
   auraName: Woundweaver Rite
   category: Ailment
-  description: Casts an aura that increases your ailment duration, but halves their
+  description: Casts an aura that increases your ailment duration. but halves their
     effect.
   icon: {fileID: 0}
   themeColor: {r: 0.5, g: 0.2, b: 0.8, a: 1}
-  effectLevel1: 100% increased ailment duration, 50% reduced ailment effect.
-  effectLevel20: 200% increased ailment duration, 50% reduced ailment effect.
+  effectLevel1: 100% increased ailment duration. 50% reduced ailment effect.
+  effectLevel20: 200% increased ailment duration. 50% reduced ailment effect.
   relianceCost: 65
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Woundweaver Rite_ModifyStat_ailment duration
+  - Woundweaver Rite_ModifyStat_ailment effect.
+  requiredLevel: 38
   unlockRequirement: 

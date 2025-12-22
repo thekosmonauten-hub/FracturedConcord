@@ -21,6 +21,7 @@ MonoBehaviour:
   effectLevel20: 22% increased Cast speed
   relianceCost: 55
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Arcanothread Surge_ModifyStat_castSpeed
+  requiredLevel: 12
   unlockRequirement: 

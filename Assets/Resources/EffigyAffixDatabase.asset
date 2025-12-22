@@ -29,8 +29,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 2
-          originalMaxValue: 4
+          originalMinValue: 20
+          originalMaxValue: 40
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -47,8 +47,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 2
-          originalMaxValue: 4
+          originalMinValue: 20
+          originalMaxValue: 40
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -65,8 +65,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 2
-          originalMaxValue: 4
+          originalMinValue: 20
+          originalMaxValue: 40
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -1535,19 +1535,19 @@ MonoBehaviour:
     - subCategoryName: Maximum Mana
       affixes:
       - name: Arcane (Tier10)
-        description: +2-4 Maximum Mana
+        description: +20-40 Maximum Mana
         affixType: 0
         tier: 9
         modifiers:
         - statName: maxMana
-          minValue: 2
-          maxValue: 4
+          minValue: 20
+          maxValue: 40
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 2
-          originalMaxValue: 4
+          originalMinValue: 20
+          originalMaxValue: 40
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -1568,19 +1568,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Arcane (Tier8)
-        description: +3-6 Maximum Mana
+        description: +30-60 Maximum Mana
         affixType: 0
         tier: 7
         modifiers:
         - statName: maxMana
-          minValue: 3
-          maxValue: 6
+          minValue: 30
+          maxValue: 60
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 3
-          originalMaxValue: 6
+          originalMinValue: 30
+          originalMaxValue: 60
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -1601,19 +1601,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Arcane (Tier6)
-        description: +5-10 Maximum Mana
+        description: +50-100 Maximum Mana
         affixType: 0
         tier: 5
         modifiers:
         - statName: maxMana
-          minValue: 5
-          maxValue: 10
+          minValue: 50
+          maxValue: 100
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 5
-          originalMaxValue: 10
+          originalMinValue: 50
+          originalMaxValue: 100
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -1634,19 +1634,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Arcane (Tier4)
-        description: +8-15 Maximum Mana
+        description: +80-150 Maximum Mana
         affixType: 0
         tier: 3
         modifiers:
         - statName: maxMana
-          minValue: 8
-          maxValue: 15
+          minValue: 80
+          maxValue: 150
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 8
-          originalMaxValue: 15
+          originalMinValue: 80
+          originalMaxValue: 150
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -1667,19 +1667,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Arcane (Tier2)
-        description: +12-22 Maximum Mana
+        description: +120-220 Maximum Mana
         affixType: 0
         tier: 1
         modifiers:
         - statName: maxMana
-          minValue: 12
-          maxValue: 22
+          minValue: 120
+          maxValue: 220
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 12
-          originalMaxValue: 22
+          originalMinValue: 120
+          originalMaxValue: 220
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -1911,8 +1911,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 2
-          originalMaxValue: 4
+          originalMinValue: 20
+          originalMaxValue: 40
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -1944,8 +1944,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 3
-          originalMaxValue: 6
+          originalMinValue: 30
+          originalMaxValue: 60
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -1977,8 +1977,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 5
-          originalMaxValue: 10
+          originalMinValue: 50
+          originalMaxValue: 100
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -2010,8 +2010,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 8
-          originalMaxValue: 15
+          originalMinValue: 80
+          originalMaxValue: 150
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -3050,8 +3050,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 2
-          originalMaxValue: 4
+          originalMinValue: 20
+          originalMaxValue: 40
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -4795,8 +4795,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 3
-          originalMaxValue: 6
+          originalMinValue: 30
+          originalMaxValue: 60
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -4813,8 +4813,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 3
-          originalMaxValue: 6
+          originalMinValue: 30
+          originalMaxValue: 60
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -4831,8 +4831,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 3
-          originalMaxValue: 6
+          originalMinValue: 30
+          originalMaxValue: 60
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -4864,8 +4864,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 8
-          originalMaxValue: 15
+          originalMinValue: 80
+          originalMaxValue: 150
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -4882,8 +4882,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 8
-          originalMaxValue: 15
+          originalMinValue: 80
+          originalMaxValue: 150
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -4900,8 +4900,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 8
-          originalMaxValue: 15
+          originalMinValue: 80
+          originalMaxValue: 150
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0

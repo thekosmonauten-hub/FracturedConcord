@@ -47,6 +47,15 @@ public class PreparationManager : MonoBehaviour
     /// </summary>
     public bool IsUnleashing => isUnleashing;
     
+    /// <summary>
+    /// Check if a PreparedCard is still valid (exists in the prepared cards list)
+    /// </summary>
+    public bool IsPreparedCardValid(PreparedCard prepared)
+    {
+        if (prepared == null) return false;
+        return preparedCards.Contains(prepared);
+    }
+    
     [Header("References")]
     public PreparedCardsUI preparedCardsUI;
     
@@ -112,6 +121,13 @@ public class PreparationManager : MonoBehaviour
         if (prepared == null || !preparedCards.Contains(prepared))
         {
             Debug.LogWarning("[PreparationManager] Cannot unleash: Invalid prepared card!");
+            return false;
+        }
+        
+        // Check if card has at least 1 charge (cannot unleash same turn it's prepared)
+        if (prepared.turnsPrepared < 1)
+        {
+            Debug.LogWarning($"[PreparationManager] Cannot unleash: Card needs at least 1 charge (currently {prepared.turnsPrepared}/{prepared.maxTurns})!");
             return false;
         }
         
@@ -274,6 +290,14 @@ public class PreparationManager : MonoBehaviour
     {
         CardDataExtended card = prepared.sourceCard;
         
+        // Check card type first - Guard cards should apply guard, not deal damage
+        if (card.GetCardTypeEnum() == CardType.Guard)
+        {
+            // Guard cards: Apply base guard + prepared card guard bonus
+            ApplyUnleashGuard(prepared, player);
+            return;
+        }
+        
         // Get unleash effect type from card
         string unleashEffect = card.unleashEffect;
         
@@ -296,6 +320,87 @@ public class PreparationManager : MonoBehaviour
                 DealUnleashDamage(prepared, player, damage);
                 ApplyUnleashBuffs(prepared, player);
                 break;
+        }
+        
+        // Trigger any combo effects
+        TriggerUnleashComboEffects(prepared, player);
+    }
+    
+    /// <summary>
+    /// Apply guard from unleashed Guard card (base guard + prepared card guard bonus)
+    /// </summary>
+    private void ApplyUnleashGuard(PreparedCard prepared, Character player)
+    {
+        if (prepared == null || prepared.sourceCard == null || player == null) return;
+        
+        CardDataExtended card = prepared.sourceCard;
+        
+        // Get CardEffectProcessor to use the full guard calculation pipeline
+        var cardEffectProcessor = FindFirstObjectByType<CardEffectProcessor>();
+        if (cardEffectProcessor == null)
+        {
+            Debug.LogError("[PreparationManager] CardEffectProcessor not found! Cannot apply guard.");
+            return;
+        }
+        
+        // Convert CardDataExtended to Card for processing
+        Card cardObj = card.ToCard();
+        
+        // Apply base guard using CardEffectProcessor (handles all the normal guard calculation)
+        // This will apply base guard, scaling, momentum effects, etc.
+        cardEffectProcessor.ApplyCardToEnemy(cardObj, null, player, Vector3.zero, false);
+        
+        // Now apply the prepared card guard bonus on top of the base guard
+        // This is the bonus that scales with the number of prepared cards
+        if (card.preparedCardGuardBase > 0f || 
+            (card.preparedCardGuardScaling != null && 
+             (card.preparedCardGuardScaling.strengthDivisor > 0f || 
+              card.preparedCardGuardScaling.dexterityDivisor > 0f || 
+              card.preparedCardGuardScaling.intelligenceDivisor > 0f ||
+              card.preparedCardGuardScaling.strengthScaling > 0f ||
+              card.preparedCardGuardScaling.dexterityScaling > 0f ||
+              card.preparedCardGuardScaling.intelligenceScaling > 0f)))
+        {
+            // Calculate guard per prepared card (including scaling)
+            float guardPerCard = card.preparedCardGuardBase;
+            if (card.preparedCardGuardScaling != null)
+            {
+                guardPerCard += card.preparedCardGuardScaling.CalculateScalingBonus(player);
+            }
+            
+            // Get the number of prepared cards (this card was already removed from the list)
+            // So we need to add 1 to account for this card itself
+            int preparedCount = (preparedCards != null ? preparedCards.Count : 0) + 1;
+            
+            // Apply guard with preparation multiplier
+            float bonusGuard = guardPerCard * preparedCount * (1f + prepared.currentMultiplier);
+            player.AddGuard(bonusGuard);
+            
+            Debug.Log($"<color=cyan>[Preparation Bonus] {card.cardName} gained {bonusGuard:F1} bonus guard from preparation (base: {card.preparedCardGuardBase} per card, scaling: {card.preparedCardGuardScaling?.CalculateScalingBonus(player) ?? 0f}, prepared count: {preparedCount}, multiplier: {1f + prepared.currentMultiplier:F2})</color>");
+            
+            // Update guard display
+            PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+            if (playerDisplay != null)
+            {
+                playerDisplay.UpdateGuardDisplay();
+            }
+        }
+        
+        // Apply temporary Dexterity bonus if specified in description
+        int tempDex = PreparationBonusParser.ParsePreparationTempDexterity(card.description);
+        if (tempDex > 0)
+        {
+            var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+            if (playerDisplay != null)
+            {
+                var statusMgr = playerDisplay.GetStatusEffectManager();
+                if (statusMgr != null)
+                {
+                    var dexEffect = new StatusEffect(StatusEffectType.Dexterity, "TempDexterity", tempDex, 3, false);
+                    statusMgr.AddStatusEffect(dexEffect);
+                    Debug.Log($"<color=cyan>[Preparation Bonus] {card.cardName} gained {tempDex} temporary Dexterity from preparation bonus</color>");
+                }
+            }
         }
         
         // Trigger any combo effects
@@ -345,36 +450,86 @@ public class PreparationManager : MonoBehaviour
             Debug.Log($"<color=cyan>[Preparation] Momentum-based card {prepared.sourceCard.cardName} - applying multiplier: {originalBaseDamage} * {preparationMultiplier:F2} = {card.baseDamage:F1} per momentum</color>");
         }
         
-        // Get target enemy (first enemy for single-target, null for AoE)
+        // Get target enemy using the same targeting system as regular cards
+        // This ensures unleashed cards follow the same targeting rules (selected enemy, AoE, etc.)
         Enemy targetEnemy = null;
         Vector3 targetScreenPosition = Vector3.zero;
         
-        var combatDisplay = FindFirstObjectByType<CombatDisplayManager>();
-        if (combatDisplay != null && combatDisplay.enemySpawner != null)
+        // For single-target cards, use the selected enemy from EnemyTargetingManager
+        // For AoE cards, targetEnemy should be null (CardEffectProcessor handles AoE targeting)
+        if (!card.isAoE)
         {
-            var activeDisplays = combatDisplay.enemySpawner.GetActiveEnemies();
-            if (activeDisplays != null && activeDisplays.Count > 0)
+            // Use EnemyTargetingManager to get the currently selected enemy (same as regular cards)
+            if (EnemyTargetingManager.Instance != null)
             {
-                // For single-target cards, get the first enemy
-                if (!card.isAoE)
+                targetEnemy = EnemyTargetingManager.Instance.GetTargetedEnemy();
+                targetScreenPosition = EnemyTargetingManager.Instance.GetTargetedEnemyPosition();
+                
+                // If no valid target found, fall back to first available enemy
+                if (targetEnemy == null)
                 {
-                    var firstEnemyDisplay = activeDisplays[0];
-                    if (firstEnemyDisplay != null)
+                    var combatDisplay = FindFirstObjectByType<CombatDisplayManager>();
+                    if (combatDisplay != null && combatDisplay.enemySpawner != null)
                     {
-                        targetEnemy = firstEnemyDisplay.GetEnemy();
-                        if (targetEnemy != null && firstEnemyDisplay.transform != null)
+                        var activeDisplays = combatDisplay.enemySpawner.GetActiveEnemies();
+                        if (activeDisplays != null && activeDisplays.Count > 0)
                         {
-                            targetScreenPosition = firstEnemyDisplay.transform.position;
+                            var firstEnemyDisplay = activeDisplays[0];
+                            if (firstEnemyDisplay != null)
+                            {
+                                targetEnemy = firstEnemyDisplay.GetEnemy();
+                                if (targetEnemy != null && firstEnemyDisplay.transform != null)
+                                {
+                                    targetScreenPosition = firstEnemyDisplay.transform.position;
+                                }
+                            }
                         }
                     }
                 }
-                else
+            }
+            else
+            {
+                // Fallback if EnemyTargetingManager not available
+                var combatDisplay = FindFirstObjectByType<CombatDisplayManager>();
+                if (combatDisplay != null && combatDisplay.enemySpawner != null)
                 {
-                    // For AoE, use first enemy's position as reference
-                    var firstEnemyDisplay = activeDisplays[0];
-                    if (firstEnemyDisplay != null && firstEnemyDisplay.transform != null)
+                    var activeDisplays = combatDisplay.enemySpawner.GetActiveEnemies();
+                    if (activeDisplays != null && activeDisplays.Count > 0)
                     {
-                        targetScreenPosition = firstEnemyDisplay.transform.position;
+                        var firstEnemyDisplay = activeDisplays[0];
+                        if (firstEnemyDisplay != null)
+                        {
+                            targetEnemy = firstEnemyDisplay.GetEnemy();
+                            if (targetEnemy != null && firstEnemyDisplay.transform != null)
+                            {
+                                targetScreenPosition = firstEnemyDisplay.transform.position;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            // For AoE cards, get position from first enemy for animation reference
+            // CardEffectProcessor will handle actual AoE targeting
+            if (EnemyTargetingManager.Instance != null)
+            {
+                targetScreenPosition = EnemyTargetingManager.Instance.GetTargetedEnemyPosition();
+            }
+            else
+            {
+                var combatDisplay = FindFirstObjectByType<CombatDisplayManager>();
+                if (combatDisplay != null && combatDisplay.enemySpawner != null)
+                {
+                    var activeDisplays = combatDisplay.enemySpawner.GetActiveEnemies();
+                    if (activeDisplays != null && activeDisplays.Count > 0)
+                    {
+                        var firstEnemyDisplay = activeDisplays[0];
+                        if (firstEnemyDisplay != null && firstEnemyDisplay.transform != null)
+                        {
+                            targetScreenPosition = firstEnemyDisplay.transform.position;
+                        }
                     }
                 }
             }
@@ -396,52 +551,89 @@ public class PreparationManager : MonoBehaviour
         
         CardDataExtended card = prepared.sourceCard;
         
-        // Check for preparation bonuses (e.g., Shadow Step: "+2 (+Dex/2) Guard and 1 temporary Dexterity")
-        if (PreparationBonusParser.HasPreparationBonus(card.description))
+        // Use the new configurable fields from CardDataExtended for guard bonuses
+        // This is more reliable than parsing description text
+        if (card.preparedCardGuardBase > 0f || 
+            (card.preparedCardGuardScaling != null && 
+             (card.preparedCardGuardScaling.strengthDivisor > 0f || 
+              card.preparedCardGuardScaling.dexterityDivisor > 0f || 
+              card.preparedCardGuardScaling.intelligenceDivisor > 0f ||
+              card.preparedCardGuardScaling.strengthScaling > 0f ||
+              card.preparedCardGuardScaling.dexterityScaling > 0f ||
+              card.preparedCardGuardScaling.intelligenceScaling > 0f)))
         {
-            // Parse preparation guard bonus
-            var (prepGuard, prepGuardDexDivisor) = PreparationBonusParser.ParsePreparationGuard(card.description);
-            if (prepGuard > 0f)
+            // Calculate guard per prepared card (including scaling)
+            float guardPerCard = card.preparedCardGuardBase;
+            if (card.preparedCardGuardScaling != null)
             {
-                float guardAmount = prepGuard;
-                
-                // Add dexterity scaling if specified
-                if (prepGuardDexDivisor > 0f)
-                {
-                    float dexBonus = player.dexterity / prepGuardDexDivisor;
-                    guardAmount += dexBonus;
-                }
-                
-                // Apply guard with preparation multiplier
-                float multipliedGuard = guardAmount * (1f + prepared.currentMultiplier);
-                player.AddGuard(multipliedGuard);
-                
-                Debug.Log($"<color=cyan>[Preparation Bonus] {card.cardName} gained {multipliedGuard:F1} guard from preparation bonus (base: {prepGuard} + Dex/{prepGuardDexDivisor}, multiplier: {1f + prepared.currentMultiplier:F2})</color>");
-                
-                // Update guard display
-                PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
-                if (playerDisplay != null)
-                {
-                    playerDisplay.UpdateGuardDisplay();
-                }
+                guardPerCard += card.preparedCardGuardScaling.CalculateScalingBonus(player);
             }
             
-            // Parse preparation temporary Dexterity bonus
-            int tempDex = PreparationBonusParser.ParsePreparationTempDexterity(card.description);
-            if (tempDex > 0)
+            // Get the number of prepared cards (including this one)
+            int preparedCount = preparedCards != null ? preparedCards.Count : 0;
+            
+            // Apply guard with preparation multiplier
+            float totalGuard = guardPerCard * preparedCount * (1f + prepared.currentMultiplier);
+            player.AddGuard(totalGuard);
+            
+            Debug.Log($"<color=cyan>[Preparation Bonus] {card.cardName} gained {totalGuard:F1} guard from preparation bonus (base: {card.preparedCardGuardBase} per card, scaling: {card.preparedCardGuardScaling?.CalculateScalingBonus(player) ?? 0f}, prepared count: {preparedCount}, multiplier: {1f + prepared.currentMultiplier:F2})</color>");
+            
+            // Update guard display
+            PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+            if (playerDisplay != null)
             {
-                // Get StatusEffectManager from PlayerCombatDisplay
-                var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
-                if (playerDisplay != null)
+                playerDisplay.UpdateGuardDisplay();
+            }
+        }
+        else
+        {
+            // Fallback: Check for preparation bonuses in description (legacy support)
+            if (PreparationBonusParser.HasPreparationBonus(card.description))
+            {
+                // Parse preparation guard bonus
+                var (prepGuard, prepGuardDexDivisor) = PreparationBonusParser.ParsePreparationGuard(card.description);
+                if (prepGuard > 0f)
                 {
-                    var statusMgr = playerDisplay.GetStatusEffectManager();
-                    if (statusMgr != null)
+                    float guardAmount = prepGuard;
+                    
+                    // Add dexterity scaling if specified
+                    if (prepGuardDexDivisor > 0f)
                     {
-                        // Use Dexterity status effect type for temporary dexterity boosts
-                        var dexEffect = new StatusEffect(StatusEffectType.Dexterity, "TempDexterity", tempDex, 3, false);
-                        statusMgr.AddStatusEffect(dexEffect);
-                        Debug.Log($"<color=cyan>[Preparation Bonus] {card.cardName} gained {tempDex} temporary Dexterity from preparation bonus</color>");
+                        float dexBonus = player.dexterity / prepGuardDexDivisor;
+                        guardAmount += dexBonus;
                     }
+                    
+                    // Apply guard with preparation multiplier
+                    float multipliedGuard = guardAmount * (1f + prepared.currentMultiplier);
+                    player.AddGuard(multipliedGuard);
+                    
+                    Debug.Log($"<color=cyan>[Preparation Bonus] {card.cardName} gained {multipliedGuard:F1} guard from preparation bonus (base: {prepGuard} + Dex/{prepGuardDexDivisor}, multiplier: {1f + prepared.currentMultiplier:F2})</color>");
+                    
+                    // Update guard display
+                    PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+                    if (playerDisplay != null)
+                    {
+                        playerDisplay.UpdateGuardDisplay();
+                    }
+                }
+            }
+        }
+        
+        // Parse preparation temporary Dexterity bonus (still from description for now)
+        int tempDex = PreparationBonusParser.ParsePreparationTempDexterity(card.description);
+        if (tempDex > 0)
+        {
+            // Get StatusEffectManager from PlayerCombatDisplay
+            var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+            if (playerDisplay != null)
+            {
+                var statusMgr = playerDisplay.GetStatusEffectManager();
+                if (statusMgr != null)
+                {
+                    // Use Dexterity status effect type for temporary dexterity boosts
+                    var dexEffect = new StatusEffect(StatusEffectType.Dexterity, "TempDexterity", tempDex, 3, false);
+                    statusMgr.AddStatusEffect(dexEffect);
+                    Debug.Log($"<color=cyan>[Preparation Bonus] {card.cardName} gained {tempDex} temporary Dexterity from preparation bonus</color>");
                 }
             }
         }
@@ -522,6 +714,12 @@ public class PreparationManager : MonoBehaviour
             {
                 preparedCardsUI.UpdatePreparedCard(prepared);
             }
+        }
+        
+        // Update all card scales after turn end (charges changed, queue order may have changed)
+        if (preparedCardsUI != null)
+        {
+            preparedCardsUI.UpdateAllCardScales();
         }
         
         // Auto-unleash cards that reached their condition

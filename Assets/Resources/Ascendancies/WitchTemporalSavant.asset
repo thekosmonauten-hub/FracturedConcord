@@ -131,7 +131,7 @@ MonoBehaviour:
       selectedSubNodeIndex: -1
     - name: Borrowed Power
       nodeType: 2
-      description: Temporal cards gain +25% effect but cost +1 more.
+      description: Temporal cards gain +25% effect but cost +1  base mana.
       icon: {fileID: 3333594751275733648, guid: 770bbbf58db5c9741b21bf1f1b49fb03, type: 3}
       nodeScale: 1.5
       pointCost: 1

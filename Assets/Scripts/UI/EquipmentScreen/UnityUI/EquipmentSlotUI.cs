@@ -178,7 +178,9 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler,
         if (draggedItem != null)
         {
             // Check if item can be equipped in this slot
-            if (draggedItem.equipmentType == slotType)
+            bool canEquip = CanItemBeEquippedInSlot(draggedItem, slotType);
+            
+            if (canEquip)
             {
                 Debug.Log($"[EquipmentSlotUI] Valid drop: {draggedItem.itemName} → {slotType}");
                 
@@ -207,6 +209,39 @@ public class EquipmentSlotUI : MonoBehaviour, IPointerClickHandler,
     public EquipmentType GetSlotType()
     {
         return slotType;
+    }
+    
+    /// <summary>
+    /// Check if an item can be equipped in this slot
+    /// Special case: 1-handed weapons can go in both MainHand and OffHand
+    /// Rule: Cannot equip in OffHand if MainHand is empty (must equip MainHand first)
+    /// </summary>
+    private bool CanItemBeEquippedInSlot(BaseItem item, EquipmentType slot)
+    {
+        if (item == null) return false;
+        
+        // Special case: 1-handed weapons can be equipped in both MainHand and OffHand
+        if (item is WeaponItem weapon && weapon.handedness == WeaponHandedness.OneHanded)
+        {
+            // Rule: Cannot equip in OffHand if MainHand is empty
+            if (slot == EquipmentType.OffHand)
+            {
+                var equipmentManager = EquipmentManager.Instance;
+                if (equipmentManager != null)
+                {
+                    BaseItem mainHandItem = equipmentManager.GetEquippedItem(EquipmentType.MainHand);
+                    if (mainHandItem == null)
+                    {
+                        Debug.LogWarning($"[EquipmentSlotUI] Cannot equip {item.itemName} in OffHand: MainHand must be equipped first!");
+                        return false;
+                    }
+                }
+            }
+            return slot == EquipmentType.MainHand || slot == EquipmentType.OffHand;
+        }
+        
+        // Default: Check if equipment types match
+        return item.equipmentType == slot;
     }
 }
 

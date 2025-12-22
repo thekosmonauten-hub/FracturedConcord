@@ -456,6 +456,14 @@ public class WarrantFusionUI : MonoBehaviour
         if (warrant == null || lockerItem == null)
             return;
         
+        // Remove warrant from locker immediately when selected for fusion
+        var grid = GetLockerGrid();
+        if (grid != null)
+        {
+            grid.HandleWarrantAssigned(lockerItem);
+            Debug.Log($"[WarrantFusionUI] Removed warrant '{warrant.warrantId}' from locker (selected for fusion)");
+        }
+        
         // Assign the warrant to the slot
         currentlySelectingSlot.AssignWarrantFromSelection(warrant, lockerItem);
         
@@ -624,12 +632,19 @@ public class WarrantFusionUI : MonoBehaviour
         lockItems.Clear();
         lockedModifiers.Clear();
         
-        // Reset selections
-        selectedNotable = null;
-        selectedAffix = null;
-        selectedNotableSlotIndex = -1;
-        selectedAffixSlotIndex = -1;
-        selectedAffixItem = null;
+        // Reset selections ONLY if they haven't been confirmed yet
+        // Don't clear confirmed selections - they need to persist for fusion
+        if (!notableConfirmed)
+        {
+            selectedNotable = null;
+            selectedNotableSlotIndex = -1;
+        }
+        if (!affixConfirmed)
+        {
+            selectedAffix = null;
+            selectedAffixSlotIndex = -1;
+            selectedAffixItem = null;
+        }
         
         // Clear notable and affix containers
         if (notableContainer != null)
@@ -788,7 +803,12 @@ public class WarrantFusionUI : MonoBehaviour
                         
                         if (affixItem != null)
                         {
-                            affixItem.Initialize(modSource.slotIndex, modSource.modifier, this);
+                            // Check if this affix is from a previously fused warrant (locked/permanent)
+                            bool isFused = IsAffixFromFusedWarrant(modSource.slotIndex);
+                            // Check if this is a sealed/locked affix
+                            bool isSealed = IsSealedAffix(modSource.modifier);
+                            // Sealed affixes should be treated as fused (yellow/gold color, non-selectable)
+                            affixItem.Initialize(modSource.slotIndex, modSource.modifier, this, isFused || isSealed);
                             lockItems.Add(affixItem);
                         }
                     }
@@ -1203,10 +1223,17 @@ public class WarrantFusionUI : MonoBehaviour
         // Remove any existing affix (only one allowed)
         fusionBlueprint.modifiers.Clear();
         
-        // Add the confirmed affix
+        // Add the confirmed affix - mark it as sealed/locked for preview display (yellow/gold color)
+        // If it's not already sealed, add the __SEALED__ prefix to indicate it's the selected affix
+        string sealedModifierId = modifier.modifierId;
+        if (!IsSealedAffix(modifier))
+        {
+            sealedModifierId = $"__SEALED__{modifier.modifierId}";
+        }
+        
         fusionBlueprint.modifiers.Add(new WarrantModifier
         {
-            modifierId = modifier.modifierId,
+            modifierId = sealedModifierId, // Mark as sealed for preview (yellow/gold display)
             displayName = modifier.displayName,
             operation = modifier.operation,
             value = modifier.value,
@@ -1275,6 +1302,7 @@ public class WarrantFusionUI : MonoBehaviour
         }
         
         // Perform fusion
+        Debug.Log($"[WarrantFusionUI] Fusing warrants. selectedNotable: {(selectedNotable != null ? selectedNotable.displayName ?? selectedNotable.notableId : "NULL")}, notableConfirmed: {notableConfirmed}, affixConfirmed: {affixConfirmed}");
         var result = WarrantFusionLogic.FuseWarrants(
             warrant1,
             warrant2,
@@ -1321,18 +1349,8 @@ public class WarrantFusionUI : MonoBehaviour
                 collectButton.gameObject.SetActive(true);
             }
             
-            // Remove consumed warrants from locker (they're already used in fusion)
-            var grid = GetLockerGrid();
-            if (grid != null)
-            {
-                var item1 = slot1 != null ? slot1.GetLockerItem() : null;
-                var item2 = slot2 != null ? slot2.GetLockerItem() : null;
-                var item3 = slot3 != null ? slot3.GetLockerItem() : null;
-                
-                if (item1 != null) grid.HandleWarrantAssigned(item1);
-                if (item2 != null) grid.HandleWarrantAssigned(item2);
-                if (item3 != null) grid.HandleWarrantAssigned(item3);
-            }
+            // Remove consumed warrants from character data (they're consumed in fusion)
+            RemoveWarrantsFromCharacter(warrant1, warrant2, warrant3);
             
             SetStatusText($"Successfully fused warrants! Click 'Collect' to save {result.fusedWarrant.displayName} to your locker.", Color.green);
             
@@ -1535,6 +1553,85 @@ public class WarrantFusionUI : MonoBehaviour
     {
         public int slotIndex;
         public WarrantModifier modifier;
+    }
+    
+    /// <summary>
+    /// Checks if an affix from the given slot index is from a previously fused warrant.
+    /// Fused warrants have IDs that start with "fused_".
+    /// </summary>
+    private bool IsAffixFromFusedWarrant(int slotIndex)
+    {
+        WarrantFusionSlot slot = null;
+        switch (slotIndex)
+        {
+            case 0: slot = slot1; break;
+            case 1: slot = slot2; break;
+            case 2: slot = slot3; break;
+        }
+        
+        if (slot == null || slot.CurrentWarrant == null)
+            return false;
+        
+        // Check if the warrant ID starts with "fused_" (indicates it came from a previous fusion)
+        string warrantId = slot.CurrentWarrant.warrantId ?? "";
+        return warrantId.StartsWith("fused_", System.StringComparison.OrdinalIgnoreCase);
+    }
+    
+    /// <summary>
+    /// Removes the input warrants from character data after fusion (they are consumed).
+    /// </summary>
+    private void RemoveWarrantsFromCharacter(WarrantDefinition warrant1, WarrantDefinition warrant2, WarrantDefinition warrant3)
+    {
+        if (CharacterManager.Instance == null || CharacterManager.Instance.currentCharacter == null)
+        {
+            Debug.LogWarning("[WarrantFusionUI] Cannot remove warrants from character: CharacterManager or character not found.");
+            return;
+        }
+
+        Character character = CharacterManager.Instance.currentCharacter;
+        if (character.ownedWarrants == null)
+        {
+            Debug.LogWarning("[WarrantFusionUI] Character has no ownedWarrants list.");
+            return;
+        }
+
+        int removedCount = 0;
+        
+        // Remove each warrant by ID
+        if (warrant1 != null && !string.IsNullOrEmpty(warrant1.warrantId))
+        {
+            removedCount += character.ownedWarrants.RemoveAll(w => w != null && w.warrantId == warrant1.warrantId);
+            Debug.Log($"[WarrantFusionUI] Removed warrant '{warrant1.warrantId}' from character data");
+        }
+        
+        if (warrant2 != null && !string.IsNullOrEmpty(warrant2.warrantId))
+        {
+            removedCount += character.ownedWarrants.RemoveAll(w => w != null && w.warrantId == warrant2.warrantId);
+            Debug.Log($"[WarrantFusionUI] Removed warrant '{warrant2.warrantId}' from character data");
+        }
+        
+        if (warrant3 != null && !string.IsNullOrEmpty(warrant3.warrantId))
+        {
+            removedCount += character.ownedWarrants.RemoveAll(w => w != null && w.warrantId == warrant3.warrantId);
+            Debug.Log($"[WarrantFusionUI] Removed warrant '{warrant3.warrantId}' from character data");
+        }
+        
+        // Save character to persist the changes
+        CharacterManager.Instance.SaveCharacter();
+        
+        Debug.Log($"[WarrantFusionUI] Removed {removedCount} warrant(s) from character data after fusion");
+    }
+    
+    /// <summary>
+    /// Checks if a modifier is a sealed/locked affix (has __SEALED__ or __LOCKED__ prefix).
+    /// </summary>
+    private bool IsSealedAffix(WarrantModifier modifier)
+    {
+        if (modifier == null || string.IsNullOrEmpty(modifier.modifierId))
+            return false;
+        
+        return modifier.modifierId.StartsWith("__SEALED__", System.StringComparison.OrdinalIgnoreCase) ||
+               modifier.modifierId.StartsWith("__LOCKED__", System.StringComparison.OrdinalIgnoreCase);
     }
     
     private class NotableSource

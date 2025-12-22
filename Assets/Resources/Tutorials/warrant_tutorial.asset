@@ -135,7 +135,7 @@ MonoBehaviour:
     conditionName: 
     onStartAction:
       actionType: 5
-      actionValue: TownScene
+      actionValue: JoregShack
       floatValue: 1
     onCompleteAction:
       actionType: 6

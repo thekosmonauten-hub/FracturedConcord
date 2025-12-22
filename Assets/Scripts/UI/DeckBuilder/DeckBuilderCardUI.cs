@@ -71,6 +71,7 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
     private readonly Dictionary<Transform, Image> embossingIconImageCache = new Dictionary<Transform, Image>();
     private static readonly string[] EmbossingIconChildNames = { "EmbossingIcon", "Icon" };
     private static Dictionary<string, EmbossingEffect> embossingEffectCache;
+    private bool isHovering = false;
     
     private void Awake()
     {
@@ -178,16 +179,8 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
             cardNameText.text = cardData.cardName;
         }
         
-        if (costText != null)
-        {
-            // Calculate display cost (includes momentum-based cost reductions)
-            int displayCost = cardData.playCost;
-            if (cardData is CardDataExtended extendedCard)
-            {
-                displayCost = CombatDeckManager.GetDisplayCost(extendedCard, cardData.playCost, ownerCharacter);
-            }
-            costText.text = displayCost.ToString();
-        }
+        // Mana cost will be updated after embossings are set (see UpdateManaCostDisplay)
+        UpdateManaCostDisplay(null);
         
         if (descriptionText != null)
         {
@@ -236,7 +229,14 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
             if (previewCard != null)
             {
                 SetEmbossingSlots(previewCard);
+                // Update mana cost after embossings are set
+                UpdateManaCostDisplay(previewCard);
             }
+        }
+        else
+        {
+            // No embossings, just update with base cost
+            UpdateManaCostDisplay(null);
         }
 
         UpdateAdditionalEffectsDisplay();
@@ -606,13 +606,90 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
         if (embossings == null || embossings.Count == 0 || cardData == null)
             return null;
 
-        return new Card
+        // Calculate base mana cost
+        int baseCost = cardData.playCost;
+        if (cardData is CardDataExtended extendedCard)
+        {
+            baseCost = CombatDeckManager.GetDisplayCost(extendedCard, cardData.playCost, ownerCharacter);
+        }
+
+        Card previewCard = new Card
         {
             cardName = cardData.cardName,
             embossingSlots = cardData.embossingSlots,
             appliedEmbossings = DeckCardEntry.CopyEmbossings(embossings),
-            groupKey = ResolveGroupKey(cardData)
+            groupKey = ResolveGroupKey(cardData),
+            manaCost = baseCost // Set base cost for embossing calculation
         };
+
+        return previewCard;
+    }
+    
+    /// <summary>
+    /// Update the mana cost display text, accounting for embossings
+    /// </summary>
+    private void UpdateManaCostDisplay(Card cardWithEmbossings)
+    {
+        if (costText == null || cardData == null)
+            return;
+
+        // Calculate base display cost (includes momentum-based cost reductions)
+        int displayCost = cardData.playCost;
+        CardDataExtended extendedCard = cardData as CardDataExtended;
+        if (extendedCard != null)
+        {
+            // Get the base cost - for Skill cards with percentage, use percentageManaCost; otherwise use playCost
+            int baseCostForDisplay = extendedCard.playCost;
+            if (extendedCard.percentageManaCost > 0 && string.Equals(extendedCard.cardType, "Skill", System.StringComparison.OrdinalIgnoreCase))
+        {
+                baseCostForDisplay = extendedCard.percentageManaCost;
+            }
+            displayCost = CombatDeckManager.GetDisplayCost(extendedCard, baseCostForDisplay, ownerCharacter);
+        }
+
+        // Apply embossing cost increases if embossings are present
+        if (cardWithEmbossings != null && cardWithEmbossings.appliedEmbossings != null && cardWithEmbossings.appliedEmbossings.Count > 0)
+        {
+            // Use the card's GetCurrentManaCost method which accounts for embossings and Skill card percentages
+            displayCost = cardWithEmbossings.GetCurrentManaCost(ownerCharacter);
+        }
+        else if (cardWithEmbossings != null && cardWithEmbossings.cardType == CardType.Skill && ownerCharacter != null && extendedCard != null)
+        {
+            // For Skill cards with percentage cost, calculate percentage-based cost
+            if (extendedCard.percentageManaCost > 0)
+            {
+                float percentageCost = extendedCard.percentageManaCost / 100.0f;
+                displayCost = Mathf.RoundToInt(ownerCharacter.maxMana * percentageCost);
+            }
+            // If percentageManaCost is 0, displayCost is already the flat cost from playCost
+        }
+
+        // For Skill cards with percentage cost, show percentage format
+        if (cardWithEmbossings != null && cardWithEmbossings.cardType == CardType.Skill && extendedCard != null)
+        {
+            if (extendedCard.percentageManaCost > 0)
+            {
+                // Use percentageManaCost
+                int percentageValue = extendedCard.percentageManaCost;
+                if (ownerCharacter != null)
+                {
+                    costText.text = $"{percentageValue}% ({displayCost})";
+                }
+                else
+                {
+                    costText.text = $"{percentageValue}%";
+                }
+            }
+            else
+            {
+                // Fallback: use playCost as flat cost
+        costText.text = displayCost.ToString();
+            }
+        }
+        else
+        {
+            costText.text = displayCost.ToString();
+        }
     }
 
     public static EmbossingEffect ResolveEmbossingEffect(string embossingId)
@@ -1013,6 +1090,8 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
     {
         if (!isInteractable) return;
         
+        isHovering = true;
+        
         // Scale up animation on visual root only (keeps layout root stable)
         LeanTween.cancel(scaleTarget.gameObject);
         LeanTween.scale(scaleTarget.gameObject, originalScale * hoverScale, animationDuration)
@@ -1035,6 +1114,9 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
             glowEffect.SetActive(true);
         }
         
+        // Check for ALT key to show tooltip
+        CheckAndShowTooltip(eventData);
+        
         // Note: SetAsLastSibling() removed because it causes grid recalculation issues
         // Cards will scale up on hover but won't overlap other cards
     }
@@ -1042,6 +1124,8 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
     public void OnPointerExit(PointerEventData eventData)
     {
         if (!isInteractable) return;
+        
+        isHovering = false;
         
         // Scale down animation on visual root only
         LeanTween.cancel(scaleTarget.gameObject);
@@ -1064,6 +1148,153 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
         {
             glowEffect.SetActive(false);
         }
+        
+        // Hide tooltip when leaving card
+        HideTooltip();
+    }
+    
+    private void Update()
+    {
+        // If hovering, check ALT key state and show/hide tooltip accordingly
+        if (isHovering && ItemTooltipManager.Instance != null && cardData != null)
+        {
+            bool altPressed = Keyboard.current != null && 
+                             (Keyboard.current.leftAltKey.isPressed || Keyboard.current.rightAltKey.isPressed);
+            
+            if (altPressed)
+            {
+                // Show tooltip if ALT is held while hovering
+                // Use current mouse position for tooltip (using new Input System)
+                Vector2 mousePosition = Mouse.current != null ? Mouse.current.position.ReadValue() : Vector2.zero;
+                PointerEventData fakeEventData = new PointerEventData(UnityEngine.EventSystems.EventSystem.current)
+                {
+                    position = mousePosition
+                };
+                CheckAndShowTooltip(fakeEventData);
+            }
+            else
+            {
+                // Hide tooltip if ALT is not pressed
+                HideTooltip();
+            }
+        }
+    }
+    
+    private void CheckAndShowTooltip(PointerEventData eventData)
+    {
+        // Only show tooltip when ALT is held
+        bool altPressed = Keyboard.current != null && 
+                         (Keyboard.current.leftAltKey.isPressed || Keyboard.current.rightAltKey.isPressed);
+        
+        if (!altPressed || cardData == null || ItemTooltipManager.Instance == null)
+        {
+            return;
+        }
+        
+        // Convert CardData to Card for tooltip
+        Card card = ConvertCardDataToCard(cardData);
+        if (card == null)
+        {
+            return;
+        }
+        
+        // Get character for tooltip calculations
+        Character character = ResolveReferenceCharacter();
+        
+        // Show tooltip
+        ItemTooltipManager.Instance.ShowCardTooltipForPointer(card, character, eventData);
+    }
+    
+    private void HideTooltip()
+    {
+        if (ItemTooltipManager.Instance != null)
+        {
+            ItemTooltipManager.Instance.HideTooltip();
+        }
+    }
+    
+    /// <summary>
+    /// Convert CardData to Card object for tooltip display
+    /// </summary>
+    private Card ConvertCardDataToCard(CardData cardData)
+    {
+        if (cardData == null) return null;
+        
+        // If it's a CardDataExtended, use its ToCard method, but override embossings with deck embossings if available
+        if (cardData is CardDataExtended extendedCardData)
+        {
+            Card tooltipCard = extendedCardData.ToCard();
+            
+            // Override embossings with deck embossings if available (deck embossings take priority)
+            IList<EmbossingInstance> deckEmbossings = ResolveStoredEmbossings();
+            if (deckEmbossings != null && deckEmbossings.Count > 0)
+            {
+                tooltipCard.appliedEmbossings = DeckCardEntry.CopyEmbossings(deckEmbossings);
+                Debug.Log($"[DeckBuilderCardUI] Tooltip: Found {deckEmbossings.Count} embossings from deck for '{cardData.cardName}'");
+            }
+            else if (extendedCardData.appliedEmbossings != null && extendedCardData.appliedEmbossings.Count > 0)
+            {
+                // If no deck embossings, use embossings from CardDataExtended asset
+                tooltipCard.appliedEmbossings = DeckCardEntry.CopyEmbossings(extendedCardData.appliedEmbossings);
+                Debug.Log($"[DeckBuilderCardUI] Tooltip: Found {extendedCardData.appliedEmbossings.Count} embossings from asset for '{cardData.cardName}'");
+            }
+            else
+            {
+                Debug.Log($"[DeckBuilderCardUI] Tooltip: No embossings found for '{cardData.cardName}'");
+            }
+            
+            return tooltipCard;
+        }
+        
+        // Otherwise, create a basic Card from CardData
+        Character character = ResolveReferenceCharacter();
+        Card basicCard = new Card
+        {
+            cardName = cardData.cardName,
+            description = cardData.description,
+            manaCost = cardData.playCost,
+            baseDamage = cardData.damage,
+            baseGuard = cardData.block,
+            cardArt = cardData.cardImage,
+            cardArtName = cardData.cardImage != null ? cardData.cardImage.name : "",
+            cardType = cardData.category == CardCategory.Attack ? CardType.Attack :
+                       cardData.category == CardCategory.Guard ? CardType.Guard :
+                       cardData.category == CardCategory.Skill ? CardType.Skill :
+                       cardData.category == CardCategory.Power ? CardType.Power : CardType.Attack,
+            primaryDamageType = cardData is CardDataExtended extendedData ? extendedData.primaryDamageType : DamageType.Physical,
+            embossingSlots = cardData.embossingSlots,
+            appliedEmbossings = new List<EmbossingInstance>(),
+            sourceCardData = cardData as CardDataExtended
+        };
+        
+        // Copy tags if available
+        if (cardData is CardDataExtended extendedForTags && extendedForTags.tags != null)
+        {
+            basicCard.tags = new List<string>(extendedForTags.tags);
+        }
+        
+        // Get embossings from deck if available
+        IList<EmbossingInstance> deckEmbossingsForBasic = ResolveStoredEmbossings();
+        if (deckEmbossingsForBasic != null && deckEmbossingsForBasic.Count > 0)
+        {
+            basicCard.appliedEmbossings = DeckCardEntry.CopyEmbossings(deckEmbossingsForBasic);
+            Debug.Log($"[DeckBuilderCardUI] Tooltip: Found {deckEmbossingsForBasic.Count} embossings from deck for '{cardData.cardName}'");
+        }
+        else
+        {
+            // If no embossings from deck, check if CardDataExtended has embossings
+            if (cardData is CardDataExtended extendedForEmbossings && extendedForEmbossings.appliedEmbossings != null && extendedForEmbossings.appliedEmbossings.Count > 0)
+            {
+                basicCard.appliedEmbossings = DeckCardEntry.CopyEmbossings(extendedForEmbossings.appliedEmbossings);
+                Debug.Log($"[DeckBuilderCardUI] Tooltip: Found {extendedForEmbossings.appliedEmbossings.Count} embossings from asset for '{cardData.cardName}'");
+            }
+            else
+            {
+                Debug.Log($"[DeckBuilderCardUI] Tooltip: No embossings found for '{cardData.cardName}'");
+            }
+        }
+        
+        return basicCard;
     }
     
     public void OnPointerClick(PointerEventData eventData)

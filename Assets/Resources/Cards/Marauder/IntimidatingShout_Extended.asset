@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Intimidating Shout
   groupKey: Intimidating_Shout
   cardType: Skill
-  playCost: 1
+  playCost: 0
   description: Apply 1 Vulnerability to all enemies.
   rarity: 0
   element: 0
@@ -35,6 +35,7 @@ MonoBehaviour:
   embossingSlots: 1
   cardLevel: 1
   cardExperience: 0
+  percentageManaCost: 15
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 0
@@ -43,14 +44,31 @@ MonoBehaviour:
   isAoE: 1
   aoeTargets: 5
   aoeRowScope: 0
+  isMultiHit: 0
+  hitCount: 2
   damageScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -72,6 +90,7 @@ MonoBehaviour:
   enableCombo: 1
   comboWith: 
   comboDescription: Consumes Crumble
+  momentumEffectDescription: 
   comboWithCardType: 0
   comboAttackIncrease: 0
   comboGuardIncrease: 0
@@ -94,14 +113,46 @@ MonoBehaviour:
   comboHighlightType: type
   channelingBonusEnabled: 0
   channelingMinStacks: 2
-  channelingDamageMultiplier: 1
   channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Skill
   - Basic
+  - Warcry
+  appliedEmbossings: []
+  delayTurns: 0
+  isDelayed: 0
   canPrepare: 0
   maxPrepTurns: 3
   multiplierPerTurn: 0.5
   unleashCondition: manual
   unleashEffect: deal_stored_damage
   prepareDescription: 
+  preparedCardDamageBase: 0
+  preparedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  preparedCardPoisonBase: 0
+  preparedCardGuardBase: 0
+  preparedCardGuardScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  consumedCardDamageBase: 0
+  consumedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0

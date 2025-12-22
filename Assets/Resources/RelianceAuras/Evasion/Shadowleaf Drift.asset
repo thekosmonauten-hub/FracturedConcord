@@ -17,10 +17,11 @@ MonoBehaviour:
   description: Casts an aura that grants evasion
   icon: {fileID: 0}
   themeColor: {r: 0.3, g: 0.8, b: 0.3, a: 1}
-  effectLevel1: 60 evasion, +30% More evasion
-  effectLevel20: 960 evasion, +39% More evasion
+  effectLevel1: 60 evasion. +30% More evasion
+  effectLevel20: 960 evasion. +39% More evasion
   relianceCost: 100
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Shadowleaf Drift_ModifyStat_evasion
+  requiredLevel: 38
   unlockRequirement: 

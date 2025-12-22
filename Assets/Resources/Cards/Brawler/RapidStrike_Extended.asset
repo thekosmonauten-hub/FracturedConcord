@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Rapid Strike
   groupKey: Rapid_Strike
   cardType: Attack
-  playCost: 1
+  playCost: 10
   description: 'Deal {damage} physical damage. Gain 1 Momentum. '
   rarity: 0
   element: 4

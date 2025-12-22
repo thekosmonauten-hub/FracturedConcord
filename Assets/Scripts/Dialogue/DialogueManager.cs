@@ -195,6 +195,22 @@ public class DialogueManager : MonoBehaviour
             return;
         }
         
+        // Clear the dialogue UI before showing the new node to prevent showing stale data
+        // This ensures the correct speaker name and text are shown immediately
+        if (dialogueUI != null)
+        {
+            dialogueUI.ClearDialogueUI();
+        }
+        else
+        {
+            // Try to find DialogueUI if not already found
+            FindDialogueUI();
+            if (dialogueUI != null)
+            {
+                dialogueUI.ClearDialogueUI();
+            }
+        }
+        
         ShowNode(startNode);
     }
     
@@ -538,6 +554,46 @@ public class DialogueManager : MonoBehaviour
         if (condition == null || condition.conditionType == DialogueCondition.ConditionType.None)
             return true;
         
+        // Evaluate the main condition
+        bool mainResult = EvaluateSingleCondition(condition);
+        
+        // If there are additional conditions, combine them with the main result
+        if (condition.additionalConditions != null && condition.additionalConditions.Count > 0)
+        {
+            bool combinedResult = mainResult;
+            
+            foreach (var additionalCondition in condition.additionalConditions)
+            {
+                if (additionalCondition == null)
+                    continue;
+                
+                bool additionalResult = EvaluateSingleCondition(additionalCondition);
+                
+                // Combine based on logic operator
+                if (condition.logicOperator == DialogueCondition.LogicOperator.AND)
+                {
+                    combinedResult = combinedResult && additionalResult;
+                }
+                else // OR
+                {
+                    combinedResult = combinedResult || additionalResult;
+                }
+            }
+            
+            return combinedResult;
+        }
+        
+        return mainResult;
+    }
+    
+    /// <summary>
+    /// Evaluates a single condition (without checking additional conditions).
+    /// </summary>
+    private bool EvaluateSingleCondition(DialogueCondition condition)
+    {
+        if (condition == null || condition.conditionType == DialogueCondition.ConditionType.None)
+            return true;
+        
         switch (condition.conditionType)
         {
             case DialogueCondition.ConditionType.DialogueNodeSeen:
@@ -556,6 +612,28 @@ public class DialogueManager : MonoBehaviour
                     if (character != null)
                     {
                         return character.HasCompletedTutorial(condition.conditionValue);
+                    }
+                }
+                return false;
+            
+            case DialogueCondition.ConditionType.MultipleTutorialsCompleted:
+                // Check if multiple tutorials are completed (conditionValue = comma-separated tutorial IDs)
+                if (!string.IsNullOrEmpty(condition.conditionValue))
+                {
+                    var character = CharacterManager.Instance != null ? CharacterManager.Instance.GetCurrentCharacter() : null;
+                    if (character != null)
+                    {
+                        // Split by comma and check all tutorials
+                        string[] tutorialIds = condition.conditionValue.Split(',');
+                        foreach (string tutorialId in tutorialIds)
+                        {
+                            string trimmedId = tutorialId.Trim();
+                            if (!string.IsNullOrEmpty(trimmedId) && !character.HasCompletedTutorial(trimmedId))
+                            {
+                                return false; // At least one tutorial not completed
+                            }
+                        }
+                        return true; // All tutorials completed
                     }
                 }
                 return false;
@@ -591,6 +669,8 @@ public class DialogueManager : MonoBehaviour
     
     /// <summary>
     /// Give a warrant pack to the player (e.g., "warrant_starter_pack" with 3 warrants)
+    /// IMPORTANT: This should ONLY be called from dialogue actions. Do not call this automatically for new characters.
+    /// The warrant starter pack should be given through Joreg's dialogue when the player selects "Warrants?" option.
     /// </summary>
     private void GiveWarrantPack(string packId, int quantity)
     {
@@ -598,6 +678,30 @@ public class DialogueManager : MonoBehaviour
         {
             Debug.LogWarning("[DialogueManager] GiveWarrantPack called with empty packId.");
             return;
+        }
+        
+        // Log that this is being called from dialogue (for debugging)
+        Debug.Log($"[DialogueManager] GiveWarrantPack called from dialogue: packId='{packId}', quantity={quantity}");
+        
+        // Special check for starter pack: ensure it's only given through dialogue
+        if (packId.Equals("warrant_starter_pack", System.StringComparison.OrdinalIgnoreCase))
+        {
+            var character = CharacterManager.Instance?.GetCurrentCharacter();
+            if (character != null && character.ownedWarrants != null && character.ownedWarrants.Count > 0)
+            {
+                // Check if character already has warrants from the starter pack
+                bool hasStarterWarrants = character.ownedWarrants.Any(w => 
+                    w != null && !string.IsNullOrEmpty(w.warrantId) && 
+                    (w.warrantId.Contains("warrant_starter") || w.warrantId.StartsWith("warrant_")));
+                
+                if (hasStarterWarrants)
+                {
+                    Debug.LogWarning($"[DialogueManager] Character already has warrants. Starter pack should only be given once through dialogue. Skipping.");
+                    return;
+                }
+            }
+            
+            Debug.Log($"[DialogueManager] Giving warrant starter pack through dialogue (as intended).");
         }
         
         // Use assigned reference or find WarrantPackDatabase
@@ -761,23 +865,45 @@ public class DialogueManager : MonoBehaviour
                     continue;
                 }
                 
-                // Roll and add the warrant
-                WarrantDefinition rolledInstance = WarrantRollingUtility.RollAndAddToLocker(
-                    blueprint,
-                    warrantDb,
-                    lockerGrid,
-                    minAffixes: pack.minAffixes,
-                    maxAffixes: pack.maxAffixes
-                );
-                
-                if (rolledInstance != null)
+                // Check if this warrant should be given directly without rolling
+                if (blueprint.doNotRoll)
                 {
-                    totalWarrantsGiven++;
-                    Debug.Log($"[DialogueManager] Gave warrant '{rolledInstance.warrantId}' from pack '{packId}' to player.");
+                    // Give the warrant directly without rolling
+                    // Create a runtime instance copy (but don't roll new affixes/notable)
+                    WarrantDefinition directInstance = WarrantDatabase.CloneDefinitionRuntime(blueprint, false, System.Guid.NewGuid().ToString("N"), null);
+                    if (directInstance != null)
+                    {
+                        directInstance.isBlueprint = false; // It's now a runtime instance
+                        directInstance.doNotRoll = false; // Clear the flag on the instance
+                        lockerGrid.AddWarrantInstance(directInstance);
+                        totalWarrantsGiven++;
+                        Debug.Log($"[DialogueManager] Gave warrant '{directInstance.warrantId}' directly (doNotRoll=true) from pack '{packId}' to player.");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[DialogueManager] Failed to create direct instance from blueprint '{blueprint.warrantId}' in pack '{packId}'.");
+                    }
                 }
                 else
                 {
-                    Debug.LogWarning($"[DialogueManager] Failed to roll warrant from blueprint '{blueprint.warrantId}' in pack '{packId}'.");
+                    // Roll and add the warrant
+                    WarrantDefinition rolledInstance = WarrantRollingUtility.RollAndAddToLocker(
+                        blueprint,
+                        warrantDb,
+                        lockerGrid,
+                        minAffixes: pack.minAffixes,
+                        maxAffixes: pack.maxAffixes
+                    );
+                    
+                    if (rolledInstance != null)
+                    {
+                        totalWarrantsGiven++;
+                        Debug.Log($"[DialogueManager] Gave warrant '{rolledInstance.warrantId}' from pack '{packId}' to player.");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[DialogueManager] Failed to roll warrant from blueprint '{blueprint.warrantId}' in pack '{packId}'.");
+                    }
                 }
             }
         }
@@ -891,6 +1017,11 @@ public class DialogueManager : MonoBehaviour
             case DialogueAction.ActionType.StartTutorial:
                 // Start a tutorial sequence
                 StartTutorial(action.actionValue);
+                break;
+            
+            case DialogueAction.ActionType.CompleteTutorial:
+                // Mark a tutorial as completed
+                CompleteTutorial(action.actionValue);
                 break;
             
             case DialogueAction.ActionType.Custom:
@@ -1043,6 +1174,53 @@ public class DialogueManager : MonoBehaviour
         else
         {
             Debug.LogWarning("[DialogueManager] TutorialManager not found. Cannot start tutorial.");
+        }
+    }
+    
+    private void CompleteTutorial(string tutorialId)
+    {
+        if (string.IsNullOrEmpty(tutorialId))
+        {
+            Debug.LogWarning("[DialogueManager] Cannot complete tutorial with empty ID.");
+            return;
+        }
+        
+        var character = CharacterManager.Instance != null ? CharacterManager.Instance.GetCurrentCharacter() : null;
+        if (character != null)
+        {
+            character.MarkTutorialCompleted(tutorialId);
+            Debug.Log($"[DialogueManager] Marked tutorial '{tutorialId}' as completed.");
+            
+            // Notify FuseButtonController if this is the fusion tutorial
+            if (tutorialId == "warrant_fusion_tutorial")
+            {
+                RefreshFuseButtonVisibility();
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[DialogueManager] Character not found. Cannot mark tutorial as completed.");
+        }
+    }
+    
+    /// <summary>
+    /// Refreshes tutorial button visibility after tutorial completion.
+    /// </summary>
+    private void RefreshFuseButtonVisibility()
+    {
+        // Find all TutorialButtonUnlock instances and refresh them
+        TutorialButtonUnlock[] unlockControllers = FindObjectsByType<TutorialButtonUnlock>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (var unlockController in unlockControllers)
+        {
+            if (unlockController != null)
+            {
+                unlockController.Refresh();
+            }
+        }
+        
+        if (unlockControllers.Length == 0)
+        {
+            Debug.Log("[DialogueManager] No TutorialButtonUnlock found in scene. Tutorial buttons will update on next scene load.");
         }
     }
     
@@ -1500,13 +1678,17 @@ public class DialogueManager : MonoBehaviour
     
     /// <summary>
     /// Get a start node based on conditions (e.g., tutorial completion).
-    /// Checks all nodes in the dialogue and returns the first one that matches conditions.
+    /// Checks all nodes in the dialogue and returns the most specific one that matches conditions.
+    /// Prioritizes nodes with more conditions (more specific = higher priority).
     /// Useful for having different start nodes based on game state.
     /// </summary>
     private DialogueNode GetConditionalStartNode(DialogueData dialogue)
     {
         if (dialogue == null || dialogue.nodes == null)
             return null;
+        
+        // Collect all potential conditional start nodes
+        List<DialogueNode> candidateNodes = new List<DialogueNode>();
         
         // Look for nodes that are conditional starts based on naming patterns
         // Common patterns: "start_tutorial", "start_post_tutorial", "post_tutorial", "post_fusion", etc.
@@ -1542,17 +1724,59 @@ public class DialogueManager : MonoBehaviour
                 // Nodes with no condition should be reached through normal dialogue flow
                 if (node.condition != null && node.condition.conditionType != DialogueCondition.ConditionType.None)
                 {
-                    // Check if this node's condition is met
-                    if (EvaluateCondition(node.condition))
-                    {
-                        Debug.Log($"[DialogueManager] Using conditional start node: '{node.nodeId}' (condition met)");
-                        return node;
-                    }
+                    candidateNodes.Add(node);
                 }
             }
         }
         
+        if (candidateNodes.Count == 0)
+            return null;
+        
+        // Calculate condition complexity for each node (more conditions = higher priority)
+        // Sort by complexity (descending) so most specific nodes are checked first
+        var sortedCandidates = candidateNodes.OrderByDescending(node => GetConditionComplexity(node.condition)).ToList();
+        
+        // Check each candidate in order of specificity
+        foreach (var node in sortedCandidates)
+        {
+            if (EvaluateCondition(node.condition))
+            {
+                Debug.Log($"[DialogueManager] Using conditional start node: '{node.nodeId}' (condition met, complexity: {GetConditionComplexity(node.condition)})");
+                return node;
+            }
+        }
+        
         return null;
+    }
+    
+    /// <summary>
+    /// Calculates the "complexity" of a condition (number of conditions to check).
+    /// Higher complexity = more specific condition = should be checked first.
+    /// </summary>
+    private int GetConditionComplexity(DialogueCondition condition)
+    {
+        if (condition == null || condition.conditionType == DialogueCondition.ConditionType.None)
+            return 0;
+        
+        int complexity = 1; // Base complexity for the main condition
+        
+        // Add complexity for additional conditions
+        if (condition.additionalConditions != null)
+        {
+            complexity += condition.additionalConditions.Count;
+        }
+        
+        // Special case: MultipleTutorialsCompleted counts as multiple conditions
+        if (condition.conditionType == DialogueCondition.ConditionType.MultipleTutorialsCompleted)
+        {
+            if (!string.IsNullOrEmpty(condition.conditionValue))
+            {
+                string[] tutorialIds = condition.conditionValue.Split(',');
+                complexity = tutorialIds.Length; // Count each tutorial as a condition
+            }
+        }
+        
+        return complexity;
     }
     
     public bool IsDialogueActive => currentDialogue != null && currentNode != null;

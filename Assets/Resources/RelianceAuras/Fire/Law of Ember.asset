@@ -14,15 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RelianceAura
   auraName: Law of Ember
   category: Fire
-  description: A fragment of Fire-Law coils around you, causing slain burning enemies
-    to erupt and spread their flame to nearby foes.
+  description: Killing ignited enemies spreads their Ignite to nearby foes.
   icon: {fileID: 0}
   themeColor: {r: 1, g: 0.3, b: 0.1, a: 1}
-  effectLevel1: Enemies you Ignite and Kill spread Ignite to 1 random enemy; +10%
-    more Fire damage
-  effectLevel20: Ignite spreads to 2 enemies, +10% more Fire damage
+  effectLevel1: Enemies you Ignite and Kill spread Ignite to 1 random enemy
+  effectLevel20: Ignite spreads to 2 enemies. +15% more Fire damage
   relianceCost: 65
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Law of Ember_AddDamageMorePercent_fire
+  - Law of Ember_ModifyStat
+  - Law of Ember_SpreadStatusOnKill_ignite
+  requiredLevel: 21
   unlockRequirement: 

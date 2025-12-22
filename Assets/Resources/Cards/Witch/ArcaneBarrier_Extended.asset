@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Arcane Barrier
   groupKey: Arcane_Barrier
   cardType: Guard
-  playCost: 1
+  playCost: 10
   description: Gain {guardintdivisor} Guard. Gain 2 temporary Intelligence.
   rarity: 0
   element: 0

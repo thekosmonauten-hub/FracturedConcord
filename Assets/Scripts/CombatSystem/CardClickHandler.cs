@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Handles card clicks with support for right-click and shift-click detection.
@@ -23,9 +24,22 @@ public class CardClickHandler : MonoBehaviour, IPointerClickHandler
         // Check for right-click
         bool isRightClick = eventData.button == PointerEventData.InputButton.Right;
         
-        // Check for shift-click (left-click + shift key)
-        bool isShiftClick = eventData.button == PointerEventData.InputButton.Left &&
-                           (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+        // Check for shift-click (left-click + shift key) using new Input System
+        bool isShiftClick = false;
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            // Use new Input System to check for shift keys
+            Keyboard keyboard = Keyboard.current;
+            if (keyboard != null)
+            {
+                isShiftClick = keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed;
+            }
+            else
+            {
+                // Fallback: If keyboard is null (shouldn't happen in normal gameplay), log warning
+                Debug.LogWarning("[CardClickHandler] Keyboard.current is null - cannot detect shift key");
+            }
+        }
         
         // If right-click or shift-click, prepare the card
         if (isRightClick || isShiftClick)

@@ -114,12 +114,33 @@ public class ItemSelectionManager : MonoBehaviour
     
     /// <summary>
     /// Check if item can be equipped in a specific slot
+    /// Rule: Cannot equip in OffHand if MainHand is empty (must equip MainHand first)
     /// </summary>
     public bool CanEquipToSlot(BaseItem item, EquipmentType targetSlot)
     {
         if (item == null) return false;
         
-        // Check if equipment types match
+        // Special case: 1-handed weapons can be equipped in both MainHand and OffHand
+        if (item is WeaponItem weapon && weapon.handedness == WeaponHandedness.OneHanded)
+        {
+            // Rule: Cannot equip in OffHand if MainHand is empty
+            if (targetSlot == EquipmentType.OffHand)
+            {
+                var equipmentManager = EquipmentManager.Instance;
+                if (equipmentManager != null)
+                {
+                    BaseItem mainHandItem = equipmentManager.GetEquippedItem(EquipmentType.MainHand);
+                    if (mainHandItem == null)
+                    {
+                        Debug.LogWarning($"[ItemSelectionManager] Cannot equip {item.itemName} in OffHand: MainHand must be equipped first!");
+                        return false;
+                    }
+                }
+            }
+            return targetSlot == EquipmentType.MainHand || targetSlot == EquipmentType.OffHand;
+        }
+        
+        // Default: Check if equipment types match
         return item.equipmentType == targetSlot;
     }
 }

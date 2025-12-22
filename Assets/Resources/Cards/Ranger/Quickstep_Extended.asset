@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Quickstep
   groupKey: Quickstep
   cardType: Skill
-  playCost: 1
+  playCost: 0
   description: Gain {evasion} Evasion for the rest of combat.
   rarity: 0
   element: 0
@@ -35,6 +35,7 @@ MonoBehaviour:
   embossingSlots: 1
   cardLevel: 1
   cardExperience: 0
+  percentageManaCost: 15
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 0
@@ -109,6 +110,7 @@ MonoBehaviour:
   tags:
   - Skill
   - Basic
+  appliedEmbossings: []
   delayTurns: 0
   isDelayed: 0
   canPrepare: 0
@@ -117,3 +119,28 @@ MonoBehaviour:
   unleashCondition: manual
   unleashEffect: deal_stored_damage
   prepareDescription: 
+  preparedCardDamageBase: 0
+  preparedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  preparedCardPoisonBase: 0
+  preparedCardGuardBase: 0
+  preparedCardGuardScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  consumedCardDamageBase: 0
+  consumedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0

@@ -611,12 +611,30 @@ public class CharacterStatsData
                     energyShield = Mathf.RoundToInt(newEnergyShield);
                     maxEnergyShield = energyShield;
                 }
+                else if (statKey == "lifeRegeneration")
+                {
+                    // Apply as flat value (1.5 = +1.5 life regen per turn)
+                    lifeRegeneration += value;
+                }
+                else if (statKey == "lifeRegenerationIncreased")
+                {
+                    // Apply as percentage (1.5 = 1.5% increased)
+                    lifeRegenerationIncreased += value;
+                }
                 else
                 {
                     // Standard stat modifier application
                     AddToStat(statKey, value);
                 }
             }
+        }
+        
+        // Apply Intelligence's % increased Energy Shield (from attributes)
+        if (character.increasedEnergyShieldPercent > 0f && energyShield > 0)
+        {
+            float newEnergyShield = energyShield * (1f + character.increasedEnergyShieldPercent);
+            energyShield = Mathf.RoundToInt(newEnergyShield);
+            maxEnergyShield = energyShield;
         }
         
         // Copy resistances

@@ -13,16 +13,20 @@ MonoBehaviour:
   m_Name: Area55-80
   m_EditorClassIdentifier: Assembly-CSharp::AreaLootTable
   areaLevel: 80
-  baseDropChance: 0.15
+  baseDropChance: 0.8
   itemTypeWeights:
   - itemType: 0
-    weight: 30
+    weight: 60
   - itemType: 1
-    weight: 40
+    weight: 65
   - itemType: 2
-    weight: 20
+    weight: 65
   - itemType: 3
-    weight: 10
+    weight: 45
+  - itemType: 7
+    weight: 20
+  - itemType: 8
+    weight: 20
   rarityWeights:
   - rarity: 0
     weight: 0.7
@@ -35,105 +39,378 @@ MonoBehaviour:
   enableCurrencyDrops: 1
   currencyDrops:
   - currencyType: 0
-    dropChance: 0.15
+    dropChance: 0.015
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 1
-    dropChance: 0.15
+    dropChance: 0.015
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 2
-    dropChance: 0.07
+    dropChance: 0.008
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 3
-    dropChance: 0.06
+    dropChance: 0.008
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 4
-    dropChance: 0.03
+    dropChance: 0.01
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 5
-    dropChance: 0.02
+    dropChance: 0.008
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 6
-    dropChance: 0.06
+    dropChance: 0.008
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 7
-    dropChance: 0.12
+    dropChance: 0.012
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 8
-    dropChance: 0.04
+    dropChance: 0.012
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 9
-    dropChance: 0.1
+    dropChance: 0.01
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 10
-    dropChance: 0.1
+    dropChance: 0.01
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 11
-    dropChance: 0.1
+    dropChance: 0.01
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 12
-    dropChance: 0.08
+    dropChance: 0.0085
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 13
-    dropChance: 0.1
+    dropChance: 0.01
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 14
-    dropChance: 0.1
+    dropChance: 0.01
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 15
-    dropChance: 0.1
+    dropChance: 0.01
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 16
-    dropChance: 0.08
+    dropChance: 0.0085
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 17
-    dropChance: 0.03
+    dropChance: 0.01
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 18
-    dropChance: 0.05
+    dropChance: 0.015
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 19
-    dropChance: 0.07
+    dropChance: 0.008
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 20
-    dropChance: 0.03
+    dropChance: 0.01
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 21
-    dropChance: 0.05
+    dropChance: 0.015
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 22
-    dropChance: 0.05
+    dropChance: 0.015
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 23
-    dropChance: 0.05
+    dropChance: 0.015
     minQuantity: 1
-    maxQuantity: 3
+    maxQuantity: 1
   - currencyType: 24
-    dropChance: 0.07
+    dropChance: 0.008
     minQuantity: 1
-    maxQuantity: 3
-  effigyDrops: []
+    maxQuantity: 1
+  effigyDrops:
+  - effigyBlueprint: {fileID: 11400000, guid: eff97c719085300438577f788a913bf2, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 0f6dea3070376b147bc17b50c3d6e50b, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: e7d01d0c827192441a2f3728e1f04457, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: e9282021ed58ea64481cb44960462734, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 083ca702a1e8b5f4aa15c65465530650, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 5fa88fabc08e10044b9c8e7dad8123b6, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: ba7f068e08ff8824a8240a7ccc599b45, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: c737ae96ab681574db9d23241f181426, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: b55e379c73e1eed4387fb6f5140ddaec, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 28703a8d47494984185bf4f31be47c61, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: e0837f1537791984e9fa880831206bd5, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 18ee6cb398108b946b5c571b8b198cd2, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 6cbcb2c080b84734d8fec93e77ab8ef4, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 5195bc4bf3edf12499bc3c0e298dcd6c, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 091e093823afda441b83d6a66febd69d, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 86325d8be7071b448b5a94d4e9c1c11d, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 1687aa051f061064896b9fe5b9166c89, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: b0b094c879727a3468f4fa0046ae68e2, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 07771f51b5f7fc04f8b84c8105050b8e, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: adae6a17a16d3df4babc9ce16d198324, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: c66f1f73f8fd39146905732fe476f35e, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 64cd0c60e77f9c245a1e289abfad711b, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 3e9e465e2024d67428353a9b751d21a5, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: e08fc469bd64b174d818baf12a2fa8b0, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 6a7e2819923b2b949b1406629bb4e1b8, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: de055c873421aad43aa797fa7435724d, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 520b5b63f57c86441828c9d10a086da1, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 24632f0f470e57f439e94cfb169df4b5, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: de3993d548fe65346a17e8b829df126c, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 5ceebbd68f144834d9d354a53c9d9935, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: b922179cf0deba141aadf10b49644b24, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 0fe352d7d349c30409becfffc61cf8dd, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 12c0093022375a14ebd9584f27d50d6c, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: e951b81bf7ef9d5428f5adc77ba795c6, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: a229fcfd56482b649aea3a7d70388529, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: f0519ad9d4e1be54492058aed5f3542a, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: a890269dc8b7c6b48833e7d261c18fba, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 59ca3c31843ea334e9e0649239e39d0c, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: c39420244950deb45852f2cbe33d338d, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 23614f6563f354347b13de7da47f3fec, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 7494c8866129b7247a7a8a6ba15407be, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 5770a4bc9c2cf6248882892ca9fd39c0, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: 49d93b95e0ffd7d4cb543baa39a30591, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  - effigyBlueprint: {fileID: 11400000, guid: d2872d209d768514e9db66cbc892130d, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.01
+    dropChanceAtMaxLevel: 0.05
+    maxQuantity: 1
+  warrantDrops:
+  - warrantBlueprint: {fileID: 11400000, guid: 99b9a306ecd84b649b00ed3fb72080c0, type: 2}
+    minAreaLevel: 1
+    maxAreaLevel: 100
+    dropChanceAtMinLevel: 0.02
+    dropChanceAtMaxLevel: 0.1
+    maxQuantity: 1
+    minAffixes: 0
+    maxAffixes: 4
   nameGenerationData: {fileID: 11400000, guid: 6d52d0f465e43ae48bb66463b328a4f1, type: 2}
   enableDebugLogs: 0

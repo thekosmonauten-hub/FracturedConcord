@@ -290,7 +290,7 @@ public class WarrantDatabase : ScriptableObject
 	}
 
 
-	private static WarrantDefinition CloneDefinitionRuntime(WarrantDefinition source, bool generateNewId, string idSuffix, Sprite overrideIcon = null)
+	public static WarrantDefinition CloneDefinitionRuntime(WarrantDefinition source, bool generateNewId, string idSuffix, Sprite overrideIcon = null)
 	{
 		if (source == null) return null;
 
@@ -304,6 +304,7 @@ public class WarrantDatabase : ScriptableObject
 		clone.rarity = source.rarity;
 		clone.isKeystone = source.isKeystone;
 		clone.isBlueprint = source.isBlueprint;
+		clone.doNotRoll = source.doNotRoll;
 		clone.rangeDirection = source.rangeDirection;
 		clone.rangeDepth = source.rangeDepth;
 		clone.affectDiagonals = source.affectDiagonals;

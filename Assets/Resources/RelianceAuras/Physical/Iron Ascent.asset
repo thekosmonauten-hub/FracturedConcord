@@ -22,6 +22,7 @@ MonoBehaviour:
   effectLevel20: 3% more physical damage per turn (Up to 10 turns)
   relianceCost: 100
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Iron Ascent_AddDamageMorePercent_physical
+  requiredLevel: 38
   unlockRequirement: 

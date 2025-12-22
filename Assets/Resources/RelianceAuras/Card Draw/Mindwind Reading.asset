@@ -18,9 +18,10 @@ MonoBehaviour:
   icon: {fileID: 0}
   themeColor: {r: 0.9, g: 0.7, b: 0.3, a: 1}
   effectLevel1: 1 Card draw
-  effectLevel20: 2 Card draw
+  effectLevel20: 3 Card draw
   relianceCost: 65
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Mindwind Reading_ModifyStat_cardsDrawnPerTurn
+  requiredLevel: 24
   unlockRequirement: 

@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Fireball
   groupKey: Fireball
   cardType: Attack
-  playCost: 2
+  playCost: 20
   description: Deal {damage} fire damage to all enemies. Apply 2 Ignite.
   rarity: 0
   element: 1

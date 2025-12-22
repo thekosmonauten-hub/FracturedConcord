@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Fieldborn Aberrant
   description: A grotesque amalgamation of corrupted crops and twisted vines, birthed
     from the blighted soil of the meadow.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: -5616635226587662501, guid: eddde8957df82a64793f5ccfa08df50c, type: 3}
   tier: 2
   rarity: 2
   category: 2
@@ -49,11 +49,9 @@ MonoBehaviour:
   - Verdant Collapse
   - Bloom of Ruin
   abilities: []
-  bossAbilities:
-  - 10
+  bossAbilities: 0a000000
   summonPool: []
-  spiritTags:
-  - 3
+  spiritTags: 03000000
   guaranteedSpiritDrop: 0
   minGoldDrop: 58
   maxGoldDrop: 115
@@ -65,4 +63,3 @@ MonoBehaviour:
   excludeFromRandom: 1
   healthBarColor: {r: 0.4, g: 0.6, b: 0.2, a: 1}
   animatorController: {fileID: 0}
-

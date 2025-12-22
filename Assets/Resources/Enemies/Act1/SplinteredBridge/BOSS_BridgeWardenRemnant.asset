@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Bridge Warden Remnant
   description: A spectral guardian bound to the splintered bridge, enforcing ancient
     laws upon those who cross.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: 7282631226863267351, guid: aaf93ad6b0c86994998f64cf14893449, type: 3}
   tier: 2
   rarity: 2
   category: 3
@@ -49,11 +49,9 @@ MonoBehaviour:
   - Judgment Loop
   - Crossing Denied
   abilities: []
-  bossAbilities:
-  - 1
-  - 12
+  bossAbilities: 010000000c000000
   summonPool: []
-  spiritTags: []
+  spiritTags: 
   guaranteedSpiritDrop: 0
   minGoldDrop: 54
   maxGoldDrop: 107
@@ -65,4 +63,3 @@ MonoBehaviour:
   excludeFromRandom: 1
   healthBarColor: {r: 0.5, g: 0.6, b: 0.7, a: 1}
   animatorController: {fileID: 0}
-

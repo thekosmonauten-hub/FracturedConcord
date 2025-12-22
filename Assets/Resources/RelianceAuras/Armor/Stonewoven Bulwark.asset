@@ -17,10 +17,11 @@ MonoBehaviour:
   description: Casts an aura that grants armour
   icon: {fileID: 0}
   themeColor: {r: 0.6, g: 0.4, b: 0.2, a: 1}
-  effectLevel1: 60 Armour, +30% More armour
-  effectLevel20: 960 Armour, +39% More armour
+  effectLevel1: 60 Armour. +30% More armour
+  effectLevel20: 960 Armour. +39% More armour
   relianceCost: 100
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Stonewoven Bulwark_ModifyStat_armour
+  requiredLevel: 38
   unlockRequirement: 

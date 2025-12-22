@@ -21,6 +21,7 @@ MonoBehaviour:
   effectLevel20: 180 energy shield
   relianceCost: 55
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Etherglass Aegis_ModifyStat_energyshield
+  requiredLevel: 12
   unlockRequirement: 

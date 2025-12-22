@@ -835,8 +835,16 @@ namespace Dexiled.UI.EquipmentScreen
             // Update all cards with same groupKey in the deck
             UpdateCardInActiveDeck(currentCard);
             
-            // Refresh card carousel display
+            // Refresh card carousel display (this will update dynamic descriptions with embossing effects)
             RefreshCardCarousel();
+            
+            // Force refresh of any open tooltips to show updated damage
+            var tooltipManager = ItemTooltipManager.Instance;
+            if (tooltipManager != null)
+            {
+                // Tooltip will refresh on next hover, but we can trigger a refresh if needed
+                tooltipManager.HideTooltip();
+            }
             
             return true;
         }

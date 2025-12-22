@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Divine Ward
   groupKey: divine_ward
   cardType: Guard
-  playCost: 1
+  playCost: 10
   description: Gain {guard} Guard.
   rarity: 0
   element: 0

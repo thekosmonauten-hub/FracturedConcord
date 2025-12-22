@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 
 /// <summary>
@@ -36,6 +37,12 @@ public class PreparedCardsUI : MonoBehaviour
     
     [Tooltip("Pulse speed for glow effect")]
     public float pulseSpeed = 2f;
+    
+    [Header("Card Scaling")]
+    [Tooltip("Scale for cards that cannot be unleashed (0/3 or not first in queue)")]
+    public float disabledCardScale = 0.7f;
+    [Tooltip("Scale for cards that can be unleashed (normal size)")]
+    public float enabledCardScale = 1f;
     
     // Tracking
     private Dictionary<PreparedCard, GameObject> cardVisuals = new Dictionary<PreparedCard, GameObject>();
@@ -91,6 +98,9 @@ public class PreparedCardsUI : MonoBehaviour
             // Update layout
             UpdateCardPositions();
             
+            // Update scales for all cards (new card added, queue order may have changed)
+            UpdateAllCardScales();
+            
             Debug.Log($"<color=green>[PreparedCardsUI] Added prepared card: {prepared.sourceCard.cardName}</color>");
         }
     }
@@ -100,8 +110,42 @@ public class PreparedCardsUI : MonoBehaviour
     /// </summary>
     public void RemovePreparedCard(PreparedCard prepared)
     {
-        if (prepared == null || !cardVisuals.ContainsKey(prepared))
+        if (prepared == null)
         {
+            return;
+        }
+        
+        // Check if we have a visual for this card
+        if (!cardVisuals.ContainsKey(prepared))
+        {
+            // Card might have been removed already - check if there's a stale visual
+            // ONLY match by exact instance reference, NOT by name (to avoid removing duplicate cards)
+            GameObject staleVisual = null;
+            PreparedCard stalePrepared = null;
+            foreach (var kvp in cardVisuals.ToList())
+            {
+                // Only match by exact instance reference - never by name!
+                if (kvp.Key == prepared)
+                {
+                    staleVisual = kvp.Value;
+                    stalePrepared = kvp.Key;
+                    break;
+                }
+            }
+            
+            if (staleVisual != null && stalePrepared != null)
+            {
+                cardVisuals.Remove(stalePrepared);
+                preparedCardsList.Remove(stalePrepared);
+                Destroy(staleVisual);
+                UpdateCardPositions();
+                UpdateAllCardScales();
+                Debug.Log($"<color=yellow>[PreparedCardsUI] Removed stale prepared card visual: {prepared.sourceCard?.cardName ?? "Unknown"}</color>");
+            }
+            else
+            {
+                Debug.LogWarning($"[PreparedCardsUI] Attempted to remove prepared card '{prepared.sourceCard?.cardName ?? "Unknown"}' but it was not found in visuals. This may indicate a timing issue or the card was already removed.");
+            }
             return;
         }
         
@@ -118,7 +162,40 @@ public class PreparedCardsUI : MonoBehaviour
         // Update layout
         UpdateCardPositions();
         
-        Debug.Log($"<color=yellow>[PreparedCardsUI] Removed prepared card: {prepared.sourceCard.cardName}</color>");
+        // Update scales for all cards (card removed, queue order changed)
+        UpdateAllCardScales();
+        
+        Debug.Log($"<color=yellow>[PreparedCardsUI] Removed prepared card: {prepared.sourceCard?.cardName ?? "Unknown"}</color>");
+    }
+    
+    /// <summary>
+    /// Clean up any stale visuals that don't match current prepared cards
+    /// Called periodically or when issues are detected
+    /// </summary>
+    public void CleanupStaleVisuals()
+    {
+        var prepManager = PreparationManager.Instance;
+        if (prepManager == null) return;
+        
+        // Get current list of valid prepared cards
+        var validPreparedCards = prepManager.GetPreparedCards();
+        
+        // Find visuals that don't match any valid prepared card
+        List<PreparedCard> toRemove = new List<PreparedCard>();
+        foreach (var kvp in cardVisuals.ToList()) // Use ToList() to avoid modification during iteration
+        {
+            if (kvp.Key == null || !validPreparedCards.Contains(kvp.Key))
+            {
+                toRemove.Add(kvp.Key);
+            }
+        }
+        
+        // Remove stale visuals
+        foreach (var stale in toRemove)
+        {
+            Debug.LogWarning($"[PreparedCardsUI] Cleaning up stale visual for: {stale?.sourceCard?.cardName ?? "Unknown"}");
+            RemovePreparedCard(stale);
+        }
     }
     
     /// <summary>
@@ -141,6 +218,71 @@ public class PreparedCardsUI : MonoBehaviour
         
         // Update card damage/guard display with current prepared values
         UpdateCardValues(cardObj, prepared);
+        
+        // Update card scale based on whether it can be unleashed
+        UpdateCardScale(cardObj, prepared);
+    }
+    
+    /// <summary>
+    /// Update scale of all prepared cards based on whether they can be unleashed
+    /// </summary>
+    public void UpdateAllCardScales()
+    {
+        var prepManager = PreparationManager.Instance;
+        if (prepManager == null) return;
+        
+        var allPreparedCards = prepManager.GetPreparedCards();
+        if (allPreparedCards == null || allPreparedCards.Count == 0) return;
+        
+        // Get the first card in queue (can be unleashed if it has charges)
+        PreparedCard firstCard = allPreparedCards.Count > 0 ? allPreparedCards[0] : null;
+        
+        foreach (var kvp in cardVisuals.ToList())
+        {
+            if (kvp.Key != null && kvp.Value != null)
+            {
+                UpdateCardScale(kvp.Value, kvp.Key, firstCard);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Update scale of a single prepared card based on whether it can be unleashed
+    /// </summary>
+    private void UpdateCardScale(GameObject cardObj, PreparedCard prepared)
+    {
+        var prepManager = PreparationManager.Instance;
+        if (prepManager == null)
+        {
+            // Default to disabled scale if manager not available
+            cardObj.transform.localScale = Vector3.one * disabledCardScale;
+            return;
+        }
+        
+        var allPreparedCards = prepManager.GetPreparedCards();
+        PreparedCard firstCard = allPreparedCards != null && allPreparedCards.Count > 0 ? allPreparedCards[0] : null;
+        
+        UpdateCardScale(cardObj, prepared, firstCard);
+    }
+    
+    /// <summary>
+    /// Update scale of a single prepared card based on whether it can be unleashed
+    /// </summary>
+    private void UpdateCardScale(GameObject cardObj, PreparedCard prepared, PreparedCard firstCard)
+    {
+        if (cardObj == null || prepared == null) return;
+        
+        // Check if card can be unleashed:
+        // 1. Must have at least 1 charge (turnsPrepared >= 1)
+        // 2. Must be first in queue
+        bool canUnleash = prepared.turnsPrepared >= 1 && prepared == firstCard;
+        
+        float targetScale = canUnleash ? enabledCardScale : disabledCardScale;
+        
+        // Animate scale change
+        LeanTween.cancel(cardObj);
+        LeanTween.scale(cardObj, Vector3.one * targetScale, 0.3f)
+            .setEase(LeanTweenType.easeOutQuad);
     }
     
     /// <summary>
@@ -235,76 +377,123 @@ public class PreparedCardsUI : MonoBehaviour
         var cardUI = cardObj.GetComponent<DeckBuilderCardUI>();
         if (cardUI != null && prepared.sourceCard is CardDataExtended extendedCard)
         {
-            // Find description text element (reuse allTexts from above)
+            // Get the dynamic description first (resolves other placeholders)
+            string dynamicDesc = extendedCard.GetDynamicDescription(prepared.owner);
+            
+            // Override {damage} and {guard} with current prepared values
+            if (currentDamage > 0)
+            {
+                // Replace any damage-related placeholders with current prepared damage
+                dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                    dynamicDesc, 
+                    @"\{damage\}", 
+                    currentDamage.ToString(),
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+                dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                    dynamicDesc, 
+                    @"\{baseDamage\}", 
+                    currentDamage.ToString(),
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+                // Also replace {PrepareDamage} with the actual prepared card damage
+                // This is important for cards like Twin Strike that say "deal {PrepareDamage} damage instead"
+                dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                    dynamicDesc, 
+                    @"\{PrepareDamage\}", 
+                    currentDamage.ToString(),
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+                
+                // Replace any damage number in the description with the prepared damage value
+                // GetDynamicDescription() replaces {damage} with a number, so we need to find and replace that number
+                // Match patterns like "19 Physical damage", "Deal 19 damage", "19 damage", etc.
+                
+                // Pattern 1: "Deal X [Type] damage" -> "Deal {currentDamage} [Type] damage"
+                dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                    dynamicDesc,
+                    @"Deal\s+\d+(?:\s+(Physical|Chaos|Fire|Cold|Lightning|Poison|Bleed))?\s+damage",
+                    match => {
+                        string damageType = match.Groups[1].Success ? $" {match.Groups[1].Value}" : "";
+                        return $"Deal {currentDamage}{damageType} damage";
+                    },
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+                
+                // Pattern 2: "X [Type] damage" (standalone) -> "{currentDamage} [Type] damage"
+                dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                    dynamicDesc,
+                    @"\b\d+\s+((?:Physical|Chaos|Fire|Cold|Lightning|Poison|Bleed)\s+)?damage\b",
+                    match => {
+                        string damageType = match.Groups[1].Success ? match.Groups[1].Value : "";
+                        return $"{currentDamage} {damageType}damage";
+                    },
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+                
+                // Pattern 3: Any number followed by "damage" (catch-all for other formats)
+                dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                    dynamicDesc,
+                    @"\b\d+\s+damage\b",
+                    $"{currentDamage} damage",
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+            }
+            
+            if (currentGuard > 0)
+            {
+                // Replace guard-related placeholders
+                dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                    dynamicDesc, 
+                    @"\{guard\}", 
+                    currentGuard.ToString(),
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+                dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                    dynamicDesc, 
+                    @"\{block\}", 
+                    currentGuard.ToString(),
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+                dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                    dynamicDesc, 
+                    @"\{baseGuard\}", 
+                    currentGuard.ToString(),
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+                
+                // Replace guard/block numbers in the description
+                dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                    dynamicDesc,
+                    @"\b\d+\s+(guard|block)\b",
+                    $"{currentGuard} $1",
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+                
+                // Replace "Gain X guard/block" patterns
+                dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
+                    dynamicDesc,
+                    @"Gain\s+\d+\s+(guard|block)",
+                    $"Gain {currentGuard} $1",
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+            }
+            
+            // Find description text element and update it
             foreach (var text in allTexts)
             {
                 if (text == null) continue;
                 
-                // Check if this is the description text (usually contains the card description)
                 string textContent = text.text;
+                string textName = text.name.ToLower();
                 string originalDesc = extendedCard.description;
                 
                 // If this text matches or contains the original description, it's likely the description text
-                if (textContent.Contains(originalDesc) || textContent.Contains("{damage}") || textContent.Contains("{guard}"))
+                if (textName.Contains("description") || 
+                    textContent.Contains(originalDesc) || 
+                    textContent.Contains("{damage}") || 
+                    textContent.Contains("{guard}"))
                 {
-                    // Get the dynamic description first (resolves other placeholders)
-                    string dynamicDesc = extendedCard.GetDynamicDescription(prepared.owner);
-                    
-                    // Override {damage} and {guard} with current prepared values
-                    if (currentDamage > 0)
-                    {
-                        // Replace any damage-related placeholders with current prepared damage
-                        dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
-                            dynamicDesc, 
-                            @"\{damage\}", 
-                            currentDamage.ToString()
-                        );
-                        dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
-                            dynamicDesc, 
-                            @"\{baseDamage\}", 
-                            currentDamage.ToString()
-                        );
-                        // Also replace the calculated damage from GetDynamicDescription with our prepared value
-                        if (originalDamage > 0 && dynamicDesc.Contains(originalDamage.ToString()))
-                        {
-                            // Replace the original damage number with current prepared damage
-                            dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
-                                dynamicDesc, 
-                                @"\b" + originalDamage + @"\b", 
-                                currentDamage.ToString()
-                            );
-                        }
-                    }
-                    
-                    if (currentGuard > 0)
-                    {
-                        // Replace guard-related placeholders
-                        dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
-                            dynamicDesc, 
-                            @"\{guard\}", 
-                            currentGuard.ToString()
-                        );
-                        dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
-                            dynamicDesc, 
-                            @"\{block\}", 
-                            currentGuard.ToString()
-                        );
-                        dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
-                            dynamicDesc, 
-                            @"\{baseGuard\}", 
-                            currentGuard.ToString()
-                        );
-                        // Also replace the original block number with current prepared guard
-                        if (originalBlock > 0 && dynamicDesc.Contains(originalBlock.ToString()))
-                        {
-                            dynamicDesc = System.Text.RegularExpressions.Regex.Replace(
-                                dynamicDesc, 
-                                @"\b" + originalBlock + @"\b", 
-                                currentGuard.ToString()
-                            );
-                        }
-                    }
-                    
                     text.text = dynamicDesc;
                     break; // Found description text, no need to continue
                 }
@@ -375,6 +564,9 @@ public class PreparedCardsUI : MonoBehaviour
         
         // Add click interaction
         AddClickInteraction(cardObj, prepared);
+        
+        // Set initial scale based on whether card can be unleashed
+        UpdateCardScale(cardObj, prepared);
         
         return cardObj;
     }
@@ -518,10 +710,11 @@ public class PreparedCardsUI : MonoBehaviour
             trigger = cardObj.AddComponent<EventTrigger>();
         }
         
-        // Click event
+        // Click event - use the GameObject to look up the PreparedCard reference dynamically
+        // This prevents using stale references if the card was already removed
         EventTrigger.Entry clickEntry = new EventTrigger.Entry();
         clickEntry.eventID = EventTriggerType.PointerClick;
-        clickEntry.callback.AddListener((data) => OnPreparedCardClicked(prepared));
+        clickEntry.callback.AddListener((data) => OnPreparedCardClicked(cardObj));
         trigger.triggers.Add(clickEntry);
         
         // Hover highlight
@@ -538,39 +731,146 @@ public class PreparedCardsUI : MonoBehaviour
     
     /// <summary>
     /// Handle prepared card click (attempt manual unleash)
+    /// Gets the PreparedCard from the GameObject's PreparedCardReference component
     /// </summary>
-    private void OnPreparedCardClicked(PreparedCard prepared)
+    private void OnPreparedCardClicked(GameObject cardObj)
     {
-        Debug.Log($"<color=yellow>[PreparedCardsUI] Clicked prepared card: {prepared.sourceCard.cardName}</color>");
+        if (cardObj == null)
+        {
+            Debug.LogWarning("[PreparedCardsUI] Clicked card GameObject is null!");
+            return;
+        }
+        
+        // Get PreparedCard from the GameObject's PreparedCardReference component
+        // This ensures we're using the current reference, not a stale captured one
+        PreparedCardReference cardRef = cardObj.GetComponent<PreparedCardReference>();
+        if (cardRef == null || cardRef.preparedCard == null)
+        {
+            Debug.LogWarning($"[PreparedCardsUI] Clicked card {cardObj.name} has no valid PreparedCardReference! Removing stale visual...");
+            
+            // Try to find the PreparedCard from our dictionary
+            PreparedCard foundPrepared = null;
+            foreach (var kvp in cardVisuals)
+            {
+                if (kvp.Value == cardObj)
+                {
+                    foundPrepared = kvp.Key;
+                    break;
+                }
+            }
+            
+            if (foundPrepared != null)
+            {
+                RemovePreparedCard(foundPrepared);
+            }
+            else
+            {
+                // Card visual exists but isn't in our tracking - destroy it
+                Destroy(cardObj);
+            }
+            return;
+        }
+        
+        PreparedCard prepared = cardRef.preparedCard;
+        
+        Debug.Log($"<color=yellow>[PreparedCardsUI] Clicked prepared card: {prepared.sourceCard?.cardName ?? "Unknown"}</color>");
         
         var prepManager = PreparationManager.Instance;
-        if (prepManager != null)
+        if (prepManager == null)
         {
-            bool success = prepManager.UnleashCardManually(prepared, prepared.owner);
+            Debug.LogWarning("[PreparedCardsUI] PreparationManager not found!");
+            return;
+        }
+        
+        // Validate that the prepared card is still in the manager's list
+        // This prevents trying to unleash a card that was already removed
+        if (!prepManager.IsPreparedCardValid(prepared))
+        {
+            Debug.LogWarning($"[PreparedCardsUI] Prepared card {prepared.sourceCard?.cardName ?? "Unknown"} is no longer valid (may have been already unleashed or removed). Removing from UI...");
             
-            if (!success)
+            // Clean up the stale visual
+            RemovePreparedCard(prepared);
+            return;
+        }
+        
+        bool success = prepManager.UnleashCardManually(prepared, prepared.owner);
+        
+        if (!success)
+        {
+            // Show feedback (not enough energy, etc.)
+            Debug.LogWarning($"[PreparedCardsUI] Failed to unleash {prepared.sourceCard?.cardName ?? "Unknown"}");
+            // TODO: Show UI feedback
+        }
+        else
+        {
+            // Card should be removed by PreparationManager, but ensure UI is updated
+            // RemovePreparedCard will be called by PreparationManager.ExecuteUnleash
+            // But we can also check here to ensure cleanup
+            if (!prepManager.IsPreparedCardValid(prepared))
             {
-                // Show feedback (not enough energy, etc.)
-                Debug.LogWarning($"[PreparedCardsUI] Failed to unleash {prepared.sourceCard.cardName}");
-                // TODO: Show UI feedback
+                RemovePreparedCard(prepared);
             }
         }
     }
     
     /// <summary>
-    /// Highlight card on hover
+    /// Highlight card on hover (preserve base scale)
     /// </summary>
     private void OnCardHoverEnter(GameObject cardObj)
     {
-        cardObj.transform.localScale = Vector3.one * 1.1f;
+        // Get the current base scale (enabled or disabled)
+        var prepManager = PreparationManager.Instance;
+        if (prepManager != null)
+        {
+            var preparedCardRef = cardObj.GetComponent<PreparedCardReference>();
+            if (preparedCardRef != null && preparedCardRef.preparedCard != null)
+            {
+                var allPreparedCards = prepManager.GetPreparedCards();
+                PreparedCard firstCard = allPreparedCards != null && allPreparedCards.Count > 0 ? allPreparedCards[0] : null;
+                PreparedCard prepared = preparedCardRef.preparedCard;
+                bool canUnleash = prepared.turnsPrepared >= 1 && prepared == firstCard;
+                float baseScale = canUnleash ? enabledCardScale : disabledCardScale;
+                
+                LeanTween.cancel(cardObj);
+                LeanTween.scale(cardObj, Vector3.one * baseScale * 1.1f, 0.2f)
+                    .setEase(LeanTweenType.easeOutQuad);
+                return;
+            }
+        }
+        // Fallback
+        LeanTween.cancel(cardObj);
+        LeanTween.scale(cardObj, Vector3.one * 1.1f, 0.2f)
+            .setEase(LeanTweenType.easeOutQuad);
     }
     
     /// <summary>
-    /// Remove highlight on hover exit
+    /// Remove highlight on hover exit (restore base scale)
     /// </summary>
     private void OnCardHoverExit(GameObject cardObj)
     {
-        cardObj.transform.localScale = Vector3.one;
+        // Restore the base scale based on whether card can be unleashed
+        var prepManager = PreparationManager.Instance;
+        if (prepManager != null)
+        {
+            var preparedCardRef = cardObj.GetComponent<PreparedCardReference>();
+            if (preparedCardRef != null && preparedCardRef.preparedCard != null)
+            {
+                var allPreparedCards = prepManager.GetPreparedCards();
+                PreparedCard firstCard = allPreparedCards != null && allPreparedCards.Count > 0 ? allPreparedCards[0] : null;
+                PreparedCard prepared = preparedCardRef.preparedCard;
+                bool canUnleash = prepared.turnsPrepared >= 1 && prepared == firstCard;
+                float baseScale = canUnleash ? enabledCardScale : disabledCardScale;
+                
+                LeanTween.cancel(cardObj);
+                LeanTween.scale(cardObj, Vector3.one * baseScale, 0.2f)
+                    .setEase(LeanTweenType.easeOutQuad);
+                return;
+            }
+        }
+        // Fallback
+        LeanTween.cancel(cardObj);
+        LeanTween.scale(cardObj, Vector3.one, 0.2f)
+            .setEase(LeanTweenType.easeOutQuad);
     }
     
     /// <summary>

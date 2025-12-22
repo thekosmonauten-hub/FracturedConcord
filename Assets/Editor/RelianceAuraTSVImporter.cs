@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 public class RelianceAuraTSVImporter : EditorWindow
 {
     private TextAsset tsvFile;
+    private string tsvFilePath = "Assets/Documentation/RelianceAuras.tsv";
     private string outputFolder = "Assets/Resources/RelianceAuras";
     private bool createSubfoldersByCategory = true;
     private bool overwriteExisting = false;
@@ -26,7 +27,33 @@ public class RelianceAuraTSVImporter : EditorWindow
         GUILayout.Label("Reliance Aura TSV Importer", EditorStyles.boldLabel);
         EditorGUILayout.Space();
         
-        tsvFile = (TextAsset)EditorGUILayout.ObjectField("TSV File", tsvFile, typeof(TextAsset), false);
+        EditorGUILayout.LabelField("TSV File Selection", EditorStyles.boldLabel);
+        tsvFile = (TextAsset)EditorGUILayout.ObjectField("TSV File (TextAsset)", tsvFile, typeof(TextAsset), false);
+        
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("OR", EditorStyles.centeredGreyMiniLabel);
+        EditorGUILayout.Space();
+        
+        EditorGUILayout.LabelField("TSV File Path (Alternative)", EditorStyles.boldLabel);
+        EditorGUILayout.BeginHorizontal();
+        tsvFilePath = EditorGUILayout.TextField("File Path", tsvFilePath);
+        if (GUILayout.Button("Browse", GUILayout.Width(60)))
+        {
+            string path = EditorUtility.OpenFilePanel("Select TSV File", "Assets", "tsv");
+            if (!string.IsNullOrEmpty(path))
+            {
+                // Convert absolute path to relative path if it's within the project
+                if (path.StartsWith(Application.dataPath))
+                {
+                    tsvFilePath = "Assets" + path.Substring(Application.dataPath.Length);
+                }
+                else
+                {
+                    tsvFilePath = path;
+                }
+            }
+        }
+        EditorGUILayout.EndHorizontal();
         
         EditorGUILayout.Space();
         outputFolder = EditorGUILayout.TextField("Output Folder", outputFolder);
@@ -35,15 +62,15 @@ public class RelianceAuraTSVImporter : EditorWindow
         overwriteExisting = EditorGUILayout.Toggle("Overwrite Existing Assets", overwriteExisting);
         
         EditorGUILayout.Space();
-        EditorGUILayout.HelpBox("TSV Format:\nCategory | Aura Name | Description | Effect Level 1 | Effect Level 20 | Reliance", MessageType.Info);
+        EditorGUILayout.HelpBox("TSV Format:\nCategory | Aura Name | Description | Effect Level 1 | Effect Level 20 | Reliance | Modifier IDs | ...", MessageType.Info);
         
         EditorGUILayout.Space();
         
         if (GUILayout.Button("Import Auras"))
         {
-            if (tsvFile == null)
+            if (tsvFile == null && string.IsNullOrEmpty(tsvFilePath))
             {
-                EditorUtility.DisplayDialog("Error", "Please select a TSV file.", "OK");
+                EditorUtility.DisplayDialog("Error", "Please select a TSV file or provide a file path.", "OK");
                 return;
             }
             
@@ -60,13 +87,48 @@ public class RelianceAuraTSVImporter : EditorWindow
     
     private void ImportAuras()
     {
-        if (tsvFile == null)
+        string tsvContent = null;
+        
+        // Try to get content from TextAsset first
+        if (tsvFile != null)
         {
-            Debug.LogError("[RelianceAuraTSVImporter] No TSV file selected!");
+            tsvContent = tsvFile.text;
+        }
+        // Otherwise, try to read from file path
+        else if (!string.IsNullOrEmpty(tsvFilePath))
+        {
+            // Check if it's a relative path (starts with Assets/)
+            if (tsvFilePath.StartsWith("Assets/"))
+            {
+                string fullPath = System.IO.Path.Combine(Application.dataPath, tsvFilePath.Substring(7)); // Remove "Assets/"
+                if (System.IO.File.Exists(fullPath))
+                {
+                    tsvContent = System.IO.File.ReadAllText(fullPath);
+                }
+                else
+                {
+                    EditorUtility.DisplayDialog("Error", $"File not found: {fullPath}", "OK");
+                    return;
+                }
+            }
+            else if (System.IO.File.Exists(tsvFilePath))
+            {
+                tsvContent = System.IO.File.ReadAllText(tsvFilePath);
+            }
+            else
+            {
+                EditorUtility.DisplayDialog("Error", $"File not found: {tsvFilePath}", "OK");
+                return;
+            }
+        }
+        
+        if (string.IsNullOrEmpty(tsvContent))
+        {
+            EditorUtility.DisplayDialog("Error", "Could not read TSV file. Please check the file path or select a TextAsset.", "OK");
             return;
         }
         
-        string[] lines = tsvFile.text.Split('\n');
+        string[] lines = tsvContent.Split('\n');
         if (lines.Length < 2)
         {
             Debug.LogError("[RelianceAuraTSVImporter] TSV file is empty or has no data rows!");
@@ -139,6 +201,21 @@ public class RelianceAuraTSVImporter : EditorWindow
             relianceCost = ParseReliance(columns[5].Trim())
         };
         
+        // Parse Modifier IDs (column 6, if it exists)
+        if (columns.Length > 6 && !string.IsNullOrEmpty(columns[6].Trim()))
+        {
+            string modifierIdsStr = columns[6].Trim();
+            data.modifierIds = new List<string>();
+            foreach (string id in modifierIdsStr.Split(','))
+            {
+                string trimmedId = id.Trim();
+                if (!string.IsNullOrEmpty(trimmedId))
+                {
+                    data.modifierIds.Add(trimmedId);
+                }
+            }
+        }
+        
         return data;
     }
     
@@ -203,6 +280,18 @@ public class RelianceAuraTSVImporter : EditorWindow
         aura.embossingSlots = 1; // Default to 1 slot, can be adjusted manually
         aura.requiredLevel = 1; // Default to level 1, can be adjusted manually
         
+        // Populate modifier IDs (from TSV or auto-link from generated modifiers)
+        if (data.modifierIds != null && data.modifierIds.Count > 0)
+        {
+            // Use modifier IDs from TSV
+            aura.modifierIds = new List<string>(data.modifierIds);
+        }
+        else
+        {
+            // Auto-link: Find modifiers that have this aura's name as linkedAuraName
+            aura.modifierIds = AutoLinkModifiers(data.auraName);
+        }
+        
         // Set default theme color based on category
         aura.themeColor = GetCategoryColor(data.category);
         
@@ -225,6 +314,38 @@ public class RelianceAuraTSVImporter : EditorWindow
         // Remove invalid characters for file names
         string sanitized = Regex.Replace(fileName, @"[<>:""/\\|?*]", "");
         return sanitized.Trim();
+    }
+    
+    /// <summary>
+    /// Auto-link modifier IDs by finding RelianceAuraModifierDefinition assets with matching linkedAuraName
+    /// </summary>
+    private List<string> AutoLinkModifiers(string auraName)
+    {
+        List<string> modifierIds = new List<string>();
+        
+        // Find all RelianceAuraModifierDefinition assets in Resources
+        string[] guids = AssetDatabase.FindAssets("t:RelianceAuraModifierDefinition", new[] { "Assets/Resources" });
+        
+        foreach (string guid in guids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            RelianceAuraModifierDefinition modifier = AssetDatabase.LoadAssetAtPath<RelianceAuraModifierDefinition>(path);
+            
+            if (modifier != null && modifier.linkedAuraName == auraName)
+            {
+                if (!string.IsNullOrEmpty(modifier.modifierId))
+                {
+                    modifierIds.Add(modifier.modifierId);
+                }
+            }
+        }
+        
+        if (modifierIds.Count > 0)
+        {
+            Debug.Log($"[RelianceAuraTSVImporter] Auto-linked {modifierIds.Count} modifier(s) for {auraName}: {string.Join(", ", modifierIds)}");
+        }
+        
+        return modifierIds;
     }
     
     private Color GetCategoryColor(string category)
@@ -299,6 +420,7 @@ Columns:
         public string effectLevel1;
         public string effectLevel20;
         public int relianceCost;
+        public List<string> modifierIds = new List<string>();
     }
 }
 

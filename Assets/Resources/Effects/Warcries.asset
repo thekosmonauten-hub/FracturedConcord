@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e42269227b297e4d9239530ffefae82, type: 3}
+  m_Name: Warcries
+  m_EditorClassIdentifier: Assembly-CSharp::EffectData
+  effectName: Warcries
+  description: Ground slam Explosion
+  associatedCardName: 
+  effectType: 4
+  category: 7
+  damageType: 0
+  effectPrefab: {fileID: 5774131453729080922, guid: ecdb70ea0cf2a284ab67a65a50912006, type: 3}
+  useUIParticle: 0
+  uiParticleScale: 90
+  isProjectile: 0
+  projectileSpeed: 2100
+  useArcTrajectory: 0
+  arcHeight: 50
+  hasImpactEffect: 0
+  impactEffect: {fileID: 0}
+  duration: 1
+  delay: 0
+  requirements: []
+  tags:
+  - Warcry
+  - Head

@@ -391,16 +391,15 @@ public class EmbossingSlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnte
         {
             Debug.Log($"[EmbossingSlotUI] Hovering: {storedEmbossing.embossingName}");
             
-            // Show tooltip
-            EmbossingTooltip tooltipSystem = FindFirstObjectByType<EmbossingTooltip>();
-            if (tooltipSystem != null)
+            // Show tooltip using ItemTooltipManager
+            if (ItemTooltipManager.Instance != null)
             {
-                Debug.Log($"[EmbossingSlotUI] Found tooltip system, showing tooltip");
-                tooltipSystem.ShowTooltip(storedEmbossing);
+                Character character = CharacterManager.Instance?.GetCurrentCharacter();
+                ItemTooltipManager.Instance.ShowEmbossingTooltip(storedEmbossing, eventData.position, character);
             }
             else
             {
-                Debug.LogWarning("[EmbossingSlotUI] EmbossingTooltip system not found in scene!");
+                Debug.LogWarning("[EmbossingSlotUI] ItemTooltipManager.Instance not found in scene!");
             }
         }
         
@@ -416,10 +415,9 @@ public class EmbossingSlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnte
         // Hide tooltip
         if (storedEmbossing != null)
         {
-            EmbossingTooltip tooltipSystem = FindFirstObjectByType<EmbossingTooltip>();
-            if (tooltipSystem != null)
+            if (ItemTooltipManager.Instance != null)
             {
-                tooltipSystem.HideTooltip();
+                ItemTooltipManager.Instance.HideTooltip();
             }
         }
         

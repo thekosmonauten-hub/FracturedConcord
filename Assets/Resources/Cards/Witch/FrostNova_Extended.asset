@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Frost Nova
   groupKey: Frost_Nova
   cardType: Attack
-  playCost: 2
+  playCost: 20
   description: 'Deal {damage} cold damage to all enemies.\nApply 3 Chill. '
   rarity: 0
   element: 2

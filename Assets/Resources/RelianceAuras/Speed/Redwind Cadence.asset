@@ -21,6 +21,7 @@ MonoBehaviour:
   effectLevel20: 22% increased Attack speed
   relianceCost: 55
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Redwind Cadence_ModifyStat_attackSpeed
+  requiredLevel: 12
   unlockRequirement: 

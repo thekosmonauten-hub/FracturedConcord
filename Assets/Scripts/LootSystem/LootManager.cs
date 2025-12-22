@@ -179,9 +179,32 @@ public class LootManager : MonoBehaviour
 
     private void HandleWarrantReward(LootReward reward)
     {
-        if (reward == null || reward.warrantBlueprint == null)
+        if (reward == null)
         {
-            Debug.LogWarning("[LootManager] Warrant reward is null or has no blueprint. Skipping.");
+            Debug.LogWarning("[LootManager] Warrant reward is null. Skipping.");
+            return;
+        }
+
+        // If we already have a rolled instance (e.g., from AreaLootTable), use it directly
+        if (reward.warrantInstance != null)
+        {
+            WarrantLockerGrid lockerGrid = FindFirstObjectByType<WarrantLockerGrid>();
+            if (lockerGrid != null)
+            {
+                lockerGrid.AddWarrantInstance(reward.warrantInstance);
+                Debug.Log($"[LootManager] Awarded pre-rolled warrant: {reward.warrantInstance.displayName} (ID: {reward.warrantInstance.warrantId})");
+                return;
+            }
+            else
+            {
+                Debug.LogWarning("[LootManager] WarrantLockerGrid not found in scene. Cannot add pre-rolled warrant to locker.");
+            }
+        }
+
+        // Otherwise, roll from blueprint (legacy behavior)
+        if (reward.warrantBlueprint == null)
+        {
+            Debug.LogWarning("[LootManager] Warrant reward has no blueprint or instance. Skipping.");
             return;
         }
 
@@ -199,8 +222,8 @@ public class LootManager : MonoBehaviour
             return;
         }
 
-        WarrantLockerGrid lockerGrid = FindFirstObjectByType<WarrantLockerGrid>();
-        if (lockerGrid == null)
+        WarrantLockerGrid lockerGrid2 = FindFirstObjectByType<WarrantLockerGrid>();
+        if (lockerGrid2 == null)
         {
             Debug.LogError("[LootManager] WarrantLockerGrid not found in scene. Cannot add warrant to locker.");
             return;
@@ -210,7 +233,7 @@ public class LootManager : MonoBehaviour
         WarrantDefinition rolledInstance = WarrantRollingUtility.RollAndAddToLocker(
             reward.warrantBlueprint,
             warrantDatabase,
-            lockerGrid,
+            lockerGrid2,
             minAffixes: 1,
             maxAffixes: 3
         );

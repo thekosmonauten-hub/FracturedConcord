@@ -41,6 +41,19 @@ public class CardEffectProcessor : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private bool showDetailedLogs = true;
     
+    // Effect system reference
+    private CombatEffectManager effectManager;
+    
+    // Track temporary stat boosts for removal
+    private class TemporaryStatBoostTracker
+    {
+        public Character character;
+        public string statName;
+        public float value;
+        public int remainingTurns;
+    }
+    private List<TemporaryStatBoostTracker> activeStatBoosts = new List<TemporaryStatBoostTracker>();
+    
     private void Awake()
     {
         if (Instance == null)
@@ -62,6 +75,9 @@ public class CardEffectProcessor : MonoBehaviour
         
         if (animationManager == null)
             animationManager = CombatAnimationManager.Instance;
+        
+        // Find effect manager
+        effectManager = FindFirstObjectByType<CombatEffectManager>();
     }
     
     /// <summary>
@@ -206,6 +222,41 @@ public class CardEffectProcessor : MonoBehaviour
         int maxTargets = (card.aoeTargets <= 0) ? validTargets.Count : Mathf.Min(card.aoeTargets, validTargets.Count);
         Debug.Log($"<color=orange>🎯 AoE targeting {maxTargets} enemies (card.aoeTargets: {card.aoeTargets}, hit all: {card.aoeTargets <= 0})</color>");
         
+        // Play Area effect for AoE card (plays once at targeted enemy's Default point)
+        if (effectManager != null && validTargets.Count > 0)
+        {
+            // Get the targeted enemy transform (first enemy in the list, or use EnemyTargetingManager if available)
+            Transform targetEnemyTransform = null;
+            var targetingManager = EnemyTargetingManager.Instance;
+            if (targetingManager != null)
+            {
+                int targetIndex = targetingManager.GetTargetedEnemyIndex();
+                if (targetIndex >= 0 && targetIndex < activeDisplays.Count && activeDisplays[targetIndex] != null)
+                {
+                    targetEnemyTransform = activeDisplays[targetIndex].transform;
+                }
+            }
+            
+            // Fallback to first valid target if targeting manager didn't provide one
+            if (targetEnemyTransform == null && validTargets.Count > 0)
+            {
+                var (firstEnemy, firstIndex) = validTargets[0];
+                if (firstIndex >= 0 && firstIndex < activeDisplays.Count && activeDisplays[firstIndex] != null)
+                {
+                    targetEnemyTransform = activeDisplays[firstIndex].transform;
+                }
+            }
+            
+            if (targetEnemyTransform != null)
+            {
+                effectManager.PlayAreaEffectForCard(card, targetEnemyTransform, false);
+            }
+            else
+            {
+                Debug.LogWarning("[CardEffectProcessor] Could not find target enemy transform for Area effect!");
+            }
+        }
+        
         // BATCH PROCESSING: Apply all AoE damage in one batch to prevent cascading defeat handlers
         // This prevents multiple simultaneous CheckWaveCompletion calls that can cause freezes
         
@@ -285,11 +336,105 @@ public class CardEffectProcessor : MonoBehaviour
             
             Debug.Log($"<color=yellow>💥 Dealing {totalDamage} damage to {enemy.enemyName} at display index {displayIndex} ({n+1}/{maxTargets})</color>");
             
-            // Apply damage
-            combatDisplayManager.PlayerAttackEnemy(displayIndex, totalDamage, card);
+            // Apply Vulnerability multiplier per enemy (AoE)
+            float enemyDamage = totalDamage;
+            try
+            {
+                var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+                foreach (var d in enemyDisplays)
+                {
+                    if (d != null && d.GetCurrentEnemy() == enemy)
+                    {
+                        var statusManager = d.GetComponent<StatusEffectManager>();
+                        if (statusManager != null)
+                        {
+                            // Use GetVulnerabilityDamageMultiplier() which returns 1.2f (20% more) and checks if consumed
+                            float vulnMultiplier = statusManager.GetVulnerabilityDamageMultiplier();
+                            if (vulnMultiplier > 1f)
+                            {
+                                Debug.Log($"  [Vulnerability] Applying multiplier to {enemy.enemyName}: x{vulnMultiplier:F2} (20% more damage)");
+                                enemyDamage *= vulnMultiplier;
+                            }
+                            // Apply Bolster (less damage taken per stack: 2%, max 10 stacks)
+                            float bolsterStacks = Mathf.Min(10f, statusManager.GetTotalMagnitude(StatusEffectType.Bolster));
+                            if (bolsterStacks > 0f)
+                            {
+                                float lessMultiplier = Mathf.Clamp01(1f - (0.02f * bolsterStacks));
+                                Debug.Log($"  Bolster stacks: {bolsterStacks}, less dmg multiplier: x{lessMultiplier:F2}");
+                                enemyDamage *= lessMultiplier;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            catch { /* safe guard */ }
+            
+            // Play visual effect before damage (AoE)
+            // Note: If card has Area effect, PlayCardEffect will skip per-enemy effects
+            // (Area effect is already played once at AoEAreaIndicator location)
+            PlayCardEffect(card, enemy, displayIndex, true);
+            
+            // Apply damage with vulnerability multiplier
+            combatDisplayManager.PlayerAttackEnemy(displayIndex, enemyDamage, card);
+            
+            // Consume Vulnerability after damage is dealt (AoE)
+            try
+            {
+                var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+                foreach (var d in enemyDisplays)
+                {
+                    if (d != null && d.GetCurrentEnemy() == enemy)
+                    {
+                        var statusManager = d.GetComponent<StatusEffectManager>();
+                        if (statusManager != null)
+                        {
+                            statusManager.ConsumeVulnerability();
+                        }
+                        break;
+                    }
+                }
+            }
+            catch { /* safe guard */ }
+            
+            // Trigger embossing modifier event for damage dealt (AoE)
+            // Note: PlayerAttackEnemy already triggers this for single-target, but for AoE we need to trigger it here
+            // since PlayerAttackEnemy is called for each enemy in the loop
+            Character playerCharacter = null;
+            if (CharacterManager.Instance != null && CharacterManager.Instance.HasCharacter())
+            {
+                playerCharacter = CharacterManager.Instance.GetCurrentCharacter();
+            }
+            if (card != null && playerCharacter != null && Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance != null)
+            {
+                // Determine primary damage type from breakdown
+                DamageType primaryDamageType = card.primaryDamageType;
+                if (damageBreakdown.fire > 0 && damageBreakdown.fire >= damageBreakdown.physical) primaryDamageType = DamageType.Fire;
+                else if (damageBreakdown.cold > 0 && damageBreakdown.cold >= damageBreakdown.physical) primaryDamageType = DamageType.Cold;
+                else if (damageBreakdown.lightning > 0 && damageBreakdown.lightning >= damageBreakdown.physical) primaryDamageType = DamageType.Lightning;
+                
+                Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance.OnDamageDealt(
+                    card, playerCharacter, enemy, totalDamage, primaryDamageType
+                );
+                
+                // Check if enemy was killed by this damage
+                if (enemy != null && enemy.currentHealth <= 0)
+                {
+                    Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance.OnEnemyKilled(
+                        card, playerCharacter, enemy
+                    );
+                }
+            }
             
             // Apply automatic status effects based on damage types
             ApplyAutomaticStatusEffects(enemy, damageBreakdown, card);
+            
+            // Process CardEffects that target enemies (e.g., ApplyStatus effects with targetsAllEnemies)
+            // This must be done AFTER damage calculation so status effects can use the damage breakdown
+            if (card.effects != null && card.effects.Count > 0)
+            {
+                ProcessCardEffectsForEnemy(card, enemy, player, totalDamage);
+            }
             
             Debug.Log($"<color=yellow>  After damage: {enemy.enemyName} HP is now {enemy.currentHealth}/{enemy.maxHealth}</color>");
         }
@@ -579,12 +724,44 @@ public class CardEffectProcessor : MonoBehaviour
             Debug.Log($"[Auto Status] Applied Shocked from {damageBreakdown.lightning} lightning damage");
         }
         
-        // Physical damage from attacks can inflict Bleeding
+        // Physical damage from attacks can inflict Bleeding (with chance check)
         if (damageBreakdown.physical > 0f && card != null && card.cardType == CardType.Attack)
         {
-            StatusEffect bleedEffect = StatusEffectFactory.CreateBleeding(damageBreakdown.physical, 5);
-            ApplyStatusEffectToEnemy(targetEnemy, bleedEffect);
-            Debug.Log($"[Auto Status] Applied Bleeding from {damageBreakdown.physical} physical attack damage");
+            // Get player character to check bleed chance
+            Character playerCharacter = null;
+            if (characterManager != null && characterManager.HasCharacter())
+            {
+                playerCharacter = characterManager.GetCurrentCharacter();
+            }
+            
+            if (playerCharacter != null)
+            {
+                var statsData = new CharacterStatsData(playerCharacter);
+                float bleedChance = statsData.chanceToBleed;
+                
+                // Apply ailment application chance increased modifier
+                bleedChance += statsData.ailmentApplicationChanceIncreased;
+                
+                // Roll chance (0-100)
+                float roll = UnityEngine.Random.Range(0f, 100f);
+                bool shouldBleed = roll < bleedChance;
+                
+                if (shouldBleed)
+                {
+                    StatusEffect bleedEffect = StatusEffectFactory.CreateBleeding(damageBreakdown.physical, 5);
+                    ApplyStatusEffectToEnemy(targetEnemy, bleedEffect);
+                    Debug.Log($"[Auto Status] Applied Bleeding from {damageBreakdown.physical} physical attack damage (Chance: {bleedChance:F1}%, Roll: {roll:F1}%)");
+                }
+                else
+                {
+                    Debug.Log($"[Auto Status] Bleed failed: Chance={bleedChance:F1}%, Roll={roll:F1}%");
+                }
+            }
+            else
+            {
+                // Fallback: if no player character found, don't apply bleed
+                Debug.LogWarning("[Auto Status] Cannot check bleed chance: Player character not found");
+            }
         }
         
         // Chaos damage can inflict Poison if card has "Poison" tag
@@ -777,26 +954,69 @@ public class CardEffectProcessor : MonoBehaviour
             int preparedCount = ThiefCardEffects.GetPreparedCardCount();
             if (preparedCount > 0)
             {
-                // Ambush: +1 (+Dex/3) damage per prepared card
-                if (card.cardName.Contains("Ambush") || card.description.Contains("prepared cards"))
+                // Use the new configurable fields from CardDataExtended
+                // Ambush: +preparedCardDamageBase (+preparedCardDamageScaling) damage per prepared card
+                if (extendedCard.preparedCardDamageBase > 0f || 
+                    (extendedCard.preparedCardDamageScaling != null && 
+                     (extendedCard.preparedCardDamageScaling.strengthDivisor > 0f || 
+                      extendedCard.preparedCardDamageScaling.dexterityDivisor > 0f || 
+                      extendedCard.preparedCardDamageScaling.intelligenceDivisor > 0f ||
+                      extendedCard.preparedCardDamageScaling.strengthScaling > 0f ||
+                      extendedCard.preparedCardDamageScaling.dexterityScaling > 0f ||
+                      extendedCard.preparedCardDamageScaling.intelligenceScaling > 0f)))
                 {
                     // Check if dual wielding for enhanced effect
                     bool isDualWielding = ThiefCardEffects.IsDualWielding(player);
-                    float bonusPerCard = isDualWielding ? 2f : 1f; // Dual: +2, Normal: +1
+                    float bonusPerCard = extendedCard.preparedCardDamageBase;
                     
-                    // Parse dexterity scaling from description
-                    float dexDivisor = ParseDexterityDivisor(card.description);
-                    float dexBonus = dexDivisor > 0 ? player.dexterity / dexDivisor : 0f;
+                    // Add attribute scaling
+                    if (extendedCard.preparedCardDamageScaling != null)
+                    {
+                        bonusPerCard += extendedCard.preparedCardDamageScaling.CalculateScalingBonus(player);
+                    }
                     
-                    float bonusDamage = (bonusPerCard + dexBonus) * preparedCount;
+                    // Dual wield doubles the base bonus (but not the scaling)
+                    if (isDualWielding && extendedCard.preparedCardDamageBase > 0f)
+                    {
+                        bonusPerCard = (extendedCard.preparedCardDamageBase * 2f) + 
+                                       (extendedCard.preparedCardDamageScaling != null ? extendedCard.preparedCardDamageScaling.CalculateScalingBonus(player) : 0f);
+                    }
+                    
+                    float bonusDamage = bonusPerCard * preparedCount;
                     totalDamage += bonusDamage;
-                    Debug.Log($"<color=cyan>[Thief] {card.cardName} gains +{bonusDamage:F1} damage from {preparedCount} prepared cards (dual wield: {isDualWielding})</color>");
+                    Debug.Log($"<color=cyan>[Thief] {card.cardName} gains +{bonusDamage:F1} damage from {preparedCount} prepared cards (base: {extendedCard.preparedCardDamageBase}, scaling: {extendedCard.preparedCardDamageScaling?.CalculateScalingBonus(player) ?? 0f}, dual wield: {isDualWielding})</color>");
                 }
                 
-                // Poisoned Blade: +1 Poison per prepared card
-                if (card.cardName.Contains("Poisoned Blade") || card.description.Contains("prepared cards"))
+                // Poisoned Blade: Apply +preparedCardPoisonBase Poison per prepared card
+                if (extendedCard.preparedCardPoisonBase > 0 && targetEnemy != null)
                 {
-                    // This will be handled in ApplySkillCard for status effects
+                    int totalPoisonStacks = extendedCard.preparedCardPoisonBase * preparedCount;
+                    
+                    // Find enemy's StatusEffectManager via EnemyCombatDisplay
+                    var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+                    foreach (var display in enemyDisplays)
+                    {
+                        if (display != null && display.GetCurrentEnemy() == targetEnemy)
+                        {
+                            var statusMgr = display.GetComponent<StatusEffectManager>();
+                            if (statusMgr != null)
+                            {
+                                // Calculate damage for poison (use card's damage breakdown)
+                                DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, totalDamage);
+                                float physDmg = damageBreakdown.physical > 0f ? damageBreakdown.physical : 10f; // Fallback
+                                float chaosDmg = damageBreakdown.chaos > 0f ? damageBreakdown.chaos : 0f;
+                                
+                                // Apply poison for each prepared card (each is a separate stack)
+                                for (int i = 0; i < totalPoisonStacks; i++)
+                                {
+                                    StatusEffect poisonEffect = StatusEffectFactory.CreatePoison(physDmg, chaosDmg, 3);
+                                    statusMgr.AddStatusEffect(poisonEffect);
+                                }
+                                Debug.Log($"<color=green>[Thief] Poisoned Blade applied {totalPoisonStacks} Poison stacks from {preparedCount} prepared cards (base: {extendedCard.preparedCardPoisonBase} per card)</color>");
+                            }
+                            break;
+                        }
+                    }
                 }
             }
             
@@ -827,6 +1047,13 @@ public class CardEffectProcessor : MonoBehaviour
             }
         }
         
+        // Apply CardEffects that target enemies (e.g., ApplyStatus effects)
+        // This must be done AFTER damage calculation so status effects can use the damage breakdown
+        if (targetEnemy != null && card.effects != null && card.effects.Count > 0)
+        {
+            ProcessCardEffectsForEnemy(card, targetEnemy, player, totalDamage);
+        }
+        
         // Apply charge modifiers to damage
         totalDamage = CombatDeckManager.ApplyDamageModifier(totalDamage); // CardDataExtended not available here, but damage modifier doesn't need it
 
@@ -841,6 +1068,9 @@ public class CardEffectProcessor : MonoBehaviour
             }
             else
             {
+                // Play visual effect before damage
+                PlayCardEffect(card, targetEnemy, idx, false);
+                
                 // Single hit - use normal path
                 // Note: combatManager is CombatDisplayManager which has PlayerAttackEnemy
                 combatManager.PlayerAttackEnemy(idx, totalDamage, card);
@@ -883,7 +1113,7 @@ public class CardEffectProcessor : MonoBehaviour
             return;
         }
 
-        // Apply Vulnerability multiplier: +15% damage taken per stack
+        // Apply Vulnerability multiplier using proper method (20% more damage, consumed after one instance)
         try
         {
             var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
@@ -894,11 +1124,11 @@ public class CardEffectProcessor : MonoBehaviour
                     var statusManager = d.GetComponent<StatusEffectManager>();
                     if (statusManager != null)
                     {
-                        float stacks = statusManager.GetTotalMagnitude(StatusEffectType.Vulnerable);
-                        if (stacks > 0f)
+                        // Use GetVulnerabilityDamageMultiplier() which returns 1.2f (20% more) and checks if consumed
+                        float vulnMultiplier = statusManager.GetVulnerabilityDamageMultiplier();
+                        if (vulnMultiplier > 1f)
                         {
-                            float vulnMultiplier = 1f + (0.15f * stacks);
-                            Debug.Log($"  Vulnerable stacks: {stacks}, multiplier: x{vulnMultiplier:F2}");
+                            Debug.Log($"  [Vulnerability] Applying multiplier: x{vulnMultiplier:F2} (20% more damage)");
                             totalDamage *= vulnMultiplier;
                         }
                         // Apply Bolster (less damage taken per stack: 2%, max 10 stacks)
@@ -925,6 +1155,9 @@ public class CardEffectProcessor : MonoBehaviour
         // Apply damage to enemy (with charge modifier: ignore guard/armor)
         bool ignoreGuardArmor = CombatDeckManager.ShouldIgnoreGuardArmor();
         
+        // Determine if this is a projectile card (used in multiple places)
+        bool isProjectile = IsProjectileCard(card);
+        
         // For multi-hit in fallback path, use coroutine to space out hits
         if (isMultiHit && hitCount > 1)
         {
@@ -932,11 +1165,54 @@ public class CardEffectProcessor : MonoBehaviour
         }
         else
         {
+            
+            // Play visual effect before damage (fallback path)
+            int fallbackIdx = FindActiveEnemyIndex(targetEnemy);
+            
+            // Create callback for projectile cards that applies damage when projectile hits
+            System.Action onProjectileHit = null;
+            if (isProjectile)
+            {
+                // Store values needed for damage application
+                float damageToApply = totalDamage;
+                bool ignoreGuard = ignoreGuardArmor;
+                Vector3 damagePos = targetScreenPosition;
+                
+                onProjectileHit = () => {
+                    ApplyProjectileDamage(card, targetEnemy, damageToApply, ignoreGuard, damagePos, player);
+                };
+                
+                PlayCardEffect(card, targetEnemy, fallbackIdx, false, totalDamage, targetScreenPosition, false, onProjectileHit);
+            }
+            else
+            {
+                // Non-projectile: apply damage immediately
+                PlayCardEffect(card, targetEnemy, fallbackIdx, false);
+                
             // Single hit - apply damage directly
             targetEnemy.TakeDamage(totalDamage, ignoreGuardArmor);
             
             Debug.Log($"<color=red>  ⚔️ Dealt {totalDamage:F0} damage to {targetEnemy.enemyName}</color>");
             Debug.Log($"<color=red>  💔 Target HP AFTER: {targetEnemy.currentHealth}/{targetEnemy.maxHealth}</color>");
+            
+            // Consume Vulnerability after damage is dealt
+            try
+            {
+                var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+                foreach (var d in enemyDisplays)
+                {
+                    if (d != null && d.GetCurrentEnemy() == targetEnemy)
+                    {
+                        var statusManager = d.GetComponent<StatusEffectManager>();
+                        if (statusManager != null)
+                        {
+                            statusManager.ConsumeVulnerability();
+                        }
+                        break;
+                    }
+                }
+            }
+            catch { /* safe guard */ }
             
             // Calculate damage breakdown for status effects
             DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, totalDamage);
@@ -944,7 +1220,7 @@ public class CardEffectProcessor : MonoBehaviour
             // Apply automatic status effects based on damage types
             ApplyAutomaticStatusEffects(targetEnemy, damageBreakdown, card);
             
-            // Show damage number
+                // Show damage number immediately for non-projectile cards
             if (animationManager != null)
             {
                 DamageNumberType damageNumberType = ConvertDamageType(card.primaryDamageType);
@@ -960,6 +1236,7 @@ public class CardEffectProcessor : MonoBehaviour
             
             // Update enemy display
             UpdateEnemyDisplay(targetEnemy);
+            }
         }
         
         // Apply guard if this attack grants any
@@ -1002,7 +1279,9 @@ public class CardEffectProcessor : MonoBehaviour
         }
         
         // NEW: Hook - apply structured combo ailment if present
-        if (card.comboAilmentId != AilmentId.None)
+        // Note: For projectile cards, this is handled in ApplyProjectileDamage when the projectile hits
+        // For non-projectile cards, apply immediately
+        if (!isProjectile && card.comboAilmentId != AilmentId.None)
         {
             switch (card.comboAilmentId)
             {
@@ -1048,8 +1327,8 @@ public class CardEffectProcessor : MonoBehaviour
             }
         }
         
-        // Check if enemy is defeated
-        if (targetEnemy.currentHealth <= 0)
+        // Check if enemy is defeated (only for non-projectile cards - projectile cards check in ApplyProjectileDamage)
+        if (!isProjectile && targetEnemy.currentHealth <= 0)
         {
             Debug.Log($"<color=yellow>💀 {targetEnemy.enemyName} has been defeated!</color>");
             
@@ -1683,6 +1962,20 @@ public class CardEffectProcessor : MonoBehaviour
             }
         }
         
+        // Process CardEffects for Skill cards (e.g., ApplyStatus effects)
+        // This handles Skill cards that don't deal damage but apply status effects
+        if (card.effects != null && card.effects.Count > 0)
+        {
+            // For single-target Skill cards, process effects on the target enemy
+            if (targetEnemy != null)
+            {
+                // Calculate damage breakdown (may be 0 for non-damage Skill cards)
+                float skillDamage = card.baseDamage > 0 ? DamageCalculator.CalculateCardDamage(card, player, null, targetEnemy) : 0f;
+                ProcessCardEffectsForEnemy(card, targetEnemy, player, skillDamage);
+            }
+            // For AoE Skill cards, effects are processed in ApplyAoECard
+        }
+        
         // Apply delayed card bonus for skill effects: +1 stack/effect or +30% duration
         if (isDelayed)
         {
@@ -1956,6 +2249,29 @@ public class CardEffectProcessor : MonoBehaviour
                 momentumGain += amount;
                 Debug.Log($"[ApplyOnPlayEffects] Found GainMomentum effect: {amount} momentum");
             }
+            else if (eff.effectType == EffectType.TemporaryStatBoost)
+            {
+                // Apply temporary stat boost to player
+                if (player != null && eff.targetsSelf)
+                {
+                    // Use the CardEffect's ApplyEffect method which handles warrantStatModifiers
+                    eff.ApplyEffect(player, player);
+                    
+                    // Track for removal at end of turn if duration is specified
+                    if (eff.duration > 0)
+                    {
+                        var tracker = new TemporaryStatBoostTracker
+                        {
+                            character = player,
+                            statName = eff.effectName,
+                            value = eff.value,
+                            remainingTurns = eff.duration
+                        };
+                        activeStatBoosts.Add(tracker);
+                        Debug.Log($"[ApplyOnPlayEffects] Tracked temporary stat boost: {eff.effectName} = +{eff.value}% for {eff.duration} turn(s)");
+                    }
+                }
+            }
         }
         
         // Apply momentum threshold modifications to momentum gain
@@ -2025,6 +2341,123 @@ public class CardEffectProcessor : MonoBehaviour
     // REMOVED: Old CalculateDamage() method
     // Now using DamageCalculator.CalculateCardDamage() for consistent damage calculation
     // with proper character modifiers, embossing effects, and debug logging
+    
+    /// <summary>
+    /// Process CardEffects that target enemies (e.g., ApplyStatus effects like Poison)
+    /// </summary>
+    private void ProcessCardEffectsForEnemy(Card card, Enemy targetEnemy, Character player, float totalDamage)
+    {
+        if (card == null || card.effects == null || targetEnemy == null)
+            return;
+        
+        // Find enemy's StatusEffectManager via EnemyCombatDisplay
+        var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+        EnemyCombatDisplay targetDisplay = null;
+        foreach (var display in enemyDisplays)
+        {
+            if (display != null && display.GetCurrentEnemy() == targetEnemy)
+            {
+                targetDisplay = display;
+                break;
+            }
+        }
+        
+        if (targetDisplay == null)
+        {
+            Debug.LogWarning($"[ProcessCardEffectsForEnemy] Could not find EnemyCombatDisplay for {targetEnemy.enemyName}");
+            return;
+        }
+        
+        var statusMgr = targetDisplay.GetComponent<StatusEffectManager>();
+        if (statusMgr == null)
+        {
+            Debug.LogWarning($"[ProcessCardEffectsForEnemy] EnemyCombatDisplay has no StatusEffectManager");
+            return;
+        }
+        
+        // Calculate damage breakdown for status effects that scale with damage
+        DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, totalDamage);
+        
+        // Process each CardEffect
+        foreach (var effect in card.effects)
+        {
+            if (effect == null) continue;
+            
+            // Only process effects that target enemies
+            if (!effect.targetsEnemy && !effect.targetsAllEnemies)
+                continue;
+            
+            if (effect.effectType == EffectType.ApplyStatus)
+            {
+                // Determine status effect type from effect name
+                StatusEffectType statusType = GetStatusEffectTypeFromName(effect.effectName);
+                
+                // For Poison, calculate damage from card's damage breakdown
+                if (statusType == StatusEffectType.Poison)
+                {
+                    float physDmg = damageBreakdown.physical > 0f ? damageBreakdown.physical : 10f; // Fallback
+                    float chaosDmg = damageBreakdown.chaos > 0f ? damageBreakdown.chaos : 0f;
+                    
+                    // Apply poison stacks (value is the number of stacks)
+                    int poisonStacks = Mathf.RoundToInt(effect.value);
+                    for (int i = 0; i < poisonStacks; i++)
+                    {
+                        StatusEffect poisonEffect = StatusEffectFactory.CreatePoison(physDmg, chaosDmg, effect.duration > 0 ? effect.duration : 3);
+                        statusMgr.AddStatusEffect(poisonEffect);
+                    }
+                    Debug.Log($"<color=green>[CardEffectProcessor] {card.cardName} applied {poisonStacks} Poison stacks via CardEffect</color>");
+                }
+                else
+                {
+                    // For other status effects, use the CardEffect's ApplyEffect method
+                    // But we need to pass the Enemy as a Character (this might need adjustment)
+                    // For now, create the status effect directly
+                    StatusEffect statusEffect = new StatusEffect(statusType, effect.effectName, effect.value, effect.duration > 0 ? effect.duration : 1);
+                    statusMgr.AddStatusEffect(statusEffect);
+                    Debug.Log($"<color=green>[CardEffectProcessor] {card.cardName} applied {effect.effectName} via CardEffect</color>");
+                }
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Get StatusEffectType from effect name (helper for CardEffect processing)
+    /// </summary>
+    private StatusEffectType GetStatusEffectTypeFromName(string effectName)
+    {
+        if (string.IsNullOrEmpty(effectName))
+            return StatusEffectType.Poison; // Default fallback
+        
+        switch (effectName.ToLower())
+        {
+            case "poison":
+            case "poisoned":
+                return StatusEffectType.Poison;
+            case "burn":
+            case "burning":
+            case "ignite":
+            case "ignited":
+                return StatusEffectType.Burn;
+            case "chill":
+            case "chilled":
+                return StatusEffectType.Chill;
+            case "freeze":
+            case "frozen":
+                return StatusEffectType.Freeze;
+            case "bleed":
+            case "bleeding":
+                return StatusEffectType.Bleed;
+            case "shock":
+            case "shocked":
+                return StatusEffectType.Shocked;
+            case "vulnerable":
+                return StatusEffectType.Vulnerable;
+            case "weak":
+                return StatusEffectType.Weak;
+            default:
+                return StatusEffectType.Poison; // Default fallback
+        }
+    }
     
     /// <summary>
     /// Get CardDataExtended from a Card object
@@ -2496,6 +2929,35 @@ public class CardEffectProcessor : MonoBehaviour
         
         Debug.Log($"<color=cyan>[Multi-Hit Coroutine] Starting {hits} hits with 0.3s delay between each</color>");
         
+        // Apply Vulnerability multiplier only to first hit (will be consumed after)
+        float firstHitDamage = damage;
+        bool vulnerabilityConsumed = false;
+        if (targetEnemy != null)
+        {
+            try
+            {
+                // Reuse existing enemyDisplays variable
+                foreach (var d in enemyDisplays)
+                {
+                    if (d != null && d.GetCurrentEnemy() == targetEnemy)
+                    {
+                        var statusManager = d.GetComponent<StatusEffectManager>();
+                        if (statusManager != null)
+                        {
+                            float vulnMultiplier = statusManager.GetVulnerabilityDamageMultiplier();
+                            if (vulnMultiplier > 1f)
+                            {
+                                firstHitDamage *= vulnMultiplier;
+                                Debug.Log($"  [Vulnerability] Applying multiplier to first hit: x{vulnMultiplier:F2} (20% more damage)");
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            catch { /* safe guard */ }
+        }
+        
         for (int hit = 0; hit < hits; hit++)
         {
             Debug.Log($"<color=yellow>[Multi-Hit Coroutine] Processing hit {hit + 1}/{hits}</color>");
@@ -2510,9 +2972,35 @@ public class CardEffectProcessor : MonoBehaviour
             // Small delay to let nudge animation start
             yield return new WaitForSeconds(0.05f);
             
+            // Use vulnerability multiplier only for first hit
+            float hitDamage = (hit == 0) ? firstHitDamage : damage;
+            
             // Apply damage via CombatDisplayManager (handles floating text internally)
-            combatMgr.PlayerAttackEnemy(enemyIndex, damage, card);
-            Debug.Log($"<color=red>  ⚔️ Hit {hit + 1}/{hits}: Dealt {damage:F0} damage via CombatDisplayManager</color>");
+            combatMgr.PlayerAttackEnemy(enemyIndex, hitDamage, card);
+            Debug.Log($"<color=red>  ⚔️ Hit {hit + 1}/{hits}: Dealt {hitDamage:F0} damage via CombatDisplayManager</color>");
+            
+            // Consume Vulnerability after first hit
+            if (hit == 0 && targetEnemy != null && !vulnerabilityConsumed)
+            {
+                try
+                {
+                    // Reuse existing enemyDisplays variable
+                    foreach (var d in enemyDisplays)
+                    {
+                        if (d != null && d.GetCurrentEnemy() == targetEnemy)
+                        {
+                            var statusManager = d.GetComponent<StatusEffectManager>();
+                            if (statusManager != null)
+                            {
+                                statusManager.ConsumeVulnerability();
+                                vulnerabilityConsumed = true;
+                            }
+                            break;
+                        }
+                    }
+                }
+                catch { /* safe guard */ }
+            }
             
             // Apply automatic status effects (only on first hit to avoid stacking issues)
             if (hit == 0 && targetEnemy != null)
@@ -2552,6 +3040,9 @@ public class CardEffectProcessor : MonoBehaviour
         // Calculate damage breakdown for status effects (same for all hits)
         DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, totalDamage);
         
+        // Get all enemy displays once to avoid repeated lookups
+        var allEnemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+        
         for (int hit = 0; hit < hitCount; hit++)
         {
             Debug.Log($"<color=yellow>[Multi-Hit AoE] Hit {hit + 1}/{hitCount} on all enemies</color>");
@@ -2572,7 +3063,55 @@ public class CardEffectProcessor : MonoBehaviour
                 int enemyIdx = FindActiveEnemyIndex(enemy);
                 if (enemyIdx >= 0)
                 {
-                    combatDisplayManager.PlayerAttackEnemy(enemyIdx, totalDamage, card);
+                    // Apply Vulnerability multiplier only to first hit per enemy
+                    float enemyDamage = totalDamage;
+                    if (hit == 0)
+                    {
+                        try
+                        {
+                            foreach (var d in allEnemyDisplays)
+                            {
+                                if (d != null && d.GetCurrentEnemy() == enemy)
+                                {
+                                    var statusManager = d.GetComponent<StatusEffectManager>();
+                                    if (statusManager != null)
+                                    {
+                                        float vulnMultiplier = statusManager.GetVulnerabilityDamageMultiplier();
+                                        if (vulnMultiplier > 1f)
+                                        {
+                                            enemyDamage *= vulnMultiplier;
+                                            Debug.Log($"  [Vulnerability] Applying multiplier to {enemy.enemyName} first hit: x{vulnMultiplier:F2} (20% more damage)");
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        catch { /* safe guard */ }
+                    }
+                    
+                    combatDisplayManager.PlayerAttackEnemy(enemyIdx, enemyDamage, card);
+                    
+                    // Consume Vulnerability after first hit
+                    if (hit == 0)
+                    {
+                        try
+                        {
+                            foreach (var d in allEnemyDisplays)
+                            {
+                                if (d != null && d.GetCurrentEnemy() == enemy)
+                                {
+                                    var statusManager = d.GetComponent<StatusEffectManager>();
+                                    if (statusManager != null)
+                                    {
+                                        statusManager.ConsumeVulnerability();
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        catch { /* safe guard */ }
+                    }
                     
                     // Apply automatic status effects (only on first hit to avoid stacking issues)
                     if (hit == 0)
@@ -2608,6 +3147,9 @@ public class CardEffectProcessor : MonoBehaviour
         // Calculate damage breakdown for status effects (same for all hits)
         DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, totalDamage);
         
+        // Get all enemy displays once to avoid repeated lookups
+        var allEnemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+        
         for (int hit = 0; hit < hitCount; hit++)
         {
             Debug.Log($"<color=yellow>[Multi-Hit Random] Hit {hit + 1}/{hitCount} on {targetsToHit} random enemies</color>");
@@ -2629,7 +3171,55 @@ public class CardEffectProcessor : MonoBehaviour
                 int enemyIdx = FindActiveEnemyIndex(randomEnemy);
                 if (enemyIdx >= 0 && combatManager != null)
                 {
-                    combatManager.PlayerAttackEnemy(enemyIdx, totalDamage, card);
+                    // Apply Vulnerability multiplier only to first hit per enemy
+                    float enemyDamage = totalDamage;
+                    if (hit == 0)
+                    {
+                        try
+                        {
+                            foreach (var d in allEnemyDisplays)
+                            {
+                                if (d != null && d.GetCurrentEnemy() == randomEnemy)
+                                {
+                                    var statusManager = d.GetComponent<StatusEffectManager>();
+                                    if (statusManager != null)
+                                    {
+                                        float vulnMultiplier = statusManager.GetVulnerabilityDamageMultiplier();
+                                        if (vulnMultiplier > 1f)
+                                        {
+                                            enemyDamage *= vulnMultiplier;
+                                            Debug.Log($"  [Vulnerability] Applying multiplier to {randomEnemy.enemyName} first hit: x{vulnMultiplier:F2} (20% more damage)");
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        catch { /* safe guard */ }
+                    }
+                    
+                    combatManager.PlayerAttackEnemy(enemyIdx, enemyDamage, card);
+                    
+                    // Consume Vulnerability after first hit
+                    if (hit == 0)
+                    {
+                        try
+                        {
+                            foreach (var d in allEnemyDisplays)
+                            {
+                                if (d != null && d.GetCurrentEnemy() == randomEnemy)
+                                {
+                                    var statusManager = d.GetComponent<StatusEffectManager>();
+                                    if (statusManager != null)
+                                    {
+                                        statusManager.ConsumeVulnerability();
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                        catch { /* safe guard */ }
+                    }
                     
                     // Apply automatic status effects (only on first hit to avoid stacking issues)
                     if (hit == 0)
@@ -2706,6 +3296,429 @@ public class CardEffectProcessor : MonoBehaviour
             if (hit < hits - 1)
             {
                 yield return new WaitForSeconds(0.2f); // 0.2 second delay between hits
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Advance turn for temporary stat boosts (called at end of player turn)
+    /// </summary>
+    public void AdvanceTurn()
+    {
+        if (activeStatBoosts.Count == 0) return;
+        
+        bool anyRemoved = false;
+        for (int i = activeStatBoosts.Count - 1; i >= 0; i--)
+        {
+            var tracker = activeStatBoosts[i];
+            if (tracker.character == null)
+            {
+                activeStatBoosts.RemoveAt(i);
+                anyRemoved = true;
+                continue;
+            }
+            
+            tracker.remainingTurns--;
+            if (tracker.remainingTurns <= 0)
+            {
+                // Remove the stat boost
+                if (tracker.character.warrantStatModifiers != null && 
+                    tracker.character.warrantStatModifiers.ContainsKey(tracker.statName))
+                {
+                    tracker.character.warrantStatModifiers[tracker.statName] -= tracker.value;
+                    
+                    // Remove the key if it reaches zero or below
+                    if (tracker.character.warrantStatModifiers[tracker.statName] <= 0f)
+                    {
+                        tracker.character.warrantStatModifiers.Remove(tracker.statName);
+                    }
+                    
+                    Debug.Log($"[CardEffectProcessor] Removed temporary stat boost: {tracker.statName} = -{tracker.value}% (expired)");
+                }
+                
+                activeStatBoosts.RemoveAt(i);
+                anyRemoved = true;
+            }
+        }
+        
+        if (anyRemoved)
+        {
+            Debug.Log($"[CardEffectProcessor] Advanced turn for temporary stat boosts. Remaining: {activeStatBoosts.Count}");
+        }
+    }
+    
+    /// <summary>
+    /// Clear all temporary stat boosts (called when combat ends)
+    /// </summary>
+    public void ClearAllTemporaryStatBoosts()
+    {
+        foreach (var tracker in activeStatBoosts)
+        {
+            if (tracker.character != null && tracker.character.warrantStatModifiers != null &&
+                tracker.character.warrantStatModifiers.ContainsKey(tracker.statName))
+            {
+                tracker.character.warrantStatModifiers[tracker.statName] -= tracker.value;
+                if (tracker.character.warrantStatModifiers[tracker.statName] <= 0f)
+                {
+                    tracker.character.warrantStatModifiers.Remove(tracker.statName);
+                }
+            }
+        }
+        activeStatBoosts.Clear();
+        Debug.Log("[CardEffectProcessor] Cleared all temporary stat boosts");
+    }
+    
+    /// <summary>
+    /// Play visual effect for a card (projectile or impact)
+    /// </summary>
+    private void PlayCardEffect(Card card, Enemy targetEnemy, int enemyDisplayIndex, bool isAoE, 
+        float? damageAmount = null, Vector3? damagePosition = null, bool isCritical = false,
+        System.Action onProjectileHit = null)
+    {
+        if (effectManager == null)
+        {
+            Debug.LogWarning("[CardEffectProcessor] CombatEffectManager not found! Effects will not play.");
+            return;
+        }
+        
+        if (card == null)
+        {
+            Debug.LogWarning("[CardEffectProcessor] Card is null! Cannot play effect.");
+            return;
+        }
+        
+        if (targetEnemy == null)
+        {
+            Debug.LogWarning($"[CardEffectProcessor] Target enemy is null for card {card.cardName}! Cannot play effect.");
+            return;
+        }
+        
+        Debug.Log($"[CardEffectProcessor] Playing effect for card: '{card.cardName}' (isProjectile: {IsProjectileCard(card)}, isAoE: {isAoE})");
+        
+        // For AoE cards, check if this card has an Area effect - if so, skip per-enemy effects
+        // (Area effect is already played once at AoEAreaIndicator location)
+        if (isAoE)
+        {
+            if (effectManager == null)
+            {
+                Debug.LogWarning($"[CardEffectProcessor] effectManager is null - cannot check for Area effects");
+            }
+            else if (effectManager.GetEffectsDatabase() == null)
+            {
+                Debug.LogWarning($"[CardEffectProcessor] EffectsDatabase is null - cannot check for Area effects");
+            }
+            else
+            {
+                var effectsDatabase = effectManager.GetEffectsDatabase();
+                
+                // Priority 1: Check for card-specific Area effect
+                EffectData cardEffect = effectsDatabase.FindEffectByCardName(card.cardName);
+                Debug.Log($"[CardEffectProcessor] Checking for Area effect - card name: '{card.cardName}', found effect: {(cardEffect != null ? cardEffect.effectName : "NULL")}, effectType: {(cardEffect != null ? cardEffect.effectType.ToString() : "N/A")}");
+                
+                if (cardEffect != null && cardEffect.effectType == VisualEffectType.Area)
+                {
+                    Debug.Log($"[CardEffectProcessor] ✓ Card '{card.cardName}' has Area effect '{cardEffect.effectName}' - skipping per-enemy effect (Area effect already played at AoEAreaIndicator)");
+                    return; // Area effect was already played once at AoEAreaIndicator location
+                }
+                
+                // Priority 2: Check if damage type has Area effect
+                DamageType primaryDamageType = card.primaryDamageType;
+                if (primaryDamageType == DamageType.None)
+                {
+                    primaryDamageType = DamageType.Physical;
+                }
+                
+                var query = new EffectQuery
+                {
+                    effectType = VisualEffectType.Area,
+                    damageType = primaryDamageType,
+                    isCritical = false
+                };
+                
+                EffectData areaEffect = effectsDatabase.FindEffect(query);
+                Debug.Log($"[CardEffectProcessor] Checking for Area effect by damage type - damageType: {primaryDamageType}, found effect: {(areaEffect != null ? areaEffect.effectName : "NULL")}");
+                
+                if (areaEffect != null)
+                {
+                    Debug.Log($"[CardEffectProcessor] ✓ Card '{card.cardName}' damage type ({primaryDamageType}) has Area effect '{areaEffect.effectName}' - skipping per-enemy effect (Area effect already played at AoEAreaIndicator)");
+                    return; // Area effect was already played once at AoEAreaIndicator location
+                }
+                
+                Debug.Log($"[CardEffectProcessor] No Area effect found for card '{card.cardName}' - will play per-enemy effects");
+            }
+        }
+        
+        // Get enemy display transform
+        Transform enemyTransform = null;
+        if (combatManager != null)
+        {
+            var activeDisplays = combatManager.GetActiveEnemyDisplays();
+            if (enemyDisplayIndex >= 0 && enemyDisplayIndex < activeDisplays.Count)
+            {
+                var enemyDisplay = activeDisplays[enemyDisplayIndex];
+                if (enemyDisplay != null && enemyDisplay.GetCurrentEnemy() == targetEnemy)
+                {
+                    enemyTransform = enemyDisplay.transform;
+                }
+            }
+        }
+        
+        // Fallback: find enemy display by enemy
+        if (enemyTransform == null)
+        {
+            var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+            foreach (var display in enemyDisplays)
+            {
+                if (display != null && display.GetCurrentEnemy() == targetEnemy)
+                {
+                    enemyTransform = display.transform;
+                    break;
+                }
+            }
+        }
+        
+        if (enemyTransform == null)
+        {
+            Debug.LogWarning($"[CardEffectProcessor] Could not find enemy display for {targetEnemy.enemyName}");
+            return;
+        }
+        
+        // Determine if card is projectile or impact
+        bool isProjectile = IsProjectileCard(card);
+        
+        if (isProjectile)
+        {
+            // Get player icon transform
+            Transform playerIcon = effectManager.FindPlayerCharacterIcon();
+            Debug.Log($"[CardEffectProcessor] Player icon found: {playerIcon != null} (name: {(playerIcon != null ? playerIcon.name : "NULL")})");
+            Debug.Log($"[CardEffectProcessor] Enemy transform: {enemyTransform != null} (name: {(enemyTransform != null ? enemyTransform.name : "NULL")})");
+            
+            if (playerIcon != null)
+            {
+                // Play projectile effect with callback (will be called when projectile hits)
+                Debug.Log($"[CardEffectProcessor] Calling PlayProjectileForCard with playerIcon={playerIcon.name}, enemy={enemyTransform.name}");
+                effectManager.PlayProjectileForCard(
+                    card,
+                    playerIcon,
+                    enemyTransform,
+                    "Weapon",  // Start point (player)
+                    "Default", // End point (enemy always uses "Default")
+                    isCritical, // isCritical
+                    onProjectileHit // Callback for damage application (includes damage numbers)
+                );
+            }
+            else
+            {
+                Debug.LogWarning("[CardEffectProcessor] Could not find player icon for projectile effect - falling back to impact");
+                // Fallback to impact effect
+                effectManager.PlayEffectForCard(card, enemyTransform, false);
+            }
+        }
+        else
+        {
+            // Play impact effect
+            effectManager.PlayEffectForCard(card, enemyTransform, false);
+        }
+    }
+    
+    /// <summary>
+    /// Determine if a card should use projectile or impact effects
+    /// </summary>
+    private bool IsProjectileCard(Card card)
+    {
+        if (card == null) return false;
+        
+        // Check CardDataExtended for scalesWithProjectileWeapon
+        CardDataExtended extendedCard = GetCardDataExtended(card);
+        if (extendedCard != null && extendedCard.scalesWithProjectileWeapon)
+        {
+            return true;
+        }
+        
+        // Check tags for projectile/ranged indicators
+        if (card.tags != null)
+        {
+            foreach (string tag in card.tags)
+            {
+                if (tag != null && (
+                    tag.Equals("Projectile", System.StringComparison.OrdinalIgnoreCase) ||
+                    tag.Equals("Ranged", System.StringComparison.OrdinalIgnoreCase) ||
+                    tag.Equals("Bow", System.StringComparison.OrdinalIgnoreCase)))
+                {
+                    return true;
+                }
+            }
+        }
+        
+        // Check card name for common projectile cards
+        string cardName = card.cardName ?? "";
+        if (cardName.Contains("Fireball", System.StringComparison.OrdinalIgnoreCase) ||
+            cardName.Contains("Arrow", System.StringComparison.OrdinalIgnoreCase) ||
+            cardName.Contains("Bolt", System.StringComparison.OrdinalIgnoreCase) ||
+            cardName.Contains("Shot", System.StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
+    /// Apply damage and related effects when a projectile hits the target
+    /// This is called from the projectile hit callback
+    /// </summary>
+    private void ApplyProjectileDamage(Card card, Enemy targetEnemy, float totalDamage, bool ignoreGuardArmor, 
+        Vector3 targetScreenPosition, Character player)
+    {
+        if (targetEnemy == null || card == null)
+        {
+            Debug.LogError("[CardEffectProcessor] ApplyProjectileDamage called with null target or card!");
+            return;
+        }
+        
+        // Apply Vulnerability multiplier for projectile damage
+        float finalDamage = totalDamage;
+        try
+        {
+            var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+            foreach (var d in enemyDisplays)
+            {
+                if (d != null && d.GetCurrentEnemy() == targetEnemy)
+                {
+                    var statusManager = d.GetComponent<StatusEffectManager>();
+                    if (statusManager != null)
+                    {
+                        // Use GetVulnerabilityDamageMultiplier() which returns 1.2f (20% more) and checks if consumed
+                        float vulnMultiplier = statusManager.GetVulnerabilityDamageMultiplier();
+                        if (vulnMultiplier > 1f)
+                        {
+                            Debug.Log($"  [Vulnerability] Applying multiplier to {targetEnemy.enemyName}: x{vulnMultiplier:F2} (20% more damage)");
+                            finalDamage *= vulnMultiplier;
+                        }
+                        // Apply Bolster (less damage taken per stack: 2%, max 10 stacks)
+                        float bolsterStacks = Mathf.Min(10f, statusManager.GetTotalMagnitude(StatusEffectType.Bolster));
+                        if (bolsterStacks > 0f)
+                        {
+                            float lessMultiplier = Mathf.Clamp01(1f - (0.02f * bolsterStacks));
+                            Debug.Log($"  Bolster stacks: {bolsterStacks}, less dmg multiplier: x{lessMultiplier:F2}");
+                            finalDamage *= lessMultiplier;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        catch { /* safe guard */ }
+        
+        Debug.Log($"[CardEffectProcessor] ⚡ Projectile hit! Applying damage: {finalDamage:F0} to {targetEnemy.enemyName}");
+        
+        // Apply damage to enemy
+        targetEnemy.TakeDamage(finalDamage, ignoreGuardArmor);
+        
+        Debug.Log($"<color=red>  ⚔️ Dealt {finalDamage:F0} damage to {targetEnemy.enemyName}</color>");
+        Debug.Log($"<color=red>  💔 Target HP AFTER: {targetEnemy.currentHealth}/{targetEnemy.maxHealth}</color>");
+        
+        // Consume Vulnerability after damage is dealt
+        try
+        {
+            var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+            foreach (var d in enemyDisplays)
+            {
+                if (d != null && d.GetCurrentEnemy() == targetEnemy)
+                {
+                    var statusManager = d.GetComponent<StatusEffectManager>();
+                    if (statusManager != null)
+                    {
+                        statusManager.ConsumeVulnerability();
+                    }
+                    break;
+                }
+            }
+        }
+        catch { /* safe guard */ }
+        
+        // Calculate damage breakdown for status effects
+        DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, finalDamage);
+        
+        // Apply automatic status effects based on damage types
+        ApplyAutomaticStatusEffects(targetEnemy, damageBreakdown, card);
+        
+        // Show damage number
+        if (animationManager != null)
+        {
+            DamageNumberType damageNumberType = ConvertDamageType(card.primaryDamageType);
+            animationManager.ShowDamageNumber(totalDamage, targetScreenPosition, damageNumberType);
+        }
+        
+        // Trigger nudge animation
+        var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+        if (playerDisplay != null)
+        {
+            playerDisplay.TriggerAttackNudge();
+        }
+        
+        // Update enemy display
+        UpdateEnemyDisplay(targetEnemy);
+        
+        // Apply combo ailments if present
+        if (card.comboAilmentId != AilmentId.None)
+        {
+            switch (card.comboAilmentId)
+            {
+                case AilmentId.Crumble:
+                    if (card.primaryDamageType == DamageType.Physical && card.comboAilmentPortion > 0f)
+                    {
+                        // Find the display for the specific target enemy to apply Crumble correctly
+                        var displays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+                        foreach (var d in displays)
+                        {
+                            if (d != null && d.GetCurrentEnemy() == targetEnemy)
+                            {
+                                var statusManager = d.GetComponent<StatusEffectManager>();
+                                if (statusManager != null)
+                                {
+                                    int dur = card.comboAilmentDuration > 0 ? card.comboAilmentDuration : 5;
+                                    float stored = totalDamage * card.comboAilmentPortion;
+                                    statusManager.ApplyOrStackCrumble(stored, dur);
+                                    Debug.Log($"[Crumble] Stored {stored:F0} damage for {dur} turns (structured)");
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case AilmentId.Chill:
+                    if (targetEnemy != null)
+                    {
+                        // Calculate damage breakdown to get cold damage
+                        DamageBreakdown chillBreakdown = CalculateDamageBreakdown(card, player, totalDamage);
+                        int chillDuration = card.comboAilmentDuration > 0 ? card.comboAilmentDuration : 2;
+                        
+                        // Chilled always applies when cold damage is dealt
+                        // Use actual cold damage from breakdown, or fallback to portion if no cold damage
+                        float coldDmg = chillBreakdown.cold > 0f ? chillBreakdown.cold : 
+                                       (Mathf.Approximately(card.comboAilmentPortion, 0f) ? 20f : card.comboAilmentPortion);
+                        
+                        StatusEffect chilledEffect = StatusEffectFactory.CreateChilled(coldDmg, chillDuration);
+                        ApplyStatusEffectToEnemy(targetEnemy, chilledEffect);
+                        Debug.Log($"[Chill] Applied Chill (cold damage: {coldDmg}, dur {chillDuration}) to {targetEnemy.enemyName}");
+                    }
+                    break;
+            }
+        }
+        
+        // Check if enemy is defeated
+        if (targetEnemy.currentHealth <= 0)
+        {
+            Debug.Log($"<color=yellow>💀 {targetEnemy.enemyName} has been defeated!</color>");
+            
+            // XP grant per enemy kill using area level and rarity multipliers with overlevel penalties
+            TryGrantKillExperience(targetEnemy);
+            TryGenerateLoot(targetEnemy);
+            
+            if (combatManager != null)
+            {
+                combatManager.OnEnemyDefeated?.Invoke(targetEnemy);
             }
         }
     }

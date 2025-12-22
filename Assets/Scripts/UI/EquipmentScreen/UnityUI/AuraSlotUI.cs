@@ -184,6 +184,13 @@ public class AuraSlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
             backgroundImage.color = hoverColor;
         }
         
+        // Show tooltip
+        if (ItemTooltipManager.Instance != null)
+        {
+            Character character = CharacterManager.Instance?.GetCurrentCharacter();
+            ItemTooltipManager.Instance.ShowAuraTooltip(aura, eventData.position, character);
+        }
+        
         OnAuraHovered?.Invoke(aura);
     }
     
@@ -191,6 +198,12 @@ public class AuraSlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     {
         // Restore normal color
         UpdateDisplay();
+        
+        // Hide tooltip
+        if (ItemTooltipManager.Instance != null)
+        {
+            ItemTooltipManager.Instance.HideTooltip();
+        }
         
         OnAuraUnhovered?.Invoke();
     }

@@ -2,6 +2,7 @@ using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ using System.Linq;
 /// Simple card display for carousel
 /// Shows card information in the embossing UI
 /// </summary>
-public class CardDisplay : MonoBehaviour
+public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Serializable]
     private class EmbossingSlotReference
@@ -961,6 +962,36 @@ public class CardDisplay : MonoBehaviour
         UnityEditor.EditorUtility.SetDirty(this);
     }
 #endif
+    #endregion
+    
+    #region Tooltip Handling
+    
+    /// <summary>
+    /// Handle pointer enter to show card tooltip
+    /// </summary>
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (displayedCard == null || ItemTooltipManager.Instance == null)
+            return;
+        
+        Character character = ResolveActiveCharacter();
+        if (character != null)
+        {
+            ItemTooltipManager.Instance.ShowCardTooltipForPointer(displayedCard, character, eventData);
+        }
+    }
+    
+    /// <summary>
+    /// Handle pointer exit to hide card tooltip
+    /// </summary>
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (ItemTooltipManager.Instance != null)
+        {
+            ItemTooltipManager.Instance.HideTooltip();
+        }
+    }
+    
     #endregion
 }
 

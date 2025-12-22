@@ -44,5 +44,5 @@ MonoBehaviour:
   turnTransitionDuration: 0.8
   turnTransitionEase: 27
   sequenceDelay: 0.1
-  enemyTurnDelay: 1
+  enemyTurnDelay: 0.7
   speedPreset: 2

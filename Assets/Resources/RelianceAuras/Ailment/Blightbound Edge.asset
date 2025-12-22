@@ -21,6 +21,7 @@ MonoBehaviour:
   effectLevel20: 20% more ailment effectiveness.
   relianceCost: 100
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Blightbound Edge_ModifyStat_ailment effectiveness.
+  requiredLevel: 38
   unlockRequirement: 

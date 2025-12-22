@@ -16,20 +16,23 @@ public class WarrantModifierLockItem : MonoBehaviour
     [SerializeField] private Button confirmButton;
     
     [Header("Colors")]
-    [SerializeField] private Color lockedColor = Color.yellow;
+    [SerializeField] private Color lockedColor = new Color(1f, 0.84f, 0f); // Gold/Yellow for locked/sealed affixes
     [SerializeField] private Color unlockedColor = Color.white;
     [SerializeField] private Color pendingColor = Color.cyan; // Color when toggled but not confirmed
+    [SerializeField] private Color fusedColor = new Color(1f, 0.84f, 0f); // Gold/Yellow for locked/sealed affixes (same as lockedColor)
     
     private int slotIndex;
     private WarrantModifier modifier;
     private WarrantFusionUI parentUI;
     private bool isInitialized = false;
+    private bool isFused = false; // True if this affix is from a previously fused warrant (locked/permanent)
     
-    public void Initialize(int slotIdx, WarrantModifier mod, WarrantFusionUI parent)
+    public void Initialize(int slotIdx, WarrantModifier mod, WarrantFusionUI parent, bool fused = false)
     {
         slotIndex = slotIdx;
         modifier = mod;
         parentUI = parent;
+        isFused = fused;
         
         if (modifierNameText != null && modifier != null)
         {
@@ -54,6 +57,7 @@ public class WarrantModifierLockItem : MonoBehaviour
         {
             lockToggle.onValueChanged.RemoveAllListeners();
             lockToggle.isOn = false;
+            lockToggle.interactable = !isFused; // Disable toggle if this is a fused affix
             lockToggle.onValueChanged.AddListener(OnToggleChanged);
         }
         
@@ -72,6 +76,16 @@ public class WarrantModifierLockItem : MonoBehaviour
     {
         if (!isInitialized || modifier == null || parentUI == null)
             return;
+        
+        // Prevent toggling if this is a fused affix
+        if (isFused)
+        {
+            if (lockToggle != null)
+            {
+                lockToggle.isOn = false;
+            }
+            return;
+        }
         
         // Notify parent that this affix is toggled (pending selection)
         parentUI.ToggleAffixSelection(slotIndex, modifier.modifierId, isLocked, this);
@@ -98,7 +112,12 @@ public class WarrantModifierLockItem : MonoBehaviour
         
         if (backgroundImage != null)
         {
-            if (isPending)
+            if (isFused)
+            {
+                // Fused affixes are permanently locked and cannot be selected
+                backgroundImage.color = fusedColor;
+            }
+            else if (isPending)
             {
                 backgroundImage.color = pendingColor;
             }
@@ -112,10 +131,10 @@ public class WarrantModifierLockItem : MonoBehaviour
             }
         }
         
-        // Show confirm button only when toggled and not yet confirmed
+        // Show confirm button only when toggled and not yet confirmed (and not fused)
         if (confirmButton != null)
         {
-            confirmButton.gameObject.SetActive(isToggled && !isPending);
+            confirmButton.gameObject.SetActive(isToggled && !isPending && !isFused);
         }
     }
     

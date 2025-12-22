@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Gate Warden of Vassara
   description: The final guardian of the shattered gate to Vassara, wielding ancient
     laws to deny passage to the unworthy.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: -8403505614708831197, guid: f92461b3d21077545a3b384b87d16b24, type: 3}
   tier: 2
   rarity: 3
   category: 3
@@ -49,11 +49,9 @@ MonoBehaviour:
   - Last Article
   - Barrier of Dissent
   abilities: []
-  bossAbilities:
-  - 8
-  - 9
+  bossAbilities: 0800000009000000
   summonPool: []
-  spiritTags: []
+  spiritTags: 
   guaranteedSpiritDrop: 0
   minGoldDrop: 70
   maxGoldDrop: 140
@@ -65,4 +63,3 @@ MonoBehaviour:
   excludeFromRandom: 1
   healthBarColor: {r: 0.7, g: 0.7, b: 0.8, a: 1}
   animatorController: {fileID: 0}
-

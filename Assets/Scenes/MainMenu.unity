@@ -326,7 +326,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 2, y: -102}
+  m_AnchoredPosition: {x: 2, y: -138}
   m_SizeDelta: {x: 431.0603, y: 75.8168}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &200705173
@@ -349,7 +349,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Hands of Ruin
+  m_text: Fractured Concord
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 281592e96d06dd94589438599351dbb7, type: 2}
   m_sharedMaterial: {fileID: 4326722954951912636, guid: 281592e96d06dd94589438599351dbb7, type: 2}
@@ -376,7 +376,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50.65
+  m_fontSize: 35.4
   m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1315,7 +1315,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 2, y: -102}
+  m_AnchoredPosition: {x: 2, y: -138}
   m_SizeDelta: {x: 431.0603, y: 75.8168}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &870008329
@@ -1338,7 +1338,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Hands of Ruin
+  m_text: Fractured Concord
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 46c761a24784f57448ba113bbb516366, type: 2}
   m_sharedMaterial: {fileID: 5071561232719052848, guid: 46c761a24784f57448ba113bbb516366, type: 2}
@@ -1365,7 +1365,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50.65
+  m_fontSize: 35.4
   m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2415,10 +2415,19 @@ MonoBehaviour:
     cardsDrawnPerWave: 0
     reliance: 0
     maxReliance: 0
+    ownedRelianceAuras: []
+    activeRelianceAuras: []
+    auraExperienceData: []
     currentGuard: 0
     maxGuard: 0
+    guardPersistenceFraction: 0
     maxEnergyShield: 0
     currentEnergyShield: 0
+    staggerThreshold: 0
+    currentStagger: 0
+    staggerDecayPerTurn: 0
+    momentumGainBonus: 0
+    delayedActions: []
     maxHealth: 0
     currentHealth: 0
     attackPower: 0
@@ -2426,14 +2435,41 @@ MonoBehaviour:
     criticalChance: 0
     criticalMultiplier: 0
     increasedMeleePhysicalDamage: 0
+    increasedSpellDamage: 0
+    increasedEnergyShieldPercent: 0
     accuracyRating: 0
     increasedEvasion: 0
     baseEvasionRating: 0
     dodgeChance: 0
     guardEffectivenessPercent: 0
+    toleranceEffectivenessPercent: 0
+    maxGuardMultiplier: 0
+    attackCannotMiss: 0
+    attackDamageIncreasedPercent: 0
+    crumbleMagnitudeIncreasedPercent: 0
+    crumbleMagnitudeMorePercent: 0
+    crumbleDurationIncreasedPercent: 0
+    crumbleExplosionHealPercent: 0
+    maxManaPercentIncrease: 0
+    immuneToBleed: 0
+    immuneToIgnite: 0
     buffDurationIncreasedPercent: 0
     randomAilmentChancePercent: 0
     increasedDamageAfterGuardPercent: 0
+    increasedDamagePercent: 0
+    criticalStrikeChance: 0
+    chaosResistancePercent: 0
+    reducedSelfInflictedDamagePercent: 0
+    increasedSelfInflictedDamagePercent: 0
+    increasedChaosDamagePercent: 0
+    corruptionGainRatePercent: 0
+    increasedElementalDamageWithAttacksPercent: 0
+    weaponAttacksScaleWithSpellPowerPercent: 0
+    spellsGainDamageFromWeaponPercent: 0
+    temporalCardDrawChancePercent: 0
+    increasedTemporalCardEffectivenessPercent: 0
+    temporalCardEffectBonusPercent: 0
+    temporalCardManaCostIncrease: 0
     attackSpeedIncreasedPercent: 0
     castSpeedIncreasedPercent: 0
     movementSpeedIncreasedPercent: 0
@@ -2449,6 +2485,8 @@ MonoBehaviour:
       increasedColdDamage: []
       increasedLightningDamage: []
       increasedChaosDamage: []
+      increasedAttackDamage: []
+      increasedSpellDamage: []
       morePhysicalDamage: []
       moreFireDamage: []
       moreColdDamage: []
@@ -2458,6 +2496,9 @@ MonoBehaviour:
       criticalStrikeMultiplier: 1.5
     increasedDamage: 0
     moreDamage: 0
+    baseEvasionFromItems: 0
+    baseArmourFromItems: 0
+    baseEnergyShieldFromItems: 0
     damageStats:
       physicalResistance: 0
       fireResistance: 0
@@ -2469,14 +2510,23 @@ MonoBehaviour:
     isNewCharacter: 0
     inventory: []
     ownedEffigies: []
+    equippedEffigies: []
+    ownedWarrants: []
     unlockedAbilities: []
+    completedEncounterIDs: 
+    unlockedEncounterIDs: 
+    enteredEncounterIDs: 
+    completedQuestIDs: []
+    completedTutorialIDs: []
     weapons:
       meleeWeapon:
         weaponName: 
         weaponType: 0
+        weaponItemType: 0
         attackSpeed: 1
         baseDamageMin: 0
         baseDamageMax: 0
+        rolledBaseDamage: 0
         baseDamageType: 0
         affixes: []
         totalDamageMin: 0
@@ -2484,9 +2534,11 @@ MonoBehaviour:
       projectileWeapon:
         weaponName: 
         weaponType: 0
+        weaponItemType: 0
         attackSpeed: 1
         baseDamageMin: 0
         baseDamageMax: 0
+        rolledBaseDamage: 0
         baseDamageType: 0
         affixes: []
         totalDamageMin: 0
@@ -2494,9 +2546,11 @@ MonoBehaviour:
       spellWeapon:
         weaponName: 
         weaponType: 0
+        weaponItemType: 0
         attackSpeed: 1
         baseDamageMin: 0
         baseDamageMax: 0
+        rolledBaseDamage: 0
         baseDamageType: 0
         affixes: []
         totalDamageMin: 0
@@ -2514,7 +2568,19 @@ MonoBehaviour:
       lastUsedDeck: 
       deckSlotsUnlocked: 5
       cardExperienceData: []
+    ascendancyProgress:
+      selectedAscendancy: 
+      ascendancyUnlocked: 0
+      totalAscendancyPoints: 0
+      spentAscendancyPoints: 0
+      availableAscendancyPoints: 0
+      unlockedPassives: []
+      choiceNodeSelections: []
+      signatureCardUnlocked: 0
   inventoryItems: []
+  references:
+    version: 2
+    RefIds: []
 --- !u!4 &1842250570
 Transform:
   m_ObjectHideFlags: 0

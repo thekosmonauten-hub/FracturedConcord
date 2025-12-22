@@ -21,6 +21,7 @@ MonoBehaviour:
   effectLevel20: 35% Increased chill magnitude
   relianceCost: 55
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Chillbinding Hymn_ModifyStat_chillMagnitude
+  requiredLevel: 24
   unlockRequirement: 

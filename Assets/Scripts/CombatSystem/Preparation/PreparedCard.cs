@@ -15,6 +15,7 @@ public class PreparedCard
     // Timing tracking
     public int turnsPrepared = 0;
     public int maxTurns = 3;
+    private int baseMaxTurns = 3; // Store the original maxTurns before intelligence bonus
     public int chargesThisTurn = 0; // For DEX-based multi-charging
     
     // Stored values
@@ -55,8 +56,16 @@ public class PreparedCard
         owner = player;
         
         // Initialize from card data
+        // Default to 3 turns if not specified (not 4!)
         maxTurns = card.maxPrepTurns > 0 ? card.maxPrepTurns : 3;
+        // Ensure maxTurns is at least 3 (safety check)
+        if (maxTurns < 3) maxTurns = 3;
+        baseMaxTurns = maxTurns; // Store base value (no intelligence bonus)
+        
         multiplierPerTurn = card.multiplierPerTurn > 0 ? card.multiplierPerTurn : 0.5f;
+        
+        // Initialize turnsPrepared to 0 (cards start with 0 charges, need at least 1 to unleash)
+        turnsPrepared = 0;
         
         // Store initial values - apply delay bonus if card is delayed
         float baseValue = card.damage;
@@ -203,9 +212,8 @@ public class PreparedCard
         // STR adds flat damage per turn
         flatStrengthBonus = owner.strength * 0.5f * turnsPrepared;
         
-        // INT increases max turns
-        int intBonus = Mathf.FloorToInt(owner.intelligence / 20f);
-        maxTurns = sourceCard.maxPrepTurns + intBonus;
+        // Max turns stays at base value (no intelligence bonus)
+        maxTurns = baseMaxTurns;
         
         Debug.Log($"<color=cyan>[Preparation] {sourceCard.cardName} stat bonuses: STR +{flatStrengthBonus:F1} dmg, Max turns: {maxTurns}</color>");
     }
@@ -217,8 +225,36 @@ public class PreparedCard
     {
         float baseDamage = storedBaseDamage;
         
-        // Check for preparation bonus (e.g., Twin Strike: "deal 7 damage (+Dex/2)" instead of base 5 + Dex/4)
-        if (PreparationBonusParser.HasPreparationBonus(sourceCard.description))
+        // NEW SYSTEM: Check if card has preparedCardDamageBase or preparedCardDamageScaling configured
+        // This is the preferred method as it's more reliable and doesn't require parsing descriptions
+        bool hasNewSystemScaling = sourceCard != null && sourceCard.preparedCardDamageScaling != null &&
+            (sourceCard.preparedCardDamageScaling.strengthScaling > 0f ||
+             sourceCard.preparedCardDamageScaling.dexterityScaling > 0f ||
+             sourceCard.preparedCardDamageScaling.intelligenceScaling > 0f ||
+             sourceCard.preparedCardDamageScaling.strengthDivisor > 0f ||
+             sourceCard.preparedCardDamageScaling.dexterityDivisor > 0f ||
+             sourceCard.preparedCardDamageScaling.intelligenceDivisor > 0f);
+        
+        if (sourceCard != null && (sourceCard.preparedCardDamageBase > 0f || hasNewSystemScaling))
+        {
+            // Use the configured prepared card damage base
+            baseDamage = sourceCard.preparedCardDamageBase;
+            
+            // Add attribute scaling if configured
+            if (sourceCard.preparedCardDamageScaling != null && owner != null)
+            {
+                float scalingBonus = sourceCard.preparedCardDamageScaling.CalculateScalingBonus(owner);
+                baseDamage += scalingBonus;
+                Debug.Log($"<color=cyan>[Preparation Bonus] {sourceCard.cardName} uses preparedCardDamageBase: {sourceCard.preparedCardDamageBase} + scaling ({scalingBonus:F1}) = {baseDamage:F1}</color>");
+            }
+            else
+            {
+                Debug.Log($"<color=cyan>[Preparation Bonus] {sourceCard.cardName} uses preparedCardDamageBase: {baseDamage:F1}</color>");
+            }
+        }
+        // FALLBACK: Old system - parse description for preparation bonus
+        // This is kept for backwards compatibility with cards that haven't been updated yet
+        else if (PreparationBonusParser.HasPreparationBonus(sourceCard.description))
         {
             var (prepBaseDamage, prepDexDivisor) = PreparationBonusParser.ParsePreparationDamage(sourceCard.description);
             
@@ -232,11 +268,11 @@ public class PreparedCard
                 {
                     float dexBonus = owner.dexterity / prepDexDivisor;
                     baseDamage += dexBonus;
-                    Debug.Log($"<color=cyan>[Preparation Bonus] {sourceCard.cardName} uses preparation damage: {prepBaseDamage} + Dex/{prepDexDivisor} = {baseDamage:F1}</color>");
+                    Debug.Log($"<color=cyan>[Preparation Bonus] {sourceCard.cardName} uses parsed preparation damage: {prepBaseDamage} + Dex/{prepDexDivisor} = {baseDamage:F1}</color>");
                 }
                 else
                 {
-                    Debug.Log($"<color=cyan>[Preparation Bonus] {sourceCard.cardName} uses preparation damage: {prepBaseDamage}</color>");
+                    Debug.Log($"<color=cyan>[Preparation Bonus] {sourceCard.cardName} uses parsed preparation damage: {prepBaseDamage}</color>");
                 }
             }
         }
@@ -315,7 +351,20 @@ public class PreparedCard
     /// </summary>
     public int CalculateManualUnleashCost()
     {
-        return sourceCard.playCost; // Base cost only - preparation doesn't increase cost
+        if (sourceCard == null || owner == null)
+            return 0;
+        
+        int baseCost = sourceCard.playCost;
+        
+        // Skill cards use percentage-based cost
+        if (string.Equals(sourceCard.cardType, "Skill", System.StringComparison.OrdinalIgnoreCase))
+        {
+            // playCost is a percentage (e.g., 10 = 10% of maxMana)
+            float percentageCost = baseCost / 100.0f;
+            return Mathf.RoundToInt(owner.maxMana * percentageCost);
+        }
+        
+        return baseCost; // Flat cost for Attack cards
     }
     
     /// <summary>

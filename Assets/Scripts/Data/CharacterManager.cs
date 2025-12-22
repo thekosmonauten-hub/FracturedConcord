@@ -134,6 +134,11 @@ public class CharacterManager : MonoBehaviour
         
         InitializeStarterDeck(currentCharacter);
         
+        // IMPORTANT: Do NOT automatically give warrant starter pack here.
+        // The warrant starter pack should ONLY be given through Joreg's dialogue
+        // when the player selects the "Warrants?" option in PeacekeeperJoreg.asset dialogue.
+        // See DialogueManager.GiveWarrantPack() for the implementation.
+        
         // For new characters, only unlock encounter 1 by default
         // Other encounters will unlock as prerequisites are completed
         // Note: We mark it unlocked here, but ApplyCharacterProgression will also ensure it's unlocked

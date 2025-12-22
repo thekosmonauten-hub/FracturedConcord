@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Chaos Bolt
   groupKey: Chaos_Bolt
   cardType: Attack
-  playCost: 2
+  playCost: 20
   description: 'Deal {damage} chaos damage. Apply Poison (3 turns, 30% of hit damage). '
   rarity: 0
   element: 5

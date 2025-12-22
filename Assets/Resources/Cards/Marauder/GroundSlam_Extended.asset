@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Ground Slam
   groupKey: Ground_Slam
   cardType: Attack
-  playCost: 2
+  playCost: 20
   description: Deal {damage} physical damage to all enemies.
   rarity: 1
   element: 4
@@ -68,6 +68,7 @@ MonoBehaviour:
     intelligenceDivisor: 0
   baseEvasion: 0
   evasionDuration: -1
+  percentageManaCost: 0
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -89,8 +90,8 @@ MonoBehaviour:
   comboConsumeAilment: 0
   comboConsumeAilmentId: 0
   comboDrawCards: 0
-  comboAilment: 9
-  comboAilmentPortion: 0.3
+  comboAilment: 10
+  comboAilmentPortion: 0.1
   comboAilmentDuration: 5
   consumeAilment: 0
   consumeAilmentId: 0
@@ -111,6 +112,7 @@ MonoBehaviour:
   - Physical
   - Melee
   - AoE
+  appliedEmbossings: []
   delayTurns: 0
   isDelayed: 0
   canPrepare: 0
@@ -119,3 +121,28 @@ MonoBehaviour:
   unleashCondition: manual
   unleashEffect: deal_stored_damage
   prepareDescription: 
+  preparedCardDamageBase: 0
+  preparedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  preparedCardPoisonBase: 0
+  preparedCardGuardBase: 0
+  preparedCardGuardScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  consumedCardDamageBase: 0
+  consumedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0

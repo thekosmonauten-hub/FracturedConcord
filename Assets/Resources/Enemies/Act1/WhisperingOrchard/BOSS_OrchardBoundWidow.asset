@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Orchard-Bound Widow
   description: A massive spider-like creature bound to the corrupted orchard, weaving
     webs of forgotten memories.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: -6363614999864197182, guid: 51ea535a4c12c854da7ca6565c68f2ba, type: 3}
   tier: 2
   rarity: 2
   category: 0
@@ -49,9 +49,9 @@ MonoBehaviour:
   - Root Lash
   - Memory Sap
   abilities: []
-  bossAbilities: []
+  bossAbilities: 
   summonPool: []
-  spiritTags: []
+  spiritTags: 
   guaranteedSpiritDrop: 0
   minGoldDrop: 48
   maxGoldDrop: 95
@@ -63,4 +63,3 @@ MonoBehaviour:
   excludeFromRandom: 1
   healthBarColor: {r: 0.5, g: 0.3, b: 0.6, a: 1}
   animatorController: {fileID: 0}
-

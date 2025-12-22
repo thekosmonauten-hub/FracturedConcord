@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: One-Two Punch
   groupKey: OneTwo_Punch
   cardType: Attack
-  playCost: 1
+  playCost: 10
   description: Deal {damage} physical damage twice. Gain 1 Momentum.
   rarity: 0
   element: 4

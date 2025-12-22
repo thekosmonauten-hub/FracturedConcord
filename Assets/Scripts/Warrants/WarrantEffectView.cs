@@ -27,19 +27,37 @@ public class WarrantEffectView : WarrantNodeView, IPointerEnterHandler, IPointer
     {
         // Refresh character reference when enabled (scene loaded/object activated)
         RefreshCharacterReference();
+        // Don't sync lock state here - wait for Start() to ensure board state is loaded
+    }
+    
+    private void Start()
+    {
+        // Sync lock state after board state controller has loaded (in its Awake)
+        // Use a small delay to ensure board state is fully loaded
         SyncLockState();
     }
 
-    private void SyncLockState()
+    /// <summary>
+    /// Syncs the lock state of this effect node based on the board state.
+    /// Public so it can be called from WarrantBoardStateController after loading state.
+    /// </summary>
+    public void SyncLockState()
     {
         if (boardState == null || string.IsNullOrEmpty(NodeId))
         {
             SetLocked(true);
+            Debug.LogWarning($"[WarrantEffectView] Cannot sync lock state for '{NodeId}': boardState is null or NodeId is empty");
             return;
         }
 
         bool unlocked = boardState.IsNodeUnlocked(NodeId);
         SetLocked(!unlocked);
+        
+        // Debug logging for first few nodes to track state
+        if (NodeId.Contains("effect") && (NodeId.Contains("effect1") || NodeId.Contains("effect2") || NodeId.Contains("effect3")))
+        {
+            Debug.Log($"[WarrantEffectView] Synced lock state for '{NodeId}': unlocked={unlocked}, locked={!unlocked}");
+        }
     }
 
     public void Configure(WarrantBoardStateController stateController, WarrantLockerGrid grid, ItemTooltipManager tooltip, WarrantBoardRuntimeGraph graph = null)
@@ -52,6 +70,7 @@ public class WarrantEffectView : WarrantNodeView, IPointerEnterHandler, IPointer
         // Refresh character reference (don't cache - always get latest)
         RefreshCharacterReference();
         
+        // Sync lock state after configuration (board state should be loaded by now)
         SyncLockState();
     }
     

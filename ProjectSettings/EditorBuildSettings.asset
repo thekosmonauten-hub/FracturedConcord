@@ -38,6 +38,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MazeScene.unity
     guid: e8de687cbe7b85243876a8d27204679f
+  - enabled: 1
+    path: Assets/Scenes/JoregShack.unity
+    guid: 91674b56f7afe7c4a9b5c96e2387b3d1
+  - enabled: 1
+    path: Assets/Scenes/SeerTent.unity
+    guid: de10b324df7cce2439d3e048c7fa7b05
+  - enabled: 1
+    path: Assets/Scenes/ForgeScene.unity
+    guid: dbb5989528a26a74b9baa74d9291f0d0
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

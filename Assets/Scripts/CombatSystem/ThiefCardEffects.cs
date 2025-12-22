@@ -50,6 +50,91 @@ public static class ThiefCardEffects
     }
     
     /// <summary>
+    /// Check if a specific card is currently prepared
+    /// </summary>
+    public static bool IsCardPrepared(CardDataExtended card)
+    {
+        if (card == null) return false;
+        
+        var prepManager = PreparationManager.Instance;
+        if (prepManager == null) return false;
+        
+        // Use reflection to access private preparedCards list
+        var field = typeof(PreparationManager).GetField("preparedCards", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (field != null)
+        {
+            var preparedCards = field.GetValue(prepManager) as List<PreparedCard>;
+            if (preparedCards != null)
+            {
+                foreach (var prepared in preparedCards)
+                {
+                    if (prepared != null && prepared.sourceCard != null && 
+                        prepared.sourceCard.cardName == card.cardName)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
+    /// Check if a card is a "Consume prepared" card (like Perfect Strike)
+    /// These cards consume all prepared cards, so they should count all prepared cards
+    /// </summary>
+    public static bool IsConsumePreparedCard(CardDataExtended card)
+    {
+        if (card == null) return false;
+        
+        // Check card name
+        if (card.cardName != null && card.cardName.Contains("Perfect Strike", System.StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        
+        // Check description for "Consume all prepared" or "Consume prepared"
+        if (!string.IsNullOrEmpty(card.description))
+        {
+            string descLower = card.description.ToLower();
+            if (descLower.Contains("consume all prepared") || descLower.Contains("consume prepared"))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
+    /// Check if a card has "If you have prepared cards" condition (like Ambush, Poisoned Blade)
+    /// These cards check if ANY card is prepared and use the count of all prepared cards for bonuses
+    /// </summary>
+    public static bool HasPreparedCardsCondition(CardDataExtended card)
+    {
+        if (card == null) return false;
+        
+        // Check description for "If you have prepared cards" or similar patterns
+        if (!string.IsNullOrEmpty(card.description))
+        {
+            string descLower = card.description.ToLower();
+            // Match patterns like:
+            // - "If you have prepared cards"
+            // - "if you have prepared cards"
+            // - "If you have any prepared cards"
+            if (descLower.Contains("if you have prepared") || 
+                descLower.Contains("if you have any prepared"))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /// <summary>
     /// Consume all prepared cards and return the count consumed
     /// </summary>
     public static int ConsumeAllPreparedCards(Character player)

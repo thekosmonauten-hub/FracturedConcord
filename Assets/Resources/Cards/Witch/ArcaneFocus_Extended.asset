@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Arcane Focus
   groupKey: Arcane_Focus
   cardType: Skill
-  playCost: 1
+  playCost: 0
   description: Gain 3 temporary Intelligence. Draw 1 card.
   rarity: 1
   element: 0
@@ -35,6 +35,7 @@ MonoBehaviour:
   embossingSlots: 1
   cardLevel: 1
   cardExperience: 0
+  percentageManaCost: 15
   primaryDamageType: 1
   additionalDamageTypes: 
   scalesWithMeleeWeapon: 0
@@ -43,14 +44,31 @@ MonoBehaviour:
   isAoE: 0
   aoeTargets: 1
   aoeRowScope: 0
+  isMultiHit: 0
+  hitCount: 2
   damageScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -72,6 +90,7 @@ MonoBehaviour:
   enableCombo: 1
   comboWith: 
   comboDescription: 'Combo: Draw 2 cards instead'
+  momentumEffectDescription: 
   comboWithCardType: 2
   comboAttackIncrease: 0
   comboGuardIncrease: 0
@@ -103,9 +122,37 @@ MonoBehaviour:
   - Skill
   - Basic
   - Spell
+  appliedEmbossings: []
+  delayTurns: 0
+  isDelayed: 0
   canPrepare: 0
   maxPrepTurns: 3
   multiplierPerTurn: 0.5
   unleashCondition: manual
   unleashEffect: deal_stored_damage
   prepareDescription: 
+  preparedCardDamageBase: 0
+  preparedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  preparedCardPoisonBase: 0
+  preparedCardGuardBase: 0
+  preparedCardGuardScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  consumedCardDamageBase: 0
+  consumedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0

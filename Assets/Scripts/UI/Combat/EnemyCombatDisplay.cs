@@ -310,37 +310,146 @@ public class EnemyCombatDisplay : MonoBehaviour
             UpdateDisplay();
         }
         
-        // Ensure enemy panel is clickable for targeting
-        UnityEngine.UI.Button button = GetComponent<UnityEngine.UI.Button>();
-        if (button == null)
-        {
-            button = gameObject.AddComponent<UnityEngine.UI.Button>();
-            button.transition = UnityEngine.UI.Selectable.Transition.None;
-        }
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() => {
-            var targeting = EnemyTargetingManager.Instance;
-            if (targeting != null)
-            {
-                // Find my index in CombatDisplayManager
-                var cdm = FindFirstObjectByType<CombatDisplayManager>();
-                if (cdm != null)
-                {
-                    var activeDisplays = cdm.GetActiveEnemyDisplays();
-                    for (int i = 0; i < activeDisplays.Count; i++)
-                    {
-                        if (activeDisplays[i] == this)
-                        {
-                            targeting.SelectEnemy(i);
-                            break;
-                        }
-                    }
-                }
-            }
-        });
+        // Setup clickable area for targeting
+        // Make the visual elements (portrait, health bar, etc.) clickable instead of just the root GameObject
+        SetupClickableArea();
         
         // DON'T auto-create test enemy - let CombatDisplayManager assign real enemies
         // If you want a placeholder, CombatDisplayManager will handle it
+    }
+    
+    /// <summary>
+    /// Setup clickable areas on visual elements (portrait, health bar, etc.) for accurate targeting
+    /// </summary>
+    private void SetupClickableArea()
+    {
+        // Remove old button from root if it exists (we'll use visual elements instead)
+        UnityEngine.UI.Button rootButton = GetComponent<UnityEngine.UI.Button>();
+        if (rootButton != null)
+        {
+            DestroyImmediate(rootButton);
+        }
+        
+        // Helper method to add click handler to a UI element
+        System.Action<GameObject> addClickHandler = (GameObject targetObj) =>
+        {
+            if (targetObj == null) return;
+            
+            // Add Image component if missing (needed for raycast detection)
+            Image img = targetObj.GetComponent<Image>();
+            if (img == null)
+            {
+                img = targetObj.AddComponent<Image>();
+                img.color = new Color(1f, 1f, 1f, 0f); // Transparent - just for raycast
+            }
+            img.raycastTarget = true;
+            
+            // Add Button component for click handling
+            UnityEngine.UI.Button btn = targetObj.GetComponent<UnityEngine.UI.Button>();
+            if (btn == null)
+            {
+                btn = targetObj.AddComponent<UnityEngine.UI.Button>();
+                btn.transition = UnityEngine.UI.Selectable.Transition.None;
+            }
+            
+            btn.onClick.RemoveAllListeners();
+            btn.onClick.AddListener(() => {
+                HandleEnemyClick();
+            });
+        };
+        
+        // Make enemy portrait clickable (main visual element)
+        if (enemyPortrait != null)
+        {
+            enemyPortrait.raycastTarget = true;
+            addClickHandler(enemyPortrait.gameObject);
+        }
+        
+        // Make health slider clickable
+        if (healthSlider != null)
+        {
+            addClickHandler(healthSlider.gameObject);
+        }
+        
+        // Make health fill image clickable
+        if (healthFillImage != null)
+        {
+            healthFillImage.raycastTarget = true;
+            addClickHandler(healthFillImage.gameObject);
+        }
+        
+        // Make enemy name text clickable (if it has a background)
+        if (enemyNameText != null)
+        {
+            // TextMeshProUGUI can be clickable if it has raycastTarget enabled
+            enemyNameText.raycastTarget = true;
+            
+            // Add a transparent Image behind the text for better click detection
+            Image textBg = enemyNameText.GetComponent<Image>();
+            if (textBg == null)
+            {
+                textBg = enemyNameText.gameObject.AddComponent<Image>();
+                textBg.color = new Color(1f, 1f, 1f, 0f); // Transparent
+            }
+            textBg.raycastTarget = true;
+            addClickHandler(enemyNameText.gameObject);
+        }
+        
+        // Make intent container clickable
+        if (intentContainer != null)
+        {
+            addClickHandler(intentContainer);
+        }
+        
+        // If we have a RectTransform on the root, ensure it has an Image for fallback clicking
+        RectTransform rootRect = GetComponent<RectTransform>();
+        if (rootRect != null)
+        {
+            Image rootImage = GetComponent<Image>();
+            if (rootImage == null)
+            {
+                rootImage = gameObject.AddComponent<Image>();
+                rootImage.color = new Color(1f, 1f, 1f, 0f); // Transparent - just for raycast
+            }
+            rootImage.raycastTarget = true;
+            
+            // Add click handler to root as fallback
+            UnityEngine.UI.Button rootBtn = GetComponent<UnityEngine.UI.Button>();
+            if (rootBtn == null)
+            {
+                rootBtn = gameObject.AddComponent<UnityEngine.UI.Button>();
+                rootBtn.transition = UnityEngine.UI.Selectable.Transition.None;
+            }
+            rootBtn.onClick.RemoveAllListeners();
+            rootBtn.onClick.AddListener(() => {
+                HandleEnemyClick();
+            });
+        }
+    }
+    
+    /// <summary>
+    /// Handle click on this enemy display
+    /// </summary>
+    private void HandleEnemyClick()
+    {
+        var targeting = EnemyTargetingManager.Instance;
+        if (targeting != null)
+        {
+            // Find my index in CombatDisplayManager
+            var cdm = FindFirstObjectByType<CombatDisplayManager>();
+            if (cdm != null)
+            {
+                var activeDisplays = cdm.GetActiveEnemyDisplays();
+                for (int i = 0; i < activeDisplays.Count; i++)
+                {
+                    if (activeDisplays[i] == this)
+                    {
+                        targeting.SelectEnemy(i);
+                        break;
+                    }
+                }
+            }
+        }
     }
     
     private void CreateTestEnemy()
@@ -476,7 +585,8 @@ public class EnemyCombatDisplay : MonoBehaviour
             enemyPortrait.sprite = null;
             enemyPortrait.enabled = false;
             enemyPortrait.color = Color.white;
-            enemyPortrait.raycastTarget = false;
+            // Keep raycastTarget enabled so clicks work on the portrait
+            enemyPortrait.raycastTarget = true;
             
             // Force Canvas update to clear any cached state
             Canvas.ForceUpdateCanvases();

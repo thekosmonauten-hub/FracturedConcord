@@ -246,7 +246,7 @@ public class CardCarouselUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     }
     
     /// <summary>
-    /// Refresh the current card display (for embossing slot updates)
+    /// Refresh the current card display (for embossing slot updates and damage recalculation)
     /// </summary>
     public void RefreshCurrentCard()
     {
@@ -258,8 +258,41 @@ public class CardCarouselUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         
         if (display != null && card != null)
         {
+            // Reload the card from deck to get latest embossings
+            // This ensures embossings from CardDataExtended are included
+            ReloadCardFromDeck(currentCardIndex);
+            
             display.SetCard(card);
             Debug.Log($"[CardCarousel] Refreshed card display for: {card.cardName}");
+        }
+    }
+    
+    /// <summary>
+    /// Reload a specific card from the deck to get latest embossings
+    /// </summary>
+    private void ReloadCardFromDeck(int index)
+    {
+        if (index < 0 || index >= deckCards.Count)
+            return;
+        
+        // Get the groupKey of the current card
+        string groupKey = deckCards[index].GetGroupKey();
+        
+        // Reload cards from deck to get latest embossings
+        List<Card> allCards = DeckManager.Instance?.GetActiveDeckAsCards() ?? new List<Card>();
+        
+        // Find a card with matching groupKey and copy its embossings
+        foreach (Card deckCard in allCards)
+        {
+            if (deckCard != null && deckCard.GetGroupKey() == groupKey)
+            {
+                // Copy embossings from deck card to displayed card
+                if (deckCard.appliedEmbossings != null)
+                {
+                    deckCards[index].appliedEmbossings = new List<EmbossingInstance>(deckCard.appliedEmbossings);
+                }
+                break;
+            }
         }
     }
 
@@ -294,6 +327,24 @@ public class CardCarouselUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
         currentCardIndex = Mathf.Clamp(targetIndex, 0, deckCards.Count - 1);
         SnapToCard(currentCardIndex, false);
+        
+        // Force refresh all card displays to update damage values with embossings
+        RefreshAllCardDisplays();
+    }
+    
+    /// <summary>
+    /// Refresh all card displays to update damage values with character scaling and embossings
+    /// </summary>
+    public void RefreshAllCardDisplays()
+    {
+        for (int i = 0; i < cardDisplays.Count && i < deckCards.Count; i++)
+        {
+            if (cardDisplays[i] != null && deckCards[i] != null)
+            {
+                cardDisplays[i].SetCard(deckCards[i]);
+            }
+        }
+        Debug.Log($"[CardCarousel] Refreshed {cardDisplays.Count} card displays with updated embossing values");
     }
     
     /// <summary>
@@ -566,6 +617,16 @@ public class CardCarouselUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
             
             cardDisplay.SetCard(deckCards[i]);
             cardDisplays.Add(cardDisplay);
+            
+            // Ensure the card GameObject can receive pointer events for tooltips
+            // Add Image component if missing (needed for raycasting)
+            Image cardImageComponent = cardObj.GetComponent<Image>();
+            if (cardImageComponent == null)
+            {
+                cardImageComponent = cardObj.AddComponent<Image>();
+                cardImageComponent.color = new Color(1f, 1f, 1f, 0f); // Transparent but still raycastable
+            }
+            cardImageComponent.raycastTarget = true; // Enable raycasting for tooltips
             
             // Add click listener to select this card
             int cardIndex = i; // Capture index for closure

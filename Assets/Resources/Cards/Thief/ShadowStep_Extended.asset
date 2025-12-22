@@ -15,9 +15,8 @@ MonoBehaviour:
   cardName: Shadow Step
   groupKey: Shadow_Step
   cardType: Guard
-  playCost: 1
-  description: 'Gain {guard} guard.\nPrepare: Gain +2 (+Dex/2) Guard and 1 temporary
-    Dexterity.'
+  playCost: 10
+  description: 'Gain {guard} guard.\nPrepared: Gain 1 temporary Dexterity.'
   rarity: 0
   element: 0
   category: 3
@@ -32,7 +31,7 @@ MonoBehaviour:
   isDiscardCard: 0
   isDualWield: 0
   ifDiscardedEffect: 
-  dualWieldEffect: Gain 6 Guard (+Dex/6) and 250(+Dex*2) evasion
+  dualWieldEffect: Gain 6 Guard (+Dex/5) and 250(+Dex*2) evasion
   embossingSlots: 1
   cardLevel: 1
   cardExperience: 0
@@ -58,7 +57,7 @@ MonoBehaviour:
     dexterityScaling: 0
     intelligenceScaling: 0
     strengthDivisor: 0
-    dexterityDivisor: 6
+    dexterityDivisor: 5
     intelligenceDivisor: 0
   evasionScaling:
     strengthScaling: 0
@@ -110,6 +109,7 @@ MonoBehaviour:
   tags:
   - Guard
   - Basic
+  appliedEmbossings: []
   delayTurns: 0
   isDelayed: 0
   canPrepare: 0
@@ -118,3 +118,28 @@ MonoBehaviour:
   unleashCondition: manual
   unleashEffect: deal_stored_damage
   prepareDescription: 
+  preparedCardDamageBase: 0
+  preparedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  preparedCardPoisonBase: 0
+  preparedCardGuardBase: 6
+  preparedCardGuardScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 3
+    intelligenceDivisor: 3
+  consumedCardDamageBase: 0
+  consumedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0

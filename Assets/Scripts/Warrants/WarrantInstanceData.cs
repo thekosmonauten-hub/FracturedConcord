@@ -13,6 +13,7 @@ public class WarrantInstanceData
     public WarrantRarity rarity;
     public bool isKeystone;
     public bool isBlueprint;
+    public bool doNotRoll;
     
     // Range & Behavior
     public WarrantRangeDirection rangeDirection;
@@ -28,10 +29,14 @@ public class WarrantInstanceData
     // Original blueprint ID (if rolled from blueprint)
     public string blueprintId;
     
+    // Icon persistence: Store the index of the icon in the icon library pool
+    // This allows us to restore the same icon when loading from save data
+    public int iconIndex = -1; // -1 means no icon index stored (legacy or random)
+    
     /// <summary>
     /// Create WarrantInstanceData from a WarrantDefinition
     /// </summary>
-    public static WarrantInstanceData FromWarrantDefinition(WarrantDefinition warrant, string blueprintId = null)
+    public static WarrantInstanceData FromWarrantDefinition(WarrantDefinition warrant, string blueprintId = null, WarrantIconLibrary iconLibrary = null)
     {
         if (warrant == null) return null;
         
@@ -42,12 +47,20 @@ public class WarrantInstanceData
             rarity = warrant.rarity,
             isKeystone = warrant.isKeystone,
             isBlueprint = warrant.isBlueprint,
+            doNotRoll = warrant.doNotRoll,
             rangeDirection = warrant.rangeDirection,
             rangeDepth = warrant.rangeDepth,
             affectDiagonals = warrant.affectDiagonals,
             notableId = warrant.notableId,
-            blueprintId = blueprintId
+            blueprintId = blueprintId,
+            iconIndex = -1 // Default to -1 (will be set if icon library is provided)
         };
+        
+        // Store icon index if icon library is provided and warrant has an icon
+        if (iconLibrary != null && warrant.icon != null)
+        {
+            data.iconIndex = iconLibrary.GetIconIndex(warrant.icon);
+        }
         
         // Copy modifiers
         if (warrant.modifiers != null)
@@ -75,7 +88,7 @@ public class WarrantInstanceData
     /// <summary>
     /// Create a WarrantDefinition ScriptableObject instance from this data
     /// </summary>
-    public WarrantDefinition ToWarrantDefinition(WarrantDatabase database)
+    public WarrantDefinition ToWarrantDefinition(WarrantDatabase database, WarrantIconLibrary iconLibrary = null)
     {
         if (database == null)
         {
@@ -91,10 +104,21 @@ public class WarrantInstanceData
         instance.rarity = this.rarity;
         instance.isKeystone = this.isKeystone;
         instance.isBlueprint = this.isBlueprint;
+        instance.doNotRoll = this.doNotRoll;
         instance.rangeDirection = this.rangeDirection;
         instance.rangeDepth = this.rangeDepth;
         instance.affectDiagonals = this.affectDiagonals;
         instance.notableId = this.notableId;
+        
+        // Restore icon from stored index if available
+        if (iconLibrary != null && this.iconIndex >= 0)
+        {
+            instance.icon = iconLibrary.GetIconByIndex(this.iconIndex);
+            if (instance.icon == null)
+            {
+                Debug.LogWarning($"[WarrantInstanceData] Could not restore icon at index {this.iconIndex} for warrant '{this.warrantId}'. Icon library may have changed.");
+            }
+        }
         
         // Copy modifiers
         instance.modifiers = new List<WarrantModifier>();

@@ -11,6 +11,7 @@ public class AuraManagerUI : MonoBehaviour
     [Header("References")]
     [SerializeField] private AuraStorageUI auraStorage;
     [SerializeField] private ActiveAurasDisplay activeAurasDisplay;
+    [SerializeField] private RelianceDisplay relianceDisplay;
     
     private CharacterManager characterManager;
     
@@ -22,6 +23,12 @@ public class AuraManagerUI : MonoBehaviour
         {
             auraStorage.SetAuraManager(this);
             auraStorage.OnAuraClicked += OnAuraClicked;
+        }
+        
+        // Auto-find RelianceDisplay if not assigned
+        if (relianceDisplay == null)
+        {
+            relianceDisplay = FindFirstObjectByType<RelianceDisplay>();
         }
         
         RefreshDisplays();
@@ -78,13 +85,18 @@ public class AuraManagerUI : MonoBehaviour
         int currentCost = GetTotalRelianceCost(character);
         int newCost = currentCost + aura.relianceCost;
         
-        // Check if player has enough reliance (you'll need to implement this check)
-        // For now, we'll just activate it
-        // TODO: Add reliance cost checking
+        // Check if player has enough available reliance
+        int availableReliance = character.maxReliance - currentCost;
+        if (availableReliance < aura.relianceCost)
+        {
+            Debug.LogWarning($"[AuraManagerUI] Cannot activate {aura.auraName} - insufficient reliance (Need {aura.relianceCost}, Have {availableReliance})");
+            return;
+        }
         
         if (!character.activeRelianceAuras.Contains(aura.auraName))
         {
             character.activeRelianceAuras.Add(aura.auraName);
+            UpdateCharacterReliance(character);
             Debug.Log($"[AuraManagerUI] Activated {aura.auraName} (Reliance cost: {aura.relianceCost}, Total: {newCost})");
         }
     }
@@ -97,8 +109,19 @@ public class AuraManagerUI : MonoBehaviour
         if (character.activeRelianceAuras != null)
         {
             character.activeRelianceAuras.Remove(aura.auraName);
+            UpdateCharacterReliance(character);
             Debug.Log($"[AuraManagerUI] Deactivated {aura.auraName}");
         }
+    }
+    
+    /// <summary>
+    /// Update character's current reliance based on active auras
+    /// Current reliance = maxReliance - total cost of active auras
+    /// </summary>
+    private void UpdateCharacterReliance(Character character)
+    {
+        int totalCost = GetTotalRelianceCost(character);
+        character.reliance = Mathf.Max(0, character.maxReliance - totalCost);
     }
     
     /// <summary>
@@ -140,6 +163,12 @@ public class AuraManagerUI : MonoBehaviour
         if (activeAurasDisplay != null)
         {
             activeAurasDisplay.Refresh();
+        }
+        
+        // Update reliance display when auras change
+        if (relianceDisplay != null)
+        {
+            relianceDisplay.Refresh();
         }
     }
     

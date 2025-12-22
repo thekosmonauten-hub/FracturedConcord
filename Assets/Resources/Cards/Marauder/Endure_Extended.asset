@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Endure
   groupKey: Endure
   cardType: Guard
-  playCost: 1
+  playCost: 10
   description: Gain {guard} Guard. Draw a card.
   rarity: 0
   element: 0

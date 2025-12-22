@@ -47,10 +47,8 @@ public class DiscardPanel : MonoBehaviour
     
     private void Awake()
     {
-        if (panelRoot != null)
-        {
-            panelRoot.SetActive(false);
-        }
+        // Ensure panel is hidden on start
+        EnsurePanelHidden();
         
         if (cancelButton != null)
         {
@@ -69,6 +67,52 @@ public class DiscardPanel : MonoBehaviour
         }
     }
     
+    private void Start()
+    {
+        // Double-check panel is hidden on start (safety check)
+        EnsurePanelHidden();
+    }
+    
+    private void OnEnable()
+    {
+        // Ensure panel stays hidden unless explicitly shown via ShowDiscardSelection
+        if (!isActive)
+        {
+            EnsurePanelHidden();
+        }
+    }
+    
+    /// <summary>
+    /// Ensure the panel root is hidden. If panelRoot is not assigned, disable this GameObject.
+    /// </summary>
+    private void EnsurePanelHidden()
+    {
+        if (panelRoot != null)
+        {
+            panelRoot.SetActive(false);
+        }
+        else
+        {
+            // If panelRoot is not assigned, try to find it
+            // Look for a child GameObject with "Panel" in the name
+            Transform panelTransform = transform.Find("Panel");
+            if (panelTransform == null)
+            {
+                panelTransform = transform.Find("DiscardPanel");
+            }
+            if (panelTransform != null)
+            {
+                panelRoot = panelTransform.gameObject;
+                panelRoot.SetActive(false);
+            }
+            // NOTE: We do NOT disable the GameObject itself here
+            // The GameObject must stay active so coroutines can run
+            // Only the panelRoot child should be hidden
+        }
+        
+        isActive = false;
+    }
+    
     /// <summary>
     /// Show discard panel and animate cards to center for selection
     /// </summary>
@@ -78,6 +122,34 @@ public class DiscardPanel : MonoBehaviour
         {
             Debug.LogWarning("[DiscardPanel] Already showing discard selection!");
             return;
+        }
+        
+        // Ensure panelRoot is set
+        if (panelRoot == null)
+        {
+            // Try to find panel root
+            Transform panelTransform = transform.Find("Panel");
+            if (panelTransform == null)
+            {
+                panelTransform = transform.Find("DiscardPanel");
+            }
+            if (panelTransform != null)
+            {
+                panelRoot = panelTransform.gameObject;
+            }
+            else
+            {
+                // If no child found, use this GameObject as the panel root
+                panelRoot = gameObject;
+                Debug.LogWarning("[DiscardPanel] panelRoot not assigned, using this GameObject as panel root. Please assign panelRoot in inspector.");
+            }
+        }
+        
+        // Ensure this GameObject is active
+        if (!gameObject.activeInHierarchy)
+        {
+            gameObject.SetActive(true);
+            Debug.Log("[DiscardPanel] Activated DiscardPanel GameObject");
         }
         
         cardsToDiscard = count;
@@ -93,6 +165,8 @@ public class DiscardPanel : MonoBehaviour
             onDiscardComplete?.Invoke(null);
             return;
         }
+        
+        Debug.Log($"[DiscardPanel] Showing discard selection for {count} card(s). Found {handCards.Count} cards in hand.");
         
         // Store original positions and scales
         originalPositions.Clear();
@@ -113,6 +187,13 @@ public class DiscardPanel : MonoBehaviour
         if (panelRoot != null)
         {
             panelRoot.SetActive(true);
+            Debug.Log($"[DiscardPanel] Enabled panel root: {panelRoot.name}");
+        }
+        else
+        {
+            Debug.LogError("[DiscardPanel] panelRoot is null! Cannot show discard panel!");
+            onDiscardComplete?.Invoke(null);
+            return;
         }
         
         // Update instruction text
@@ -122,6 +203,33 @@ public class DiscardPanel : MonoBehaviour
         }
         
         isActive = true;
+        
+        // CRITICAL: Ensure GameObject is active before starting coroutine
+        // Coroutines can only run on active GameObjects
+        if (!gameObject.activeSelf)
+        {
+            gameObject.SetActive(true);
+            Debug.Log("[DiscardPanel] Force-activated GameObject before starting coroutine");
+        }
+        
+        // Double-check it's active in hierarchy (parent chain must also be active)
+        if (!gameObject.activeInHierarchy)
+        {
+            Debug.LogError("[DiscardPanel] GameObject or parent is inactive! Cannot start coroutine.");
+            // Try to activate parent if it exists
+            if (transform.parent != null && !transform.parent.gameObject.activeSelf)
+            {
+                transform.parent.gameObject.SetActive(true);
+                Debug.Log("[DiscardPanel] Activated parent GameObject");
+            }
+            // Re-check after parent activation
+            if (!gameObject.activeInHierarchy)
+            {
+                Debug.LogError("[DiscardPanel] Still inactive after parent activation. Aborting.");
+                onDiscardComplete?.Invoke(null);
+                return;
+            }
+        }
         
         // Animate cards to center
         StartCoroutine(AnimateCardsToCenter(handCards));
@@ -134,6 +242,29 @@ public class DiscardPanel : MonoBehaviour
     {
         List<GameObject> cards = new List<GameObject>();
         
+        // First, try to get cards from CombatDeckManager (preferred method)
+        if (deckManager != null)
+        {
+            // Use reflection to access private handVisuals list
+            var field = typeof(CombatDeckManager).GetField("handVisuals", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (field != null)
+            {
+                var handVisuals = field.GetValue(deckManager) as List<GameObject>;
+                if (handVisuals != null && handVisuals.Count > 0)
+                {
+                    // Filter out null entries and return only active cards
+                    cards.AddRange(handVisuals.Where(go => go != null && go.activeInHierarchy));
+                    if (cards.Count > 0)
+                    {
+                        Debug.Log($"[DiscardPanel] Found {cards.Count} cards from CombatDeckManager.handVisuals");
+                        return cards;
+                    }
+                }
+            }
+        }
+        
+        // Fallback: Try CardRuntimeManager
         if (cardRuntimeManager != null)
         {
             // Use reflection to access private activeCards list
@@ -142,20 +273,30 @@ public class DiscardPanel : MonoBehaviour
             if (field != null)
             {
                 var activeCards = field.GetValue(cardRuntimeManager) as List<GameObject>;
-                if (activeCards != null)
+                if (activeCards != null && activeCards.Count > 0)
                 {
-                    cards.AddRange(activeCards);
+                    cards.AddRange(activeCards.Where(go => go != null && go.activeInHierarchy));
+                    if (cards.Count > 0)
+                    {
+                        Debug.Log($"[DiscardPanel] Found {cards.Count} cards from CardRuntimeManager.activeCards");
+                        return cards;
+                    }
                 }
             }
         }
         
-        // Fallback: Find cards by tag or component
+        // Final fallback: Find cards by tag or component
         if (cards.Count == 0)
         {
             var cardObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None)
-                .Where(go => go.GetComponent<CardVisualizer>() != null || go.name.Contains("Card"))
+                .Where(go => go != null && go.activeInHierarchy && 
+                       (go.GetComponent<DeckBuilderCardUI>() != null || go.GetComponent<CombatCardAdapter>() != null || go.name.Contains("Card")))
                 .ToList();
             cards.AddRange(cardObjects);
+            if (cards.Count > 0)
+            {
+                Debug.Log($"[DiscardPanel] Found {cards.Count} cards via fallback search");
+            }
         }
         
         return cards;

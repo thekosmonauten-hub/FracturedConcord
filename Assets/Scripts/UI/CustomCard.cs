@@ -71,8 +71,8 @@ public class CustomCard : VisualElement
         // Update card name
         cardName.text = cardData.cardName;
         
-        // Update mana cost
-        manaCost.text = cardData.manaCost.ToString();
+        // Update mana cost (using GetManaCostDisplay for Skill cards with percentage)
+        manaCost.text = cardData.GetManaCostDisplay(character);
         
         // Update card type
         UpdateCardType();
@@ -150,9 +150,13 @@ public class CustomCard : VisualElement
             cardBackground.AddToClassList("unusable");
             
             // Check if it's specifically a mana issue
-            if (character != null && character.mana < cardData.manaCost)
+            if (character != null)
+            {
+                int requiredMana = cardData.GetCurrentManaCost(character);
+                if (character.mana < requiredMana)
             {
                 cardBackground.AddToClassList("mana-insufficient");
+                }
             }
         }
         
@@ -164,7 +168,8 @@ public class CustomCard : VisualElement
     {
         if (manaCost != null && character != null)
         {
-            if (character.mana >= cardData.manaCost)
+            int requiredMana = cardData.GetCurrentManaCost(character);
+            if (character.mana >= requiredMana)
             {
                 // Can afford - normal color
                 manaCost.style.color = new Color(1f, 1f, 1f); // White

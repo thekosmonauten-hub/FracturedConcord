@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Guardbreaker
   groupKey: Guardbreaker
   cardType: Attack
-  playCost: 2
+  playCost: 20
   description: Spend up to 2 Momentum. Deal {damage} physical damage per Momentum
     spent.
   rarity: 0

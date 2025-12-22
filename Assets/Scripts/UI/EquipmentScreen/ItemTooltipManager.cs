@@ -22,6 +22,8 @@ public class ItemTooltipManager : MonoBehaviour
     [SerializeField] private GameObject cardTooltipPrefab;
     [SerializeField] private GameObject currencyTooltipPrefab;
     [SerializeField] private GameObject warrantTooltipPrefab;
+    [SerializeField] private GameObject auraTooltipPrefab;
+    [SerializeField] private GameObject embossingTooltipPrefab;
     
     [Header("Equipped Item Tooltip Containers (Scene Objects)")]
     [Tooltip("Pre-existing GameObjects in scene to display equipped tooltips")]
@@ -725,6 +727,92 @@ public class ItemTooltipManager : MonoBehaviour
         }
 
         ShowWarrantTooltip(definition, eventData.position);
+    }
+
+    /// <summary>
+    /// Show tooltip for Reliance Auras.
+    /// </summary>
+    public void ShowAuraTooltip(RelianceAura aura, Vector2 screenPosition, Character character = null)
+    {
+        if (aura == null)
+        {
+            Debug.LogWarning("[ItemTooltipManager] ShowAuraTooltip called with null aura.");
+            HideTooltip();
+            return;
+        }
+
+        if (character == null)
+        {
+            character = CharacterManager.Instance?.GetCurrentCharacter();
+        }
+
+        ShowTooltipInternal(auraTooltipPrefab, screenPosition, tooltip =>
+        {
+            var view = tooltip.GetComponent<AuraTooltipView>();
+            if (view == null)
+            {
+                Debug.LogWarning("[ItemTooltipManager] AuraTooltipPrefab missing AuraTooltipView component.");
+                return;
+            }
+
+            view.SetData(aura, character);
+        });
+    }
+
+    /// <summary>
+    /// Show tooltip for Embossing Effects.
+    /// </summary>
+    public void ShowEmbossingTooltip(EmbossingEffect embossing, Vector2 screenPosition, Character character = null)
+    {
+        if (embossing == null)
+        {
+            Debug.LogWarning("[ItemTooltipManager] ShowEmbossingTooltip called with null embossing.");
+            HideTooltip();
+            return;
+        }
+
+        if (character == null)
+        {
+            character = CharacterManager.Instance?.GetCurrentCharacter();
+        }
+
+        ShowTooltipInternal(embossingTooltipPrefab, screenPosition, tooltip =>
+        {
+            var view = tooltip.GetComponent<EmbossingTooltipView>();
+            if (view == null)
+            {
+                Debug.LogWarning("[ItemTooltipManager] EmbossingTooltipPrefab missing EmbossingTooltipView component.");
+                return;
+            }
+
+            view.SetData(embossing, character);
+        });
+    }
+
+    /// <summary>
+    /// Convenience overload for aura tooltips when handling pointer events.
+    /// </summary>
+    public void ShowAuraTooltipForPointer(RelianceAura aura, PointerEventData eventData, Character character = null)
+    {
+        if (eventData == null)
+        {
+            return;
+        }
+
+        ShowAuraTooltip(aura, eventData.position, character);
+    }
+
+    /// <summary>
+    /// Convenience overload for embossing tooltips when handling pointer events.
+    /// </summary>
+    public void ShowEmbossingTooltipForPointer(EmbossingEffect embossing, PointerEventData eventData, Character character = null)
+    {
+        if (eventData == null)
+        {
+            return;
+        }
+
+        ShowEmbossingTooltip(embossing, eventData.position, character);
     }
 
     private GameObject CreateRuntimeWarrantTooltip()

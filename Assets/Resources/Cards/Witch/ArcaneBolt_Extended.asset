@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Arcane Bolt
   groupKey: Arcane_Bolt
   cardType: Attack
-  playCost: 1
+  playCost: 10
   description: Deal {damage} Lightning damage.\nGain {guardIntDivisor} Guard.
   rarity: 0
   element: 3

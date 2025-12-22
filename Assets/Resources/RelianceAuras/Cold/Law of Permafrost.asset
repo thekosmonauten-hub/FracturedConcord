@@ -14,16 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RelianceAura
   auraName: Law of Permafrost
   category: Cold
-  description: The shattered memory of Frost-Law clings to you; frozen or chilled
-    enemies that fall burst in fractal cold shards.
+  description: Killing frozen or chilled enemies causes them to shatter. damaging
+    nearby foes.
   icon: {fileID: 0}
   themeColor: {r: 0.3, g: 0.7, b: 1, a: 1}
-  effectLevel1: On killing a Chilled/Frozen enemy, they shatter and deal damage based
+  effectLevel1: On killing a Chilled/Frozen enemy. they shatter and deal damage based
     on 3% of max life to adjacent enemies.
-  effectLevel20: Deal damage based on 7% of max life to adjacent enemies., +10% more
+  effectLevel20: Deal damage based on 7% of max life to adjacent enemies, +10% more
     Cold damage
   relianceCost: 65
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Law of Permafrost_AddDamageMorePercent_cold
+  - Law of Permafrost_ModifyStat
+  - Law of Permafrost_ShatterOnKill
+  requiredLevel: 21
   unlockRequirement: 

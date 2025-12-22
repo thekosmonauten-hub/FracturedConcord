@@ -130,13 +130,13 @@ MonoBehaviour:
       actionValue: 
       floatValue: 0
     onCompleteAction:
-      actionType: 0
+      actionType: 2
       actionValue: WarrantFusionPanel
       floatValue: 0
   canSkip: 1
   autoStart: 1
   targetScene: 
   onTutorialComplete:
-    actionType: 2
-    actionValue: WarrantFusionPanel
+    actionType: 6
+    actionValue: peacekeeper_joreg
     floatValue: 0

@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Devastating Blow
   groupKey: Devastating_Blow
   cardType: Attack
-  playCost: 2
+  playCost: 20
   description: Deal {damage} physical damage. Gain 2 Momentum.
   rarity: 0
   element: 4

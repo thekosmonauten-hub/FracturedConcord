@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438d3f7fbc252444f96931a3233c1f23, type: 3}
+  m_Name: fortification_ModifyStat
+  m_EditorClassIdentifier: Assembly-CSharp::EmbossingModifierDefinition
+  modifierId: fortification_ModifyStat
+  linkedEmbossingId: fortification
+  description: Attacks grant Bolster stacks based on damage dealt
+  effects:
+  - eventType: 3
+    conditions: []
+    actions:
+    - actionType: 15
+      parameterDict:
+        entries:
+        - key: customEffect
+          value:
+            type: 0
+            stringValue: Attacks grant Bolster stacks based on damage dealt
+            intValue: 0
+            floatValue: 0
+            boolValue: 0
+      executionOrder: 0
+    priority: 0
+  variableKeys: []
+  tags:
+  - NeedsManualConfig
+  minLevel: 31
+  maxLevel: 0
+  requiredCardTags:
+  - Bolster
+  - Duration
+  - Melee
+  applicableDamageTypes: 

@@ -317,13 +317,52 @@ public class CombatCardAdapter : MonoBehaviour
         
         if (costText != null)
         {
-            // Calculate display cost (includes momentum-based cost reductions)
-            int displayCost = card.manaCost;
+            // Calculate display cost (includes momentum-based cost reductions and Skill card percentages)
+            int displayCost = card.GetCurrentManaCost(ownerCharacter);
             if (card.sourceCardData is CardDataExtended extendedCard && ownerCharacter != null)
             {
-                displayCost = CombatDeckManager.GetDisplayCost(extendedCard, card.manaCost, ownerCharacter);
+                // Get the base cost - for Skill cards with percentage, use percentageManaCost; otherwise use playCost
+                int baseCostForDisplay = extendedCard.playCost;
+                if (extendedCard.percentageManaCost > 0 && string.Equals(extendedCard.cardType, "Skill", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    baseCostForDisplay = extendedCard.percentageManaCost;
+                }
+                
+                // GetDisplayCost handles Skill card percentages and applies modifiers
+                displayCost = CombatDeckManager.GetDisplayCost(extendedCard, baseCostForDisplay, ownerCharacter);
+                // But we still need to apply embossings if present
+                if (card.appliedEmbossings != null && card.appliedEmbossings.Count > 0)
+                {
+                    displayCost = card.GetCurrentManaCost(ownerCharacter);
+                }
             }
+            
+            // For Skill cards with percentage cost, show percentage format
+            if (card.cardType == CardType.Skill && card.sourceCardData is CardDataExtended extendedCardForDisplay)
+            {
+                if (extendedCardForDisplay.percentageManaCost > 0)
+                {
+                    // Use percentageManaCost from sourceCardData
+                    int percentageValue = extendedCardForDisplay.percentageManaCost;
+                    if (ownerCharacter != null)
+                    {
+                        costText.text = $"{percentageValue}% ({displayCost})";
+            }
+                    else
+                    {
+                        costText.text = $"{percentageValue}%";
+                    }
+                }
+                else
+                {
+                    // Fallback: flat cost
             costText.text = displayCost.ToString();
+                }
+            }
+            else
+            {
+                costText.text = displayCost.ToString();
+            }
         }
         
         if (descText != null)

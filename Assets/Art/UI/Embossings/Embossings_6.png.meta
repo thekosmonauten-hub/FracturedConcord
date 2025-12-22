@@ -1,0 +1,1410 @@
+fileFormatVersion: 2
+guid: ba5a7244c6464a047a69eee97f6e9c89
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7886199633783815937
+    second: Embossings_6_0
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 16384
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Embossings_6_0
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 870
+        width: 119
+        height: 117
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff0008847379e8290800000000000000
+      internalID: -7886199633783815937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_1
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 868
+        width: 117
+        height: 121
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d7414f2eb3267b4b9514b4fb72f94ae
+      internalID: -2121124393
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_2
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 870
+        width: 122
+        height: 118
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e14385a2b2dfbe04c9f24bfd4f7c4b6f
+      internalID: 625724837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_3
+      rect:
+        serializedVersion: 2
+        x: 312
+        y: 871
+        width: 120
+        height: 116
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb0710ca98453314aa6f08c9c86dcdaa
+      internalID: 748476872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_4
+      rect:
+        serializedVersion: 2
+        x: 450
+        y: 869
+        width: 123
+        height: 119
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fa1c2a896f0bcf14eba8d2fbe95cfc65
+      internalID: 962798077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_5
+      rect:
+        serializedVersion: 2
+        x: 591
+        y: 871
+        width: 121
+        height: 116
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c790cc8e451801843861d5efd39d50bf
+      internalID: -316133950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_6
+      rect:
+        serializedVersion: 2
+        x: 735
+        y: 870
+        width: 121
+        height: 118
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2055e4a72f081514a872b56e664141cd
+      internalID: -1921149380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_7
+      rect:
+        serializedVersion: 2
+        x: 869
+        y: 746
+        width: 121
+        height: 120
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f8e561555f0f7424d8756135e76a66dc
+      internalID: -1627115927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_8
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 752
+        width: 108
+        height: 106
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad262d49fc162a94cadac67d4b0ff1f4
+      internalID: 261347877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_9
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 740
+        width: 122
+        height: 125
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a07f973f0a53d1c4fb56d2aa1dffa829
+      internalID: -279106032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_10
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 748
+        width: 115
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2cdc0e64d226b244988f8540f829f502
+      internalID: 102334741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_11
+      rect:
+        serializedVersion: 2
+        x: 455
+        y: 749
+        width: 111
+        height: 108
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c71385072ea05724285a61c5e9cb119c
+      internalID: 1788143578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_12
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 746
+        width: 112
+        height: 111
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53419bb8e2d88f545aef0489bd8d7af2
+      internalID: -1727541275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_13
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 751
+        width: 109
+        height: 106
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ff34bed9fdfa984ca1a370e8424cffb
+      internalID: 472631863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_14
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 621
+        width: 120
+        height: 111
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 56b49e030848f8c41a51cfc7ecb93fff
+      internalID: -1299883054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_15
+      rect:
+        serializedVersion: 2
+        x: 180
+        y: 623
+        width: 105
+        height: 109
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0efaa9b0eafca774eabb61f5886b9b16
+      internalID: -1692246160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_16
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 617
+        width: 127
+        height: 119
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b5c93e16155f8934db5cd710a1735f3f
+      internalID: 1141384789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_17
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 616
+        width: 122
+        height: 122
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b2bef601ede04d548a51b962b9783e59
+      internalID: 55080330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_18
+      rect:
+        serializedVersion: 2
+        x: 588
+        y: 618
+        width: 127
+        height: 119
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 709418bbfa24cc84cb81e63ffd6a188a
+      internalID: 2023860903
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_19
+      rect:
+        serializedVersion: 2
+        x: 727
+        y: 611
+        width: 129
+        height: 129
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 331bc23c8aa073f4b8ba1310d0080aec
+      internalID: -1944316331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_20
+      rect:
+        serializedVersion: 2
+        x: 873
+        y: 617
+        width: 112
+        height: 117
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7db53a00936619e4bbe728c7143519bc
+      internalID: 67272860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_21
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 498
+        width: 107
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d0a23c7020c3fd5449ca4677e8104472
+      internalID: -1228692751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_22
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 496
+        width: 110
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2fa11a811a2b7f342884d564a69fabcf
+      internalID: -332394525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_23
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 499
+        width: 109
+        height: 106
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 55fd4be3b26b38f4682066632baab539
+      internalID: -338716906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_24
+      rect:
+        serializedVersion: 2
+        x: 455
+        y: 498
+        width: 113
+        height: 112
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a56dc3c79b38ee24299c2edbb7b4f2b2
+      internalID: 277982434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_25
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 499
+        width: 113
+        height: 109
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bc19ab71e8ff93247b35450acfac9107
+      internalID: 171932366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_26
+      rect:
+        serializedVersion: 2
+        x: 737
+        y: 497
+        width: 108
+        height: 111
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 87e0129ffaf811a4f8e13b0194a5673d
+      internalID: -371793091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_27
+      rect:
+        serializedVersion: 2
+        x: 873
+        y: 495
+        width: 112
+        height: 114
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 541a8b1b923488346b177e2d9af03809
+      internalID: -488739569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_28
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 410
+        width: 107
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ff1c72d9a584aa4b8c6689cae24218c
+      internalID: 1294863888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_29
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 409
+        width: 110
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb4159642958a034d9468cd78fbe9c2a
+      internalID: 1183434108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_30
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 410
+        width: 108
+        height: 81
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ffa796337579ba4283573cb589a4f1d
+      internalID: 1048182205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_31
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 412
+        width: 109
+        height: 76
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 130f3c5b87fee934a905a98e3c84cc17
+      internalID: -1575934628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_32
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 407
+        width: 110
+        height: 83
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b084ecc039d24cb409b8e0f5694e9441
+      internalID: -641056038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_33
+      rect:
+        serializedVersion: 2
+        x: 736
+        y: 409
+        width: 111
+        height: 84
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b90d14dea9673d4683d66cba71e9f58
+      internalID: 201869370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_34
+      rect:
+        serializedVersion: 2
+        x: 871
+        y: 284
+        width: 119
+        height: 120
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: db441f92fb4ffce40aa3aa7fcb03e537
+      internalID: 639475658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_35
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 407
+        width: 104
+        height: 83
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2493fae036654b14f949a8f278a543cb
+      internalID: -1764958667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_36
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 290
+        width: 118
+        height: 116
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd3f3d3e9d153da43b0628174cc32ca7
+      internalID: 626867315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_37
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 287
+        width: 119
+        height: 119
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bbdfeafa457b1964a84b61b65add402c
+      internalID: 2091077700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_38
+      rect:
+        serializedVersion: 2
+        x: 310
+        y: 290
+        width: 124
+        height: 114
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd815bbd111a12c4da9615235cbc1294
+      internalID: 1448846500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_39
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 290
+        width: 121
+        height: 108
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30f99010f9777af4a8bb84a673ff9055
+      internalID: 923686685
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_40
+      rect:
+        serializedVersion: 2
+        x: 587
+        y: 160
+        width: 129
+        height: 124
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d9db89bd0b263749bb172326afe40a9
+      internalID: 1549916393
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_41
+      rect:
+        serializedVersion: 2
+        x: 727
+        y: 289
+        width: 129
+        height: 119
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2eb7bb1c0598c1440b161627e855d85e
+      internalID: 1634034660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_42
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 164
+        width: 109
+        height: 109
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd4f7218fa9e5884789bada70d3cd2b8
+      internalID: -945802768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_43
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 165
+        width: 116
+        height: 109
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c05bb7f5ec2211043a6a88198ef4bf9d
+      internalID: -1111860835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_44
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 157
+        width: 129
+        height: 125
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 69e147276fc5db649b0fd78cbddef626
+      internalID: -2093614746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_45
+      rect:
+        serializedVersion: 2
+        x: 450
+        y: 165
+        width: 121
+        height: 111
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7f4df3ba8579d3646ac875aae428ba61
+      internalID: -2007515117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_46
+      rect:
+        serializedVersion: 2
+        x: 728
+        y: 157
+        width: 128
+        height: 124
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 01abe21e575472942aef7a677f9aadcd
+      internalID: -1689937392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_47
+      rect:
+        serializedVersion: 2
+        x: 873
+        y: 164
+        width: 117
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89938c30b2aae59459be1340bfbb06d9
+      internalID: -1601092095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_48
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 33
+        width: 112
+        height: 116
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4410d912c0fe7aa428ab9e7e10af344d
+      internalID: -1234922029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_49
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 35
+        width: 120
+        height: 114
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 186481b701761f24bb25d233b626686a
+      internalID: 710821681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_50
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 33
+        width: 127
+        height: 121
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9996e0ba536b13e4eb87a01e107c8964
+      internalID: 1568648631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_51
+      rect:
+        serializedVersion: 2
+        x: 453
+        y: 37
+        width: 116
+        height: 116
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30489ccb12943fe4ba1e78f72277f744
+      internalID: 1077662339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_52
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 35
+        width: 113
+        height: 117
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38a6c84539b379244b2fed189c1b8557
+      internalID: -321860711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_53
+      rect:
+        serializedVersion: 2
+        x: 735
+        y: 39
+        width: 113
+        height: 111
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1676b486f11f6bd45973ae08c42f7c6f
+      internalID: 920009759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_54
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 34
+        width: 120
+        height: 120
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5fe81aee7750ff447847a792eff2e8ba
+      internalID: 76932043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Embossings_6_55
+      rect:
+        serializedVersion: 2
+        x: 588
+        y: 284
+        width: 130
+        height: 120
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b3f9639d6ad5bb439aa4f7b58644469
+      internalID: 1081701099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: aa34f6c808934e84f807f4fc2ee0ad97
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      Embossings_6_0: -7886199633783815937
+      Embossings_6_1: -2121124393
+      Embossings_6_10: 102334741
+      Embossings_6_11: 1788143578
+      Embossings_6_12: -1727541275
+      Embossings_6_13: 472631863
+      Embossings_6_14: -1299883054
+      Embossings_6_15: -1692246160
+      Embossings_6_16: 1141384789
+      Embossings_6_17: 55080330
+      Embossings_6_18: 2023860903
+      Embossings_6_19: -1944316331
+      Embossings_6_2: 625724837
+      Embossings_6_20: 67272860
+      Embossings_6_21: -1228692751
+      Embossings_6_22: -332394525
+      Embossings_6_23: -338716906
+      Embossings_6_24: 277982434
+      Embossings_6_25: 171932366
+      Embossings_6_26: -371793091
+      Embossings_6_27: -488739569
+      Embossings_6_28: 1294863888
+      Embossings_6_29: 1183434108
+      Embossings_6_3: 748476872
+      Embossings_6_30: 1048182205
+      Embossings_6_31: -1575934628
+      Embossings_6_32: -641056038
+      Embossings_6_33: 201869370
+      Embossings_6_34: 639475658
+      Embossings_6_35: -1764958667
+      Embossings_6_36: 626867315
+      Embossings_6_37: 2091077700
+      Embossings_6_38: 1448846500
+      Embossings_6_39: 923686685
+      Embossings_6_4: 962798077
+      Embossings_6_40: 1549916393
+      Embossings_6_41: 1634034660
+      Embossings_6_42: -945802768
+      Embossings_6_43: -1111860835
+      Embossings_6_44: -2093614746
+      Embossings_6_45: -2007515117
+      Embossings_6_46: -1689937392
+      Embossings_6_47: -1601092095
+      Embossings_6_48: -1234922029
+      Embossings_6_49: 710821681
+      Embossings_6_5: -316133950
+      Embossings_6_50: 1568648631
+      Embossings_6_51: 1077662339
+      Embossings_6_52: -321860711
+      Embossings_6_53: 920009759
+      Embossings_6_54: 76932043
+      Embossings_6_55: 1081701099
+      Embossings_6_6: -1921149380
+      Embossings_6_7: -1627115927
+      Embossings_6_8: 261347877
+      Embossings_6_9: -279106032
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -21,6 +21,7 @@ MonoBehaviour:
   effectLevel20: 15% increased Movement speed
   relianceCost: 55
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Fleetshadow Grace_ModifyStat_movementSpeed
+  requiredLevel: 24
   unlockRequirement: 

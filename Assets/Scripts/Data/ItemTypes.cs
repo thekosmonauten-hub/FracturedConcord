@@ -166,6 +166,7 @@ public enum ItemType
     Currency,
     QuestItem,
     Effigy,
+    Warrant,
     Material     // Crafting materials
 }
 

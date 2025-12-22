@@ -14,17 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RelianceAura
   auraName: Law of Force
   category: Physical
-  description: A splinter of the Law of Force binds to your strikes. Enemies hit
-    Crumble, each subsequent hit deals 10% of the Stored Crumble value.
+  description: Your physical damage has a chance to apply Crumble. Hitting Crumbled
+    enemies deals extra damage based on stored Crumble.
   icon: {fileID: 0}
   themeColor: {r: 0.7, g: 0.7, b: 0.7, a: 1}
-  effectLevel1: Gain +10% Physical Damage. Enemies you hit gain Crumble. Hitting
-    an enemy affected by Crumble deals 10% of stored as extra physical damage.
-  effectLevel20: Gain +20% Physical Damage.  Enemies you hit Crumbles. Hitting an
-    enemy affected by Crumble deals 15% of stored as extra physical damage and applies
-    Shatter Weakness (-10% phys resistance).
+  effectLevel1: Hitting an enemy affected by Crumble deals 10% of stored as extra
+    physical damage.
+  effectLevel20: Hitting an enemy affected by Crumble deals 15% of stored as extra
+    physical damage.
   relianceCost: 65
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Law of Force_DealCrumbleDamage
+  requiredLevel: 21
   unlockRequirement: 

@@ -17,7 +17,8 @@ MonoBehaviour:
   icon: {fileID: -6706033890486739295, guid: c80cc579a7c04b44fa74fbd076c5f1c9, type: 3}
   rarity: 0
   isKeystone: 0
-  isBlueprint: 0
+  isBlueprint: 1
+  doNotRoll: 1
   rangeDirection: 3
   rangeDepth: 3
   affectDiagonals: 1

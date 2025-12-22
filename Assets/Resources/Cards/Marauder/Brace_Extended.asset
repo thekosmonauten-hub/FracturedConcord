@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Brace
   groupKey: Brace
   cardType: Guard
-  playCost: 1
+  playCost: 10
   description: Gain {guard} Guard.
   rarity: 0
   element: 0
@@ -43,14 +43,31 @@ MonoBehaviour:
   isAoE: 0
   aoeTargets: 1
   aoeRowScope: 0
+  isMultiHit: 0
+  hitCount: 2
   damageScaling:
     strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0.5
     dexterityScaling: 0
     intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  evasionScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  baseEvasion: 0
+  evasionDuration: -1
   requirements:
     requiredStrength: 0
     requiredDexterity: 0
@@ -61,6 +78,7 @@ MonoBehaviour:
   enableCombo: 1
   comboWith: 
   comboDescription: Gain additional {comboGuard} guard
+  momentumEffectDescription: 
   comboWithCardType: 1
   comboAttackIncrease: 0
   comboGuardIncrease: 6
@@ -83,14 +101,45 @@ MonoBehaviour:
   comboHighlightType: type
   channelingBonusEnabled: 0
   channelingMinStacks: 2
-  channelingDamageMultiplier: 1
   channelingAdditionalGuard: 0
+  channelingDamageIncreasedPercent: 0
+  channelingDamageMorePercent: 0
+  channelingGuardIncreasedPercent: 0
+  channelingGuardMorePercent: 0
   tags:
   - Guard
   - Basic
+  appliedEmbossings: []
+  delayTurns: 0
+  isDelayed: 0
   canPrepare: 0
   maxPrepTurns: 3
   multiplierPerTurn: 0.5
   unleashCondition: manual
   unleashEffect: deal_stored_damage
   prepareDescription: 
+  preparedCardDamageBase: 0
+  preparedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  preparedCardPoisonBase: 0
+  preparedCardGuardBase: 0
+  preparedCardGuardScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  consumedCardDamageBase: 0
+  consumedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0

@@ -21,6 +21,7 @@ MonoBehaviour:
   effectLevel20: 160 Life regeneration per turn
   relianceCost: 25
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Lifethread Chorus_ModifyStat_lifeRegeneration
+  requiredLevel: 12
   unlockRequirement: 

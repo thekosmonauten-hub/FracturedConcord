@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// ScriptableObject representing an Embossing effect that can be applied to cards
@@ -77,6 +78,10 @@ public class EmbossingEffect : ScriptableObject
     
     [Tooltip("Custom effect logic identifier (for special effects)")]
     public string customEffectId = "";
+    
+    [Header("Modifier Definitions")]
+    [Tooltip("List of modifier IDs that define this embossing's effects (auto-linked from EmbossingModifierDefinition assets)")]
+    public List<string> modifierIds = new List<string>();
     
     /// <summary>
     /// Auto-generate ID from name on validation

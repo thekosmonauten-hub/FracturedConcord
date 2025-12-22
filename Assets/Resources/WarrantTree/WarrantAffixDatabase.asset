@@ -645,12 +645,12 @@ MonoBehaviour:
     displayName: Flat Max mana
     statKey: maxManaFlat
     isFlat: 1
-    minPercent: 2
-    maxPercent: 4
+    minPercent: 10
+    maxPercent: 30
     tags:
     - Mana
-    rarity: 2
-    weight: 50
+    rarity: 1
+    weight: 100
     kind: 0
     socketOnly: 0
     groupId: MaxMana

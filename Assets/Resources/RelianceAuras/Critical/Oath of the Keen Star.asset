@@ -21,6 +21,7 @@ MonoBehaviour:
   effectLevel20: 48% increased critical strike chance.
   relianceCost: 25
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Oath of the Keen Star_ModifyStat_criticalstrikechance
+  requiredLevel: 12
   unlockRequirement: 

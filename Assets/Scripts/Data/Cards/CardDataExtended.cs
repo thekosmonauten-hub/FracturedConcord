@@ -15,6 +15,10 @@ using System.Text.RegularExpressions;
 [CreateAssetMenu(fileName = "New Card Extended", menuName = "Dexiled/Cards/Card Data Extended")]
 public class CardDataExtended : CardData
 {
+    [Header("Mana Cost (Skill Cards)")]
+    [Tooltip("Percentage of max mana cost for Skill cards (e.g., 10 = 10% of maxMana). Only used if cardType is Skill. If set, playCost should be 0. Leave at 0 to use playCost as flat cost.")]
+    public int percentageManaCost = 0;
+    
     [Header("Combat Properties (Extended)")]
     public DamageType primaryDamageType = DamageType.Physical;
     public List<DamageType> additionalDamageTypes = new List<DamageType>();
@@ -139,6 +143,12 @@ public class CardDataExtended : CardData
     [Header("Tags")]
     public List<string> tags = new List<string>();
     
+    [Header("Embossing System")]
+    // Note: embossingSlots is inherited from CardData base class, do not redeclare it here
+    
+    [Tooltip("List of applied embossing instances (includes level and XP). Persists with the card asset.")]
+    public List<EmbossingInstance> appliedEmbossings = new List<EmbossingInstance>();
+    
     [Header("Delayed Action")]
     [Tooltip("Number of turns to delay this card's execution (0 = play immediately). Used for Temporal Savant and similar effects.")]
     [Min(0)]
@@ -166,6 +176,29 @@ public class CardDataExtended : CardData
     [TextArea(2,3)]
     public string prepareDescription = "";
     
+    [Header("Prepared Card Bonuses (Thief Class)")]
+    [Tooltip("Base damage bonus per prepared card (for {PrepareDamage} variable). Set to 0 to disable.")]
+    public float preparedCardDamageBase = 0f;
+    
+    [Tooltip("Attribute scaling for prepared card damage bonus (e.g., Dex/3). Leave all at 0 to disable scaling.")]
+    public AttributeScaling preparedCardDamageScaling = new AttributeScaling();
+    
+    [Tooltip("Base poison bonus per prepared card (for {PreparePoison} variable). Set to 0 to disable.")]
+    public int preparedCardPoisonBase = 0;
+    
+    [Tooltip("Base guard bonus per prepared card (for {PrepareGuard} variable). Set to 0 to disable.")]
+    public float preparedCardGuardBase = 0f;
+    
+    [Tooltip("Attribute scaling for prepared card guard bonus (e.g., Dex/2). Leave all at 0 to disable scaling.")]
+    public AttributeScaling preparedCardGuardScaling = new AttributeScaling();
+    
+    [Header("Consumed Card Bonuses (Thief Class)")]
+    [Tooltip("Base damage bonus per consumed card (for {ConsumedDamage} variable). Set to 0 to disable.")]
+    public float consumedCardDamageBase = 0f;
+    
+    [Tooltip("Attribute scaling for consumed card damage bonus (e.g., Dex/3). Leave all at 0 to disable scaling.")]
+    public AttributeScaling consumedCardDamageScaling = new AttributeScaling();
+    
     // IMPORTANT: Add all Card methods here
     
     /// <summary>
@@ -174,7 +207,11 @@ public class CardDataExtended : CardData
     public bool CanUseCard(Character character)
     {
         if (!requirements.MeetsRequirements(character)) return false;
-        if (playCost > 0 && character.mana < playCost) return false;
+        
+        // Calculate actual mana cost (percentage for Skill cards if set, otherwise flat)
+        int requiredMana = GetCurrentManaCost(null, character);
+        if (requiredMana > 0 && character.mana < requiredMana) return false;
+        
         return true;
     }
     
@@ -187,8 +224,10 @@ public class CardDataExtended : CardData
         if (!meetsReqs)
             return (false, reqReason);
         
-        if (playCost > 0 && character.mana < playCost)
-            return (false, $"Requires {playCost} Mana (has {character.mana})");
+        // Calculate actual mana cost (percentage for Skill cards if set, otherwise flat)
+        int requiredMana = GetCurrentManaCost(null, character);
+        if (requiredMana > 0 && character.mana < requiredMana)
+            return (false, $"Requires {requiredMana} Mana (has {character.mana})");
         
         return (true, "Can use card");
     }
@@ -409,11 +448,143 @@ public class CardDataExtended : CardData
         }
         
         // Replace mana cost placeholder
-        dynamicDesc = dynamicDesc.Replace("{manaCost}", playCost.ToString());
-        dynamicDesc = dynamicDesc.Replace("{cost}", playCost.ToString());
+        // For Skill cards with percentage cost, show percentage; otherwise show playCost
+        string costDisplay = playCost.ToString();
+        if (string.Equals(cardType, "Skill", System.StringComparison.OrdinalIgnoreCase) && percentageManaCost > 0)
+        {
+            if (character != null)
+            {
+                float percentageCost = percentageManaCost / 100.0f;
+                int calculatedCost = Mathf.RoundToInt(character.maxMana * percentageCost);
+                costDisplay = $"{percentageManaCost}% ({calculatedCost})";
+            }
+            else
+            {
+                costDisplay = $"{percentageManaCost}%";
+            }
+        }
+        dynamicDesc = dynamicDesc.Replace("{manaCost}", costDisplay);
+        dynamicDesc = dynamicDesc.Replace("{cost}", costDisplay);
         
         // Final fallback: ensure {aoeTargets} is always replaced even if isAoE wasn't set
         dynamicDesc = dynamicDesc.Replace("{aoeTargets}", (aoeTargets > 0 ? aoeTargets.ToString() : "1"));
+        
+        // Replace prepared card variables (Thief class cards)
+        // These work both in and out of combat
+        // IMPORTANT: Only show prepared card variables if:
+        // 1. This card is a "Consume prepared" card (like Perfect Strike) - count ALL prepared cards
+        // 2. This card has "If you have prepared cards" condition (like Ambush, Poisoned Blade) - count ALL prepared cards if any exist
+        // 3. This card is currently prepared - count only this card (count = 1)
+        // 4. Otherwise - don't show the variables (count = 0)
+        
+        bool isConsumePreparedCard = ThiefCardEffects.IsConsumePreparedCard(this);
+        bool hasPreparedCardsCondition = ThiefCardEffects.HasPreparedCardsCondition(this);
+        bool isThisCardPrepared = ThiefCardEffects.IsCardPrepared(this);
+        
+        int preparedCount = 0;
+        if (isConsumePreparedCard)
+        {
+            // "Consume prepared" cards count ALL prepared cards
+            preparedCount = ThiefCardEffects.GetPreparedCardCount();
+        }
+        else if (hasPreparedCardsCondition)
+        {
+            // Cards with "If you have prepared cards" condition count ALL prepared cards
+            // (they check if ANY card is prepared and use the total count for bonuses)
+            preparedCount = ThiefCardEffects.GetPreparedCardCount();
+        }
+        else if (isThisCardPrepared)
+        {
+            // Regular prepared cards only count themselves
+            preparedCount = 1;
+        }
+        // else: preparedCount = 0 (card is not prepared, don't show variables)
+        
+        // {PrepareCount} - Number of prepared cards
+        dynamicDesc = dynamicDesc.Replace("{PrepareCount}", preparedCount.ToString());
+        
+        // {PrepareDamage} - Damage bonus per prepared card
+        // Reads from card's preparedCardDamageBase and preparedCardDamageScaling fields
+        if (dynamicDesc.Contains("{PrepareDamage}"))
+        {
+            if (preparedCardDamageBase > 0f || preparedCardDamageScaling != null)
+            {
+                float damagePerCard = preparedCardDamageBase;
+                if (preparedCardDamageScaling != null)
+                {
+                    damagePerCard += preparedCardDamageScaling.CalculateScalingBonus(character);
+                }
+                float totalPrepareDamage = damagePerCard * preparedCount;
+                dynamicDesc = dynamicDesc.Replace("{PrepareDamage}", totalPrepareDamage.ToString("F0"));
+            }
+            else
+            {
+                // Fallback: hide the variable if not configured
+                dynamicDesc = dynamicDesc.Replace("{PrepareDamage}", "0");
+            }
+        }
+        
+        // {PreparePoison} - Poison bonus per prepared card
+        // Reads from card's preparedCardPoisonBase field
+        if (dynamicDesc.Contains("{PreparePoison}"))
+        {
+            if (preparedCardPoisonBase > 0)
+            {
+                int totalPreparePoison = preparedCardPoisonBase * preparedCount;
+                dynamicDesc = dynamicDesc.Replace("{PreparePoison}", totalPreparePoison.ToString());
+            }
+            else
+            {
+                // Fallback: hide the variable if not configured
+                dynamicDesc = dynamicDesc.Replace("{PreparePoison}", "0");
+            }
+        }
+        
+        // {ConsumedDamage} - Damage bonus per consumed card
+        // Reads from card's consumedCardDamageBase and consumedCardDamageScaling fields
+        // Note: This assumes all prepared cards will be consumed (for Perfect Strike)
+        // Only show for "Consume prepared" cards
+        if (dynamicDesc.Contains("{ConsumedDamage}"))
+        {
+            if (isConsumePreparedCard && (consumedCardDamageBase > 0f || consumedCardDamageScaling != null))
+            {
+                float damagePerConsumedCard = consumedCardDamageBase;
+                if (consumedCardDamageScaling != null)
+                {
+                    damagePerConsumedCard += consumedCardDamageScaling.CalculateScalingBonus(character);
+                }
+                // For consume cards, count all prepared cards (they will all be consumed)
+                int allPreparedCount = ThiefCardEffects.GetPreparedCardCount();
+                float totalConsumedDamage = damagePerConsumedCard * allPreparedCount;
+                dynamicDesc = dynamicDesc.Replace("{ConsumedDamage}", totalConsumedDamage.ToString("F0"));
+            }
+            else
+            {
+                // Fallback: hide the variable if not configured or not a consume card
+                dynamicDesc = dynamicDesc.Replace("{ConsumedDamage}", "0");
+            }
+        }
+        
+        // {PrepareGuard} - Guard bonus per prepared card
+        // Reads from card's preparedCardGuardBase and preparedCardGuardScaling fields
+        if (dynamicDesc.Contains("{PrepareGuard}"))
+        {
+            if (preparedCardGuardBase > 0f || preparedCardGuardScaling != null)
+            {
+                float guardPerCard = preparedCardGuardBase;
+                if (preparedCardGuardScaling != null)
+                {
+                    guardPerCard += preparedCardGuardScaling.CalculateScalingBonus(character);
+                }
+                float totalPrepareGuard = guardPerCard * preparedCount;
+                dynamicDesc = dynamicDesc.Replace("{PrepareGuard}", totalPrepareGuard.ToString("F0"));
+            }
+            else
+            {
+                // Fallback: hide the variable if not configured
+                dynamicDesc = dynamicDesc.Replace("{PrepareGuard}", "0");
+            }
+        }
         
         return dynamicDesc;
     }
@@ -564,7 +735,15 @@ public class CardDataExtended : CardData
     {
         string tooltip = $"{cardName}\n";
         tooltip += $"Type: {category}\n";
-        tooltip += $"Cost: {playCost} Mana\n";
+        // Show cost - percentage for Skill cards with percentageManaCost, otherwise flat
+        if (string.Equals(cardType, "Skill", System.StringComparison.OrdinalIgnoreCase) && percentageManaCost > 0)
+        {
+            tooltip += $"Cost: {percentageManaCost}% of Max Mana\n";
+        }
+        else
+        {
+            tooltip += $"Cost: {playCost} Mana\n";
+        }
         
         if (damage > 0)
         {
@@ -617,37 +796,73 @@ public class CardDataExtended : CardData
     /// <summary>
     /// Calculate the card's current mana cost with embossing modifiers
     /// Formula: (Base + N_embossings) × (1 + Σ Multipliers)
+    /// For Skill cards: cost is percentage-based (playCost% of maxMana)
+    /// For Attack cards (Weapon/Spell): cost is flat
     /// Note: This calculates based on a Card instance with applied embossings
     /// </summary>
-    public int GetCurrentManaCost(Card card)
+    public int GetCurrentManaCost(Card card, Character character = null)
     {
+        int baseCost = playCost;
+        
+        // Skill cards use percentage-based cost if percentageManaCost is set
+        if (string.Equals(cardType, "Skill", System.StringComparison.OrdinalIgnoreCase) && character != null)
+        {
+            if (percentageManaCost > 0)
+            {
+                // percentageManaCost is a percentage (e.g., 10 = 10% of maxMana)
+                // Use CeilToInt to round up (e.g., 4.5 -> 5, not 4)
+                float percentageCost = percentageManaCost / 100.0f;
+                baseCost = Mathf.CeilToInt(character.maxMana * percentageCost);
+            }
+            // If percentageManaCost is 0, use playCost as flat cost (backward compatibility)
+        }
+        
         if (card == null || card.appliedEmbossings == null || card.appliedEmbossings.Count == 0)
-            return playCost;
+            return baseCost;
         
         // Use EmbossingDatabase if available
         if (EmbossingDatabase.Instance != null)
         {
-            return EmbossingDatabase.Instance.CalculateCardManaCost(card, playCost);
+            return EmbossingDatabase.Instance.CalculateCardManaCost(card, baseCost);
         }
         
         // Fallback calculation if database not available
         int embossingCount = card.appliedEmbossings.Count;
-        return playCost + embossingCount;
+        return baseCost + embossingCount;
     }
     
     /// <summary>
     /// Get formatted mana cost display with embossing increase
     /// Shows increase if card has embossings: "5 (+3)"
     /// </summary>
-    public string GetManaCostDisplay(Card card)
+    public string GetManaCostDisplay(Card card, Character character = null)
     {
-        int currentCost = GetCurrentManaCost(card);
+        int currentCost = GetCurrentManaCost(card, character);
         
-        if (currentCost == playCost)
+        // For Skill cards, show percentage if percentageManaCost is set
+        if (string.Equals(cardType, "Skill", System.StringComparison.OrdinalIgnoreCase) && percentageManaCost > 0)
+        {
+            if (character != null)
+            {
+                float percentageCost = percentageManaCost / 100.0f;
+                int calculatedCost = Mathf.RoundToInt(character.maxMana * percentageCost);
+                if (currentCost == calculatedCost && (card == null || card.appliedEmbossings == null || card.appliedEmbossings.Count == 0))
+                    return $"{percentageManaCost}% ({calculatedCost})";
+            }
+            else
+            {
+                return $"{percentageManaCost}%";
+            }
+        }
+        
+        // For Attack/Guard cards or Skill cards with flat cost, use playCost
+        int baseCost = playCost;
+        
+        if (currentCost == baseCost)
             return currentCost.ToString();
         
         // Show increase: "5 (+3)"
-        int increase = currentCost - playCost;
+        int increase = currentCost - baseCost;
         return $"{currentCost} <color=#FF6B6B>(+{increase})</color>";
     }
     
@@ -655,18 +870,31 @@ public class CardDataExtended : CardData
     /// Get mana cost breakdown for tooltip
     /// Shows how embossings affect the mana cost
     /// </summary>
-    public string GetManaCostBreakdown(Card card)
+    public string GetManaCostBreakdown(Card card, Character character = null)
     {
+        // For Skill cards with percentage cost, show percentage-based calculation
+        if (string.Equals(cardType, "Skill", System.StringComparison.OrdinalIgnoreCase) && percentageManaCost > 0 && character != null)
+        {
+            float percentageCost = percentageManaCost / 100.0f;
+            int calculatedCost = Mathf.RoundToInt(character.maxMana * percentageCost);
+            
+            if (card == null || card.appliedEmbossings == null || card.appliedEmbossings.Count == 0)
+                return $"Mana Cost: {percentageManaCost}% of Max Mana ({calculatedCost})";
+        }
+        
+        // For Attack/Guard cards or Skill cards with flat cost, use playCost
+        int baseCost = playCost;
+        
         if (card == null || card.appliedEmbossings == null || card.appliedEmbossings.Count == 0)
-            return $"Mana Cost: {playCost}";
+            return $"Mana Cost: {baseCost}";
         
         if (EmbossingDatabase.Instance != null)
         {
-            return EmbossingDatabase.Instance.GetManaCostBreakdown(card, playCost);
+            return EmbossingDatabase.Instance.GetManaCostBreakdown(card, baseCost);
         }
         
-        int finalCost = GetCurrentManaCost(card);
-        return $"Base: {playCost}\nWith {card.appliedEmbossings.Count} Embossings: {finalCost}";
+        int finalCost = GetCurrentManaCost(card, character);
+        return $"Base: {baseCost}\nWith {card.appliedEmbossings.Count} Embossings: {finalCost}";
     }
     
     /// <summary>
@@ -698,7 +926,11 @@ public class CardDataExtended : CardData
             groupKey = this.groupKey,
             description = this.description,
             cardType = GetCardTypeEnum(),
-            manaCost = this.playCost,
+            // For Skill cards with percentage cost, store the percentage value in manaCost
+            // For other cards, use playCost
+            manaCost = (string.Equals(cardType, "Skill", System.StringComparison.OrdinalIgnoreCase) && this.percentageManaCost > 0) 
+                ? this.percentageManaCost 
+                : this.playCost,
             baseDamage = (float)this.damage,
             baseGuard = (float)this.block,
             isMultiHit = this.isMultiHit,
@@ -736,9 +968,16 @@ public class CardDataExtended : CardData
             channelingGuardIncreasedPercent = this.channelingGuardIncreasedPercent,
             channelingGuardMorePercent = this.channelingGuardMorePercent,
             embossingSlots = this.embossingSlots,
-            appliedEmbossings = new List<EmbossingInstance>(), // Start with empty embossings
+            appliedEmbossings = this.appliedEmbossings != null ? new List<EmbossingInstance>(this.appliedEmbossings) : new List<EmbossingInstance>(), // Copy embossings from CardDataExtended
             cardLevel = this.cardLevel,
-            cardExperience = this.cardExperience
+            cardExperience = this.cardExperience,
+            preparedCardDamageBase = this.preparedCardDamageBase,
+            preparedCardDamageScaling = this.preparedCardDamageScaling,
+            preparedCardPoisonBase = this.preparedCardPoisonBase,
+            preparedCardGuardBase = this.preparedCardGuardBase,
+            preparedCardGuardScaling = this.preparedCardGuardScaling,
+            consumedCardDamageBase = this.consumedCardDamageBase,
+            consumedCardDamageScaling = this.consumedCardDamageScaling
         };
         
         // Set source reference for preparation system

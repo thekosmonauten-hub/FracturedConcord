@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Divine Wrath
   groupKey: divine_wrath
   cardType: Attack
-  playCost: 2
+  playCost: 20
   description: 'Deal {damage} chaos damage to all enemies. '
   rarity: 0
   element: 5

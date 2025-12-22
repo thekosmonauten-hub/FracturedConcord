@@ -18,10 +18,12 @@ MonoBehaviour:
     of spells
   icon: {fileID: 0}
   themeColor: {r: 0.5, g: 0.8, b: 1, a: 1}
-  effectLevel1: 10% more Spell damage, +10% increased spell Critical strike chance.
-  effectLevel20: 20% more Spell damage, +20% increased spell Critical strike chance.
+  effectLevel1: 10% more Spell damage. +10% increased spell Critical strike chance.
+  effectLevel20: 20% more Spell damage. +20% increased spell Critical strike chance.
   relianceCost: 100
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Concordial Resonance_AddDamageMorePercent_spell
+  - Concordial Resonance_ModifyStat_spell critical strike chance.
+  requiredLevel: 38
   unlockRequirement: 

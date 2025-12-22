@@ -125,6 +125,12 @@ public class WarrantBoardGraphBuilder : MonoBehaviour
                 }
             }
         }
+        
+        // Notify state controller that graph is built so it can refresh effect views
+        if (boardStateController != null)
+        {
+            boardStateController.OnGraphBuilt();
+        }
     }
 
     private List<WarrantBoardRuntimeGraph.Node> GetIntermediateNodes(string fromId, string toId)

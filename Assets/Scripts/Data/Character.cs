@@ -21,9 +21,9 @@ public class Character
     public int intelligence = 14;
     
     [Header("Resources")]
-    public int mana = 3;
-    public int maxMana = 3;
-    public int manaRecoveryPerTurn = 3; // Base mana recovery per turn
+    public int mana = 30;
+    public int maxMana = 30;
+    public int manaRecoveryPerTurn = 30; // Base mana recovery per turn
     public int cardsDrawnPerTurn = 1; // Base cards drawn per turn
     public int cardsDrawnPerWave = 1; // Base cards drawn when a new wave starts (in addition to turn draw)
     public int reliance = 200;
@@ -163,6 +163,8 @@ public class Character
     
     // Derived secondary stats from attributes
     public float increasedMeleePhysicalDamage = 0f; // Additive increased (e.g., 0.15 = +15%)
+    public float increasedSpellDamage = 0f; // Additive increased spell damage from Intelligence (e.g., 0.15 = +15%)
+    public float increasedEnergyShieldPercent = 0f; // % increased Energy Shield from Intelligence (e.g., 0.10 = +10%)
     public float accuracyRating = 0f;
     public float increasedEvasion = 0f; // Additive increased (e.g., 0.10 = +10%)
     public float baseEvasionRating = 0f; // baseline before increased modifiers
@@ -201,7 +203,7 @@ public class Character
     
     [Header("Temporal Savant Modifiers")]
     public float temporalCardDrawChancePercent = 0f; // Chance to draw Temporal cards
-    public float increasedEnergyShieldPercent = 0f; // Increased Energy Shield
+    // Note: increasedEnergyShieldPercent is defined in "Derived secondary stats from attributes" section (line 167)
     public float increasedTemporalCardEffectivenessPercent = 0f; // Increased effectiveness of Temporal cards
     public float temporalCardEffectBonusPercent = 0f; // Bonus effect for Temporal cards (Borrowed Power)
     public int temporalCardManaCostIncrease = 0; // Mana cost increase for Temporal cards (Borrowed Power)
@@ -250,6 +252,10 @@ public class Character
     [Header("Warrants")]
     [Tooltip("List of warrant instances owned by this character. Persisted across scenes.")]
     public List<WarrantInstanceData> ownedWarrants = new List<WarrantInstanceData>();
+    
+    [Header("Forge Materials")]
+    [Tooltip("Materials salvaged from items, used for crafting.")]
+    public List<ForgeMaterialData> forgeMaterials = new List<ForgeMaterialData>();
     
     [Header("Progression")]
     public List<string> unlockedAbilities = new List<string>();
@@ -335,10 +341,10 @@ public class Character
                 break;
         }
         
-        // All classes start with 3 Mana and 200 Reliance
-        mana = 3;
-        maxMana = 3;
-        manaRecoveryPerTurn = 3; // Base mana recovery per turn
+        // All classes start with 30 Mana and 200 Reliance
+        mana = 30;
+        maxMana = 30;
+        manaRecoveryPerTurn = 30; // Base mana recovery per turn
         cardsDrawnPerTurn = 1; // Base cards drawn per turn
         cardsDrawnPerWave = 1; // Base cards drawn per wave
         reliance = 200;
@@ -401,13 +407,28 @@ public class Character
         increasedEvasion = 0.01f * (dex / 5) + 0.02f * (dex / 10);
         baseEvasionRating = 0f; // can be set by gear; character sheets can display final via a helper if needed
 
-        // Intelligence → Energy Shield and Increased Max ES
-        // Every 2 INT: +1 ES; Every 10 INT: +5 additional ES
-        // Every 5 INT: +1% inc max ES; Every 10 INT: +2% additional inc max ES
-        int esFromInt = (intel / 2) + 5 * (intel / 10);
-        float incESPct = 0.01f * (intel / 5) + 0.02f * (intel / 10);
-        maxEnergyShield = Mathf.FloorToInt(esFromInt * (1f + incESPct));
-        currentEnergyShield = maxEnergyShield; // Start with full energy shield
+        // Intelligence → Increased Spell Damage and % Increased Energy Shield
+        // Spell Damage: Same formula as Strength's melee physical damage
+        // Every 5 INT: +1% inc spell damage; Every 10 INT: +2% additional inc spell damage
+        float incSpellFromInt = 0.01f * (intel / 5) + 0.02f * (intel / 10);
+        increasedSpellDamage = incSpellFromInt;
+        
+        // Add Intelligence's spell damage to damageModifiers list (so it's included in CharacterStatsData)
+        // Clear any existing Intelligence-based spell damage first (to avoid duplicates on recalculation)
+        damageModifiers.increasedSpellDamage.RemoveAll(x => Mathf.Approximately(x, incSpellFromInt));
+        if (incSpellFromInt > 0f)
+        {
+            damageModifiers.increasedSpellDamage.Add(incSpellFromInt);
+        }
+        
+        // Energy Shield: % Increased (not flat)
+        // Every 3 INT: +1% increased Energy Shield
+        increasedEnergyShieldPercent = 0.01f * (intel / 3);
+        
+        // Base Energy Shield stays 0 unless overridden by content systems (equipment, etc.)
+        // The % increased will be applied when calculating final ES from equipment/base values
+        // For now, we don't set maxEnergyShield here - it should come from equipment or other sources
+        // maxEnergyShield will be calculated elsewhere with the increasedEnergyShieldPercent applied
         
         // Attack power (based on Strength and Dexterity)
         attackPower = strength * 2 + dexterity * 1;
@@ -781,6 +802,66 @@ public class Character
         // Warrants
         data.ownedWarrants = new List<WarrantInstanceData>(ownedWarrants);
         
+        // Warrant Board State (NEW) - Save socket assignments and unlocked nodes
+        // First try to get from WarrantsManager singleton (persists across scenes)
+        var warrantsManager = WarrantsManager.Instance;
+        if (warrantsManager != null)
+        {
+            string stateJson = warrantsManager.GetWarrantBoardStateJson();
+            if (!string.IsNullOrEmpty(stateJson))
+            {
+                data.warrantBoardStateJson = stateJson;
+                Debug.Log($"[Character] Saved warrant board state from WarrantsManager ({data.warrantBoardStateJson.Length} chars)");
+            }
+            else
+            {
+                // Fallback: Try to get from WarrantBoardStateController if it's in the scene
+                var boardState = UnityEngine.Object.FindFirstObjectByType<WarrantBoardStateController>();
+                if (boardState != null)
+                {
+                    data.warrantBoardStateJson = boardState.ToJson(false);
+                    // Also sync to WarrantsManager for next time
+                    warrantsManager.SetWarrantBoardStateJson(data.warrantBoardStateJson);
+                    Debug.Log($"[Character] Saved warrant board state from WarrantBoardStateController ({data.warrantBoardStateJson.Length} chars)");
+                }
+                else
+                {
+                    // Final fallback: Try PlayerPrefs
+                    string playerPrefsKey = $"WarrantBoardState_{this.characterName}";
+                    if (PlayerPrefs.HasKey(playerPrefsKey))
+                    {
+                        data.warrantBoardStateJson = PlayerPrefs.GetString(playerPrefsKey);
+                        Debug.Log($"[Character] Loaded warrant board state from PlayerPrefs fallback ({data.warrantBoardStateJson.Length} chars)");
+                    }
+                    else if (PlayerPrefs.HasKey("WarrantBoardState"))
+                    {
+                        data.warrantBoardStateJson = PlayerPrefs.GetString("WarrantBoardState");
+                        Debug.Log($"[Character] Loaded warrant board state from legacy PlayerPrefs key ({data.warrantBoardStateJson.Length} chars)");
+                    }
+                    else
+                    {
+                        data.warrantBoardStateJson = "";
+                        Debug.LogWarning("[Character] No warrant board state found in WarrantsManager, WarrantBoardStateController, or PlayerPrefs");
+                    }
+                }
+            }
+        }
+        else
+        {
+            // WarrantsManager not available - try direct access to controller
+            var boardState = UnityEngine.Object.FindFirstObjectByType<WarrantBoardStateController>();
+            if (boardState != null)
+            {
+                data.warrantBoardStateJson = boardState.ToJson(false);
+                Debug.Log($"[Character] Saved warrant board state from WarrantBoardStateController (WarrantsManager unavailable) ({data.warrantBoardStateJson.Length} chars)");
+            }
+            else
+            {
+                data.warrantBoardStateJson = "";
+                Debug.LogWarning("[Character] WarrantsManager and WarrantBoardStateController both unavailable - warrant board state not saved");
+            }
+        }
+        
         // Currencies (NEW)
         var lootManager = LootManager.Instance;
         if (lootManager != null)
@@ -813,6 +894,9 @@ public class Character
         
         // Aura Experience Data
         data.auraExperienceData = auraExperienceData != null ? new List<AuraExperienceData>(auraExperienceData) : new List<AuraExperienceData>();
+        
+        // Forge Materials
+        data.forgeMaterials = forgeMaterials != null ? new List<ForgeMaterialData>(forgeMaterials) : new List<ForgeMaterialData>();
         
         return data;
     }
@@ -969,6 +1053,9 @@ public class Character
         // Aura Experience Data
         character.auraExperienceData = data.auraExperienceData != null ? new List<AuraExperienceData>(data.auraExperienceData) : new List<AuraExperienceData>();
         
+        // Forge Materials
+        character.forgeMaterials = data.forgeMaterials != null ? new List<ForgeMaterialData>(data.forgeMaterials) : new List<ForgeMaterialData>();
+        
         character.completedEncounterIDs = data.completedEncounterIDs != null ? new List<int>(data.completedEncounterIDs) : new List<int>();
         character.unlockedEncounterIDs = data.unlockedEncounterIDs != null ? new List<int>(data.unlockedEncounterIDs) : new List<int>();
         character.enteredEncounterIDs = data.enteredEncounterIDs != null ? new List<int>(data.enteredEncounterIDs) : new List<int>();
@@ -977,6 +1064,32 @@ public class Character
         
         // Warrants
         character.ownedWarrants = data.ownedWarrants != null ? new List<WarrantInstanceData>(data.ownedWarrants) : new List<WarrantInstanceData>();
+        
+        // Warrant Board State (NEW) - Load socket assignments and unlocked nodes
+        // Note: This will be applied when the warrant board scene is loaded
+        // Store the JSON string temporarily so it can be loaded later
+        if (!string.IsNullOrEmpty(data.warrantBoardStateJson))
+        {
+            // First, sync to WarrantsManager (persists across scenes)
+            var warrantsManager = WarrantsManager.Instance;
+            if (warrantsManager != null)
+            {
+                warrantsManager.SetWarrantBoardStateJson(data.warrantBoardStateJson);
+            }
+            
+            // Try to load immediately if board state controller exists
+            var boardState = UnityEngine.Object.FindFirstObjectByType<WarrantBoardStateController>();
+            if (boardState != null)
+            {
+                boardState.LoadFromJson(data.warrantBoardStateJson);
+                Debug.Log($"[Character] Loaded warrant board state from CharacterData into WarrantsManager and WarrantBoardStateController ({data.warrantBoardStateJson.Length} chars)");
+            }
+            else
+            {
+                // Board state controller not available yet - state is in WarrantsManager and will be loaded when warrant board scene opens
+                Debug.Log($"[Character] Loaded warrant board state from CharacterData into WarrantsManager (WarrantBoardStateController not in scene) ({data.warrantBoardStateJson.Length} chars)");
+            }
+        }
         
         // Currencies (NEW)
         var lootManager = LootManager.Instance;
@@ -1193,10 +1306,7 @@ public class Character
     /// </summary>
     public void RefreshWarrantModifiers()
     {
-        // Clear all warrant modifiers first to avoid duplicates
-        ClearAllWarrantModifiers();
-        
-        // Re-apply equipment modifiers first
+        // Re-apply equipment modifiers first (these should always be available)
         var equipmentManager = EquipmentManager.Instance;
         if (equipmentManager != null)
         {
@@ -1204,26 +1314,48 @@ public class Character
         }
         
         // Find WarrantBoardStateController and WarrantLockerGrid
-        var boardState = UnityEngine.Object.FindFirstObjectByType<WarrantBoardStateController>();
-        var lockerGrid = UnityEngine.Object.FindFirstObjectByType<WarrantLockerGrid>();
+        // Use FindObjectsByType with FindObjectsInactive.Include to find inactive components
+        // This ensures we can refresh modifiers even when the locker panel is inactive
+        var boardStates = UnityEngine.Object.FindObjectsByType<WarrantBoardStateController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        var lockerGrids = UnityEngine.Object.FindObjectsByType<WarrantLockerGrid>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        var graphBuilders = UnityEngine.Object.FindObjectsByType<WarrantBoardGraphBuilder>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        
+        WarrantBoardStateController boardState = boardStates != null && boardStates.Length > 0 ? boardStates[0] : null;
+        WarrantLockerGrid lockerGrid = lockerGrids != null && lockerGrids.Length > 0 ? lockerGrids[0] : null;
         
         // WarrantBoardRuntimeGraph is not a MonoBehaviour, get it from WarrantBoardGraphBuilder
         WarrantBoardRuntimeGraph runtimeGraph = null;
-        var graphBuilder = UnityEngine.Object.FindFirstObjectByType<WarrantBoardGraphBuilder>();
-        if (graphBuilder != null)
+        if (graphBuilders != null && graphBuilders.Length > 0 && graphBuilders[0] != null)
         {
-            runtimeGraph = graphBuilder.RuntimeGraph;
+            runtimeGraph = graphBuilders[0].RuntimeGraph;
         }
         
         if (boardState != null && lockerGrid != null && runtimeGraph != null)
         {
+            // Only clear warrant modifiers if we can successfully re-apply them
+            // This ensures modifiers persist across scenes where warrant board components aren't available
+            ClearAllWarrantModifiers();
+            
             WarrantModifierCollector.ApplyWarrantModifiersToCharacter(this, boardState, lockerGrid, runtimeGraph);
             Debug.Log($"[Character] ✅ Refreshed warrant modifiers. Total increased Physical Damage entries: {damageModifiers.increasedPhysicalDamage.Count}");
         }
         else
         {
-            Debug.LogWarning("[Character] Could not refresh warrant modifiers - missing warrant board components");
+            // If warrant board components aren't available, try lightweight method from saved state
+            // This ensures modifiers are applied even when WarrantScene isn't loaded
+            ClearAllWarrantModifiers();
+            WarrantModifierCollector.ApplyWarrantModifiersFromSavedState(this);
+            
+            string missing = "";
+            if (boardState == null) missing += "WarrantBoardStateController ";
+            if (lockerGrid == null) missing += "WarrantLockerGrid ";
+            if (runtimeGraph == null) missing += "WarrantBoardRuntimeGraph ";
+            Debug.Log($"[Character] Warrant board components not available ({missing.Trim()}). Applied modifiers from saved state instead.");
         }
+        
+        // Re-apply attribute-based modifiers (Strength's melee physical, Intelligence's spell damage)
+        // This ensures attribute bonuses are preserved after clearing modifiers
+        CalculateDerivedStats();
     }
 
     public void ApplyEquipmentModifiers(DamageModifiers equipmentModifiers)

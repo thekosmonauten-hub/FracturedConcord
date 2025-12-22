@@ -15,8 +15,8 @@ MonoBehaviour:
   cardName: Heavy Strike
   groupKey: Heavy_Strike
   cardType: Attack
-  playCost: 1
-  description: Deal {damage} physical damage.
+  playCost: 10
+  description: Deal {damage} physical damage. This attack deals increased stagger damage.
   rarity: 0
   element: 4
   category: 0
@@ -74,7 +74,18 @@ MonoBehaviour:
     requiredIntelligence: 0
     requiredWeaponTypes: 
     requiredLevel: 1
-  effects: []
+  effects:
+  - effectType: 10
+    effectName: staggerEffectivenessIncreased
+    description: Increases stagger effectiveness by {value}%
+    value: 50
+    duration: 1
+    damageType: 1
+    targetsSelf: 1
+    targetsEnemy: 0
+    targetsAllEnemies: 0
+    targetsAll: 0
+    condition: 
   enableCombo: 1
   comboWith: 
   comboDescription: Deal {comboDamage} additional damage.

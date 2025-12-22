@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class CardTooltipView : MonoBehaviour
 {
     [Header("Card Elements")]
+    [SerializeField] private TextMeshProUGUI cardNameLabel;
     [SerializeField] private TextMeshProUGUI cardDetailsLabel;
     [SerializeField] private Image cardIconImage;
     [SerializeField] private Transform embossingContainer;
@@ -39,6 +40,12 @@ public class CardTooltipView : MonoBehaviour
 
     private void PopulateHeader(Card card, Character character)
     {
+        // Populate card name separately
+        if (cardNameLabel != null)
+        {
+            cardNameLabel.text = card.cardName;
+        }
+        
         if (cardDetailsLabel != null)
         {
             string manaDisplay;
@@ -46,19 +53,26 @@ public class CardTooltipView : MonoBehaviour
 
             if (card.sourceCardData != null)
             {
-                manaDisplay = card.sourceCardData.GetManaCostDisplay(card);
-                manaBreakdown = card.sourceCardData.GetManaCostBreakdown(card);
+                manaDisplay = card.sourceCardData.GetManaCostDisplay(card, character);
+                manaBreakdown = card.sourceCardData.GetManaCostBreakdown(card, character);
             }
             else
             {
-                manaDisplay = card.GetManaCostDisplay();
+                manaDisplay = card.GetManaCostDisplay(character);
                 if (EmbossingDatabase.Instance != null)
                 {
-                    manaBreakdown = EmbossingDatabase.Instance.GetManaCostBreakdown(card, card.manaCost);
+                    // For Skill cards, calculate base cost first
+                    int baseCost = card.manaCost;
+                    if (card.cardType == CardType.Skill && character != null)
+                    {
+                        float percentageCost = baseCost / 100.0f;
+                        baseCost = Mathf.RoundToInt(character.maxMana * percentageCost);
+                    }
+                    manaBreakdown = EmbossingDatabase.Instance.GetManaCostBreakdown(card, baseCost);
                 }
                 else
                 {
-                    manaBreakdown = $"Mana Cost: {card.GetCurrentManaCost()}";
+                    manaBreakdown = $"Mana Cost: {card.GetCurrentManaCost(character)}";
                 }
             }
 
@@ -71,17 +85,49 @@ public class CardTooltipView : MonoBehaviour
             {
                 dynamicDescription = card.GetDynamicDescription(character);
             }
+            
+            // Add damage breakdown if card has embossings
+            if (card.cardType == CardType.Attack && card.baseDamage > 0 && 
+                card.appliedEmbossings != null && card.appliedEmbossings.Count > 0)
+            {
+                var breakdown = CardStatCalculator.CalculateCardDamage(card, character);
+                if (breakdown.embossingFlatBonus > 0 || breakdown.embossingMultiplier > 0 || breakdown.embossingAddedDamage.Count > 0)
+                {
+                    // Extract breakdown from description if it exists, or add it
+                    if (!dynamicDescription.Contains("Damage Breakdown:"))
+                    {
+                        dynamicDescription += $"\n\n<color=cyan>Damage Breakdown:</color>\n{breakdown.breakdownText}";
+                    }
+                }
+            }
 
             int filled = card.GetFilledSlotCount();
             string embossingInfo = $"Embossings: {filled}/{card.embossingSlots}";
+            
+            // Build card tags string
+            string tagsText = string.Empty;
+            if (card.tags != null && card.tags.Count > 0)
+            {
+                tagsText = $"Tags: {string.Join(", ", card.tags)}";
+            }
 
             cardDetailsLabel.text =
-                $"{card.cardName}\n" +
                 $"Type: {card.cardType}\n" +
                 $"Mana: {manaDisplay}\n" +
                 $"{manaBreakdown}\n" +
-                $"{embossingInfo}\n\n" +
-                $"{dynamicDescription}";
+                $"{embossingInfo}";
+            
+            // Add tags if present
+            if (!string.IsNullOrEmpty(tagsText))
+            {
+                cardDetailsLabel.text += $"\n{tagsText}";
+            }
+            
+            // Add description
+            if (!string.IsNullOrEmpty(dynamicDescription))
+            {
+                cardDetailsLabel.text += $"\n\n{dynamicDescription}";
+            }
         }
 
         if (cardIconImage != null)
@@ -110,33 +156,96 @@ public class CardTooltipView : MonoBehaviour
             }
 
             EmbossingInstance instance = embossings[i];
+            
+            // Ensure database exists
+            if (EmbossingDatabase.Instance == null)
+            {
+                EmbossingDatabase.EnsureInstance();
+            }
+            
             EmbossingEffect effect = EmbossingDatabase.Instance != null
                 ? EmbossingDatabase.Instance.GetEmbossing(instance.embossingId)
                 : null;
 
+            if (effect == null)
+            {
+                Debug.LogWarning($"[CardTooltipView] Embossing not found in database: '{instance.embossingId}' for card '{card.cardName}'. Instance is {(EmbossingDatabase.Instance == null ? "NULL" : "EXISTS")}");
+            }
+
             if (row.Icon != null)
             {
-                row.Icon.sprite = effect?.embossingIcon;
-                row.Icon.color = effect != null ? effect.embossingColor : Color.white;
-                row.Icon.enabled = row.Icon.sprite != null;
+                if (effect != null && effect.embossingIcon != null)
+                {
+                    row.Icon.sprite = effect.embossingIcon;
+                    row.Icon.color = effect.embossingColor;
+                    row.Icon.enabled = true;
+                }
+                else
+                {
+                    row.Icon.sprite = null;
+                    row.Icon.enabled = false;
+                    if (effect != null)
+                    {
+                        Debug.LogWarning($"[CardTooltipView] Embossing '{effect.embossingName}' (ID: {instance.embossingId}) has no icon assigned");
+                    }
+                }
             }
 
             if (row.Description != null)
             {
                 string title = effect != null ? effect.embossingName : instance.embossingId;
-                string effectDescription = effect != null ? effect.GetEffectDescription() : "Unknown effect";
-                string requirements = effect != null ? effect.GetRequirementsTextColored(character) : string.Empty;
+                string effectDescription = "Unknown effect";
+                
+                if (effect != null)
+                {
+                    string desc = effect.GetEffectDescription();
+                    if (!string.IsNullOrEmpty(desc))
+                    {
+                        effectDescription = desc;
+                    }
+                    else if (!string.IsNullOrEmpty(effect.description))
+                    {
+                        // Fallback to description field if GetEffectDescription() returns empty
+                        effectDescription = effect.description;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[CardTooltipView] Embossing '{effect.embossingName}' (ID: {instance.embossingId}) has no description");
+                    }
+                }
 
                 row.Description.text =
                     $"{title} (Lv {instance.level})\n" +
-                    $"{effectDescription}\n" +
-                    $"{requirements}".TrimEnd();
+                    $"{effectDescription}";
             }
         }
     }
 
     private void CacheUIElements()
     {
+        if (cardNameLabel == null)
+        {
+            // Try multiple possible paths for card name
+            var namePaths = new[]
+            {
+                "Header/CardName",
+                "CardName",
+                "Header/Title",
+                "Title"
+            };
+            
+            foreach (var path in namePaths)
+            {
+                var nameObj = transform.Find(path);
+                if (nameObj != null)
+                {
+                    cardNameLabel = nameObj.GetComponent<TextMeshProUGUI>();
+                    if (cardNameLabel != null)
+                        break;
+                }
+            }
+        }
+        
         if (cardDetailsLabel == null)
         {
             var header = transform.Find("Header/CardDetails");
@@ -169,7 +278,7 @@ public class CardTooltipView : MonoBehaviour
 
     private void EnsureUIReferencesCached()
     {
-        if (cardDetailsLabel == null || cardIconImage == null || embossingRows.Count == 0)
+        if (cardNameLabel == null || cardDetailsLabel == null || cardIconImage == null || embossingRows.Count == 0)
         {
             CacheUIElements();
         }

@@ -358,12 +358,10 @@ public class CardRuntimeManager : MonoBehaviour
 
         cardObj.transform.localScale = cardScale;
         SetSiblingIndex(cardObj.transform, index);
-
-        CardHoverEffect hoverEffect = cardObj.GetComponent<CardHoverEffect>();
-        if (hoverEffect != null)
-        {
-            hoverEffect.StoreOriginalPosition();
-        }
+        
+        // Ensure raycasting is enabled and finalize placement
+        EnsureCardRaycastEnabled(cardObj);
+        FinalizeCardPlacement(cardObj);
     }
 
     /// <summary>
@@ -432,6 +430,9 @@ public class CardRuntimeManager : MonoBehaviour
                 
                 // Additional safety: Cancel any existing position tweens before repositioning
                 LeanTween.cancel(cardList[i], false);
+                
+                // Update sibling index immediately to ensure proper z-ordering
+                SetSiblingIndex(cardList[i].transform, i);
                 
                 if (animated)
                 {
@@ -505,16 +506,42 @@ public class CardRuntimeManager : MonoBehaviour
 
         cardObj.transform.position = startPos;
 
+        // Callback to ensure raycasting is enabled and card is finalized after animation
+        System.Action onComplete = () =>
+        {
+            // Ensure raycasting is enabled (safety check)
+            EnsureCardRaycastEnabled(cardObj);
+            // Finalize card placement
+            FinalizeCardPlacement(cardObj);
+        };
+
         if (delay > 0f)
         {
             LeanTween.delayedCall(delay, () =>
             {
-                animManager.AnimateCardDraw(cardObj, startPos, endPos);
+                animManager.AnimateCardDraw(cardObj, startPos, endPos, onComplete);
             });
         }
         else
         {
-            animManager.AnimateCardDraw(cardObj, startPos, endPos);
+            animManager.AnimateCardDraw(cardObj, startPos, endPos, onComplete);
+        }
+    }
+    
+    /// <summary>
+    /// Ensure raycasting is enabled on all graphics in a card
+    /// </summary>
+    private void EnsureCardRaycastEnabled(GameObject cardObj)
+    {
+        if (cardObj == null) return;
+        
+        var graphics = cardObj.GetComponentsInChildren<UnityEngine.UI.Graphic>(true);
+        foreach (var graphic in graphics)
+        {
+            if (graphic != null)
+            {
+                graphic.raycastTarget = true;
+            }
         }
     }
     
@@ -777,10 +804,18 @@ public class CardRuntimeManager : MonoBehaviour
 
     private void FinalizeCardPlacement(GameObject cardObj)
     {
+        // Ensure raycasting is enabled (safety check in case it was disabled during animation/repositioning)
+        EnsureCardRaycastEnabled(cardObj);
+        
         CardHoverEffect hoverEffect = cardObj.GetComponent<CardHoverEffect>();
         if (hoverEffect != null)
         {
             hoverEffect.StoreOriginalPosition();
+            // If card is currently hovering, update its hover position
+            if (hoverEffect.IsHovering())
+            {
+                hoverEffect.UpdateHoverPosition();
+            }
         }
     }
 

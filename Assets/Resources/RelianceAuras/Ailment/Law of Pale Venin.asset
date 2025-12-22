@@ -14,14 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RelianceAura
   auraName: Law of Pale Venin
   category: Ailment
-  description: A lingering poison-law infects your attacks; applying an additional
-    stack of poison.
+  description: Your attacks have a chance to apply an extra stack of Poison.
   icon: {fileID: 0}
   themeColor: {r: 0.5, g: 0.2, b: 0.8, a: 1}
-  effectLevel1: 25% chance to poison on hit, +1 Poison stacks applied.
-  effectLevel20: 40% chance to poison on hit, +1 Poison stacks applied.
+  effectLevel1: 25% chance to poison on hit. +1 Poison stacks applied.
+  effectLevel20: 40% chance to poison on hit. +1 Poison stacks applied.
   relianceCost: 65
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Law of Pale Venin_AddPoisonStacks
+  - Law of Pale Venin_ApplyStatus
+  requiredLevel: 21
   unlockRequirement: 

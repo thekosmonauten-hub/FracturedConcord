@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Cleave
   groupKey: Cleave
   cardType: Attack
-  playCost: 1
+  playCost: 10
   description: Deal {damage} physical damage to {aoeTargets} enemies.
   rarity: 0
   element: 4

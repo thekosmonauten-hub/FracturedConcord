@@ -3507,8 +3507,8 @@ MonoBehaviour:
           damageType: 0
           scope: 0
           description: 
-          originalMinValue: 30
-          originalMaxValue: 39
+          originalMinValue: 300
+          originalMaxValue: 390
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -3771,8 +3771,8 @@ MonoBehaviour:
           damageType: 0
           scope: 0
           description: 
-          originalMinValue: 10
-          originalMaxValue: 14
+          originalMinValue: 100
+          originalMaxValue: 140
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -3789,8 +3789,8 @@ MonoBehaviour:
           damageType: 0
           scope: 0
           description: 
-          originalMinValue: 10
-          originalMaxValue: 14
+          originalMinValue: 100
+          originalMaxValue: 140
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -3887,8 +3887,8 @@ MonoBehaviour:
           damageType: 0
           scope: 0
           description: 
-          originalMinValue: 10
-          originalMaxValue: 14
+          originalMinValue: 100
+          originalMaxValue: 140
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -3905,8 +3905,8 @@ MonoBehaviour:
           damageType: 0
           scope: 0
           description: 
-          originalMinValue: 10
-          originalMaxValue: 14
+          originalMinValue: 100
+          originalMaxValue: 140
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -6060,8 +6060,8 @@ MonoBehaviour:
           damageType: 0
           scope: 0
           description: 
-          originalMinValue: 8
-          originalMaxValue: 12
+          originalMinValue: 80
+          originalMaxValue: 120
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -12100,8 +12100,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 8
-          originalMaxValue: 12
+          originalMinValue: 80
+          originalMaxValue: 120
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -12413,8 +12413,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 30
-          originalMaxValue: 39
+          originalMinValue: 300
+          originalMaxValue: 390
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -16452,8 +16452,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 3
-          originalMaxValue: 5
+          originalMinValue: 30
+          originalMaxValue: 50
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -18112,8 +18112,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 30
-          originalMaxValue: 39
+          originalMinValue: 300
+          originalMaxValue: 390
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -18330,19 +18330,19 @@ MonoBehaviour:
     - subCategoryName: Mana
       affixes:
       - name: Mana Infused
-        description: "+5\u20139 to Maximum Mana"
+        description: "+50\u201390 to Maximum Mana"
         affixType: 0
         tier: 8
         modifiers:
         - statName: maxMana
-          minValue: 5
-          maxValue: 9
+          minValue: 50
+          maxValue: 90
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 5
-          originalMaxValue: 9
+          originalMinValue: 50
+          originalMaxValue: 90
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -18365,19 +18365,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Mindful
-        description: "+10\u201314 to Maximum Mana"
+        description: "+100\u2013140 to Maximum Mana"
         affixType: 0
         tier: 7
         modifiers:
         - statName: maxMana
-          minValue: 10
-          maxValue: 14
+          minValue: 100
+          maxValue: 140
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 10
-          originalMaxValue: 14
+          originalMinValue: 100
+          originalMaxValue: 140
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -18400,19 +18400,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Enlightened
-        description: "+15\u201319 to Maximum Mana"
+        description: "+150\u2013190 to Maximum Mana"
         affixType: 0
         tier: 6
         modifiers:
         - statName: maxMana
-          minValue: 15
-          maxValue: 19
+          minValue: 150
+          maxValue: 190
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 15
-          originalMaxValue: 19
+          originalMinValue: 150
+          originalMaxValue: 190
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -18435,19 +18435,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Spiritual
-        description: "+20\u201324 to Maximum Mana"
+        description: "+200\u2013240 to Maximum Mana"
         affixType: 0
         tier: 5
         modifiers:
         - statName: maxMana
-          minValue: 20
-          maxValue: 24
+          minValue: 200
+          maxValue: 240
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 20
-          originalMaxValue: 24
+          originalMinValue: 200
+          originalMaxValue: 240
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -18470,19 +18470,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Arcane
-        description: "+25\u201329 to Maximum Mana"
+        description: "+250\u2013290 to Maximum Mana"
         affixType: 0
         tier: 3
         modifiers:
         - statName: maxMana
-          minValue: 25
-          maxValue: 29
+          minValue: 250
+          maxValue: 290
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 25
-          originalMaxValue: 29
+          originalMinValue: 250
+          originalMaxValue: 290
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -18505,19 +18505,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Sage's
-        description: "+30\u201339 to Maximum Mana"
+        description: "+300\u2013390 to Maximum Mana"
         affixType: 0
         tier: 1
         modifiers:
         - statName: maxMana
-          minValue: 30
-          maxValue: 39
+          minValue: 300
+          maxValue: 390
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 30
-          originalMaxValue: 39
+          originalMinValue: 300
+          originalMaxValue: 390
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -18972,7 +18972,7 @@ MonoBehaviour:
     - subCategoryName: Life & Mana
       affixes:
       - name: Balanced
-        description: "+15\u201324 to Maximum Life and +8\u201312 to Maximum Mana"
+        description: "+150\u2013240 to Maximum Life and +80\u2013120 to Maximum Mana"
         affixType: 0
         tier: 5
         modifiers:
@@ -18983,8 +18983,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 11.5
-          originalMaxValue: 18
+          originalMinValue: 115
+          originalMaxValue: 180
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -18995,14 +18995,14 @@ MonoBehaviour:
           rolledValue: 0
           isRolled: 0
         - statName: maxMana
-          minValue: 11.5
-          maxValue: 18
+          minValue: 115
+          maxValue: 180
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 11.5
-          originalMaxValue: 18
+          originalMinValue: 115
+          originalMaxValue: 180
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -19029,19 +19029,19 @@ MonoBehaviour:
     - subCategoryName: Maximum Mana
       affixes:
       - name: Mana-Touched
-        description: +1-1 to Maximum Mana
+        description: +10-10 to Maximum Mana
         affixType: 0
         tier: 9
         modifiers:
         - statName: maxMana
-          minValue: 1
-          maxValue: 1
+          minValue: 10
+          maxValue: 10
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 1
-          originalMaxValue: 1
+          originalMinValue: 10
+          originalMaxValue: 10
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -19067,19 +19067,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Mana-Blessed
-        description: +1-1 to Maximum Mana
+        description: +10-10 to Maximum Mana
         affixType: 0
         tier: 8
         modifiers:
         - statName: maxMana
-          minValue: 1
-          maxValue: 1
+          minValue: 10
+          maxValue: 10
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 1
-          originalMaxValue: 1
+          originalMinValue: 10
+          originalMaxValue: 10
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -19105,19 +19105,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Mana-Infused
-        description: +2-3 to Maximum Mana
+        description: +20-30 to Maximum Mana
         affixType: 0
         tier: 7
         modifiers:
         - statName: maxMana
-          minValue: 2
-          maxValue: 3
+          minValue: 20
+          maxValue: 30
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 2
-          originalMaxValue: 3
+          originalMinValue: 20
+          originalMaxValue: 30
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -19143,19 +19143,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Mana-Flowing
-        description: +3-5 to Maximum Mana
+        description: +30-50 to Maximum Mana
         affixType: 0
         tier: 6
         modifiers:
         - statName: maxMana
-          minValue: 3
-          maxValue: 5
+          minValue: 30
+          maxValue: 50
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 3
-          originalMaxValue: 5
+          originalMinValue: 30
+          originalMaxValue: 50
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -19181,19 +19181,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Mana-Rich
-        description: +4-7 to Maximum Mana
+        description: +40-70 to Maximum Mana
         affixType: 0
         tier: 5
         modifiers:
         - statName: maxMana
-          minValue: 4
-          maxValue: 7
+          minValue: 40
+          maxValue: 70
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 4
-          originalMaxValue: 7
+          originalMinValue: 40
+          originalMaxValue: 70
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -19219,19 +19219,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Mana-Weaver
-        description: +6-9 to Maximum Mana
+        description: +60-90 to Maximum Mana
         affixType: 0
         tier: 4
         modifiers:
         - statName: maxMana
-          minValue: 6
-          maxValue: 9
+          minValue: 60
+          maxValue: 90
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 6
-          originalMaxValue: 9
+          originalMinValue: 60
+          originalMaxValue: 90
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -19257,19 +19257,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Mana-Keeper
-        description: +8-12 to Maximum Mana
+        description: +80-120 to Maximum Mana
         affixType: 0
         tier: 3
         modifiers:
         - statName: maxMana
-          minValue: 8
-          maxValue: 12
+          minValue: 80
+          maxValue: 120
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 8
-          originalMaxValue: 12
+          originalMinValue: 80
+          originalMaxValue: 120
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -19295,19 +19295,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Mana-Sage
-        description: +10-14 to Maximum Mana
+        description: +100-140 to Maximum Mana
         affixType: 0
         tier: 2
         modifiers:
         - statName: maxMana
-          minValue: 10
-          maxValue: 14
+          minValue: 100
+          maxValue: 140
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 10
-          originalMaxValue: 14
+          originalMinValue: 100
+          originalMaxValue: 140
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -19333,19 +19333,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Mana-Master
-        description: +12-17 to Maximum Mana
+        description: +120-170 to Maximum Mana
         affixType: 0
         tier: 1
         modifiers:
         - statName: maxMana
-          minValue: 12
-          maxValue: 17
+          minValue: 120
+          maxValue: 170
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 12
-          originalMaxValue: 17
+          originalMinValue: 120
+          originalMaxValue: 170
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -19371,19 +19371,19 @@ MonoBehaviour:
         rolledValue: 0
         isRolled: 0
       - name: Mana-Transcendent
-        description: +15-20 to Maximum Mana
+        description: +150-200 to Maximum Mana
         affixType: 0
         tier: 0
         modifiers:
         - statName: maxMana
-          minValue: 15
-          maxValue: 20
+          minValue: 150
+          maxValue: 200
           modifierType: 0
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 15
-          originalMaxValue: 20
+          originalMinValue: 150
+          originalMaxValue: 200
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -20821,8 +20821,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 3
-          originalMaxValue: 5
+          originalMinValue: 30
+          originalMaxValue: 50
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -21736,8 +21736,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 1
-          originalMaxValue: 1
+          originalMinValue: 10
+          originalMaxValue: 10
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -21771,8 +21771,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 1
-          originalMaxValue: 1
+          originalMinValue: 10
+          originalMaxValue: 10
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0
@@ -21958,8 +21958,8 @@ MonoBehaviour:
           damageType: 0
           scope: 1
           description: 
-          originalMinValue: 3
-          originalMaxValue: 5
+          originalMinValue: 30
+          originalMaxValue: 50
           isDualRange: 0
           firstRangeMin: 0
           firstRangeMax: 0

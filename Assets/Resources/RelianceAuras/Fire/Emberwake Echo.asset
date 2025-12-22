@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RelianceAura
   auraName: Emberwake Echo
   category: Fire
-  description: Casts an aura that causes enemies you kill to spread their ignite
-    to a random target.
+  description: Casts an aura that causes enemies to take more Ignite damage.
   icon: {fileID: 0}
   themeColor: {r: 1, g: 0.3, b: 0.1, a: 1}
-  effectLevel1: 25% Increased ignite magnitude
-  effectLevel20: 35% Increased ignite magnitude
-  relianceCost: 55
+  effectLevel1: 25% more ignite magnitude
+  effectLevel20: 35% more ignite magnitude
+  relianceCost: 100
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Emberwake Echo_ModifyStat_igniteMagnitude
+  requiredLevel: 38
   unlockRequirement: 

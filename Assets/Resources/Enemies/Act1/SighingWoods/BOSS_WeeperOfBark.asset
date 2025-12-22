@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Weeper-of-Bark
   description: An ancient tree spirit corrupted by grief. Its bark weeps with sorrow,
     and its branches shatter with each movement.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: 226075129797047001, guid: 846fc3ec7b79efb4ca0f7642396587b7, type: 3}
   tier: 2
   rarity: 3
   category: 0

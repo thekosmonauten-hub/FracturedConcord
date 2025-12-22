@@ -15,9 +15,9 @@ MonoBehaviour:
   cardName: Poisoned Blade
   groupKey: Poisoned_Blade
   cardType: Attack
-  playCost: 1
-  description: Deal 4 physical damage (+Dex/3). Apply 2 Poison.\nIf you have prepared
-    cards, apply +1 Poison per prepared card.
+  playCost: 10
+  description: 'Deal {damage} physical damage. Apply 2 Poison.\nPrepare: Apply {PreparePoison}
+    additional Poison.'
   rarity: 0
   element: 4
   category: 0
@@ -27,7 +27,7 @@ MonoBehaviour:
   elementFrame: {fileID: 0}
   costBubble: {fileID: 0}
   rarityFrame: {fileID: 0}
-  damage: 4
+  damage: 5
   block: 0
   isDiscardCard: 0
   isDualWield: 0
@@ -47,11 +47,11 @@ MonoBehaviour:
   isMultiHit: 0
   hitCount: 2
   damageScaling:
-    strengthScaling: 1
+    strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
     strengthDivisor: 0
-    dexterityDivisor: 0
+    dexterityDivisor: 3
     intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0
@@ -75,7 +75,18 @@ MonoBehaviour:
     requiredIntelligence: 0
     requiredWeaponTypes: 
     requiredLevel: 1
-  effects: []
+  effects:
+  - effectType: 5
+    effectName: Poison
+    description: Apply 2 Poison
+    value: 2
+    duration: 3
+    damageType: 1
+    targetsSelf: 0
+    targetsEnemy: 1
+    targetsAllEnemies: 0
+    targetsAll: 0
+    condition: 
   enableCombo: 0
   comboWith: 
   comboDescription: Apply 3 Poison and gain 1 temporary Dexterity.
@@ -111,6 +122,7 @@ MonoBehaviour:
   - Attack
   - Physical
   - Melee
+  appliedEmbossings: []
   delayTurns: 0
   isDelayed: 0
   canPrepare: 0
@@ -119,3 +131,28 @@ MonoBehaviour:
   unleashCondition: manual
   unleashEffect: deal_stored_damage
   prepareDescription: 
+  preparedCardDamageBase: 8
+  preparedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 2
+    intelligenceDivisor: 0
+  preparedCardPoisonBase: 1
+  preparedCardGuardBase: 0
+  preparedCardGuardScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  consumedCardDamageBase: 0
+  consumedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0

@@ -100,6 +100,28 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		return baseScale;
 	}
 	
+	/// <summary>
+	/// Check if the card is currently hovering
+	/// </summary>
+	public bool IsHovering()
+	{
+		return isHovering;
+	}
+	
+	/// <summary>
+	/// Update the hover position when the card is repositioned while hovering
+	/// </summary>
+	public void UpdateHoverPosition()
+	{
+		if (isHovering && animationManager != null)
+		{
+			// Store the new position as the original
+			StoreOriginalPosition();
+			// Update the hover animation to use the new position
+			animationManager.AnimateCardHover(gameObject, originalPosition, true);
+		}
+	}
+	
 	public void OnPointerEnter(PointerEventData eventData)
 	{
 		// IMPORTANT: Don't process hover if component is disabled
@@ -146,10 +168,46 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		// Restore original order
 		RestoreLayerOrder();
 		
+		// Request hand reposition to ensure proper layout after hover
+		RequestHandReposition();
+		
 		// Hide tooltips if present
 		if (hoverTooltip != null)
 		{
 			hoverTooltip.Hide();
+		}
+	}
+	
+	/// <summary>
+	/// Request that the hand be repositioned to fix any layout issues
+	/// </summary>
+	private void RequestHandReposition()
+	{
+		// Find CardRuntimeManager and request reposition
+		var cardRuntimeManager = CardRuntimeManager.Instance;
+		if (cardRuntimeManager != null)
+		{
+			// Get the hand visuals from CombatDeckManager if available
+			var combatDeckManager = FindFirstObjectByType<CombatDeckManager>();
+			if (combatDeckManager != null)
+			{
+				// Use reflection to access handVisuals (private field)
+				var handVisualsField = typeof(CombatDeckManager).GetField("handVisuals", 
+					System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+				if (handVisualsField != null)
+				{
+					var handVisuals = handVisualsField.GetValue(combatDeckManager) as System.Collections.Generic.List<GameObject>;
+					if (handVisuals != null && handVisuals.Count > 0)
+					{
+						cardRuntimeManager.RepositionCards(handVisuals, animated: true, duration: 0.2f);
+					}
+				}
+			}
+			else
+			{
+				// Fallback: reposition all active cards
+				cardRuntimeManager.RepositionAllCards(animated: true, duration: 0.2f);
+			}
 		}
 	}
 	
@@ -287,6 +345,9 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		var lines = new System.Collections.Generic.List<string>();
 		Character character = GetCurrentCharacter();
 		
+		// Check if card is currently prepared (once, reuse for all sections)
+		PreparedCard preparedCard = GetPreparedCardForCard(card);
+		
 		// Calculate actual damage value
 		if (card.baseDamage > 0)
 		{
@@ -301,7 +362,17 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 				// Fallback: just add base + scaling bonus (without weapon/embossing)
 				totalDamage += card.damageScaling.CalculateScalingBonus(null);
 			}
-			lines.Add($"Damage: {card.baseDamage:F0} → {totalDamage:F0} (with scaling)");
+			
+			// Check if card is currently prepared and add preparation scaling
+			if (preparedCard != null)
+			{
+				float preparedDamage = preparedCard.GetCurrentDamage();
+				lines.Add($"Damage: {card.baseDamage:F0} → {totalDamage:F0} (base) → {preparedDamage:F0} (prepared {preparedCard.turnsPrepared}/{preparedCard.maxTurns})");
+			}
+			else
+			{
+				lines.Add($"Damage: {card.baseDamage:F0} → {totalDamage:F0} (with scaling)");
+			}
 		}
 		
 		// Calculate actual guard value
@@ -312,15 +383,53 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 			{
 				totalGuard += card.guardScaling.CalculateScalingBonus(character);
 			}
-			lines.Add($"Guard: {card.baseGuard:F0} → {totalGuard:F0} (with scaling)");
+			
+			// Check if card is currently prepared and add preparation scaling
+			if (preparedCard != null)
+			{
+				int preparedGuard = preparedCard.GetCurrentGuard();
+				lines.Add($"Guard: {card.baseGuard:F0} → {totalGuard:F0} (base) → {preparedGuard:F0} (prepared {preparedCard.turnsPrepared}/{preparedCard.maxTurns})");
+			}
+			else
+			{
+				lines.Add($"Guard: {card.baseGuard:F0} → {totalGuard:F0} (with scaling)");
+			}
 		}
 		
 		// Damage scaling details
 		var dmgScale = BuildScalingString("Scaling", card.scalesWithMeleeWeapon, card.scalesWithProjectileWeapon, card.scalesWithSpellWeapon, card.damageScaling);
 		if (!string.IsNullOrEmpty(dmgScale)) lines.Add(dmgScale);
+		
+		// Warrant bonuses (increased damage modifiers)
+		if (character != null && card.baseDamage > 0)
+		{
+			var statsData = new CharacterStatsData(character);
+			var warrantBonuses = BuildWarrantBonusesString(card, statsData);
+			if (!string.IsNullOrEmpty(warrantBonuses))
+			{
+				lines.Add(warrantBonuses);
+			}
+		}
+		
 		// Guard scaling details
 		var grdScale = BuildScalingString("Guard Scaling", false, false, false, card.guardScaling);
 		if (!string.IsNullOrEmpty(grdScale)) lines.Add(grdScale);
+		
+		// Preparation scaling details (if card is prepared)
+		if (preparedCard != null)
+		{
+			float multiplierPercent = preparedCard.currentMultiplier * 100f;
+			lines.Add($"Preparation: {preparedCard.turnsPrepared}/{preparedCard.maxTurns} charges (+{multiplierPercent:F0}% multiplier)");
+			if (preparedCard.isOvercharged)
+			{
+				lines.Add("  Overcharged: Half bonus per turn");
+			}
+			if (preparedCard.decayAmount > 0f)
+			{
+				float decayPercent = preparedCard.decayAmount * 100f;
+				lines.Add($"  Decay: -{decayPercent:F0}% penalty");
+			}
+		}
 		// Ailments
 		lines.AddRange(BuildAilmentLines(card.comboAilmentId, card.comboAilmentPortion, card.comboAilmentDuration));
 		// Buffs on legacy Card via effects
@@ -350,6 +459,9 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		var lines = new System.Collections.Generic.List<string>();
 		Character character = GetCurrentCharacter();
 		
+		// Check if card is currently prepared (once, reuse for all sections)
+		PreparedCard preparedCard = GetPreparedCardForExtended(ext);
+		
 		// Calculate actual damage value
 		if (ext.damage > 0)
 		{
@@ -365,7 +477,17 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 				// Fallback: just add base + scaling bonus (without weapon/embossing)
 				totalDamage += ext.damageScaling.CalculateScalingBonus(null);
 			}
-			lines.Add($"Damage: {ext.damage:F0} → {totalDamage:F0} (with scaling)");
+			
+			// Check if card is currently prepared and add preparation scaling
+			if (preparedCard != null)
+			{
+				float preparedDamage = preparedCard.GetCurrentDamage();
+				lines.Add($"Damage: {ext.damage:F0} → {totalDamage:F0} (base) → {preparedDamage:F0} (prepared {preparedCard.turnsPrepared}/{preparedCard.maxTurns})");
+			}
+			else
+			{
+				lines.Add($"Damage: {ext.damage:F0} → {totalDamage:F0} (with scaling)");
+			}
 		}
 		
 		// Calculate actual guard value
@@ -376,15 +498,55 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 			{
 				totalGuard += ext.guardScaling.CalculateScalingBonus(character);
 			}
-			lines.Add($"Guard: {ext.block:F0} → {totalGuard:F0} (with scaling)");
+			
+			// Check if card is currently prepared and add preparation scaling
+			if (preparedCard != null)
+			{
+				int preparedGuard = preparedCard.GetCurrentGuard();
+				lines.Add($"Guard: {ext.block:F0} → {totalGuard:F0} (base) → {preparedGuard:F0} (prepared {preparedCard.turnsPrepared}/{preparedCard.maxTurns})");
+			}
+			else
+			{
+				lines.Add($"Guard: {ext.block:F0} → {totalGuard:F0} (with scaling)");
+			}
 		}
 		
 		// Damage scaling details (weapons + stats)
 		var dmgScale = BuildScalingString("Scaling", ext.scalesWithMeleeWeapon, ext.scalesWithProjectileWeapon, ext.scalesWithSpellWeapon, ext.damageScaling);
 		if (!string.IsNullOrEmpty(dmgScale)) lines.Add(dmgScale);
+		
+		// Warrant bonuses (increased damage modifiers)
+		if (character != null && ext.damage > 0)
+		{
+			var statsData = new CharacterStatsData(character);
+			// Convert CardDataExtended to Card for warrant bonuses check
+			Card tempCard = ext.ToCard();
+			var warrantBonuses = BuildWarrantBonusesString(tempCard, statsData);
+			if (!string.IsNullOrEmpty(warrantBonuses))
+			{
+				lines.Add(warrantBonuses);
+			}
+		}
+		
 		// Guard scaling details
 		var grdScale = BuildScalingString("Guard Scaling", false, false, false, ext.guardScaling);
 		if (!string.IsNullOrEmpty(grdScale)) lines.Add(grdScale);
+		
+		// Preparation scaling details (if card is prepared)
+		if (preparedCard != null)
+		{
+			float multiplierPercent = preparedCard.currentMultiplier * 100f;
+			lines.Add($"Preparation: {preparedCard.turnsPrepared}/{preparedCard.maxTurns} charges (+{multiplierPercent:F0}% multiplier)");
+			if (preparedCard.isOvercharged)
+			{
+				lines.Add("  Overcharged: Half bonus per turn");
+			}
+			if (preparedCard.decayAmount > 0f)
+			{
+				float decayPercent = preparedCard.decayAmount * 100f;
+				lines.Add($"  Decay: -{decayPercent:F0}% penalty");
+			}
+		}
 		// Ailments from asset-defined combo/apply
 		lines.AddRange(BuildAilmentLines(ext.comboAilment, ext.comboAilmentPortion, ext.comboAilmentDuration));
 		// Buffs: Bolster via comboBuffs or effects
@@ -577,6 +739,95 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		}
 		return $"{stat} x {scale:0.##}";
 	}
+	
+	/// <summary>
+	/// Build string showing warrant bonuses (increased damage modifiers) that apply to this card
+	/// </summary>
+	private string BuildWarrantBonusesString(Card card, CharacterStatsData statsData)
+	{
+		if (statsData == null || card == null) return string.Empty;
+		
+		var bonusParts = new System.Collections.Generic.List<string>();
+		
+		// Determine card type for relevant bonuses
+		bool isSpell = card.cardType == CardType.Skill || card.cardType == CardType.Power ||
+		               (card.tags != null && (card.tags.Contains("Spell") || card.tags.Contains("spell")));
+		bool isAttack = card.cardType == CardType.Attack;
+		bool isProjectile = card.scalesWithProjectileWeapon || 
+		                    (card.tags != null && (card.tags.Contains("Projectile") || card.tags.Contains("projectile")));
+		bool isMelee = card.scalesWithMeleeWeapon;
+		bool isRanged = card.scalesWithProjectileWeapon;
+		bool isAoE = card.isAoE || (card.tags != null && (card.tags.Contains("AoE") || card.tags.Contains("aoe")));
+		
+		// Spell damage bonus (for spell cards)
+		// Values are stored as decimals (0.2 = 20%), so multiply by 100 for display
+		if (isSpell && statsData.increasedSpellDamage > 0f)
+		{
+			bonusParts.Add($"+{statsData.increasedSpellDamage * 100f:F0}% Spell Damage");
+		}
+		
+		// Attack damage bonus (for attack cards)
+		if (isAttack && statsData.increasedAttackDamage > 0f)
+		{
+			bonusParts.Add($"+{statsData.increasedAttackDamage * 100f:F0}% Attack Damage");
+		}
+		
+		// Projectile damage bonus
+		if (isProjectile && statsData.increasedProjectileDamage > 0f)
+		{
+			bonusParts.Add($"+{statsData.increasedProjectileDamage * 100f:F0}% Projectile Damage");
+		}
+		
+		// Melee damage bonus
+		if (isMelee && statsData.increasedMeleeDamage > 0f)
+		{
+			bonusParts.Add($"+{statsData.increasedMeleeDamage * 100f:F0}% Melee Damage");
+		}
+		
+		// Ranged damage bonus
+		if (isRanged && statsData.increasedRangedDamage > 0f)
+		{
+			bonusParts.Add($"+{statsData.increasedRangedDamage * 100f:F0}% Ranged Damage");
+		}
+		
+		// AoE damage bonus
+		if (isAoE && statsData.increasedAreaDamage > 0f)
+		{
+			bonusParts.Add($"+{statsData.increasedAreaDamage * 100f:F0}% Area Damage");
+		}
+		
+		// Elemental damage bonuses (for elemental cards)
+		// Only show specific elemental type, not generic "Elemental" since specific types are more informative
+		DamageType primaryType = card.primaryDamageType;
+		if (primaryType == DamageType.Fire && statsData.increasedFireDamage > 0f)
+		{
+			bonusParts.Add($"+{statsData.increasedFireDamage * 100f:F0}% Fire Damage");
+		}
+		else if (primaryType == DamageType.Cold && statsData.increasedColdDamage > 0f)
+		{
+			bonusParts.Add($"+{statsData.increasedColdDamage * 100f:F0}% Cold Damage");
+		}
+		else if (primaryType == DamageType.Lightning && statsData.increasedLightningDamage > 0f)
+		{
+			bonusParts.Add($"+{statsData.increasedLightningDamage * 100f:F0}% Lightning Damage");
+		}
+		
+		// Physical damage bonus
+		if (primaryType == DamageType.Physical && statsData.increasedPhysicalDamage > 0f)
+		{
+			bonusParts.Add($"+{statsData.increasedPhysicalDamage * 100f:F0}% Physical Damage");
+		}
+		
+		// Chaos damage bonus
+		if (primaryType == DamageType.Chaos && statsData.increasedChaosDamage > 0f)
+		{
+			bonusParts.Add($"+{statsData.increasedChaosDamage * 100f:F0}% Chaos Damage");
+		}
+		
+		if (bonusParts.Count == 0) return string.Empty;
+		
+		return $"Warrant Bonuses: {string.Join(", ", bonusParts)}";
+	}
 
 	private System.Collections.Generic.IEnumerable<string> BuildAilmentLines(AilmentId id, float portion, int duration)
 	{
@@ -627,12 +878,28 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 	private void RestoreLayerOrder()
 	{
         // Restore sibling index if valid
-        if (raiseBySibling && originalSiblingIndex >= 0 && transform.parent != null)
+        // IMPORTANT: Use current position in hand, not original index, in case cards were removed
+        if (raiseBySibling && transform.parent != null)
 		{
-			int maxIndex = transform.parent.childCount - 1;
-			int target = Mathf.Clamp(originalSiblingIndex, 0, maxIndex);
-			transform.SetSiblingIndex(target);
-			Debug.Log($"[CardHover] {gameObject.name}: Restored sibling index to {target}");
+			// Find the card's current index in the hand by checking CardRuntimeManager or CombatDeckManager
+			int currentIndex = GetCurrentHandIndex();
+			
+			if (currentIndex >= 0)
+			{
+				// Use current index instead of original to handle cards being removed
+				int maxIndex = transform.parent.childCount - 1;
+				int target = Mathf.Clamp(currentIndex, 0, maxIndex);
+				transform.SetSiblingIndex(target);
+				Debug.Log($"[CardHover] {gameObject.name}: Restored sibling index to {target} (current hand index: {currentIndex})");
+			}
+			else if (originalSiblingIndex >= 0)
+			{
+				// Fallback to original index if we can't determine current position
+				int maxIndex = transform.parent.childCount - 1;
+				int target = Mathf.Clamp(originalSiblingIndex, 0, maxIndex);
+				transform.SetSiblingIndex(target);
+				Debug.Log($"[CardHover] {gameObject.name}: Restored sibling index to {target} (using original index)");
+			}
 		}
 		originalSiblingIndex = -1;
 
@@ -648,12 +915,89 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
             }
             else
             {
-                // We created this canvas - disable override sorting
+                // We created this canvas - don't remove it, just reset sorting
+                // (Removing canvas causes pointer flicker)
                 cardCanvas.overrideSorting = false;
                 cardCanvas.sortingOrder = 0;
-                Debug.Log($"[CardHover] {gameObject.name}: Disabled canvas override sorting (created canvas)");
+                Debug.Log($"[CardHover] {gameObject.name}: Reset canvas sorting (canvas kept for performance)");
             }
+        }
+	}
+	
+	/// <summary>
+	/// Get the current index of this card in the hand
+	/// </summary>
+	private int GetCurrentHandIndex()
+	{
+		// Try to get from CombatDeckManager's handVisuals
+		var combatDeckManager = FindFirstObjectByType<CombatDeckManager>();
+		if (combatDeckManager != null)
+		{
+			var handVisualsField = typeof(CombatDeckManager).GetField("handVisuals", 
+				System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+			if (handVisualsField != null)
+			{
+				var handVisuals = handVisualsField.GetValue(combatDeckManager) as System.Collections.Generic.List<GameObject>;
+				if (handVisuals != null)
+				{
+					return handVisuals.IndexOf(gameObject);
+				}
+			}
 		}
+		
+		// Fallback: try CardRuntimeManager's activeCards
+		var cardRuntimeManager = CardRuntimeManager.Instance;
+		if (cardRuntimeManager != null)
+		{
+			var activeCards = cardRuntimeManager.GetActiveCards();
+			return activeCards.IndexOf(gameObject);
+		}
+		
+		return -1;
+	}
+	
+	/// <summary>
+	/// Get the PreparedCard instance for a Card if it's currently prepared
+	/// </summary>
+	private PreparedCard GetPreparedCardForCard(Card card)
+	{
+		if (card == null || card.sourceCardData == null) return null;
+		
+		var prepManager = PreparationManager.Instance;
+		if (prepManager == null) return null;
+		
+		var preparedCards = prepManager.GetPreparedCards();
+		foreach (var prepared in preparedCards)
+		{
+			if (prepared != null && prepared.sourceCard != null && prepared.sourceCard == card.sourceCardData)
+			{
+				return prepared;
+			}
+		}
+		
+		return null;
+	}
+	
+	/// <summary>
+	/// Get the PreparedCard instance for a CardDataExtended if it's currently prepared
+	/// </summary>
+	private PreparedCard GetPreparedCardForExtended(CardDataExtended ext)
+	{
+		if (ext == null) return null;
+		
+		var prepManager = PreparationManager.Instance;
+		if (prepManager == null) return null;
+		
+		var preparedCards = prepManager.GetPreparedCards();
+		foreach (var prepared in preparedCards)
+		{
+			if (prepared != null && prepared.sourceCard != null && prepared.sourceCard == ext)
+			{
+				return prepared;
+			}
+		}
+		
+		return null;
 	}
 }
 

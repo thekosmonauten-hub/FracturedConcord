@@ -25,7 +25,6 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    onUseDescription: 
     slotIndex: 0
   - currencyType: 1
     currencyName: Orb of Infusion
@@ -34,12 +33,11 @@ MonoBehaviour:
     currencySprite: {fileID: -1176463662525446447, guid: 6369d77d7f9b06347a15ce69d54f594e, type: 3}
     quantity: 0
     canTargetCards: 0
-    canTargetEquipment: 0
+    canTargetEquipment: 1
     validEquipmentRarities: 
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    onUseDescription: 
     slotIndex: 1
   - currencyType: 2
     currencyName: Orb of Perfection
@@ -48,12 +46,11 @@ MonoBehaviour:
     currencySprite: {fileID: 7055937660387581569, guid: f7a22e37ba124db49bfa9b895052b591, type: 3}
     quantity: 0
     canTargetCards: 0
-    canTargetEquipment: 0
+    canTargetEquipment: 1
     validEquipmentRarities: 
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    onUseDescription: 
     slotIndex: 2
   - currencyType: 3
     currencyName: Orb of Perpetuity
@@ -62,12 +59,11 @@ MonoBehaviour:
     currencySprite: {fileID: 698161679061589658, guid: d99137782d99ea54abb965d0faec4696, type: 3}
     quantity: 0
     canTargetCards: 0
-    canTargetEquipment: 0
+    canTargetEquipment: 1
     validEquipmentRarities: 
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    onUseDescription: 
     slotIndex: 3
   - currencyType: 4
     currencyName: Orb of Redundancy
@@ -81,7 +77,6 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    onUseDescription: 
     slotIndex: 4
   - currencyType: 5
     currencyName: Orb of the Void
@@ -95,7 +90,6 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 1
     preservesLockedAffixes: 0
-    onUseDescription: 
     slotIndex: 5
   - currencyType: 6
     currencyName: Orb of Mutation
@@ -109,7 +103,6 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    onUseDescription: 
     slotIndex: 6
   - currencyType: 7
     currencyName: Orb of Proliferation
@@ -123,7 +116,6 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    onUseDescription: 
     slotIndex: 7
   - currencyType: 8
     currencyName: Orb of Amnesia
@@ -137,7 +129,6 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 1
-    onUseDescription: 
     slotIndex: 8
   - currencyType: 9
     currencyName: Fire Spirit
@@ -151,7 +142,6 @@ MonoBehaviour:
     maxAffixesForTarget: 6
     isCorruption: 0
     preservesLockedAffixes: 1
-    onUseDescription: 
     slotIndex: 9
   - currencyType: 10
     currencyName: Cold Spirit
@@ -165,7 +155,6 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 1
-    onUseDescription: 
     slotIndex: 10
   - currencyType: 11
     currencyName: Lightning Spirit
@@ -179,7 +168,6 @@ MonoBehaviour:
     maxAffixesForTarget: 6
     isCorruption: 0
     preservesLockedAffixes: 1
-    onUseDescription: 
     slotIndex: 11
   - currencyType: 12
     currencyName: Chaos Spirit
@@ -193,7 +181,6 @@ MonoBehaviour:
     maxAffixesForTarget: 6
     isCorruption: 0
     preservesLockedAffixes: 1
-    onUseDescription: 
     slotIndex: 12
   - currencyType: 13
     currencyName: Physical Spirit
@@ -207,7 +194,6 @@ MonoBehaviour:
     maxAffixesForTarget: 6
     isCorruption: 0
     preservesLockedAffixes: 1
-    onUseDescription: 
     slotIndex: 13
   - currencyType: 14
     currencyName: Life Spirit
@@ -221,7 +207,6 @@ MonoBehaviour:
     maxAffixesForTarget: 6
     isCorruption: 0
     preservesLockedAffixes: 1
-    onUseDescription: 
     slotIndex: 14
   - currencyType: 15
     currencyName: Defense Spirit
@@ -235,7 +220,6 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    onUseDescription: 
     slotIndex: 15
   - currencyType: 16
     currencyName: Crit Spirit
@@ -249,7 +233,6 @@ MonoBehaviour:
     maxAffixesForTarget: 6
     isCorruption: 0
     preservesLockedAffixes: 1
-    onUseDescription: 
     slotIndex: 16
   - currencyType: 17
     currencyName: Divine Spirit
@@ -263,7 +246,6 @@ MonoBehaviour:
     maxAffixesForTarget: 6
     isCorruption: 0
     preservesLockedAffixes: 1
-    onUseDescription: 
     slotIndex: 17
   - currencyType: 18
     currencyName: Transposition Seal
@@ -278,7 +260,6 @@ MonoBehaviour:
     maxAffixesForTarget: 6
     isCorruption: 0
     preservesLockedAffixes: 1
-    onUseDescription: 
     slotIndex: 18
   - currencyType: 19
     currencyName: Chaos Seal
@@ -292,7 +273,6 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 1
-    onUseDescription: 
     slotIndex: 19
   - currencyType: 20
     currencyName: Memory Seal
@@ -308,7 +288,6 @@ MonoBehaviour:
     maxAffixesForTarget: 6
     isCorruption: 0
     preservesLockedAffixes: 0
-    onUseDescription: 
     slotIndex: 20
   - currencyType: 21
     currencyName: Inscription Seal
@@ -322,7 +301,6 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    onUseDescription: 
     slotIndex: 21
   - currencyType: 22
     currencyName: Adaptation Seal
@@ -336,7 +314,6 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    onUseDescription: 
     slotIndex: 22
   - currencyType: 23
     currencyName: Correction Seal
@@ -350,5 +327,4 @@ MonoBehaviour:
     maxAffixesForTarget: 0
     isCorruption: 0
     preservesLockedAffixes: 0
-    onUseDescription: 
     slotIndex: 23

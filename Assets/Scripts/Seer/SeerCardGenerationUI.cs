@@ -4,6 +4,7 @@ using TMPro;
 using System.Collections.Generic;
 using System.Linq;
 using Dexiled.Data.Items;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// UI for the Seer's card generation system.
@@ -41,11 +42,12 @@ public class SeerCardGenerationUI : MonoBehaviour
     [SerializeField] private TMP_Text generationOrbCountText; // Legacy: Direct text field (used if prefab not provided)
     
     [Header("Output Display")]
-    [SerializeField] private GameObject outputCardDisplay; // Where generated card is shown
-    [SerializeField] private TMP_Text outputCardNameText;
-    [SerializeField] private TMP_Text outputCardRarityText;
-    [SerializeField] private TMP_Text outputCardElementText;
-    [SerializeField] private Image outputCardImage;
+    [SerializeField] private Transform outputCardContainer; // Container where generated card prefab will be instantiated
+    [SerializeField] private GameObject cardPrefab; // CardPrefab.prefab to use for displaying generated cards
+    
+    [Header("Confirmation Settings")]
+    [SerializeField] private Toggle bypassConfirmationToggle; // Toggle to bypass confirmation prompt
+    private const string BYPASS_CONFIRMATION_PREFS_KEY = "SeerCardGeneration_BypassConfirmation";
     
     [Header("Summary")]
     [SerializeField] private TMP_Text summaryText;
@@ -73,6 +75,11 @@ public class SeerCardGenerationUI : MonoBehaviour
     private LootManager lootManager;
     private CharacterManager characterManager;
     
+    // Runtime: Track current displayed card instance
+    private GameObject currentCardInstance;
+    private CardData currentGeneratedCard; // Track the currently displayed card
+    private bool cardPickedUp = false; // Track if the current card has been added to collection
+    
     private void Awake()
     {
         currencyDatabase = Resources.Load<CurrencyDatabase>("CurrencyDatabase");
@@ -91,10 +98,30 @@ public class SeerCardGenerationUI : MonoBehaviour
         RefreshUI();
     }
     
+    private void OnDisable()
+    {
+        // Clean up card instance when panel is disabled
+        CleanupCardInstance();
+    }
+    
     private void Start()
     {
         SetupButtons();
         RefreshUI();
+        
+        // Load bypass confirmation preference
+        if (bypassConfirmationToggle != null)
+        {
+            bool bypassEnabled = PlayerPrefs.GetInt(BYPASS_CONFIRMATION_PREFS_KEY, 0) == 1;
+            bypassConfirmationToggle.isOn = bypassEnabled;
+            bypassConfirmationToggle.onValueChanged.AddListener(OnBypassToggleChanged);
+        }
+    }
+    
+    private void OnBypassToggleChanged(bool bypassEnabled)
+    {
+        PlayerPrefs.SetInt(BYPASS_CONFIRMATION_PREFS_KEY, bypassEnabled ? 1 : 0);
+        PlayerPrefs.Save();
     }
     
     private void SetupButtons()
@@ -520,7 +547,7 @@ public class SeerCardGenerationUI : MonoBehaviour
         {
             if (!hasAnyContent)
             {
-                sb.AppendLine("Generation Summary:");
+                sb.AppendLine("Outcome:");
                 hasAnyContent = true;
             }
             sb.AppendLine($"Infusion Orbs: {selectedInfusionOrbs} ({SeerCardGenerator.GetChancePercentage(selectedInfusionOrbs):F0}% Magic)");
@@ -531,7 +558,7 @@ public class SeerCardGenerationUI : MonoBehaviour
         {
             if (!hasAnyContent)
             {
-                sb.AppendLine("Generation Summary:");
+                sb.AppendLine("Outcome:");
                 hasAnyContent = true;
             }
             sb.AppendLine($"Perfection Orbs: {selectedPerfectionOrbs} ({SeerCardGenerator.GetChancePercentage(selectedPerfectionOrbs):F0}% Rare)");
@@ -543,7 +570,7 @@ public class SeerCardGenerationUI : MonoBehaviour
         {
             if (!hasAnyContent)
             {
-                sb.AppendLine("Generation Summary:");
+                sb.AppendLine("Outcome:");
                 hasAnyContent = true;
             }
             sb.AppendLine("Spirits:");
@@ -559,8 +586,8 @@ public class SeerCardGenerationUI : MonoBehaviour
         // If nothing is selected, show empty or a message
         if (!hasAnyContent)
         {
-            sb.AppendLine("Generation Summary:");
-            sb.AppendLine("No ingredients selected. Random card will be generated.");
+            sb.AppendLine("Outcome:");
+            sb.AppendLine("Random card will be generated.");
         }
         
         summaryText.text = sb.ToString();
@@ -714,6 +741,34 @@ public class SeerCardGenerationUI : MonoBehaviour
             return;
         }
         
+        // Check if there's an existing card that hasn't been picked up
+        if (currentCardInstance != null && currentGeneratedCard != null && !cardPickedUp)
+        {
+            // Check if bypass is enabled
+            bool bypassEnabled = bypassConfirmationToggle != null && bypassConfirmationToggle.isOn;
+            
+            if (!bypassEnabled)
+            {
+                // Show confirmation dialog
+                SimpleConfirmationDialog.Show(
+                    title: "Generated Card Will Be Destroyed",
+                    message: "You have a generated card that hasn't been picked up. Generating a new card will destroy it. Proceed?",
+                    onConfirm: () => ProceedWithGeneration(),
+                    onCancel: null,
+                    confirmText: "Yes",
+                    cancelText: "No"
+                );
+                return;
+            }
+        }
+        
+        // Proceed with generation
+        ProceedWithGeneration();
+    }
+    
+    private void ProceedWithGeneration()
+    {
+        
         // Generate card
         CardData generatedCard = SeerCardGenerator.GenerateCard(
             selectedInfusionOrbs,
@@ -793,13 +848,7 @@ public class SeerCardGenerationUI : MonoBehaviour
             }
         }
         
-        // Unlock card for character
-        if (characterManager != null && characterManager.GetCurrentCharacter() != null)
-        {
-            characterManager.UnlockCard(generatedCard.cardName);
-        }
-        
-        // Display generated card
+        // Display generated card (but don't unlock yet - wait for click)
         DisplayGeneratedCard(generatedCard);
         
         // Reset selections
@@ -816,28 +865,162 @@ public class SeerCardGenerationUI : MonoBehaviour
     
     private void DisplayGeneratedCard(CardData card)
     {
-        if (outputCardDisplay != null)
-            outputCardDisplay.SetActive(true);
+        if (outputCardContainer == null)
+        {
+            Debug.LogWarning("[SeerCardGenerationUI] Output card container is not assigned!");
+            return;
+        }
         
-        if (outputCardNameText != null)
-            outputCardNameText.text = card.cardName;
+        if (cardPrefab == null)
+        {
+            Debug.LogWarning("[SeerCardGenerationUI] Card prefab is not assigned!");
+            return;
+        }
         
-        if (outputCardRarityText != null)
-            outputCardRarityText.text = $"Rarity: {card.rarity}";
+        if (card == null)
+        {
+            Debug.LogWarning("[SeerCardGenerationUI] Card data is null!");
+            return;
+        }
         
-        if (outputCardElementText != null)
-            outputCardElementText.text = $"Element: {card.element}";
+        // Clean up previous card instance if it exists
+        CleanupCardInstance();
         
-        if (outputCardImage != null && card.cardImage != null)
-            outputCardImage.sprite = card.cardImage;
+        // Track the new card
+        currentGeneratedCard = card;
+        cardPickedUp = false;
+        
+        // Instantiate the card prefab
+        GameObject cardInstance = Instantiate(cardPrefab, outputCardContainer);
+        currentCardInstance = cardInstance;
+        
+        // Try to populate using CombatCardAdapter first (preferred method)
+        CombatCardAdapter adapter = cardInstance.GetComponent<CombatCardAdapter>();
+        if (adapter != null)
+        {
+            adapter.SetCardData(card);
+            Debug.Log($"[SeerCardGenerationUI] Displayed card '{card.cardName}' using CombatCardAdapter");
+        }
+        else
+        {
+            // Fallback to DeckBuilderCardUI
+            DeckBuilderCardUI deckBuilderCard = cardInstance.GetComponent<DeckBuilderCardUI>();
+            if (deckBuilderCard != null)
+            {
+                // Get current character for dynamic descriptions if available
+                Character character = characterManager != null && characterManager.HasCharacter() 
+                    ? characterManager.GetCurrentCharacter() 
+                    : null;
+                
+                deckBuilderCard.Initialize(card, null, character);
+                Debug.Log($"[SeerCardGenerationUI] Displayed card '{card.cardName}' using DeckBuilderCardUI");
+            }
+            else
+            {
+                Debug.LogError($"[SeerCardGenerationUI] Card prefab '{cardPrefab.name}' does not have CombatCardAdapter or DeckBuilderCardUI component!");
+            }
+        }
+        
+        // Add click handler to add card to collection
+        SetupCardClickHandler(cardInstance, card);
+        
+        // Show the container
+        if (outputCardContainer.gameObject != null)
+            outputCardContainer.gameObject.SetActive(true);
+    }
+    
+    /// <summary>
+    /// Setup click handler on the card instance to add it to collection
+    /// </summary>
+    private void SetupCardClickHandler(GameObject cardInstance, CardData card)
+    {
+        // Try to get Button component
+        Button button = cardInstance.GetComponent<Button>();
+        if (button == null)
+        {
+            // Try to find button in children
+            button = cardInstance.GetComponentInChildren<Button>();
+        }
+        
+        if (button != null)
+        {
+            // Remove existing listeners and add our own
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() => OnCardClicked(card));
+        }
+        else
+        {
+            // Fallback: Add EventTrigger for pointer click
+            EventTrigger trigger = cardInstance.GetComponent<EventTrigger>();
+            if (trigger == null)
+            {
+                trigger = cardInstance.AddComponent<EventTrigger>();
+            }
+            
+            EventTrigger.Entry entry = new EventTrigger.Entry();
+            entry.eventID = EventTriggerType.PointerClick;
+            entry.callback.AddListener((data) => { OnCardClicked(card); });
+            trigger.triggers.Add(entry);
+        }
+    }
+    
+    /// <summary>
+    /// Handle card click - add to collection
+    /// </summary>
+    private void OnCardClicked(CardData card)
+    {
+        if (card == null)
+        {
+            Debug.LogWarning("[SeerCardGenerationUI] Card data is null!");
+            return;
+        }
+        
+        if (cardPickedUp)
+        {
+            Debug.Log($"[SeerCardGenerationUI] Card '{card.cardName}' has already been picked up!");
+            return;
+        }
+        
+        // Unlock card for character
+        if (characterManager != null && characterManager.GetCurrentCharacter() != null)
+        {
+            characterManager.UnlockCard(card.cardName);
+            cardPickedUp = true;
+            Debug.Log($"[SeerCardGenerationUI] Card '{card.cardName}' added to collection!");
+            
+            // Optional: Visual feedback (you could add a visual indicator here)
+            // For example, change card color, show a checkmark, etc.
+        }
+        else
+        {
+            Debug.LogWarning("[SeerCardGenerationUI] CharacterManager or current character is null! Cannot add card to collection.");
+        }
     }
     
     private void OnCloseClicked()
     {
+        // Clean up card instance when closing
+        CleanupCardInstance();
+        
         if (panelRoot != null)
             panelRoot.SetActive(false);
         else
             gameObject.SetActive(false);
+    }
+    
+    /// <summary>
+    /// Clean up the current card instance
+    /// </summary>
+    private void CleanupCardInstance()
+    {
+        if (currentCardInstance != null)
+        {
+            Destroy(currentCardInstance);
+            currentCardInstance = null;
+        }
+        
+        currentGeneratedCard = null;
+        cardPickedUp = false;
     }
     
     /// <summary>

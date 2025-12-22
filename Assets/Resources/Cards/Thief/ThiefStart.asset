@@ -15,13 +15,13 @@ MonoBehaviour:
   characterClass: Thief
   cards:
   - card: {fileID: 11400000, guid: 4ee5ac56f87530c419939aff831efa46, type: 2}
-    count: 4
+    count: 6
   - card: {fileID: 11400000, guid: 630babfa0b32a4a4fb2a9f6794613b21, type: 2}
     count: 4
   - card: {fileID: 11400000, guid: 15046eb9d3ebc4c489f93ec261b1475f, type: 2}
     count: 2
   - card: {fileID: 11400000, guid: e804b5937dc30054b94d2b16327f6aa3, type: 2}
-    count: 4
+    count: 2
   - card: {fileID: 11400000, guid: 3b12aa8baea1552408fda61e8e34a732, type: 2}
     count: 2
   - card: {fileID: 11400000, guid: aea9803b49254a34fb6dcab635de21d5, type: 2}

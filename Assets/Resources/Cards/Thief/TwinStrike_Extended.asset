@@ -15,9 +15,8 @@ MonoBehaviour:
   cardName: Twin Strike
   groupKey: Twin_Strike
   cardType: Attack
-  playCost: 1
-  description: 'Deal 5 physical damage (+Dex/4).\nPrepare: When this card is unleashed,
-    deal 7 damage (+Dex/2).'
+  playCost: 10
+  description: Deal {damage} physical damage to 2 targets.
   rarity: 0
   element: 4
   category: 0
@@ -41,17 +40,17 @@ MonoBehaviour:
   scalesWithMeleeWeapon: 1
   scalesWithProjectileWeapon: 0
   scalesWithSpellWeapon: 0
-  isAoE: 0
-  aoeTargets: 1
+  isAoE: 1
+  aoeTargets: 2
   aoeRowScope: 0
   isMultiHit: 0
   hitCount: 2
   damageScaling:
-    strengthScaling: 1
+    strengthScaling: 0
     dexterityScaling: 0
     intelligenceScaling: 0
     strengthDivisor: 0
-    dexterityDivisor: 0
+    dexterityDivisor: 4
     intelligenceDivisor: 0
   guardScaling:
     strengthScaling: 0
@@ -76,7 +75,7 @@ MonoBehaviour:
     requiredWeaponTypes: 
     requiredLevel: 1
   effects: []
-  enableCombo: 1
+  enableCombo: 0
   comboWith: 
   comboDescription: 
   momentumEffectDescription: 
@@ -111,6 +110,7 @@ MonoBehaviour:
   - Attack
   - Physical
   - Melee
+  appliedEmbossings: []
   delayTurns: 0
   isDelayed: 0
   canPrepare: 0
@@ -119,3 +119,28 @@ MonoBehaviour:
   unleashCondition: manual
   unleashEffect: deal_stored_damage
   prepareDescription: 
+  preparedCardDamageBase: 7
+  preparedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 2
+    intelligenceDivisor: 0
+  preparedCardPoisonBase: 0
+  preparedCardGuardBase: 0
+  preparedCardGuardScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  consumedCardDamageBase: 0
+  consumedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0

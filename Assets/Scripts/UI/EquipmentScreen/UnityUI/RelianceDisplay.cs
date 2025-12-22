@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 /// <summary>
 /// Displays current and max Reliance with a filled image bar
@@ -17,8 +18,16 @@ public class RelianceDisplay : MonoBehaviour
     [SerializeField] private bool updateOnEnable = true;
     [SerializeField] private float updateInterval = 0.1f; // Update every 0.1 seconds
     
+    [Header("Animation Settings")]
+    [SerializeField] private bool animateFillBar = true;
+    [SerializeField] private float animationDuration = 0.5f; // Time to animate from current to target fill
+    [SerializeField] private AnimationCurve animationCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    
     private CharacterManager characterManager;
     private float lastUpdateTime = 0f;
+    private float targetFillAmount = 0f;
+    private float currentFillAmount = 0f;
+    private Coroutine fillAnimationCoroutine;
     
     void Start()
     {
@@ -29,6 +38,8 @@ public class RelianceDisplay : MonoBehaviour
         {
             relianceFillImage.type = Image.Type.Filled;
             relianceFillImage.fillMethod = Image.FillMethod.Horizontal; // Or Vertical, depending on design
+            currentFillAmount = relianceFillImage.fillAmount;
+            targetFillAmount = currentFillAmount;
         }
         
         UpdateDisplay();
@@ -91,7 +102,23 @@ public class RelianceDisplay : MonoBehaviour
         if (relianceFillImage != null && maxReliance > 0)
         {
             float fillAmount = (float)currentReliance / (float)maxReliance;
-            relianceFillImage.fillAmount = Mathf.Clamp01(fillAmount);
+            targetFillAmount = Mathf.Clamp01(fillAmount);
+            
+            if (animateFillBar && animationDuration > 0f)
+            {
+                // Animate to target fill amount
+                if (fillAnimationCoroutine != null)
+                {
+                    StopCoroutine(fillAnimationCoroutine);
+                }
+                fillAnimationCoroutine = StartCoroutine(AnimateFillBar(targetFillAmount));
+            }
+            else
+            {
+                // Update immediately without animation
+                currentFillAmount = targetFillAmount;
+                relianceFillImage.fillAmount = targetFillAmount;
+            }
         }
     }
     
@@ -101,6 +128,34 @@ public class RelianceDisplay : MonoBehaviour
     public void Refresh()
     {
         UpdateDisplay();
+    }
+    
+    /// <summary>
+    /// Animate the fill bar smoothly to the target amount
+    /// </summary>
+    private IEnumerator AnimateFillBar(float targetAmount)
+    {
+        float startAmount = currentFillAmount;
+        float elapsedTime = 0f;
+        
+        while (elapsedTime < animationDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTime / animationDuration);
+            
+            // Apply animation curve for smooth easing
+            float curveValue = animationCurve.Evaluate(t);
+            
+            currentFillAmount = Mathf.Lerp(startAmount, targetAmount, curveValue);
+            relianceFillImage.fillAmount = currentFillAmount;
+            
+            yield return null;
+        }
+        
+        // Ensure we end exactly at the target
+        currentFillAmount = targetAmount;
+        relianceFillImage.fillAmount = targetAmount;
+        fillAnimationCoroutine = null;
     }
 }
 

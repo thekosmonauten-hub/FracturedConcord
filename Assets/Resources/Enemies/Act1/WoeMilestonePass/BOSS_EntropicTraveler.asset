@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Entropic Traveler
   description: A mysterious wanderer whose footsteps leave trails of decay and entropy,
     avoiding attacks with unnatural ease.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: -1539155288906151354, guid: 3bff23ccb80b9f640957adfda480f6b2, type: 3}
   tier: 2
   rarity: 2
   category: 4
@@ -49,12 +49,9 @@ MonoBehaviour:
   - Empty Footfalls
   - Dust Trail
   abilities: []
-  bossAbilities:
-  - 5
-  - 13
+  bossAbilities: 050000000d000000
   summonPool: []
-  spiritTags:
-  - 3
+  spiritTags: 03000000
   guaranteedSpiritDrop: 0
   minGoldDrop: 51
   maxGoldDrop: 100
@@ -66,4 +63,3 @@ MonoBehaviour:
   excludeFromRandom: 1
   healthBarColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   animatorController: {fileID: 0}
-

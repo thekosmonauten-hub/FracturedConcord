@@ -62,12 +62,25 @@ public class DialogueCondition
         ItemOwned,
         DialogueNodeSeen, // Check if a specific dialogue node has been seen
         TutorialCompleted, // Check if a tutorial has been completed (conditionValue = tutorial ID)
+        MultipleTutorialsCompleted, // Check if multiple tutorials are completed (conditionValue = comma-separated tutorial IDs)
         Custom
     }
     
+    public enum LogicOperator
+    {
+        AND, // All conditions must be true
+        OR   // At least one condition must be true
+    }
+    
     public ConditionType conditionType;
-    public string conditionValue; // Quest ID, Item ID, etc.
+    public string conditionValue; // Quest ID, Item ID, comma-separated tutorial IDs, etc.
     public int intValue; // For level requirements
+    
+    [Tooltip("Additional conditions to check (for AND/OR logic). Only used if additionalConditions list is not empty.")]
+    public List<DialogueCondition> additionalConditions = new List<DialogueCondition>();
+    
+    [Tooltip("Logic operator for combining multiple conditions: AND (all must be true) or OR (at least one must be true).")]
+    public LogicOperator logicOperator = LogicOperator.AND;
 }
 
 [System.Serializable]
@@ -85,6 +98,7 @@ public class DialogueAction
         MarkNodeSeen, // Mark a dialogue node as seen (for unlocking conditional choices)
         TransitionScene, // Transition to a different scene (actionValue = scene name)
         StartTutorial, // Start a tutorial sequence (actionValue = tutorial ID)
+        CompleteTutorial, // Mark a tutorial as completed (actionValue = tutorial ID)
         Custom
     }
     

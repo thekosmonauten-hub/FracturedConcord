@@ -1,0 +1,30 @@
+Category	Aura Name	Description	Effect Level 1	Effect Level 20	Reliance	Modifier IDs	Embossing Slots	Required Level	Unlock Requirement	Icon Name	Theme Color
+Fire	Pyreheart	Casts an aura that adds fire damage to attacks and spells.	90 flat Fire damage, 15% chance to ignite	160 flat Fire damage, 45% chance to ignite	100		1	24			
+Fire	Emberwake Echo	Casts an aura that causes enemies you kill to spread their ignite to a random target.	25% More ignite magnitude	35% more ignite magnitude	100		1	38			
+Cold	Frostgraft	Casts an aura that causes your physical damage to deal extra Cold damage.	15% of Physical damage as Extra cold damage	25% of Physical damage as Extra cold damage	100		1	38			
+Cold	Chillbinding Hymn	Casts an aura that causes your chill magnitude to increase.	25% Increased chill magnitude	35% Increased chill magnitude	55		1	24			
+Lightning	Stormbrand Covenant	Casts an aura that causes your lightning damage to always shock enemies hit.	15% increased Lightning damage. 100% chance to shock.	35% more Lightning damage. 50% chance to shock.	100		1	38			
+Lightning	Tempest Flux	Casts an aura that adds lightning damage attacks and spells. a new value each turn:	1-140 flat Lightning damage. rolled each turn.	1-260 flat Lightning damage. rolled each turn.	75		1	24			
+Physical	Iron Ascent	Casts an aura that causes your Physical damage to increase over a duration.	1% more physical damage per turn (Up to 10 turns)	3% more physical damage per turn (Up to 10 turns)	100		1	38			
+Ailment	Woundweaver Rite	Casts an aura that increases your ailment duration. but halves their effect.	100% increased ailment duration. 50% reduced ailment effect.	200% increased ailment duration. 50% reduced ailment effect.	65		1	38			
+Ailment	Blightbound Edge	Casts an aura that multiplies you ailment damage.	10% more ailment effectiveness.	20% more ailment effectiveness.	100		1	38			
+Speed	Redwind Cadence	Casts an Aura that increases your Attack speed	11% increased Attack speed	22% increased Attack speed	55		1	12			
+Speed	Arcanothread Surge	Casts an Aura that increases your Cast speed	11% increased Cast speed	22% increased Cast speed	55		1	12			
+Speed	Fleetshadow Grace	Casts an Aura that increases your Movement speed	5% increased Movement speed	15% increased Movement speed	55		1	24			
+Critical	Oath of the Keen Star	Casts and aura that causes you to increase your critical strike chance.	15% increased Critical strike chance.	48% increased critical strike chance.	25		1	12			
+Critical	Bloodspark Edict	Casts an aura that causes your to increased your critical strike multiplier.	25% Critical strike multiplier	45% Critical strike multiplier	50		1	38			
+Spell	Concordial Resonance	Casts an aura that grants bonuses to damage and critical strike chance of spells	10% more Spell damage. +10% increased spell Critical strike chance.	20% more Spell damage. +20% increased spell Critical strike chance.	100		1	38			
+Mana	Arcwell Flow	Casts an aura that increases your Mana regeneration per turn:	1 Mana regeneration	20 Mana regeneration	40		1	12			
+Armor	Stonewoven Bulwark	Casts an aura that grants armour	60 Armour. +30% More armour	960 Armour. +39% More armour	100		1	28			
+Evasion	Shadowleaf Drift	Casts an aura that grants evasion	60 evasion. +30% More evasion	960 evasion. +39% More evasion	100		1	28			
+Energy Shield	Etherglass Aegis	Casts an aura that grants energy shield	60 energy shield	180 energy shield	55		1	24			
+Life Regen	Lifethread Chorus	Casts an aura that grants life regeneration	3 Life regeneration per turn	160 Life regeneration per turn	25		1	12			
+Resist	Elemental Rite	Casts an aura that grants elemental resistances	20% all resistance	39% all resistance	65		1	28			
+Card Draw	Mindwind Reading	Cast an aura that grants you additional card draw per turn	1 Card draw	3 Card draw	65		1	24			
+Prep	Preparatory Lattice	Casts an aura that grants increased card preparation charge cap:	1 Preparation charge	5 preparation charge	100		1	24			
+Discard	Unburdened Echo	Cast an aura that grants you increased discard power for each time you've discarded this combat.	1 discard power per discarded card.	3 discard power per discarded card.	100		1	38			
+Fire	Law of Ember	Killing ignited enemies spreads their Ignite to nearby foes.	Enemies you Ignite and Kill spread Ignite to 1 random enemy	Ignite spreads to 2 enemies. +15% more Fire damage	65		1	21			
+Cold	Law of Permafrost	Killing frozen or chilled enemies causes them to shatter. damaging nearby foes.	On killing a Chilled/Frozen enemy. they shatter and deal damage based on 3% of max life to adjacent enemies.	Deal damage based on 7% of max life to adjacent enemies, +10% more Cold damage	65		1	21			
+Lightning	Law of Tempest	Killing shocked enemies casts a lightning bolt at another enemy.	On killing a Shocked enemy. cast Lightning bolt on a random enemy. 80 Lightning damage, strikes once.	Lightning bolt deals 150 Lightning and strikes 5 times.	65		1	21			
+Physical	Law of Force	Your physical damage has a chance to apply Crumble. Hitting Crumbled enemies deals extra damage based on stored Crumble.	Hitting an enemy affected by Crumble deals 10% of stored as extra physical damage.	Hitting an enemy affected by Crumble deals 15% of stored as extra physical damage.	65		1	21			
+Ailment	Law of Pale Venin	Your attacks have a chance to apply an extra stack of Poison.	25% chance to poison on hit. +1 Poison stacks applied.	40% chance to poison on hit. +1 Poison stacks applied.	65		1	21			

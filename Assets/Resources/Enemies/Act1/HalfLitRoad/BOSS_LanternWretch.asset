@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: The Lantern Wretch
   description: A twisted entity carrying a broken lantern, casting erratic light
     that blinds and disorients.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: -1482676198310808740, guid: 03377f1f193454c4cac9193d597d2e7d, type: 3}
   tier: 2
   rarity: 2
   category: 2
@@ -49,9 +49,9 @@ MonoBehaviour:
   - Blindflare
   - Broken Lens
   abilities: []
-  bossAbilities: []
+  bossAbilities: 
   summonPool: []
-  spiritTags: []
+  spiritTags: 
   guaranteedSpiritDrop: 0
   minGoldDrop: 53
   maxGoldDrop: 105
@@ -63,4 +63,3 @@ MonoBehaviour:
   excludeFromRandom: 1
   healthBarColor: {r: 0.9, g: 0.7, b: 0.3, a: 1}
   animatorController: {fileID: 0}
-

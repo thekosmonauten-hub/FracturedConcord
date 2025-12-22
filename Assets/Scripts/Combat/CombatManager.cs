@@ -208,11 +208,7 @@ public class CombatManager : MonoBehaviour
             }
         }
         
-        // Check mana cost
-        if (playerCharacter.mana < card.manaCost)
-            return false;
-        
-        // Check requirements
+        // Check requirements first (includes mana check with calculated cost)
         if (!card.CanUseCard(playerCharacter))
             return false;
         
@@ -226,6 +222,9 @@ public class CombatManager : MonoBehaviour
             Debug.LogWarning($"Cannot play card {card.cardName}");
             return;
         }
+        
+        // Calculate mana cost once (using calculated cost for Skill cards)
+        int manaCost = card.GetCurrentManaCost(playerCharacter);
         
         // Check if this card should be prepared instead of played immediately
         CardDataExtended extendedCard = card.sourceCardData;
@@ -242,7 +241,7 @@ public class CombatManager : MonoBehaviour
                     currentHand.Remove(card);
                     
                     // Spend mana
-                    if (!playerCharacter.UseMana(card.manaCost))
+                    if (!playerCharacter.UseMana(manaCost))
                     {
                         Debug.LogWarning($"[CombatManager] Failed to spend mana for preparing {card.cardName}");
                         currentHand.Add(card);
@@ -274,7 +273,7 @@ public class CombatManager : MonoBehaviour
                     else
                     {
                         // Failed to prepare, refund mana and return card to hand
-                        playerCharacter.RestoreMana(card.manaCost);
+                        playerCharacter.RestoreMana(manaCost);
                         currentHand.Add(card);
                         Debug.LogWarning($"[CombatManager] Failed to prepare {card.cardName}");
                         return;
@@ -293,7 +292,7 @@ public class CombatManager : MonoBehaviour
                 currentHand.Remove(card);
                 
                 // Spend mana
-                if (!playerCharacter.UseMana(card.manaCost))
+                if (!playerCharacter.UseMana(manaCost))
                 {
                     Debug.LogWarning($"[CombatManager] Failed to spend mana for unleash card {card.cardName}");
                     currentHand.Add(card);
@@ -335,7 +334,7 @@ public class CombatManager : MonoBehaviour
         currentHand.Remove(card);
         
         // Spend mana
-        playerCharacter.UseMana(card.manaCost);
+        playerCharacter.UseMana(manaCost);
         
         // Calculate damage
         float damage = DamageCalculator.CalculateCardDamage(card, playerCharacter, GetEquippedWeapon());

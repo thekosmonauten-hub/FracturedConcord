@@ -733,6 +733,12 @@ public class CombatDisplayManager : MonoBehaviour
         
         AdvanceAllStatusEffects();
         
+        // Advance temporary stat boosts from card effects
+        if (CardEffectProcessor.Instance != null)
+        {
+            CardEffectProcessor.Instance.AdvanceTurn();
+        }
+        
         // Restore player resources (guard + mana)
         if (characterManager != null && characterManager.HasCharacter())
         {
@@ -1642,10 +1648,51 @@ public class CombatDisplayManager : MonoBehaviour
                 activeDisplays[enemyIndex].TakeDamage(damage, ignoreGuardArmor);
                 activeDisplays[enemyIndex].PlayDamageAnimation();
                 
-                // Show floating damage number
+                // Show floating damage number or status effect name
                 if (floatingDamageManager != null)
                 {
-                    floatingDamageManager.ShowDamage(damage, wasCritical, activeDisplays[enemyIndex].transform);
+                    // If damage is 0 and card applies status effects, show status effect name instead
+                    if (damage <= 0.01f && playedCard != null && playedCard.effects != null && playedCard.effects.Count > 0)
+                    {
+                        // Find the first ApplyStatus effect
+                        string statusEffectName = null;
+                        foreach (var effect in playedCard.effects)
+                        {
+                            if (effect != null && effect.effectType == EffectType.ApplyStatus && 
+                                (effect.targetsEnemy || effect.targetsAllEnemies))
+                            {
+                                // Format the status effect name nicely
+                                statusEffectName = FormatStatusEffectName(effect.effectName);
+                                break;
+                            }
+                        }
+                        
+                        if (!string.IsNullOrEmpty(statusEffectName))
+                        {
+                            // Show status effect name in a distinct color (e.g., purple/cyan for debuffs)
+                            Color statusColor = new Color(0.8f, 0.6f, 1f); // Light purple
+                            floatingDamageManager.ShowAbilityName(statusEffectName, activeDisplays[enemyIndex].transform, statusColor);
+                        }
+                        else
+                        {
+                            // No status effect found, show 0 damage
+                            floatingDamageManager.ShowDamage(damage, wasCritical, activeDisplays[enemyIndex].transform);
+                        }
+                    }
+                    else
+                    {
+                        // Normal damage display
+                        floatingDamageManager.ShowDamage(damage, wasCritical, activeDisplays[enemyIndex].transform);
+                    }
+                }
+                
+                // Trigger embossing modifier event for damage dealt
+                if (playedCard != null && player != null && Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance != null)
+                {
+                    DamageType damageType = playedCard.primaryDamageType;
+                    Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance.OnDamageDealt(
+                        playedCard, player, targetEnemy, damage, damageType
+                    );
                 }
             }
             
@@ -1653,6 +1700,14 @@ public class CombatDisplayManager : MonoBehaviour
 				if (targetEnemy.currentHealth <= 0)
 				{
 					Debug.Log($"[Enemy Defeat] {targetEnemy.enemyName} defeated! HP: {targetEnemy.currentHealth}");
+					
+					// Trigger embossing modifier event for enemy killed
+					if (playedCard != null && player != null && Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance != null)
+					{
+						Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance.OnEnemyKilled(
+							playedCard, player, targetEnemy
+						);
+					}
 					
 					// Prevent double-defeat by immediately marking enemy as defeated
 					if (activeEnemies.Contains(targetEnemy))
@@ -1861,6 +1916,55 @@ public class CombatDisplayManager : MonoBehaviour
     }
     
     /// <summary>
+    /// Format status effect name for display (capitalize first letter, handle common variations)
+    /// </summary>
+    private string FormatStatusEffectName(string effectName)
+    {
+        if (string.IsNullOrEmpty(effectName))
+            return "";
+        
+        // Handle common status effect name variations
+        string lower = effectName.ToLower();
+        switch (lower)
+        {
+            case "vulnerable":
+            case "vulnerability":
+                return "Vulnerability";
+            case "poison":
+            case "poisoned":
+                return "Poison";
+            case "burn":
+            case "burning":
+            case "ignite":
+            case "ignited":
+                return "Burn";
+            case "chill":
+            case "chilled":
+                return "Chill";
+            case "freeze":
+            case "frozen":
+                return "Freeze";
+            case "stun":
+            case "stunned":
+                return "Stun";
+            case "weak":
+                return "Weak";
+            case "frail":
+                return "Frail";
+            case "bleed":
+            case "bleeding":
+                return "Bleed";
+            default:
+                // Capitalize first letter
+                if (effectName.Length > 0)
+                {
+                    return char.ToUpper(effectName[0]) + (effectName.Length > 1 ? effectName.Substring(1).ToLower() : "");
+                }
+                return effectName;
+        }
+    }
+    
+    /// <summary>
     /// Mark that an AoE attack is starting (prevents cascading wave completion checks)
     /// </summary>
     public void StartAoEAttack()
@@ -1884,7 +1988,34 @@ public class CombatDisplayManager : MonoBehaviour
     /// </summary>
     private void CheckWaveCompletion()
     {
-		if (activeEnemies.Count == 0)
+		// IMPORTANT: Rebuild activeEnemies list from spawner to ensure we have the most up-to-date count
+		// This prevents issues where the list might be out of sync (e.g., when boss dies but other enemies remain)
+		RebuildActiveEnemiesFromSpawner();
+		
+		// Also check spawner's active displays directly as a double-check
+		int spawnerActiveCount = 0;
+		if (enemySpawner != null)
+		{
+			var activeDisplays = enemySpawner.GetActiveEnemies();
+			if (activeDisplays != null)
+			{
+				foreach (var display in activeDisplays)
+				{
+					var enemy = display?.GetEnemy();
+					if (enemy != null && enemy.currentHealth > 0)
+					{
+						spawnerActiveCount++;
+					}
+				}
+			}
+		}
+		
+		// Use the higher count to be safe (in case one list is out of sync)
+		int actualEnemyCount = Mathf.Max(activeEnemies.Count, spawnerActiveCount);
+		
+		Debug.Log($"[Wave Status] Checking completion - activeEnemies: {activeEnemies.Count}, spawner active: {spawnerActiveCount}, using: {actualEnemyCount}");
+		
+		if (actualEnemyCount == 0)
 		{
 			// Prevent multiple wave transitions when multiple enemies die simultaneously
 			if (isWaveTransitioning)
@@ -1908,7 +2039,7 @@ public class CombatDisplayManager : MonoBehaviour
 		}
 		else
 		{
-			Debug.Log($"[Wave Status] {activeEnemies.Count} enemies remaining");
+			Debug.Log($"[Wave Status] {actualEnemyCount} enemies remaining - combat continues");
 		}
     }
     
@@ -2211,7 +2342,8 @@ public class CombatDisplayManager : MonoBehaviour
         {
             // Area loot table override or global area loot system fallback
             List<LootReward> areaRewards = null;
-            int maxDrops = Mathf.Max(1, enemiesPerWave);
+            // Increased base drops: at least 2 items per encounter, plus 1 per enemy (minimum 2, scales with enemies)
+            int maxDrops = Mathf.Max(2, 2 + enemiesPerWave);
 
             if (encounterAreaLootTable != null)
             {
@@ -2348,9 +2480,10 @@ public class CombatDisplayManager : MonoBehaviour
 			}
 
 			// Supplement with area loot drops if configured
+			// Increased from 1 to 2 drops per enemy for better drop frequency
 			if (encounterAreaLootTable != null)
 			{
-				var areaDrops = encounterAreaLootTable.GenerateAllLoot(areaLevel, 1);
+				var areaDrops = encounterAreaLootTable.GenerateAllLoot(areaLevel, 2);
 				if (areaDrops != null && areaDrops.Count > 0)
 				{
 					drops.AddRange(areaDrops);

@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Dodge
   groupKey: Dodge
   cardType: Guard
-  playCost: 1
+  playCost: 10
   description: 'Gain {guard} Guard for the rest of combat. '
   rarity: 0
   element: 0

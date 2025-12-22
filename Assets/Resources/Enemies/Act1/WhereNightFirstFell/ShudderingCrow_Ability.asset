@@ -34,7 +34,7 @@ MonoBehaviour:
   cooldownTurns: 2
   initialCooldown: 1
   phaseThreshold: 0
-  consumesTurn: 0
+  consumesTurn: 1
   target: 1
   energyCost: 45
   effects:

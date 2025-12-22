@@ -717,7 +717,11 @@ public class DeckBuilderUI : MonoBehaviour
         // Add card
         if (currentDeck.AddCard(card, 1))
         {
+            // Preserve embossings when adding a card that already exists in deck
+            // (AddCard already handles this by using existing entry, but we ensure it's saved)
+            SaveCurrentDeck();
             RefreshDeckDisplay();
+            RefreshCardCollection(); // Refresh to show updated embossings on cards
             PlayCardAddAnimation(card);
         }
     }
@@ -732,7 +736,10 @@ public class DeckBuilderUI : MonoBehaviour
         
         if (currentDeck.RemoveCard(card, 1))
         {
+            // Save deck to persist embossing changes (if card was completely removed, embossings are cleared)
+            SaveCurrentDeck();
             RefreshDeckDisplay();
+            RefreshCardCollection(); // Refresh to show updated embossings on cards
             PlayCardRemoveAnimation(card);
         }
     }
@@ -977,6 +984,18 @@ public class DeckBuilderUI : MonoBehaviour
             ShowMessage($"Deck '{currentDeck.deckName}' saved successfully!");
             RefreshPresetDropdown();
         }
+    }
+    
+    /// <summary>
+    /// Save the current deck to persist embossings and other changes.
+    /// </summary>
+    private void SaveCurrentDeck()
+    {
+        if (currentDeck == null || DeckManager.Instance == null)
+            return;
+        
+        // Save deck to persist embossings and other changes
+        DeckManager.Instance.SaveDeck(currentDeck);
     }
     
     private void OnDeleteDeck()

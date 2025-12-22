@@ -14,14 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RelianceAura
   auraName: Tempest Flux
   category: Lightning
-  description: 'Casts an aura that adds lightning damage attacks and spells, a new
-    value each turn:'
+  description: 'Casts an aura that adds lightning damage attacks and spells. Value
+    is rolled each turn:'
   icon: {fileID: 2822679472050872952, guid: c6df899066c98b2468c6c809d16285d7, type: 3}
   themeColor: {r: 0.9, g: 0.9, b: 0.2, a: 1}
   effectLevel1: 1-140 flat Lightning damage, rolled each turn.
   effectLevel20: 1-260 flat Lightning damage, rolled each turn.
-  relianceCost: 55
+  relianceCost: 75
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Tempest Flux_AddFlatDamage_lightning
+  - Tempest Flux_RollDamagePerTurn
+  requiredLevel: 24
   unlockRequirement: 

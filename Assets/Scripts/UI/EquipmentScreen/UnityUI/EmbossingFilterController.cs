@@ -52,6 +52,7 @@ namespace Dexiled.UI.EquipmentScreen
         private int filterMinLevel = 1;
         private bool filterAffordable = false;
         private bool filterMeetsRequirements = false;
+        private bool filterByCardTags = true; // Default: filter by selected card's tags
         
         void Start()
         {
@@ -122,8 +123,8 @@ namespace Dexiled.UI.EquipmentScreen
                 {
                     selectedCard = newCard;
                     
-                    // Refresh grid if filtering by requirements
-                    if (filterMeetsRequirements || filterAffordable)
+                    // Refresh grid if filtering by requirements or card tags
+                    if (filterMeetsRequirements || filterAffordable || filterByCardTags)
                     {
                         ApplyFilters();
                     }
@@ -269,6 +270,14 @@ namespace Dexiled.UI.EquipmentScreen
                 // Intersect with already filtered list
                 filteredEmbossings = filteredEmbossings
                     .Where(e => affordable.Contains(e))
+                    .ToList();
+            }
+            
+            // Filter by card tags (based on embossing modifier requirements)
+            if (filterByCardTags && selectedCard != null)
+            {
+                filteredEmbossings = filteredEmbossings
+                    .Where(e => IsEmbossingCompatibleWithCard(e, selectedCard))
                     .ToList();
             }
             
@@ -476,6 +485,75 @@ namespace Dexiled.UI.EquipmentScreen
         public EmbossingEffect GetSelectedEmbossing()
         {
             return selectedEmbossing;
+        }
+        
+        /// <summary>
+        /// Check if an embossing is compatible with a card based on the card's tags
+        /// Uses the embossing's modifier definitions to check requiredCardTags
+        /// </summary>
+        private bool IsEmbossingCompatibleWithCard(EmbossingEffect embossing, Card card)
+        {
+            if (embossing == null || card == null)
+                return false;
+            
+            // If embossing has no modifiers, it's compatible with all cards
+            if (embossing.modifierIds == null || embossing.modifierIds.Count == 0)
+                return true;
+            
+            // Get the embossing's modifiers
+            var modifierRegistry = EmbossingModifierRegistry.Instance;
+            if (modifierRegistry == null)
+                return true; // If registry not available, assume compatible
+            
+            // Check if any modifier is compatible with the card
+            // An embossing is compatible if at least one of its modifiers can apply to the card
+            foreach (string modifierId in embossing.modifierIds)
+            {
+                var modifierDef = modifierRegistry.GetModifier(modifierId);
+                if (modifierDef == null)
+                    continue;
+                
+                // If modifier has no requiredCardTags, it applies to all cards
+                if (modifierDef.requiredCardTags == null || modifierDef.requiredCardTags.Count == 0)
+                    return true; // At least one modifier applies to all cards
+                
+                // Check if card has the required tags
+                bool isCompatible = false;
+                
+                if (modifierDef.requireAllTags)
+                {
+                    // AND logic: card must have ALL required tags
+                    isCompatible = true;
+                    foreach (string requiredTag in modifierDef.requiredCardTags)
+                    {
+                        if (card.tags == null || !card.tags.Contains(requiredTag))
+                        {
+                            isCompatible = false;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // OR logic (default): card must have AT LEAST ONE required tag
+                    isCompatible = false;
+                    foreach (string requiredTag in modifierDef.requiredCardTags)
+                    {
+                        if (card.tags != null && card.tags.Contains(requiredTag))
+                        {
+                            isCompatible = true;
+                            break;
+                        }
+                    }
+                }
+                
+                // If this modifier is compatible, the embossing is compatible
+                if (isCompatible)
+                    return true;
+            }
+            
+            // If no modifiers are compatible, the embossing is not compatible
+            return false;
         }
         
         /// <summary>

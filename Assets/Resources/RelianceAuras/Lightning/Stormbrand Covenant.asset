@@ -14,14 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RelianceAura
   auraName: Stormbrand Covenant
   category: Lightning
-  description: Casts an aura that causes your lightning damage to always shock enemies
-    hit.
+  description: Casts an aura that multipies your Lightning damage and incrases your
+    chance to shock enemies.
   icon: {fileID: 0}
   themeColor: {r: 0.9, g: 0.9, b: 0.2, a: 1}
-  effectLevel1: 15% increased Lightning damage, 100% chance to shock.
-  effectLevel20: 35% increased Lightning damage, 100% chance to shock.
+  effectLevel1: 15% more Lightning damage. 50% chance to shock.
+  effectLevel20: 35% more Lightning damage. 50% chance to shock.
   relianceCost: 100
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Stormbrand Covenant_AddDamageMorePercent_lightning
+  - Stormbrand Covenant_ApplyStatus
+  requiredLevel: 38
   unlockRequirement: 

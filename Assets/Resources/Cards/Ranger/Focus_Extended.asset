@@ -16,8 +16,8 @@ MonoBehaviour:
   groupKey: Focus
   cardType: Skill
   playCost: 0
-  description: Recover 1 mana, or gain +1 temporary max mana for 1 turn if already
-    full. Gain 20% increased evasion for 2 turns.
+  description: Recover 20% of mana, or gain +20% temporary max mana for 1 turn if
+    already full. Gain 20% increased evasion for 2 turns.
   rarity: 0
   element: 0
   category: 1
@@ -110,6 +110,7 @@ MonoBehaviour:
   tags:
   - Skill
   - Basic
+  appliedEmbossings: []
   delayTurns: 0
   isDelayed: 0
   canPrepare: 0
@@ -118,3 +119,28 @@ MonoBehaviour:
   unleashCondition: manual
   unleashEffect: deal_stored_damage
   prepareDescription: 
+  preparedCardDamageBase: 0
+  preparedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  preparedCardPoisonBase: 0
+  preparedCardGuardBase: 0
+  preparedCardGuardScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0
+  consumedCardDamageBase: 0
+  consumedCardDamageScaling:
+    strengthScaling: 0
+    dexterityScaling: 0
+    intelligenceScaling: 0
+    strengthDivisor: 0
+    dexterityDivisor: 0
+    intelligenceDivisor: 0

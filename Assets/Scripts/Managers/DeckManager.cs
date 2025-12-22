@@ -476,12 +476,25 @@ public class DeckManager : MonoBehaviour
             return;
 
         card.embossingSlots = entry.cardData.embossingSlots;
-        card.appliedEmbossings = DeckCardEntry.CopyEmbossings(entry.embossings);
+        
+        // Prioritize embossings from deck entry (most up-to-date), but merge with CardDataExtended if entry is empty
+        if (entry.embossings != null && entry.embossings.Count > 0)
+        {
+            // Use embossings from deck entry (these are the most current)
+            card.appliedEmbossings = DeckCardEntry.CopyEmbossings(entry.embossings);
+        }
+        else if (entry.cardData is CardDataExtended extended && extended.appliedEmbossings != null && extended.appliedEmbossings.Count > 0)
+        {
+            // Fallback to embossings from CardDataExtended asset if deck entry has none
+            card.appliedEmbossings = new List<EmbossingInstance>(extended.appliedEmbossings);
+        }
+        // If both are empty, card.appliedEmbossings remains as set by ToCard() (empty list)
+        
         card.groupKey = ResolveGroupKey(entry.cardData);
 
-        if (entry.cardData is CardDataExtended extended)
+        if (entry.cardData is CardDataExtended extendedCard)
         {
-            card.sourceCardData = extended;
+            card.sourceCardData = extendedCard;
         }
     }
 
@@ -497,6 +510,13 @@ public class DeckManager : MonoBehaviour
     {
         if (cardData == null) return null;
         
+        // If it's CardDataExtended, use ToCard() which automatically copies embossings
+        if (cardData is CardDataExtended extended)
+        {
+            return extended.ToCard();
+        }
+        
+        // Fallback for regular CardData
         Card card = new Card
         {
             cardName = cardData.cardName,

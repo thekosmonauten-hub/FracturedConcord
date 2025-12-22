@@ -63,6 +63,38 @@ public class WarrantIconLibrary : ScriptableObject
         }
         return count;
     }
+    
+    /// <summary>
+    /// Gets the index of a sprite in the icon pool. Returns -1 if not found.
+    /// Used for saving icon persistence.
+    /// </summary>
+    public int GetIconIndex(Sprite sprite)
+    {
+        if (sprite == null || randomIconPool == null)
+            return -1;
+        
+        for (int i = 0; i < randomIconPool.Count; i++)
+        {
+            if (randomIconPool[i] == sprite)
+            {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+    
+    /// <summary>
+    /// Gets the sprite at the specified index in the icon pool. Returns null if index is invalid.
+    /// Used for restoring icon persistence.
+    /// </summary>
+    public Sprite GetIconByIndex(int index)
+    {
+        if (randomIconPool == null || index < 0 || index >= randomIconPool.Count)
+            return null;
+        
+        return randomIconPool[index];
+    }
 
     /// <summary>
     /// Legacy: Attempts to retrieve the icon sprite for the provided warrant ID.

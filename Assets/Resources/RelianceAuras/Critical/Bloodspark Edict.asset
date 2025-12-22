@@ -21,6 +21,7 @@ MonoBehaviour:
   effectLevel20: 45% Critical strike multiplier
   relianceCost: 50
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Bloodspark Edict_ModifyStat_criticalstrikemultiplier
+  requiredLevel: 38
   unlockRequirement: 

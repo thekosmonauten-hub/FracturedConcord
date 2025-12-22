@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Shadow Shepherd
   description: A dark entity that commands the shadows of the fallen. It shepherds
     lost souls through the failing light.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: 1438215945726200906, guid: c4698343d3acd314fb991d19959e1b34, type: 3}
   tier: 2
   rarity: 2
   category: 4
@@ -49,10 +49,9 @@ MonoBehaviour:
   - Mournful Toll
   - Cloak of Dusk
   abilities: []
-  bossAbilities:
-  - 7
+  bossAbilities: 07000000
   summonPool: []
-  spiritTags: []
+  spiritTags: 
   guaranteedSpiritDrop: 0
   minGoldDrop: 60
   maxGoldDrop: 120
@@ -64,4 +63,3 @@ MonoBehaviour:
   excludeFromRandom: 1
   healthBarColor: {r: 0.3, g: 0.2, b: 0.5, a: 1}
   animatorController: {fileID: 0}
-

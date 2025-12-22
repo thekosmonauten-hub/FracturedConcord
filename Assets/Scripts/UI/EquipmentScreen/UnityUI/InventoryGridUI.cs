@@ -47,7 +47,40 @@ public class InventoryGridUI : MonoBehaviour
     private void OnEnable()
     {
         TryBindManagers();
+        SubscribeToEvents();
         
+        if (refreshOnEnable)
+        {
+            RefreshFromDataSource();
+        }
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeFromEvents();
+    }
+    
+    /// <summary>
+    /// Unsubscribe from all events
+    /// </summary>
+    private void UnsubscribeFromEvents()
+    {
+        if (boundCharacterManager != null)
+        {
+            boundCharacterManager.OnItemAdded -= HandleCharacterItemAdded;
+        }
+        
+        if (boundStashManager != null)
+        {
+            boundStashManager.OnStashChanged -= HandleStashChanged;
+        }
+    }
+    
+    /// <summary>
+    /// Subscribe to events based on current grid mode
+    /// </summary>
+    private void SubscribeToEvents()
+    {
         if (gridMode == GridMode.CharacterInventory)
         {
             if (boundCharacterManager != null)
@@ -62,24 +95,53 @@ public class InventoryGridUI : MonoBehaviour
                 boundStashManager.OnStashChanged += HandleStashChanged;
             }
         }
-        
-        if (refreshOnEnable)
-        {
-            RefreshFromDataSource();
-        }
     }
-
-    private void OnDisable()
+    
+    /// <summary>
+    /// Change grid mode at runtime (can be called from Unity events)
+    /// </summary>
+    public void SetGridMode(GridMode newMode)
     {
-        if (boundCharacterManager != null)
+        if (gridMode == newMode)
         {
-            boundCharacterManager.OnItemAdded -= HandleCharacterItemAdded;
+            return; // No change needed
         }
         
-        if (boundStashManager != null)
-        {
-            boundStashManager.OnStashChanged -= HandleStashChanged;
-        }
+        // Unsubscribe from old events
+        UnsubscribeFromEvents();
+        
+        // Change mode
+        gridMode = newMode;
+        
+        // Rebind to managers
+        TryBindManagers();
+        
+        // Subscribe to new events
+        SubscribeToEvents();
+        
+        // Refresh grid with new data source
+        RefreshFromDataSource();
+        
+        Debug.Log($"[InventoryGridUI] Grid mode changed to: {newMode}");
+    }
+    
+    /// <summary>
+    /// Set grid mode from boolean (for Toggle On Value Changed)
+    /// true = GlobalStash, false = CharacterInventory
+    /// </summary>
+    public void SetGridModeFromBool(bool useStash)
+    {
+        SetGridMode(useStash ? GridMode.GlobalStash : GridMode.CharacterInventory);
+    }
+    
+    /// <summary>
+    /// Set grid mode from integer (for Dropdown/Enum)
+    /// 0 = CharacterInventory, 1 = GlobalStash
+    /// </summary>
+    public void SetGridModeFromInt(int modeIndex)
+    {
+        GridMode newMode = modeIndex == 0 ? GridMode.CharacterInventory : GridMode.GlobalStash;
+        SetGridMode(newMode);
     }
     
     private void HandleStashChanged()
@@ -549,13 +611,7 @@ public class InventoryGridUI : MonoBehaviour
         
         Debug.Log($"[InventoryGridUI] Attempting to equip '{item.itemName}' (type: {item.equipmentType}) to slot {slotType}");
         
-        // Check if item can be equipped in this slot
-        if (item.equipmentType != slotType)
-        {
-            Debug.LogWarning($"[InventoryGridUI] ❌ Item type mismatch: {item.equipmentType} cannot go in {slotType} slot!");
-            return;
-        }
-        
+        // Check if item can be equipped in this slot (1-handed weapons can go in both MainHand and OffHand)
         var equipmentManager = EquipmentManager.Instance;
         if (equipmentManager == null)
         {
@@ -563,12 +619,18 @@ public class InventoryGridUI : MonoBehaviour
             return;
         }
         
-        Debug.Log($"[InventoryGridUI] Calling EquipmentManager.EquipItem({item.itemName})...");
-        bool success = equipmentManager.EquipItem(item);
+        if (!equipmentManager.CanItemBeEquippedInSlot(item, slotType))
+        {
+            Debug.LogWarning($"[InventoryGridUI] ❌ Item type mismatch: {item.equipmentType} cannot go in {slotType} slot!");
+            return;
+        }
+        
+        Debug.Log($"[InventoryGridUI] Calling EquipmentManager.EquipItem({item.itemName}, {slotType})...");
+        bool success = equipmentManager.EquipItem(item, slotType);
         
         if (!success)
         {
-            Debug.LogError($"[InventoryGridUI] ❌ EquipmentManager.EquipItem() returned FALSE for {item.itemName}!");
+            Debug.LogError($"[InventoryGridUI] ❌ EquipmentManager.EquipItem() returned FALSE for {item.itemName} to {slotType}!");
             return;
         }
         

@@ -365,11 +365,38 @@ public partial class EncounterManager : MonoBehaviour
         
         EncounterEvents.InvokeEncounterEntered(encounterID);
         
+        // Check if this is a non-combat encounter (e.g., TownScene, ShopScene, etc.)
+        // Non-combat encounters should be marked as completed immediately when clicked
+        bool isNonCombatEncounter = !string.IsNullOrEmpty(encounter.sceneName) && 
+                                    !encounter.sceneName.Equals("CombatScene", System.StringComparison.OrdinalIgnoreCase);
+        
+        if (isNonCombatEncounter)
+        {
+            // Mark non-combat encounters as completed immediately when clicked
+            // This allows them to unlock subsequent encounters without requiring combat completion
+            if (!progressionManager.IsCompleted(encounterID))
+            {
+                Debug.Log($"[EncounterManager] Non-combat encounter {encounterID} ({encounter.encounterName}) - marking as completed immediately");
+                progressionManager.MarkCompleted(encounterID, 0f, 0);
+                
+                // Also mark in character for persistence
+                if (character != null)
+                {
+                    character.MarkEncounterCompleted(encounterID);
+                    CharacterManager.Instance.SaveCharacter();
+                }
+            }
+            else
+            {
+                Debug.Log($"[EncounterManager] Non-combat encounter {encounterID} ({encounter.encounterName}) - already completed, allowing replay");
+            }
+        }
+        
         // Persist encounter ID for scene transition
         PlayerPrefs.SetInt("PendingEncounterID", encounterID);
         PlayerPrefs.Save();
         
-        Debug.Log($"[EncounterManager] Starting encounter {encounterID}: {encounter.encounterName}");
+        Debug.Log($"[EncounterManager] Starting encounter {encounterID}: {encounter.encounterName} (Scene: {encounter.sceneName}, Non-Combat: {isNonCombatEncounter})");
         SceneManager.LoadScene(encounter.sceneName);
     }
     

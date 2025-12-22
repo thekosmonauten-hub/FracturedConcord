@@ -16,7 +16,7 @@ MonoBehaviour:
   encounterName: Blight-Tilled Meadow
   sceneName: CombatScene
   actNumber: 1
-  encounterSprite: {fileID: 0}
+  encounterSprite: {fileID: 4113829005332862926, guid: 4cb208d6afaaed84cacc2d519319758f, type: 3}
   prerequisiteEncounters:
   - {fileID: 11400000, guid: dbea9abbf8e5e9f488a7372a3df90338, type: 2}
   areaLevel: 13

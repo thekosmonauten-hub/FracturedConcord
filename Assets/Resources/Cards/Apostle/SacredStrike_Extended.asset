@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Sacred Strike
   groupKey: sacred_strike
   cardType: Attack
-  playCost: 1
+  playCost: 10
   description: 'Deal {damage} physical damage to targetted Row. '
   rarity: 0
   element: 4

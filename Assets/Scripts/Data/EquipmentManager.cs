@@ -58,12 +58,34 @@ public class EquipmentManager : MonoBehaviour
     }
     
     // Equip an item
-    public bool EquipItem(BaseItem item)
+    public bool EquipItem(BaseItem item, EquipmentType? targetSlotOverride = null)
     {
         if (item == null) return false;
         
-        // Check if the item can be equipped in the specified slot
-        EquipmentType targetSlot = item.equipmentType;
+        // Determine target slot: use override if provided, otherwise use item's equipmentType
+        // Special case: 1-handed weapons can be equipped in either MainHand or OffHand
+        EquipmentType targetSlot;
+        if (targetSlotOverride.HasValue)
+        {
+            targetSlot = targetSlotOverride.Value;
+        }
+        else if (item is WeaponItem weapon && weapon.handedness == WeaponHandedness.OneHanded)
+        {
+            // Default 1-handed weapons to MainHand if no override specified
+            targetSlot = EquipmentType.MainHand;
+        }
+        else
+        {
+            targetSlot = item.equipmentType;
+        }
+        
+        // Validate that the item can actually go in this slot
+        if (!CanItemBeEquippedInSlot(item, targetSlot))
+        {
+            Debug.LogWarning($"[EquipmentManager] Cannot equip {item.itemName} in {targetSlot} slot!");
+            return false;
+        }
+        
         BaseItem currentlyEquipped = GetEquippedItem(targetSlot);
         
         // Unequip current item if any and return it to inventory
@@ -106,9 +128,28 @@ public class EquipmentManager : MonoBehaviour
         {
             SetEquippedItem(slot, null);
             
+            // Special rule: If MainHand is unequipped and OffHand has a weapon, move it to MainHand
+            if (slot == EquipmentType.MainHand)
+            {
+                BaseItem offHandItem = GetEquippedItem(EquipmentType.OffHand);
+                if (offHandItem != null && offHandItem is WeaponItem)
+                {
+                    Debug.Log($"[EquipmentManager] MainHand unequipped. Moving {offHandItem.itemName} from OffHand to MainHand.");
+                    
+                    // Move offhand weapon to main hand
+                    SetEquippedItem(EquipmentType.OffHand, null);
+                    SetEquippedItem(EquipmentType.MainHand, offHandItem);
+                    
+                    Debug.Log($"[EquipmentManager] ✅ {offHandItem.itemName} moved from OffHand to MainHand");
+                }
+            }
+            
             // Recalculate and apply equipment stats
             CalculateTotalEquipmentStats();
             ApplyEquipmentStats();
+            
+            // Update Character.weapons for damage scaling
+            UpdateCharacterWeaponReferences();
             
             // Save equipment data
             SaveEquipmentData();
@@ -770,5 +811,34 @@ public class EquipmentManager : MonoBehaviour
         if (currentEquipment.boots != null) equippedCount++;
         
         return $"Equipped Items: {equippedCount}/10";
+    }
+    
+    /// <summary>
+    /// Check if an item can be equipped in a specific slot
+    /// Special case: 1-handed weapons can go in both MainHand and OffHand
+    /// Rule: Cannot equip in OffHand if MainHand is empty (must equip MainHand first)
+    /// </summary>
+    public bool CanItemBeEquippedInSlot(BaseItem item, EquipmentType slot)
+    {
+        if (item == null) return false;
+        
+        // Special case: 1-handed weapons can be equipped in both MainHand and OffHand
+        if (item is WeaponItem weapon && weapon.handedness == WeaponHandedness.OneHanded)
+        {
+            // Rule: Cannot equip in OffHand if MainHand is empty
+            if (slot == EquipmentType.OffHand)
+            {
+                BaseItem mainHandItem = GetEquippedItem(EquipmentType.MainHand);
+                if (mainHandItem == null)
+                {
+                    Debug.LogWarning($"[EquipmentManager] Cannot equip {item.itemName} in OffHand: MainHand must be equipped first!");
+                    return false;
+                }
+            }
+            return slot == EquipmentType.MainHand || slot == EquipmentType.OffHand;
+        }
+        
+        // Default: Check if equipment types match
+        return item.equipmentType == slot;
     }
 }

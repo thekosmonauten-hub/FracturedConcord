@@ -104,7 +104,7 @@ public class TutorialManager : MonoBehaviour
             if (panel == null)
             {
                 // Try searching in all canvases
-                Canvas[] canvases = FindObjectsOfType<Canvas>(true);
+                Canvas[] canvases = FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None);
                 foreach (var canvas in canvases)
                 {
                     Transform found = canvas.transform.Find("TutorialPanel");
@@ -1118,7 +1118,7 @@ public class TutorialManager : MonoBehaviour
         }
         
         // Last resort: search all GameObjects in scene (slower)
-        GameObject[] allObjects = FindObjectsOfType<GameObject>();
+        GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
         foreach (var obj in allObjects)
         {
             if (obj.name == path)
@@ -1141,7 +1141,7 @@ public class TutorialManager : MonoBehaviour
             case "WarrantNodeView":
             case "WarrantSocketView":
                 // Find WarrantNodeView with matching NodeId
-                WarrantNodeView[] nodeViews = FindObjectsOfType<WarrantNodeView>();
+                WarrantNodeView[] nodeViews = FindObjectsByType<WarrantNodeView>(FindObjectsSortMode.None);
                 foreach (var nodeView in nodeViews)
                 {
                     if (nodeView.NodeId == propertyValue)
@@ -1181,7 +1181,7 @@ public class TutorialManager : MonoBehaviour
         
         // Find all components of this type
         // Search all GameObjects and check for component (simpler and more reliable)
-        GameObject[] allObjects = FindObjectsOfType<GameObject>();
+        GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
         foreach (var obj in allObjects)
         {
             var component = obj.GetComponent(componentType);
@@ -1310,6 +1310,12 @@ public class TutorialManager : MonoBehaviour
                 character.MarkTutorialCompleted(currentTutorial.tutorialId);
                 CharacterManager.Instance.SaveCharacter(); // Persist the completion
                 Debug.Log($"[TutorialManager] Marked tutorial '{currentTutorial.tutorialId}' as completed for character '{character.characterName}'");
+                
+                // Notify FuseButtonController if this is the fusion tutorial
+                if (currentTutorial.tutorialId == "warrant_fusion_tutorial")
+                {
+                    RefreshFuseButtonVisibility();
+                }
             }
         }
         
@@ -1450,9 +1456,11 @@ public class TutorialManager : MonoBehaviour
         NPCInteractable npc = FindNPCById(dialogueIdOrNpcId);
         if (npc != null)
         {
-            // Use the NPC's StartDialogue method which handles dialogueData internally
-            npc.StartDialogue();
-            Debug.Log($"[TutorialManager] Started dialogue with NPC '{dialogueIdOrNpcId}'.");
+            // Activate the NPC and its parent panel before starting dialogue
+            ActivateNPCAndParentPanel(npc);
+            
+            // Use a coroutine to ensure panel is fully activated before starting dialogue
+            StartCoroutine(StartDialogueAfterPanelActivation(npc, dialogueIdOrNpcId));
         }
         else
         {
@@ -1471,18 +1479,93 @@ public class TutorialManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Find NPC by ID
+    /// Activate NPC and its parent panel (e.g., PeacekeepersFaction panel)
+    /// </summary>
+    private void ActivateNPCAndParentPanel(NPCInteractable npc)
+    {
+        if (npc == null) return;
+        
+        Debug.Log($"[TutorialManager] Activating NPC '{npc.GetNPCId()}' and parent panel...");
+        
+        // Activate the NPC GameObject and all its parents
+        Transform current = npc.transform;
+        while (current != null)
+        {
+            if (!current.gameObject.activeSelf)
+            {
+                current.gameObject.SetActive(true);
+                Debug.Log($"[TutorialManager] Activated parent: {current.name}");
+            }
+            current = current.parent;
+        }
+        
+        // Also try to find and activate common panel names that might contain NPCs
+        string[] panelNames = { "PeacekeepersFactionPanel", "PeacekeepersFaction", "Peacekeepers", "FactionPanel" };
+        foreach (string panelName in panelNames)
+        {
+            GameObject panel = GameObject.Find(panelName);
+            if (panel != null && !panel.activeSelf)
+            {
+                panel.SetActive(true);
+                Debug.Log($"[TutorialManager] Activated panel: {panelName}");
+                // Activate all parents of the panel too
+                Transform panelParent = panel.transform.parent;
+                while (panelParent != null)
+                {
+                    if (!panelParent.gameObject.activeSelf)
+                    {
+                        panelParent.gameObject.SetActive(true);
+                        Debug.Log($"[TutorialManager] Activated panel parent: {panelParent.name}");
+                    }
+                    panelParent = panelParent.parent;
+                }
+                break; // Found and activated, no need to check other names
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Coroutine to start dialogue after ensuring panel is activated
+    /// </summary>
+    private IEnumerator StartDialogueAfterPanelActivation(NPCInteractable npc, string npcId)
+    {
+        // Wait a frame to ensure panel activation has processed
+        yield return null;
+        yield return null;
+        
+        // Verify NPC is now active
+        if (npc != null && npc.gameObject.activeInHierarchy)
+        {
+            // Use the NPC's StartDialogue method which handles dialogueData internally
+            npc.StartDialogue();
+            Debug.Log($"[TutorialManager] Started dialogue with NPC '{npcId}' after panel activation.");
+        }
+        else
+        {
+            Debug.LogWarning($"[TutorialManager] NPC '{npcId}' is still not active after activation attempt. Trying to start dialogue anyway...");
+            if (npc != null)
+            {
+                npc.StartDialogue();
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Find NPC by ID (searches both active and inactive NPCs)
     /// </summary>
     private NPCInteractable FindNPCById(string npcId)
     {
-        NPCInteractable[] allNPCs = FindObjectsOfType<NPCInteractable>();
+        // Search for NPCs including inactive ones (in case they're under inactive panels)
+        NPCInteractable[] allNPCs = FindObjectsByType<NPCInteractable>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (NPCInteractable npc in allNPCs)
         {
             if (npc != null && npc.GetNPCId() == npcId)
             {
+                Debug.Log($"[TutorialManager] Found NPC '{npcId}' (active: {npc.gameObject.activeSelf}, activeInHierarchy: {npc.gameObject.activeInHierarchy})");
                 return npc;
             }
         }
+        Debug.LogWarning($"[TutorialManager] NPC with ID '{npcId}' not found in scene (searched active and inactive NPCs).");
         return null;
     }
     
@@ -1649,6 +1732,27 @@ public class TutorialManager : MonoBehaviour
                 current.gameObject.SetActive(true);
             }
             current = current.parent;
+        }
+    }
+    
+    /// <summary>
+    /// Refreshes tutorial button visibility after tutorial completion.
+    /// </summary>
+    private void RefreshFuseButtonVisibility()
+    {
+        // Find all TutorialButtonUnlock instances and refresh them
+        TutorialButtonUnlock[] unlockControllers = FindObjectsByType<TutorialButtonUnlock>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (var unlockController in unlockControllers)
+        {
+            if (unlockController != null)
+            {
+                unlockController.Refresh();
+            }
+        }
+        
+        if (unlockControllers.Length == 0)
+        {
+            Debug.Log("[TutorialManager] No TutorialButtonUnlock found in scene. Tutorial buttons will update on next scene load.");
         }
     }
 }

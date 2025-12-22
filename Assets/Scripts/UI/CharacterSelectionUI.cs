@@ -253,6 +253,9 @@ public class CharacterData
     // Warrants
     public List<WarrantInstanceData> ownedWarrants = new List<WarrantInstanceData>();
     
+    // Warrant Board State (NEW) - JSON string containing socket assignments and unlocked nodes
+    public string warrantBoardStateJson = "";
+    
     // Currencies (NEW)
     public List<string> currencyTypes = new List<string>();
     public List<int> currencyAmounts = new List<int>();
@@ -262,6 +265,9 @@ public class CharacterData
     
     // Aura Experience System (NEW)
     public List<AuraExperienceData> auraExperienceData = new List<AuraExperienceData>();
+    
+    // Forge Materials (NEW)
+    public List<ForgeMaterialData> forgeMaterials = new List<ForgeMaterialData>();
     
     public CharacterData(string name, string characterClass, int level, int act)
     {

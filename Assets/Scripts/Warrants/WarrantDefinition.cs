@@ -11,6 +11,8 @@ public class WarrantDefinition : ScriptableObject
     public WarrantRarity rarity = WarrantRarity.Common;
     public bool isKeystone;
 	public bool isBlueprint; // Master blueprint template (rolled into runtime instances)
+	[Tooltip("If true, this warrant should NOT be rolled when given. It will be given as-is (useful for blueprint warrants that should be given directly).")]
+	public bool doNotRoll; // If true, give this warrant directly without rolling
 
     [Header("Range & Behavior")]
     [Tooltip("Directions affected relative to the socket. Forward = nodes above, Backward = nodes below.")]

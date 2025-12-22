@@ -228,8 +228,8 @@ public class EquipmentScreenUI : MonoBehaviour
             // Check if item can go in this slot
             if (selectionManager.CanEquipToSlot(selectedItem, slotType))
             {
-                // Equip the item
-                bool success = equipmentManager.EquipItem(selectedItem);
+                // Equip the item (pass target slot for 1-handed weapons)
+                bool success = equipmentManager.EquipItem(selectedItem, slotType);
                     
                 if (success)
                 {
@@ -270,19 +270,23 @@ public class EquipmentScreenUI : MonoBehaviour
             if (equippedItem)
             {
                 // Unequip and move to inventory
-                bool unequipped = equipmentManager.UnequipItem(slotType);
+                BaseItem unequippedItem = equipmentManager.UnequipItem(slotType);
                 
-                if (unequipped)
+                if (unequippedItem != null)
                 {
+                    // Special case: If MainHand was unequipped, OffHand weapon may have been moved to MainHand
+                    // In that case, unequippedItem is the MainHand item, and OffHand is now empty
+                    // We need to refresh to show the moved weapon in MainHand
+                    
                     // Add to inventory
                     var charManager = CharacterManager.Instance;
                     if (charManager != null)
                     {
-                        charManager.inventoryItems.Add(equippedItem);
-                        charManager.OnItemAdded?.Invoke(equippedItem);
+                        charManager.inventoryItems.Add(unequippedItem);
+                        charManager.OnItemAdded?.Invoke(unequippedItem);
                     }
                     
-                    Debug.Log($"[EquipmentScreenUI] Unequipped {equippedItem.itemName} from {slotType}");
+                    Debug.Log($"[EquipmentScreenUI] Unequipped {unequippedItem.itemName} from {slotType}");
                     RefreshAllDisplays();
                 }
             }

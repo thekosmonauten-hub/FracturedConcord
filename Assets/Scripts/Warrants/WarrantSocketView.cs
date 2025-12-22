@@ -357,7 +357,11 @@ public class WarrantSocketView : WarrantNodeView,
 
     private bool HasPayload => !string.IsNullOrEmpty(assignedWarrantId);
 
-    private void SyncFromState()
+    /// <summary>
+    /// Syncs the socket view's assigned warrant from the board state.
+    /// Called after loading state to ensure socketed warrants are displayed correctly.
+    /// </summary>
+    public void SyncFromState()
     {
         if (boardState == null || string.IsNullOrEmpty(NodeId))
         {
@@ -368,6 +372,12 @@ public class WarrantSocketView : WarrantNodeView,
 
         assignedWarrantId = boardState.GetWarrantAtNode(NodeId);
         UpdateIconSprite();
+        
+        // Debug logging to trace socket state syncing
+        if (!string.IsNullOrEmpty(assignedWarrantId))
+        {
+            Debug.Log($"[WarrantSocketView] Synced socket '{NodeId}': assigned warrant = '{assignedWarrantId}'");
+        }
     }
 
     private bool ClearAssignment()
@@ -516,13 +526,30 @@ public class WarrantSocketView : WarrantNodeView,
 				if (def != null && def.icon != null)
 				{
 					sprite = def.icon;
+					Debug.Log($"[WarrantSocketView] UpdateIconSprite for '{NodeId}': Found warrant definition '{assignedWarrantId}' with icon");
 				}
+				else if (def == null)
+				{
+					Debug.LogWarning($"[WarrantSocketView] UpdateIconSprite for '{NodeId}': Warrant definition not found for '{assignedWarrantId}' (lockerGrid.GetDefinition returned null). Locker grid may not have loaded warrants yet.");
+				}
+				else if (def.icon == null)
+				{
+					Debug.LogWarning($"[WarrantSocketView] UpdateIconSprite for '{NodeId}': Warrant definition found for '{assignedWarrantId}' but icon is null");
+				}
+			}
+			else
+			{
+				Debug.LogWarning($"[WarrantSocketView] UpdateIconSprite for '{NodeId}': lockerGrid is null, cannot retrieve warrant definition for '{assignedWarrantId}'");
 			}
 			
 			// Fallback to icon library only if database has no icon
 			if (sprite == null && iconLibrary != null)
 			{
 				sprite = iconLibrary.GetIcon(assignedWarrantId);
+				if (sprite != null)
+				{
+					Debug.Log($"[WarrantSocketView] UpdateIconSprite for '{NodeId}': Using fallback icon from iconLibrary for '{assignedWarrantId}'");
+				}
 			}
 		}
 
@@ -531,6 +558,10 @@ public class WarrantSocketView : WarrantNodeView,
             iconImage.sprite = emptyIcon;
             iconImage.color = emptyIconTint;
             iconImage.enabled = emptyIcon != null;
+            if (!string.IsNullOrEmpty(assignedWarrantId))
+            {
+                Debug.LogWarning($"[WarrantSocketView] UpdateIconSprite for '{NodeId}': No sprite found for assigned warrant '{assignedWarrantId}', showing empty icon");
+            }
         }
         else
         {

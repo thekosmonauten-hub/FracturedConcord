@@ -832,8 +832,11 @@ public class CombatDeckManager : MonoBehaviour
             return;
         }
         
+        // Calculate base mana cost (percentage for Skill cards if set, otherwise flat)
+        int baseManaCost = card.GetCurrentManaCost(null, player);
+        
         // Apply charge modifiers to mana cost
-        int effectiveManaCost = ApplyManaCostModifier(card, card.playCost);
+        int effectiveManaCost = ApplyManaCostModifier(card, baseManaCost);
         
         if (player.mana < effectiveManaCost) // Use effective mana cost after modifiers
         {
@@ -1895,16 +1898,25 @@ public class CombatDeckManager : MonoBehaviour
     
     /// <summary>
     /// Get the display cost for a card (includes all modifiers)
+    /// For Skill cards: calculates percentage-based cost first, then applies modifiers
+    /// For Attack cards: applies modifiers to flat cost
     /// </summary>
     public static int GetDisplayCost(CardDataExtended card, int baseManaCost, Character character)
     {
         if (card == null) return baseManaCost;
         
-        // Apply mana cost modifiers (Focus charge effects, etc.)
-        int displayCost = ApplyManaCostModifier(card, baseManaCost);
+        // For Skill cards with percentage cost, calculate percentage-based cost first
+        int calculatedCost = baseManaCost;
+        if (string.Equals(card.cardType, "Skill", System.StringComparison.OrdinalIgnoreCase) && character != null && card.percentageManaCost > 0)
+        {
+            // percentageManaCost is a percentage (e.g., 10 = 10% of maxMana)
+            // Use CeilToInt to round up (e.g., 4.5 -> 5, not 4)
+            float percentageCost = card.percentageManaCost / 100.0f;
+            calculatedCost = Mathf.CeilToInt(character.maxMana * percentageCost);
+        }
         
-        // Note: Character-specific modifiers could be added here if needed
-        // For now, just return the modified cost
+        // Apply mana cost modifiers (Focus charge effects, momentum reductions, etc.)
+        int displayCost = ApplyManaCostModifier(card, calculatedCost);
         
         return displayCost;
     }
@@ -3426,14 +3438,21 @@ public class CombatDeckManager : MonoBehaviour
             case CardType.Attack:
                 if (targetDisplay != null)
                 {
+                    // Skip impact effect for projectile cards - they play impact when projectile hits
+                    // Projectile cards are handled by CardEffectProcessor.PlayCardEffect which plays
+                    // the projectile and triggers impact when it arrives
+                    bool isProjectile = IsProjectileCard(card);
+                    if (!isProjectile)
+                    {
                     // Check for critical hit (10% chance)
                     bool isCritical = Random.Range(0f, 1f) < 0.1f;
                     
                     // Get damage type from card effects
                     DamageType damageType = GetCardDamageType(card);
                     
-                    // Play elemental damage effect
+                        // Play elemental damage effect (only for non-projectile cards)
                     combatEffectManager.PlayElementalDamageEffectOnTarget(targetDisplay.transform, damageType, isCritical);
+                    }
                 }
                 break;
                 
@@ -3476,6 +3495,47 @@ public class CombatDeckManager : MonoBehaviour
         }
         
         Debug.Log($"Played combat effects for {card.cardName} ({cardType})");
+    }
+    
+    /// <summary>
+    /// Determine if a card should use projectile effects (works with CardDataExtended)
+    /// </summary>
+    private bool IsProjectileCard(CardDataExtended card)
+    {
+        if (card == null) return false;
+        
+        // Check scalesWithProjectileWeapon
+        if (card.scalesWithProjectileWeapon)
+        {
+            return true;
+        }
+        
+        // Check tags for projectile/ranged indicators
+        if (card.tags != null)
+        {
+            foreach (string tag in card.tags)
+            {
+                if (tag != null && (
+                    tag.Equals("Projectile", System.StringComparison.OrdinalIgnoreCase) ||
+                    tag.Equals("Ranged", System.StringComparison.OrdinalIgnoreCase) ||
+                    tag.Equals("Bow", System.StringComparison.OrdinalIgnoreCase)))
+                {
+                    return true;
+                }
+            }
+        }
+        
+        // Check card name for common projectile cards
+        string cardName = card.cardName ?? "";
+        if (cardName.Contains("Fireball", System.StringComparison.OrdinalIgnoreCase) ||
+            cardName.Contains("Arrow", System.StringComparison.OrdinalIgnoreCase) ||
+            cardName.Contains("Bolt", System.StringComparison.OrdinalIgnoreCase) ||
+            cardName.Contains("Shot", System.StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        
+        return false;
     }
     
     /// <summary>

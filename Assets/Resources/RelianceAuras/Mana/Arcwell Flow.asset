@@ -21,6 +21,7 @@ MonoBehaviour:
   effectLevel20: 20 Mana regeneration
   relianceCost: 40
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Arcwell Flow_ModifyStat_manaRecoveryPerTurn
+  requiredLevel: 12
   unlockRequirement: 

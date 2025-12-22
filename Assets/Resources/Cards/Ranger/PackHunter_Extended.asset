@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Pack Hunter
   groupKey: PackHunter
   cardType: Attack
-  playCost: 1
+  playCost: 10
   description: Deal {damage} physical damage to a single enemy.
   rarity: 0
   element: 4

@@ -14,15 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RelianceAura
   auraName: Law of Tempest
   category: Lightning
-  description: A flicker of Storm-Law orbits you. Shocking an enemy marks them; when
-    they die, a storm arc lashes another foe.
+  description: Killing shocked enemies casts a lightning bolt at another enemy.
   icon: {fileID: 0}
   themeColor: {r: 0.9, g: 0.9, b: 0.2, a: 1}
-  effectLevel1: On killing a Shocked enemy, cast Lightning bolt on a random enemy,
-    80 Lightning damage
-  effectLevel20: Lightning bolt deals 150 Lightning, +10% more Lightning damage
+  effectLevel1: On killing a Shocked enemy. cast Lightning bolt on a random enemy.
+    80 Lightning damage, strikes once.
+  effectLevel20: Lightning bolt deals 150 Lightning and strikes 5 times.
   relianceCost: 65
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Law of Tempest_AddFlatDamage_lightning
+  - Law of Tempest_ModifyStat
+  requiredLevel: 21
   unlockRequirement: 

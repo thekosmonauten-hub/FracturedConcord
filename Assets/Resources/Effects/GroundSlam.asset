@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e42269227b297e4d9239530ffefae82, type: 3}
+  m_Name: GroundSlam
+  m_EditorClassIdentifier: Assembly-CSharp::EffectData
+  effectName: Ground slam
+  description: Ground slam Explosion
+  associatedCardName: Ground Slam
+  effectType: 3
+  category: 9
+  damageType: 1
+  effectPrefab: {fileID: 176822597162087251, guid: 46c9f274c478e1c45ab763283a604cdb, type: 3}
+  useUIParticle: 1
+  uiParticleScale: 90
+  isProjectile: 0
+  projectileSpeed: 2100
+  useArcTrajectory: 1
+  arcHeight: 50
+  hasImpactEffect: 0
+  impactEffect: {fileID: 0}
+  duration: 1
+  delay: 0
+  requirements: []
+  tags:
+  - Ground Slam

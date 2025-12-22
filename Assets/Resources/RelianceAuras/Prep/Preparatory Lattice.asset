@@ -21,6 +21,7 @@ MonoBehaviour:
   effectLevel20: 5 preparation charge
   relianceCost: 100
   embossingSlots: 1
-  modifierIds: []
-  requiredLevel: 1
+  modifierIds:
+  - Preparatory Lattice_ModifyStat_preparationChargeCap
+  requiredLevel: 38
   unlockRequirement: 

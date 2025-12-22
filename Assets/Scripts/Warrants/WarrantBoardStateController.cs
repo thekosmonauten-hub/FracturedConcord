@@ -42,12 +42,127 @@ public class WarrantBoardStateController : MonoBehaviour
             EnsurePageCount(defaultPageCount);
         }
         ClampActiveIndex();
+        
+        // Try to load warrant board state from Character save data
+        LoadFromCharacterData();
+        
+        // Sync initial state to WarrantsManager
+        SyncToWarrantsManager();
+    }
+    
+    private void Start()
+    {
+        // Refresh character warrant modifiers after Start() to ensure all components are initialized
+        // This ensures warrants from locker grid are loaded and board state is ready
+        RefreshCharacterWarrantModifiers();
+    }
+    
+    /// <summary>
+    /// Load warrant board state from Character save data if available
+    /// </summary>
+    private void LoadFromCharacterData()
+    {
+        // First, try to load from WarrantsManager (most up-to-date, persists across scenes)
+        var warrantsManager = WarrantsManager.Instance;
+        if (warrantsManager != null)
+        {
+            string stateJson = warrantsManager.GetWarrantBoardStateJson();
+            if (!string.IsNullOrEmpty(stateJson))
+            {
+                LoadFromJson(stateJson);
+                Debug.Log($"[WarrantBoardStateController] Loaded warrant board state from WarrantsManager ({stateJson.Length} chars)");
+                return;
+            }
+        }
+        
+        // Fallback: Try to load from Character save data
+        var charManager = CharacterManager.Instance ?? FindFirstObjectByType<CharacterManager>();
+        if (charManager != null && charManager.HasCharacter())
+        {
+            Character character = charManager.GetCurrentCharacter();
+            if (character != null)
+            {
+                // Get CharacterData from save system to access warrant board state JSON
+                var saveSystem = CharacterSaveSystem.Instance;
+                if (saveSystem != null)
+                {
+                    CharacterData characterData = saveSystem.GetCharacter(character.characterName);
+                    if (characterData != null && !string.IsNullOrEmpty(characterData.warrantBoardStateJson))
+                    {
+                        LoadFromJson(characterData.warrantBoardStateJson);
+                        // Also sync to WarrantsManager for next time
+                        if (warrantsManager != null)
+                        {
+                            warrantsManager.SetWarrantBoardStateJson(characterData.warrantBoardStateJson);
+                        }
+                        Debug.Log($"[WarrantBoardStateController] Loaded warrant board state from Character save data ({characterData.warrantBoardStateJson.Length} chars)");
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // Final fallback: Try loading from PlayerPrefs (per-character key)
+        LoadFromPlayerPrefs();
     }
 
     private void OnValidate()
     {
         CacheValidSockets();
         ClampActiveIndex();
+    }
+    
+    private void OnDestroy()
+    {
+        // Sync state to WarrantsManager before scene is destroyed
+        // This ensures the state is persisted even if Character.ToCharacterData() is called
+        // after the scene is unloaded (where FindFirstObjectByType won't find us)
+        SyncToWarrantsManager();
+        
+        // Also save to PlayerPrefs as backup
+        SaveToPlayerPrefs();
+        
+        // Force save character to ensure state is persisted
+        var charManager = CharacterManager.Instance ?? FindFirstObjectByType<CharacterManager>();
+        if (charManager != null && charManager.HasCharacter())
+        {
+            charManager.SaveCharacter();
+            Debug.Log("[WarrantBoardStateController] Saved character on scene destroy to persist warrant board state");
+        }
+        
+        Debug.Log("[WarrantBoardStateController] Synced warrant board state to WarrantsManager and PlayerPrefs on scene destroy");
+    }
+    
+    private void OnDisable()
+    {
+        // Also sync on disable (in case OnDestroy isn't called in some scenarios)
+        // This is a safety net to ensure state is saved
+        SyncToWarrantsManager();
+    }
+    
+    /// <summary>
+    /// Syncs the current warrant board state to WarrantsManager singleton.
+    /// This ensures the state persists across scene changes.
+    /// </summary>
+    private void SyncToWarrantsManager()
+    {
+        var warrantsManager = WarrantsManager.Instance;
+        if (warrantsManager != null)
+        {
+            string json = ToJson(false);
+            warrantsManager.SetWarrantBoardStateJson(json);
+            
+            // Debug: Log unlocked nodes count for verification
+            if (ActivePage != null)
+            {
+                int unlockedCount = ActivePage.UnlockedNodeCount;
+                Debug.Log($"[WarrantBoardStateController] Synced state to WarrantsManager: {unlockedCount} unlocked nodes on active page");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[WarrantBoardStateController] WarrantsManager.Instance is null - cannot sync state!");
+        }
     }
 
     /// <summary>
@@ -93,8 +208,18 @@ public class WarrantBoardStateController : MonoBehaviour
 
         ActivePage.SetAssignment(nodeId, warrantId);
         
+        // Sync state to WarrantsManager
+        SyncToWarrantsManager();
+        
         // Refresh character warrant modifiers
         RefreshCharacterWarrantModifiers();
+        
+        // Save character to persist warrant board state
+        var charManager = CharacterManager.Instance ?? FindFirstObjectByType<CharacterManager>();
+        if (charManager != null && charManager.HasCharacter())
+        {
+            charManager.SaveCharacter();
+        }
         
         return true;
     }
@@ -111,8 +236,18 @@ public class WarrantBoardStateController : MonoBehaviour
         
         if (removed)
         {
+            // Sync state to WarrantsManager
+            SyncToWarrantsManager();
+            
             // Refresh character warrant modifiers
             RefreshCharacterWarrantModifiers();
+            
+            // Save character to persist warrant board state
+            var charManager = CharacterManager.Instance ?? FindFirstObjectByType<CharacterManager>();
+            if (charManager != null && charManager.HasCharacter())
+            {
+                charManager.SaveCharacter();
+            }
         }
         
         return removed;
@@ -156,6 +291,108 @@ public class WarrantBoardStateController : MonoBehaviour
         pages = data.pages ?? new List<WarrantBoardPageData>();
         activePageIndex = data.activePageIndex;
         ClampActiveIndex();
+        
+        // IMPORTANT: Rebuild cache for all pages after loading
+        // The cache might be stale after deserialization
+        foreach (var page in pages)
+        {
+            if (page != null)
+            {
+                // Force cache rebuild after deserialization
+                page.RebuildUnlockedCache();
+            }
+        }
+        
+        // Debug: Log loaded state
+        if (ActivePage != null)
+        {
+            int unlockedCount = ActivePage.UnlockedNodeCount;
+            Debug.Log($"[WarrantBoardStateController] Loaded state: {unlockedCount} unlocked nodes on active page (page {activePageIndex + 1}/{pages.Count})");
+            
+            // Debug: Log the actual unlocked node IDs for verification
+            if (unlockedCount > 0)
+            {
+                var unlockedIds = string.Join(", ", ActivePage.UnlockedNodeIds);
+                Debug.Log($"[WarrantBoardStateController] Unlocked node IDs: [{unlockedIds}]");
+            }
+        }
+        
+        // Sync loaded state to WarrantsManager
+        SyncToWarrantsManager();
+        
+        // Refresh character warrant modifiers after loading state
+        // This ensures stats from socketed warrants are applied to the character
+        RefreshCharacterWarrantModifiers();
+        
+        // Note: Effect views and socket views will be refreshed when graph is built (via OnGraphBuilt callback)
+        // This ensures they refresh after all views are created and configured
+    }
+    
+    /// <summary>
+    /// Called by WarrantBoardGraphBuilder when the graph is finished building.
+    /// Refreshes all effect views and socket views to sync their state with the loaded board state.
+    /// </summary>
+    public void OnGraphBuilt()
+    {
+        RefreshAllEffectViews();
+        RefreshAllSocketViews();
+        
+        // Refresh character warrant modifiers after graph is built and socket views are synced
+        // This ensures stats from socketed warrants are applied to the character
+        RefreshCharacterWarrantModifiers();
+    }
+    
+    /// <summary>
+    /// Refreshes all WarrantEffectView components in the scene to sync their lock state.
+    /// Called after graph is built to ensure all views are created and configured.
+    /// </summary>
+    private void RefreshAllEffectViews()
+    {
+        // Find all WarrantEffectView components and refresh their lock state
+        WarrantEffectView[] effectViews = FindObjectsByType<WarrantEffectView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        int refreshedCount = 0;
+        foreach (var effectView in effectViews)
+        {
+            if (effectView != null)
+            {
+                // Sync lock state (effectView should already have boardState reference from Configure)
+                effectView.SyncLockState();
+                refreshedCount++;
+            }
+        }
+        if (refreshedCount > 0)
+        {
+            Debug.Log($"[WarrantBoardStateController] Refreshed {refreshedCount} effect views after graph built");
+        }
+    }
+    
+    /// <summary>
+    /// Refreshes all WarrantSocketView components in the scene to sync their assigned warrants.
+    /// Called after graph is built to ensure socketed warrants are displayed correctly.
+    /// </summary>
+    private void RefreshAllSocketViews()
+    {
+        // Find all WarrantSocketView components and refresh their assigned warrants
+        WarrantSocketView[] socketViews = FindObjectsByType<WarrantSocketView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        int refreshedCount = 0;
+        int assignedCount = 0;
+        foreach (var socketView in socketViews)
+        {
+            if (socketView != null)
+            {
+                // Sync assigned warrant from board state (socketView should already have boardState reference from Configure)
+                socketView.SyncFromState();
+                refreshedCount++;
+                if (!string.IsNullOrEmpty(socketView.WarrantId))
+                {
+                    assignedCount++;
+                }
+            }
+        }
+        if (refreshedCount > 0)
+        {
+            Debug.Log($"[WarrantBoardStateController] Refreshed {refreshedCount} socket views after graph built ({assignedCount} with assigned warrants)");
+        }
     }
 
     [ContextMenu("Save To PlayerPrefs")]
@@ -164,17 +401,49 @@ public class WarrantBoardStateController : MonoBehaviour
         if (string.IsNullOrEmpty(playerPrefsKey))
             return;
 
-        PlayerPrefs.SetString(playerPrefsKey, ToJson(false));
+        // Use per-character key if character is loaded
+        string key = GetPerCharacterKey();
+        PlayerPrefs.SetString(key, ToJson(false));
         PlayerPrefs.Save();
+        Debug.Log($"[WarrantBoardStateController] Saved to PlayerPrefs with key: {key}");
     }
 
     [ContextMenu("Load From PlayerPrefs")]
     public void LoadFromPlayerPrefs()
     {
-        if (string.IsNullOrEmpty(playerPrefsKey) || !PlayerPrefs.HasKey(playerPrefsKey))
+        string key = GetPerCharacterKey();
+        if (!PlayerPrefs.HasKey(key))
+        {
+            // Fallback to old global key for backward compatibility
+            if (!string.IsNullOrEmpty(playerPrefsKey) && PlayerPrefs.HasKey(playerPrefsKey))
+            {
+                LoadFromJson(PlayerPrefs.GetString(playerPrefsKey));
+                Debug.Log($"[WarrantBoardStateController] Loaded from legacy PlayerPrefs key: {playerPrefsKey}");
+                return;
+            }
             return;
+        }
 
-        LoadFromJson(PlayerPrefs.GetString(playerPrefsKey));
+        LoadFromJson(PlayerPrefs.GetString(key));
+        Debug.Log($"[WarrantBoardStateController] Loaded from PlayerPrefs with key: {key}");
+    }
+    
+    /// <summary>
+    /// Get per-character PlayerPrefs key for warrant board state
+    /// </summary>
+    private string GetPerCharacterKey()
+    {
+        var charManager = CharacterManager.Instance ?? FindFirstObjectByType<CharacterManager>();
+        if (charManager != null && charManager.HasCharacter())
+        {
+            Character character = charManager.GetCurrentCharacter();
+            if (character != null)
+            {
+                return $"{playerPrefsKey}_{character.characterName}";
+            }
+        }
+        // Fallback to global key if no character loaded
+        return playerPrefsKey;
     }
 
     public WarrantBoardPageData DuplicateActivePage(string newDisplayName = null)
@@ -248,8 +517,23 @@ public class WarrantBoardStateController : MonoBehaviour
                 skillPoints -= 1;
             }
             
+            Debug.Log($"[WarrantBoardStateController] ✅ Unlocked node '{nodeId}'. Active page now has {ActivePage.UnlockedNodeCount} unlocked nodes");
+            
+            // Sync state to WarrantsManager FIRST (important: unlocks effect nodes)
+            // This must happen before SaveCharacter() so WarrantsManager has the latest state
+            SyncToWarrantsManager();
+            
             // Refresh character warrant modifiers (unlocking nodes may affect effect nodes)
             RefreshCharacterWarrantModifiers();
+            
+            // Save character to persist warrant board state
+            // Character.ToCharacterData() will read from WarrantsManager, which now has the latest state
+            var charManager = CharacterManager.Instance ?? FindFirstObjectByType<CharacterManager>();
+            if (charManager != null && charManager.HasCharacter())
+            {
+                charManager.SaveCharacter();
+                Debug.Log($"[WarrantBoardStateController] Saved character after unlocking node '{nodeId}'");
+            }
             
             return true;
         }
@@ -278,7 +562,21 @@ public class WarrantBoardStateController : MonoBehaviour
     /// </summary>
     public bool IsNodeUnlocked(string nodeId)
     {
-        return ActivePage != null && ActivePage.IsNodeUnlocked(nodeId);
+        if (ActivePage == null)
+        {
+            Debug.LogWarning($"[WarrantBoardStateController] IsNodeUnlocked('{nodeId}'): ActivePage is null");
+            return false;
+        }
+        
+        bool unlocked = ActivePage.IsNodeUnlocked(nodeId);
+        
+        // Debug logging for first few nodes to track state
+        if (nodeId.Contains("effect") && (nodeId.Contains("effect1") || nodeId.Contains("effect2") || nodeId.Contains("effect3")))
+        {
+            Debug.Log($"[WarrantBoardStateController] IsNodeUnlocked('{nodeId}'): {unlocked} (ActivePage: {ActivePageIndex + 1}/{pages.Count}, UnlockedCount: {ActivePage.UnlockedNodeCount})");
+        }
+        
+        return unlocked;
     }
 
     private void CacheValidSockets()
@@ -350,6 +648,8 @@ public class WarrantBoardStateController : MonoBehaviour
         public string PageId => pageId;
         public string DisplayName => displayName;
         public IReadOnlyList<WarrantSocketAssignment> SocketAssignments => socketAssignments;
+        public int UnlockedNodeCount => unlockedNodeIds?.Count ?? 0;
+        public IReadOnlyList<string> UnlockedNodeIds => unlockedNodeIds ?? new List<string>();
         
         public bool IsNodeUnlocked(string nodeId)
         {
@@ -367,8 +667,18 @@ public class WarrantBoardStateController : MonoBehaviour
         {
             if (unlockedSetCache == null)
             {
-                unlockedSetCache = new HashSet<string>(unlockedNodeIds);
+                unlockedSetCache = new HashSet<string>(unlockedNodeIds ?? new List<string>());
             }
+        }
+        
+        /// <summary>
+        /// Forces a rebuild of the unlocked node cache.
+        /// Call this after deserialization to ensure cache is up to date.
+        /// </summary>
+        public void RebuildUnlockedCache()
+        {
+            unlockedSetCache = null;
+            EnsureUnlockedSetCache();
         }
 
         public bool UnlockNode(string nodeId)

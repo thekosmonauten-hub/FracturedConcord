@@ -31,8 +31,6 @@ namespace Dexiled.UI.EquipmentScreen
         public Action<EmbossingEffect> OnSlotClicked;
         public Action<EmbossingEffect> OnSlotClickedForConfirmation;
         
-        private EmbossingTooltip tooltipSystem;
-        
         void Awake()
         {
             // Auto-setup references if enabled
@@ -55,17 +53,6 @@ namespace Dexiled.UI.EquipmentScreen
             if (backgroundImage != null)
             {
                 originalBackgroundColor = backgroundImage.color;
-            }
-        }
-        
-        void Start()
-        {
-            // Find tooltip system
-            tooltipSystem = FindFirstObjectByType<EmbossingTooltip>();
-            
-            if (tooltipSystem == null)
-            {
-                Debug.LogWarning("[EmbossingSlotUI] EmbossingTooltip system not found in scene!");
             }
         }
         
@@ -228,9 +215,10 @@ namespace Dexiled.UI.EquipmentScreen
         /// </summary>
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (embossing != null && tooltipSystem != null)
+            if (embossing != null && ItemTooltipManager.Instance != null)
             {
-                tooltipSystem.ShowTooltip(embossing);
+                Character character = CharacterManager.Instance?.GetCurrentCharacter();
+                ItemTooltipManager.Instance.ShowEmbossingTooltip(embossing, eventData.position, character);
             }
         }
         
@@ -239,9 +227,9 @@ namespace Dexiled.UI.EquipmentScreen
         /// </summary>
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (tooltipSystem != null)
+            if (ItemTooltipManager.Instance != null)
             {
-                tooltipSystem.HideTooltip();
+                ItemTooltipManager.Instance.HideTooltip();
             }
         }
         
@@ -253,9 +241,9 @@ namespace Dexiled.UI.EquipmentScreen
             if (embossing == null) return;
             
             // Hide tooltip when clicked
-            if (tooltipSystem != null)
+            if (ItemTooltipManager.Instance != null)
             {
-                tooltipSystem.ForceHideTooltip();
+                ItemTooltipManager.Instance.HideTooltip();
             }
             
             SetSelected(true);

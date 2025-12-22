@@ -22,26 +22,28 @@ public class AreaLootTable : ScriptableObject
     [Header("Drop Rates")]
     [Tooltip("Chance for any item to drop (0.0 to 1.0)")]
     [Range(0f, 1f)]
-    public float baseDropChance = 0.50f; // Increased from 0.15f to 0.50f
+    public float baseDropChance = 0.80f; // Increased from 0.45f to 0.80f (80%) for more frequent drops
     
     [Header("Item Type Weights")]
-    [Tooltip("Relative chance for each item type to drop")]
+    [Tooltip("Relative chance for each item type to drop. Effigy weight controls overall effigy drop rate - all effigies in effigyDrops share this weight equally.")]
     public ItemTypeWeight[] itemTypeWeights = new ItemTypeWeight[]
     {
         new ItemTypeWeight { itemType = ItemType.Weapon, weight = 30f },
         new ItemTypeWeight { itemType = ItemType.Armour, weight = 40f },
         new ItemTypeWeight { itemType = ItemType.Accessory, weight = 20f },
-        new ItemTypeWeight { itemType = ItemType.Consumable, weight = 10f }
+        new ItemTypeWeight { itemType = ItemType.Consumable, weight = 10f },
+        new ItemTypeWeight { itemType = ItemType.Effigy, weight = 20f },  // Increased from 5f to 20f for more frequent effigy drops
+        new ItemTypeWeight { itemType = ItemType.Warrant, weight = 20f }  // Increased from 5f to 20f for more frequent warrant drops
     };
     
     [Header("Rarity Distribution")]
     [Tooltip("Rarity chances (should add up to ~1.0)")]
     public RarityWeight[] rarityWeights = new RarityWeight[]
     {
-        new RarityWeight { rarity = ItemRarity.Normal, weight = 0.70f },
-        new RarityWeight { rarity = ItemRarity.Magic, weight = 0.25f },
-        new RarityWeight { rarity = ItemRarity.Rare, weight = 0.05f },
-        new RarityWeight { rarity = ItemRarity.Unique, weight = 0.001f }
+        new RarityWeight { rarity = ItemRarity.Normal, weight = 0.65f },  // Tuned: Slightly reduced
+        new RarityWeight { rarity = ItemRarity.Magic, weight = 0.28f },   // Tuned: Slightly increased
+        new RarityWeight { rarity = ItemRarity.Rare, weight = 0.065f },   // Tuned: Slightly increased
+        new RarityWeight { rarity = ItemRarity.Unique, weight = 0.002f }  // Tuned: Doubled for better excitement
     };
     
     [Header("Currency Drops")]
@@ -51,41 +53,45 @@ public class AreaLootTable : ScriptableObject
     [Tooltip("Currency drop configuration with individual drop chances")]
     public CurrencyDropWeight[] currencyDrops = new CurrencyDropWeight[]
     {
-        // Currency drop rates (REDUCED by ~75% from original values)
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfGeneration, dropChance = 0.04f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfInfusion, dropChance = 0.04f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfPerfection, dropChance = 0.02f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfPerpetuity, dropChance = 0.015f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfRedundancy, dropChance = 0.01f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfTheVoid, dropChance = 0.005f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfMutation, dropChance = 0.015f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfProliferation, dropChance = 0.03f },
-        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfAmnesia, dropChance = 0.01f },
+        // Currency drop rates (TUNED for better balance)
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfGeneration, dropChance = 0.05f, minQuantity = 1, maxQuantity = 1 },  // Tuned: Slightly increased, can drop 1-2
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfInfusion, dropChance = 0.045f, minQuantity = 1, maxQuantity = 2 },
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfPerfection, dropChance = 0.025f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfPerpetuity, dropChance = 0.02f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfRedundancy, dropChance = 0.015f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfTheVoid, dropChance = 0.008f, minQuantity = 1, maxQuantity = 1 },  // Tuned: Slightly increased
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfMutation, dropChance = 0.02f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfProliferation, dropChance = 0.035f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.OrbOfAmnesia, dropChance = 0.015f, minQuantity = 1, maxQuantity = 1 },
         
-        // Spirits (REDUCED by ~75%)
-        new CurrencyDropWeight { currencyType = CurrencyType.FireSpirit, dropChance = 0.025f },
-        new CurrencyDropWeight { currencyType = CurrencyType.ColdSpirit, dropChance = 0.025f },
-        new CurrencyDropWeight { currencyType = CurrencyType.LightningSpirit, dropChance = 0.025f },
-        new CurrencyDropWeight { currencyType = CurrencyType.ChaosSpirit, dropChance = 0.02f },
-        new CurrencyDropWeight { currencyType = CurrencyType.PhysicalSpirit, dropChance = 0.025f },
-        new CurrencyDropWeight { currencyType = CurrencyType.LifeSpirit, dropChance = 0.025f },
-        new CurrencyDropWeight { currencyType = CurrencyType.DefenseSpirit, dropChance = 0.025f },
-        new CurrencyDropWeight { currencyType = CurrencyType.CritSpirit, dropChance = 0.02f },
-        new CurrencyDropWeight { currencyType = CurrencyType.DivineSpirit, dropChance = 0.01f },
+        // Spirits (TUNED for better balance)
+        new CurrencyDropWeight { currencyType = CurrencyType.FireSpirit, dropChance = 0.03f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.ColdSpirit, dropChance = 0.03f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.LightningSpirit, dropChance = 0.03f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.ChaosSpirit, dropChance = 0.025f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.PhysicalSpirit, dropChance = 0.03f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.LifeSpirit, dropChance = 0.03f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.DefenseSpirit, dropChance = 0.03f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.CritSpirit, dropChance = 0.025f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.DivineSpirit, dropChance = 0.015f, minQuantity = 1, maxQuantity = 1 },  // Tuned: Slightly increased
         
-        // Seals (REDUCED by ~75%)
-        new CurrencyDropWeight { currencyType = CurrencyType.TranspositionSeal, dropChance = 0.0125f },
-        new CurrencyDropWeight { currencyType = CurrencyType.ChaosSeal, dropChance = 0.0175f },
-        new CurrencyDropWeight { currencyType = CurrencyType.MemorySeal, dropChance = 0.01f },
-        new CurrencyDropWeight { currencyType = CurrencyType.InscriptionSeal, dropChance = 0.0125f },
-        new CurrencyDropWeight { currencyType = CurrencyType.AdaptationSeal, dropChance = 0.0125f },
-        new CurrencyDropWeight { currencyType = CurrencyType.CorrectionSeal, dropChance = 0.0125f },
-        new CurrencyDropWeight { currencyType = CurrencyType.EtchingSeal, dropChance = 0.0175f }
+        // Seals (TUNED for better balance)
+        new CurrencyDropWeight { currencyType = CurrencyType.TranspositionSeal, dropChance = 0.015f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.ChaosSeal, dropChance = 0.02f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.MemorySeal, dropChance = 0.012f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.InscriptionSeal, dropChance = 0.015f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.AdaptationSeal, dropChance = 0.015f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.CorrectionSeal, dropChance = 0.015f, minQuantity = 1, maxQuantity = 1 },
+        new CurrencyDropWeight { currencyType = CurrencyType.EtchingSeal, dropChance = 0.02f, minQuantity = 1, maxQuantity = 1 }
     };
 
     [Header("Effigy Drops")]
     [Tooltip("Optional effigy drops evaluated against area level")]
     public EffigyDropWeight[] effigyDrops = new EffigyDropWeight[0];
+
+    [Header("Warrant Drops")]
+    [Tooltip("Optional warrant drops evaluated against area level")]
+    public WarrantDropWeight[] warrantDrops = new WarrantDropWeight[0];
 
     [Header("Name Generation")]
     [Tooltip("Data for generating Magic and Rare item names")]
@@ -610,10 +616,14 @@ public class AreaLootTable : ScriptableObject
         // Generate effigy drops
         List<LootReward> effigyRewards = GenerateEffigyDrops(currentAreaLevel);
         allRewards.AddRange(effigyRewards);
+
+        // Generate warrant drops
+        List<LootReward> warrantRewards = GenerateWarrantDrops(currentAreaLevel);
+        allRewards.AddRange(warrantRewards);
         
         if (enableDebugLogs && allRewards.Count > 0)
         {
-            Debug.Log($"[AreaLoot] Generated {allRewards.Count} total rewards ({items.Count} items, {currencies.Count} currencies, {effigyRewards.Count} effigies)");
+            Debug.Log($"[AreaLoot] Generated {allRewards.Count} total rewards ({items.Count} items, {currencies.Count} currencies, {effigyRewards.Count} effigies, {warrantRewards.Count} warrants)");
         }
         
         return allRewards;
@@ -626,35 +636,176 @@ public class AreaLootTable : ScriptableObject
         if (effigyDrops == null || effigyDrops.Length == 0)
             return effigyRewards;
 
+        // Get Effigy weight from itemTypeWeights
+        float effigyWeight = GetItemTypeWeight(ItemType.Effigy);
+        if (effigyWeight <= 0f)
+        {
+            // Effigy drops disabled (weight is 0 or not found)
+            return effigyRewards;
+        }
+
+        // Calculate total weight of all item types for probability
+        float totalItemWeight = itemTypeWeights.Sum(w => w.weight);
+        if (totalItemWeight <= 0f)
+        {
+            return effigyRewards;
+        }
+
+        // Calculate probability of dropping an effigy (based on weight ratio)
+        float effigyDropProbability = effigyWeight / totalItemWeight;
+
+        // First roll: Should we drop an effigy at all? (based on baseDropChance and effigy weight)
+        if (Random.Range(0f, 1f) > baseDropChance * effigyDropProbability)
+        {
+            return effigyRewards;
+        }
+
+        // Second roll: Which effigy to drop? (equal weight among all effigies in effigyDrops)
+        // Filter eligible effigies for this area level
+        List<EffigyDropWeight> eligibleDrops = new List<EffigyDropWeight>();
         foreach (var drop in effigyDrops)
         {
             if (drop == null || drop.effigyBlueprint == null)
                 continue;
 
-            float chance = drop.GetDropChance(currentAreaLevel);
-            if (chance <= 0f)
-                continue;
-
-            // Supports dropping multiple if desired
-            int rolls = Mathf.Max(1, drop.maxQuantity);
-            for (int r = 0; r < rolls; r++)
+            // Check if this effigy is eligible for this area level
+            if (currentAreaLevel >= drop.minAreaLevel && currentAreaLevel <= drop.maxAreaLevel)
             {
-                if (Random.Range(0f, 1f) <= chance)
+                eligibleDrops.Add(drop);
+            }
+        }
+
+        if (eligibleDrops.Count == 0)
+        {
+            return effigyRewards;
+        }
+
+        // Select a random eligible effigy (equal probability for all)
+        EffigyDropWeight selectedDrop = eligibleDrops[Random.Range(0, eligibleDrops.Count)];
+
+        // Roll the selected effigy (using area-level scaling for drop chance)
+        float chance = selectedDrop.GetDropChance(currentAreaLevel);
+        if (chance > 0f && Random.Range(0f, 1f) <= chance)
+        {
+            Effigy instance = EffigyFactory.CreateInstance(selectedDrop.effigyBlueprint, EffigyAffixDatabase.Instance);
+            if (instance != null)
+            {
+                effigyRewards.Add(new LootReward
                 {
-                    Effigy instance = EffigyFactory.CreateInstance(drop.effigyBlueprint, EffigyAffixDatabase.Instance);
-                    if (instance != null)
-                    {
-                        effigyRewards.Add(new LootReward
-                        {
-                            rewardType = RewardType.Effigy,
-                            effigyInstance = instance
-                        });
-                    }
+                    rewardType = RewardType.Effigy,
+                    effigyInstance = instance
+                });
+
+                if (enableDebugLogs)
+                {
+                    Debug.Log($"[AreaLoot] Generated effigy: {instance.effigyName} (weight: {effigyWeight}, probability: {effigyDropProbability:P2})");
                 }
             }
         }
 
         return effigyRewards;
+    }
+
+    /// <summary>
+    /// Get the weight for a specific item type
+    /// </summary>
+    private float GetItemTypeWeight(ItemType itemType)
+    {
+        var weight = itemTypeWeights.FirstOrDefault(w => w.itemType == itemType);
+        return weight != null ? weight.weight : 0f;
+    }
+
+    private List<LootReward> GenerateWarrantDrops(int currentAreaLevel)
+    {
+        List<LootReward> warrantRewards = new List<LootReward>();
+
+        if (warrantDrops == null || warrantDrops.Length == 0)
+            return warrantRewards;
+
+        // Get Warrant weight from itemTypeWeights
+        float warrantWeight = GetItemTypeWeight(ItemType.Warrant);
+        if (warrantWeight <= 0f)
+        {
+            // Warrant drops disabled (weight is 0 or not found)
+            return warrantRewards;
+        }
+
+        // Calculate total weight of all item types for probability
+        float totalItemWeight = itemTypeWeights.Sum(w => w.weight);
+        if (totalItemWeight <= 0f)
+        {
+            return warrantRewards;
+        }
+
+        // Calculate probability of dropping a warrant (based on weight ratio)
+        float warrantDropProbability = warrantWeight / totalItemWeight;
+
+        // First roll: Should we drop a warrant at all? (based on baseDropChance and warrant weight)
+        if (Random.Range(0f, 1f) > baseDropChance * warrantDropProbability)
+        {
+            return warrantRewards;
+        }
+
+        // Get WarrantDatabase (needed to create instances from blueprints)
+        WarrantDatabase warrantDatabase = Resources.Load<WarrantDatabase>("WarrantDatabase");
+        if (warrantDatabase == null)
+        {
+            if (enableDebugLogs)
+                Debug.LogWarning("[AreaLoot] WarrantDatabase not found in Resources. Warrant drops disabled.");
+            return warrantRewards;
+        }
+
+        // Second roll: Which warrant to drop? (equal weight among all warrants in warrantDrops)
+        // Filter eligible warrants for this area level
+        List<WarrantDropWeight> eligibleDrops = new List<WarrantDropWeight>();
+        foreach (var drop in warrantDrops)
+        {
+            if (drop == null || drop.warrantBlueprint == null)
+                continue;
+
+            // Check if this warrant is eligible for this area level
+            if (currentAreaLevel >= drop.minAreaLevel && currentAreaLevel <= drop.maxAreaLevel)
+            {
+                eligibleDrops.Add(drop);
+            }
+        }
+
+        if (eligibleDrops.Count == 0)
+        {
+            return warrantRewards;
+        }
+
+        // Select a random eligible warrant (equal probability for all)
+        WarrantDropWeight selectedDrop = eligibleDrops[Random.Range(0, eligibleDrops.Count)];
+
+        // Roll the selected warrant (using area-level scaling for drop chance)
+        float chance = selectedDrop.GetDropChance(currentAreaLevel);
+        if (chance > 0f && Random.Range(0f, 1f) <= chance)
+        {
+            // Create rolled instance from blueprint
+            WarrantDefinition rolledInstance = warrantDatabase.CreateInstanceFromBlueprint(
+                selectedDrop.warrantBlueprint, 
+                selectedDrop.minAffixes, 
+                selectedDrop.maxAffixes
+            );
+            
+            if (rolledInstance != null)
+            {
+                warrantRewards.Add(new LootReward
+                {
+                    rewardType = RewardType.Warrant,
+                    warrantBlueprint = selectedDrop.warrantBlueprint,
+                    warrantInstance = rolledInstance
+                });
+
+                if (enableDebugLogs)
+                {
+                    Debug.Log($"[AreaLoot] Generated warrant: {rolledInstance.displayName} (weight: {warrantWeight}, probability: {warrantDropProbability:P2})");
+                }
+            }
+        }
+
+        return warrantRewards;
     }
     
     /// <summary>
@@ -774,6 +925,51 @@ public class EffigyDropWeight
     public float GetDropChance(int areaLevel)
     {
         if (effigyBlueprint == null)
+            return 0f;
+
+        if (areaLevel < minAreaLevel || areaLevel > maxAreaLevel)
+            return 0f;
+
+        if (Mathf.Approximately(minAreaLevel, maxAreaLevel))
+            return dropChanceAtMaxLevel;
+
+        float t = Mathf.InverseLerp(minAreaLevel, maxAreaLevel, areaLevel);
+        return Mathf.Lerp(dropChanceAtMinLevel, dropChanceAtMaxLevel, t);
+    }
+}
+
+[System.Serializable]
+public class WarrantDropWeight
+{
+    [Tooltip("Warrant blueprint to roll when this drop succeeds")]
+    public WarrantDefinition warrantBlueprint;
+
+    [Tooltip("Lowest area level this drop can appear")]
+    public int minAreaLevel = 1;
+
+    [Tooltip("Highest area level this drop can appear")]
+    public int maxAreaLevel = 100;
+
+    [Tooltip("Drop chance when the area level equals minAreaLevel (0.0 - 1.0)")]
+    [Range(0f, 1f)]
+    public float dropChanceAtMinLevel = 0f;
+
+    [Tooltip("Drop chance when the area level equals maxAreaLevel (0.0 - 1.0)")]
+    [Range(0f, 1f)]
+    public float dropChanceAtMaxLevel = 0.05f;
+
+    [Tooltip("Number of times to roll this warrant when the drop chance succeeds")]
+    public int maxQuantity = 1;
+
+    [Tooltip("Minimum number of affixes to roll on the warrant")]
+    public int minAffixes = 1;
+
+    [Tooltip("Maximum number of affixes to roll on the warrant")]
+    public int maxAffixes = 3;
+
+    public float GetDropChance(int areaLevel)
+    {
+        if (warrantBlueprint == null)
             return 0f;
 
         if (areaLevel < minAreaLevel || areaLevel > maxAreaLevel)

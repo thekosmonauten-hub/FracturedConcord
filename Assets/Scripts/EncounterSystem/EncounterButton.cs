@@ -199,7 +199,18 @@ public class EncounterButton : MonoBehaviour, IPointerClickHandler, IPointerDown
             encounterImage = GetComponent<Image>();
             if (encounterImage == null)
             {
-                encounterImage = GetComponentsInChildren<Image>(true).FirstOrDefault();
+                // Try to find Image component in children (including inactive)
+                Image[] images = GetComponentsInChildren<Image>(true);
+                encounterImage = images.FirstOrDefault();
+                
+                if (encounterImage == null && verboseDebug)
+                {
+                    Debug.LogWarning($"[EncounterButton] No Image component found for Encounter {encounterID} ({encounterName}). Searched in GameObject '{gameObject.name}' and all children.");
+                }
+                else if (encounterImage != null && verboseDebug)
+                {
+                    Debug.Log($"[EncounterButton] Found encounterImage for Encounter {encounterID} ({encounterName}) on GameObject '{encounterImage.gameObject.name}'");
+                }
             }
         }
 
@@ -317,10 +328,21 @@ public class EncounterButton : MonoBehaviour, IPointerClickHandler, IPointerDown
             }
             sceneName = string.IsNullOrWhiteSpace(encounterAsset.sceneName) ? sceneName : encounterAsset.sceneName;
             areaLevel = encounterAsset.areaLevel;
+            
+            // Always update sprite if asset has one
             if (encounterAsset.encounterSprite != null)
             {
                 encounterSprite = encounterAsset.encounterSprite;
+                if (verboseDebug)
+                {
+                    Debug.Log($"[EncounterButton] Loaded sprite from EncounterDataAsset for {encounterID} ({encounterName}): {encounterSprite.name}");
+                }
             }
+            else if (verboseDebug)
+            {
+                Debug.LogWarning($"[EncounterButton] EncounterDataAsset for {encounterID} ({encounterName}) has no encounterSprite assigned.");
+            }
+            
             UpdateEncounterSprite();
             UpdateAreaLevelText();
             UpdateButtonText();
@@ -506,6 +528,25 @@ public class EncounterButton : MonoBehaviour, IPointerClickHandler, IPointerDown
         {
             encounterImage.sprite = encounterSprite;
             encounterImage.enabled = encounterSprite != null;
+            
+            if (verboseDebug)
+            {
+                if (encounterSprite != null)
+                {
+                    Debug.Log($"[EncounterButton] Set sprite for Encounter {encounterID} ({encounterName}): {encounterSprite.name}");
+                }
+                else
+                {
+                    Debug.LogWarning($"[EncounterButton] No sprite found for Encounter {encounterID} ({encounterName}). encounterImage will be disabled.");
+                }
+            }
+        }
+        else
+        {
+            if (verboseDebug)
+            {
+                Debug.LogWarning($"[EncounterButton] encounterImage is null for Encounter {encounterID} ({encounterName}). Cannot set sprite.");
+            }
         }
     }
 
@@ -830,9 +871,19 @@ public class EncounterButton : MonoBehaviour, IPointerClickHandler, IPointerDown
         encounterID = data.encounterID;
         sceneName = string.IsNullOrWhiteSpace(data.sceneName) ? sceneName : data.sceneName;
         areaLevel = data.areaLevel;
+        
+        // Always update sprite if data has one (don't skip if null, but do update if present)
         if (data.encounterSprite != null)
         {
             encounterSprite = data.encounterSprite;
+            if (verboseDebug)
+            {
+                Debug.Log($"[EncounterButton] Loaded sprite from EncounterData for {encounterID} ({encounterName}): {encounterSprite.name}");
+            }
+        }
+        else if (verboseDebug)
+        {
+            Debug.LogWarning($"[EncounterButton] EncounterData for {encounterID} ({encounterName}) has no encounterSprite assigned.");
         }
 
         UpdateButtonText();

@@ -393,6 +393,22 @@ public class CombatAnimationManager : MonoBehaviour
         cardObject.transform.localScale = targetScale * 0.3f; // Start at 30% of target scale
         cardObject.transform.rotation = Quaternion.Euler(0, 0, Random.Range(-15f, 15f));
         
+        // Disable raycasting during animation so card doesn't interfere with mouse
+        SetCardRaycastTargets(cardObject, false);
+        
+        // Disable hover effect and button interactions during animation
+        var hoverEffect = cardObject.GetComponent<CardHoverEffect>();
+        if (hoverEffect != null)
+        {
+            hoverEffect.enabled = false;
+        }
+        
+        var button = cardObject.GetComponent<UnityEngine.UI.Button>();
+        if (button != null)
+        {
+            button.interactable = false;
+        }
+        
         // Move to hand position
         LeanTween.move(cardObject, endPosition, config.cardDrawDuration)
             .setEase(config.cardDrawEase);
@@ -404,7 +420,42 @@ public class CombatAnimationManager : MonoBehaviour
         // Rotate to upright
         LeanTween.rotate(cardObject, Vector3.zero, config.cardDrawDuration)
             .setEase(LeanTweenType.easeOutQuad)
-            .setOnComplete(() => onComplete?.Invoke());
+            .setOnComplete(() => 
+            {
+                // Re-enable raycasting when animation completes
+                SetCardRaycastTargets(cardObject, true);
+                
+                // Re-enable hover effect and button
+                if (hoverEffect != null)
+                {
+                    hoverEffect.enabled = true;
+                }
+                
+                if (button != null)
+                {
+                    button.interactable = true;
+                }
+                
+                onComplete?.Invoke();
+            });
+    }
+    
+    /// <summary>
+    /// Enable or disable raycasting on all graphics in a card GameObject
+    /// </summary>
+    private void SetCardRaycastTargets(GameObject cardObject, bool enabled)
+    {
+        if (cardObject == null) return;
+        
+        // Get all Graphic components (Image, TextMeshProUGUI, etc.) in the card and its children
+        var graphics = cardObject.GetComponentsInChildren<UnityEngine.UI.Graphic>(true);
+        foreach (var graphic in graphics)
+        {
+            if (graphic != null)
+            {
+                graphic.raycastTarget = enabled;
+            }
+        }
     }
     
     /// <summary>

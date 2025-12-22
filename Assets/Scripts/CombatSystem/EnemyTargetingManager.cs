@@ -78,32 +78,18 @@ public class EnemyTargetingManager : MonoBehaviour
     
     /// <summary>
     /// Setup click handlers on all enemy displays.
+    /// Note: EnemyCombatDisplay now handles its own clickable areas on visual elements,
+    /// so we don't need to add buttons here. This method is kept for compatibility.
     /// </summary>
     private void SetupEnemyClickHandlers()
     {
+        // EnemyCombatDisplay.SetupClickableArea() now handles making visual elements clickable
+        // This ensures clicks work on the actual sprites/UI elements, not just the root bounds
+        // No action needed here - EnemyCombatDisplay handles it in Start()
+        
         if (combatManager == null || combatManager.GetActiveEnemyDisplays() == null) return;
         
-        for (int i = 0; i < combatManager.GetActiveEnemyDisplays().Count; i++)
-        {
-            EnemyCombatDisplay display = combatManager.GetActiveEnemyDisplays()[i];
-            if (display != null)
-            {
-                // Add button if not present
-                Button button = display.GetComponent<Button>();
-                if (button == null)
-                {
-                    button = display.gameObject.AddComponent<Button>();
-                    button.transition = Selectable.Transition.None; // We'll handle visuals ourselves
-                }
-                
-                // Setup click handler
-                int enemyIndex = i; // Capture for lambda
-                button.onClick.RemoveAllListeners();
-                button.onClick.AddListener(() => OnEnemyClicked(enemyIndex));
-                
-                Debug.Log($"Setup targeting for enemy panel {i}");
-            }
-        }
+        Debug.Log($"EnemyTargetingManager: {combatManager.GetActiveEnemyDisplays().Count} enemy displays found. Click handling is managed by EnemyCombatDisplay components.");
     }
     
     /// <summary>

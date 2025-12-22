@@ -29,19 +29,153 @@ public class WarrantLockerGrid : MonoBehaviour
     private readonly List<WarrantLockerItem> lockerItems = new List<WarrantLockerItem>();
     private readonly Dictionary<string, WarrantDefinition> definitionLookup = new Dictionary<string, WarrantDefinition>();
     private GridLayoutGroup gridLayout;
+    private bool isDragging = false;
     
     private void Awake()
     {
         InitializeGrid();
+        
+        // Load warrants from Character immediately in Awake() so they're available
+        // even if the locker panel is inactive. This ensures socket views can display
+        // socketed warrants when the warrant board scene loads.
+        LoadWarrantsFromCharacter();
+        
+        // Configure scroll rect to only allow scrolling down (prevent scrolling above top)
+        ConfigureScrollRestriction();
+    }
+    
+    /// <summary>
+    /// Configures the scroll rect to only allow scrolling down (negative values).
+    /// Prevents scrolling above the top of the content.
+    /// </summary>
+    private void ConfigureScrollRestriction()
+    {
+        if (scrollRect != null)
+        {
+            // Subscribe to value changes to clamp scroll position
+            scrollRect.onValueChanged.AddListener(OnScrollValueChanged);
+            
+            // Set initial clamp
+            ClampScrollPosition();
+        }
+    }
+    
+    /// <summary>
+    /// Called when scroll value changes. Clamps the vertical position to prevent scrolling above top.
+    /// </summary>
+    private void OnScrollValueChanged(Vector2 scrollPosition)
+    {
+        ClampScrollPosition();
+    }
+    
+    private void LateUpdate()
+    {
+        // Continuously clamp during dragging to prevent scrolling past the top
+        // Using LateUpdate ensures this runs after ScrollRect has updated its position
+        // This prevents scrolling past the top even during manual dragging
+        if (scrollRect != null && scrollRect.vertical)
+        {
+            ClampScrollPosition();
+        }
+    }
+    
+    private void OnDestroy()
+    {
+        // Clean up event listener
+        if (scrollRect != null)
+        {
+            scrollRect.onValueChanged.RemoveListener(OnScrollValueChanged);
+        }
+    }
+    
+    /// <summary>
+    /// Clamps the scroll position to only allow downward scrolling.
+    /// verticalNormalizedPosition: 1.0 = top (content starts here), 0.0 = bottom
+    /// We clamp it to <= 1.0 to prevent scrolling above the top (scrolling up).
+    /// This means content can only scroll down from the top, never scroll up past it.
+    /// </summary>
+    private void ClampScrollPosition()
+    {
+        if (scrollRect != null && scrollRect.vertical && scrollRect.content != null)
+        {
+            // Clamp vertical position to prevent scrolling above top (only allow values <= 1.0)
+            // This means content can only scroll down (toward 0.0), not up (past 1.0)
+            if (scrollRect.verticalNormalizedPosition > 1.0f)
+            {
+                scrollRect.verticalNormalizedPosition = 1.0f;
+            }
+            
+            // Also clamp the content's anchored position directly as a backup
+            // This provides an additional layer of protection during dragging
+            RectTransform contentRect = scrollRect.content;
+            Vector2 anchoredPos = contentRect.anchoredPosition;
+            
+            // If content is scrolled above the top (positive Y for top-anchored content),
+            // clamp it back to the top position
+            // For top-anchored content, Y should not be positive (which would move it up)
+            if (anchoredPos.y > 0f)
+            {
+                anchoredPos.y = 0f;
+                contentRect.anchoredPosition = anchoredPos;
+            }
+        }
     }
 
     private void Start()
     {
-        // Load warrants from Character if available, otherwise rebuild from database
-        LoadWarrantsFromCharacter();
+        // If warrants weren't loaded in Awake (shouldn't happen, but safety check),
+        // load them here as well. This ensures warrants are loaded regardless of
+        // initialization order or panel state.
         if (availableWarrants.Count == 0)
         {
-            RebuildInventoryFromDatabase();
+            LoadWarrantsFromCharacter();
+        }
+        
+        // After loading warrants, refresh all socket views so they can display socketed warrants
+        RefreshAllSocketViews();
+        
+        // Refresh character warrant modifiers after warrants are loaded
+        // This ensures stats from socketed warrants are applied to the character
+        RefreshCharacterWarrantModifiers();
+    }
+    
+    /// <summary>
+    /// Refreshes character warrant modifiers after warrants are loaded.
+    /// This ensures stats from socketed warrants are applied to the character.
+    /// </summary>
+    private void RefreshCharacterWarrantModifiers()
+    {
+        var charManager = CharacterManager.Instance ?? FindFirstObjectByType<CharacterManager>();
+        if (charManager != null && charManager.HasCharacter())
+        {
+            Character character = charManager.GetCurrentCharacter();
+            if (character != null)
+            {
+                character.RefreshWarrantModifiers();
+                Debug.Log("[WarrantLockerGrid] Refreshed character warrant modifiers after loading warrants");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Refreshes all WarrantSocketView components in the scene to sync their assigned warrants.
+    /// Called after loading warrants to ensure socketed warrants are displayed correctly.
+    /// </summary>
+    private void RefreshAllSocketViews()
+    {
+        WarrantSocketView[] socketViews = FindObjectsByType<WarrantSocketView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        int refreshedCount = 0;
+        foreach (var socketView in socketViews)
+        {
+            if (socketView != null)
+            {
+                socketView.SyncFromState();
+                refreshedCount++;
+            }
+        }
+        if (refreshedCount > 0)
+        {
+            Debug.Log($"[WarrantLockerGrid] Refreshed {refreshedCount} socket views after loading warrants");
         }
     }
     
@@ -186,13 +320,15 @@ public class WarrantLockerGrid : MonoBehaviour
         if (CharacterManager.Instance == null || CharacterManager.Instance.currentCharacter == null)
         {
             Debug.Log("[WarrantLockerGrid] No Character loaded. Cannot load warrants from Character.");
+            ClearGrid(); // Ensure grid is empty if no character
             return;
         }
 
         Character character = CharacterManager.Instance.currentCharacter;
         if (character.ownedWarrants == null || character.ownedWarrants.Count == 0)
         {
-            Debug.Log("[WarrantLockerGrid] Character has no owned warrants.");
+            Debug.Log("[WarrantLockerGrid] Character has no owned warrants. Locker will be empty.");
+            ClearGrid(); // Ensure grid is empty if character has no warrants
             return;
         }
 
@@ -211,17 +347,32 @@ public class WarrantLockerGrid : MonoBehaviour
                 continue;
 
             // Convert WarrantInstanceData back to WarrantDefinition
-            WarrantDefinition warrant = warrantData.ToWarrantDefinition(warrantDatabase);
+            WarrantDefinition warrant = warrantData.ToWarrantDefinition(warrantDatabase, iconLibrary);
             if (warrant != null)
             {
-                // If icon is null (lost during save/load), get a random one from icon library
+                // If icon is still null (iconIndex was -1 or icon library changed), get a random one from icon library
                 if (warrant.icon == null && iconLibrary != null)
                 {
                     Sprite randomIcon = iconLibrary.GetRandomIcon();
                     if (randomIcon != null)
                     {
                         warrant.icon = randomIcon;
-                        Debug.Log($"[WarrantLockerGrid] Assigned random icon from library to warrant '{warrant.warrantId}'.");
+                        // Save the icon index so it persists next time
+                        int newIconIndex = iconLibrary.GetIconIndex(randomIcon);
+                        if (newIconIndex >= 0)
+                        {
+                            warrantData.iconIndex = newIconIndex;
+                            // Save character to persist the updated iconIndex
+                            if (CharacterManager.Instance != null)
+                            {
+                                CharacterManager.Instance.SaveCharacter();
+                            }
+                            Debug.Log($"[WarrantLockerGrid] Assigned random icon (index {newIconIndex}) to warrant '{warrant.warrantId}' and saved iconIndex.");
+                        }
+                        else
+                        {
+                            Debug.Log($"[WarrantLockerGrid] Assigned random icon from library to warrant '{warrant.warrantId}' (iconIndex was {warrantData.iconIndex}, couldn't get index).");
+                        }
                     }
                 }
                 
@@ -264,8 +415,8 @@ public class WarrantLockerGrid : MonoBehaviour
             return;
         }
 
-        // Create WarrantInstanceData from WarrantDefinition
-        WarrantInstanceData warrantData = WarrantInstanceData.FromWarrantDefinition(warrant, warrant.warrantId);
+        // Create WarrantInstanceData from WarrantDefinition (with icon library for icon persistence)
+        WarrantInstanceData warrantData = WarrantInstanceData.FromWarrantDefinition(warrant, warrant.warrantId, iconLibrary);
         
         if (character.ownedWarrants == null)
         {

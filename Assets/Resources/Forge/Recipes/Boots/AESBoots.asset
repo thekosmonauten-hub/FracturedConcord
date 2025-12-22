@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e4e1dedee02b994c92e11f732a591f3, type: 3}
+  m_Name: AESBoots
+  m_EditorClassIdentifier: Assembly-CSharp::CraftingRecipe
+  itemDatabaseReference: {fileID: 11400000, guid: 50306b68ca3b3a34cade80d1b7725631, type: 2}
+  recipeName: Boots
+  description: Recipe description
+  requiredMaterials:
+  - materialType: 1
+    quantity: 4
+  useAutoCalculatedCosts: 0
+  itemType: 2
+  filterByEquipmentType: 1
+  equipmentType: 9
+  filterByArmourSlot: 1
+  armourSlot: 3
+  filterByDefenseType: 1
+  defenseType: 5
+  filterByWeaponType: 0
+  weaponType: 0
+  filterByWeaponHandedness: 0
+  weaponHandedness: 0
+  specificItem: {fileID: 0}
+  craftRandomItem: 1
+  minItemLevel: 1
+  maxItemLevel: -1
+  craftedRarity: 0
+  levelRangeAbovePlayer: 5

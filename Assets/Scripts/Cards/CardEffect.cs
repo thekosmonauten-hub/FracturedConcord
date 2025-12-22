@@ -105,8 +105,34 @@ public class CardEffect
             case EffectType.TemporaryStatBoost:
                 if (target != null)
                 {
-                    // Apply temporary stat boost
-                    // This would need to be implemented in the Character class
+                    // Apply temporary stat boost via warrantStatModifiers
+                    // The effectName should match a stat key (e.g., "staggerEffectivenessIncreased")
+                    if (!string.IsNullOrEmpty(effectName))
+                    {
+                        if (target.warrantStatModifiers == null)
+                        {
+                            target.warrantStatModifiers = new System.Collections.Generic.Dictionary<string, float>();
+                        }
+                        
+                        // Add or update the stat modifier
+                        if (target.warrantStatModifiers.ContainsKey(effectName))
+                        {
+                            target.warrantStatModifiers[effectName] += value;
+                        }
+                        else
+                        {
+                            target.warrantStatModifiers[effectName] = value;
+                        }
+                        
+                        Debug.Log($"[CardEffect] Applied temporary stat boost: {effectName} = +{value}% to {target.characterName} (duration: {duration} turns)");
+                        
+                        // Note: Duration-based removal should be handled by the combat system
+                        // For now, this applies the boost immediately
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[CardEffect] TemporaryStatBoost effect has no effectName specified!");
+                    }
                 }
                 break;
         }

@@ -35,6 +35,8 @@ MonoBehaviour:
         conditionType: 0
         conditionValue: 
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
         actionType: 7
         actionValue: start
@@ -56,6 +58,8 @@ MonoBehaviour:
       conditionType: 0
       conditionValue: 
       intValue: 0
+      additionalConditions: []
+      logicOperator: 0
   - nodeId: main
     speakerName: Joreg, The Sealwright
     paragraphs: []
@@ -69,6 +73,8 @@ MonoBehaviour:
         conditionType: 5
         conditionValue: who_are_you
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
         actionType: 0
         actionValue: 
@@ -79,6 +85,8 @@ MonoBehaviour:
         conditionType: 5
         conditionValue: what_do_you_do
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
         actionType: 0
         actionValue: 
@@ -89,6 +97,8 @@ MonoBehaviour:
         conditionType: 0
         conditionValue: 
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
         actionType: 0
         actionValue: 
@@ -107,6 +117,8 @@ MonoBehaviour:
       conditionType: 5
       conditionValue: start
       intValue: 0
+      additionalConditions: []
+      logicOperator: 0
   - nodeId: who_are_you
     speakerName: Joreg, The Sealwright
     paragraphs:
@@ -129,6 +141,8 @@ MonoBehaviour:
         conditionType: 0
         conditionValue: 
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
         actionType: 0
         actionValue: 
@@ -150,6 +164,8 @@ MonoBehaviour:
       conditionType: 0
       conditionValue: 
       intValue: 0
+      additionalConditions: []
+      logicOperator: 0
   - nodeId: what_do_you_do
     speakerName: Joreg, The Sealwright
     paragraphs:
@@ -173,6 +189,8 @@ MonoBehaviour:
         conditionType: 0
         conditionValue: 
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
         actionType: 7
         actionValue: what_do_you_do
@@ -191,6 +209,8 @@ MonoBehaviour:
       conditionType: 0
       conditionValue: 
       intValue: 0
+      additionalConditions: []
+      logicOperator: 0
   - nodeId: peacekeepers
     speakerName: Joreg, The Sealwright
     paragraphs:
@@ -227,6 +247,8 @@ MonoBehaviour:
         conditionType: 0
         conditionValue: 
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
         actionType: 7
         actionValue: 
@@ -245,6 +267,8 @@ MonoBehaviour:
       conditionType: 0
       conditionValue: 
       intValue: 0
+      additionalConditions: []
+      logicOperator: 0
   - nodeId: warrants
     speakerName: Joreg, The Sealwright
     paragraphs:
@@ -267,6 +291,8 @@ MonoBehaviour:
         conditionType: 0
         conditionValue: 
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
         actionType: 3
         actionValue: warrant_starter_pack
@@ -285,6 +311,8 @@ MonoBehaviour:
       conditionType: 0
       conditionValue: 
       intValue: 0
+      additionalConditions: []
+      logicOperator: 0
   - nodeId: warrant_tutorial
     speakerName: Joreg, The Sealwright
     paragraphs:
@@ -302,6 +330,8 @@ MonoBehaviour:
         conditionType: 0
         conditionValue: 
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
         actionType: 8
         actionValue: WarrantTree
@@ -323,6 +353,8 @@ MonoBehaviour:
       conditionType: 0
       conditionValue: 
       intValue: 0
+      additionalConditions: []
+      logicOperator: 0
   - nodeId: post_tutorial
     speakerName: Joreg, The Sealwright
     paragraphs:
@@ -340,9 +372,11 @@ MonoBehaviour:
         conditionType: 0
         conditionValue: 
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
-        actionType: 0
-        actionValue: 
+        actionType: 9
+        actionValue: warrant_fusion_tutorial
         intValue: 0
     - choiceText: I don't need you help.
       targetNodeId: warrant_fusion_2
@@ -350,9 +384,11 @@ MonoBehaviour:
         conditionType: 0
         conditionValue: 
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
-        actionType: 9
-        actionValue: warrant_fusion_tutorial
+        actionType: 0
+        actionValue: 
         intValue: 0
     onEnterAction:
       actionType: 0
@@ -360,14 +396,16 @@ MonoBehaviour:
       intValue: 0
     onEnterActions: []
     onExitAction:
-      actionType: 8
-      actionValue: WarrantTree
+      actionType: 0
+      actionValue: 
       intValue: 0
     onExitActions: []
     condition:
       conditionType: 6
       conditionValue: warrant_tutorial
       intValue: 0
+      additionalConditions: []
+      logicOperator: 0
   - nodeId: warrant_fusion_1
     speakerName: Joreg, The Sealwright
     paragraphs:
@@ -381,13 +419,15 @@ MonoBehaviour:
         conditionType: 0
         conditionValue: 
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
         actionType: 6
         actionValue: WarrantFusionPanel
         intValue: 1
     onEnterAction:
-      actionType: 0
-      actionValue: 
+      actionType: 7
+      actionValue: warrant_fusion_1
       intValue: 0
     onEnterActions:
     - actionType: 6
@@ -405,6 +445,8 @@ MonoBehaviour:
       conditionType: 0
       conditionValue: 
       intValue: 0
+      additionalConditions: []
+      logicOperator: 0
   - nodeId: warrant_fusion_2
     speakerName: Joreg, The Sealwright
     paragraphs:
@@ -418,24 +460,28 @@ MonoBehaviour:
         conditionType: 0
         conditionValue: 
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
-        actionType: 6
-        actionValue: WarrantFusionPanel
+        actionType: 10
+        actionValue: warrant_fusion_tutorial
         intValue: 0
     onEnterAction:
-      actionType: 0
-      actionValue: 
+      actionType: 7
+      actionValue: warrant_fusion_2
       intValue: 0
     onEnterActions: []
     onExitAction:
-      actionType: 8
-      actionValue: WarrantTree
+      actionType: 0
+      actionValue: 
       intValue: 0
     onExitActions: []
     condition:
       conditionType: 0
       conditionValue: 
       intValue: 0
+      additionalConditions: []
+      logicOperator: 0
   - nodeId: post_fusion_skip
     speakerName: Joreg, The Sealwright
     paragraphs:
@@ -449,8 +495,10 @@ MonoBehaviour:
         conditionType: 0
         conditionValue: 
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
-        actionType: 5
+        actionType: 6
         actionValue: WarrantFusionPanel
         intValue: 0
     onEnterAction:
@@ -459,14 +507,26 @@ MonoBehaviour:
       intValue: 0
     onEnterActions: []
     onExitAction:
-      actionType: 8
-      actionValue: WarrantTree
+      actionType: 0
+      actionValue: 
       intValue: 0
     onExitActions: []
     condition:
       conditionType: 5
-      conditionValue: warrant_fusion_tutorial_skip
+      conditionValue: warrant_fusion_2
       intValue: 0
+      additionalConditions:
+      - conditionType: 6
+        conditionValue: warrant_tutorial
+        intValue: 0
+        additionalConditions: []
+        logicOperator: 0
+      - conditionType: 6
+        conditionValue: warrant_fusion_tutorial
+        intValue: 0
+        additionalConditions: []
+        logicOperator: 0
+      logicOperator: 0
   - nodeId: post_fusion_tutorial
     speakerName: Joreg, The Sealwright
     paragraphs:
@@ -480,8 +540,10 @@ MonoBehaviour:
         conditionType: 0
         conditionValue: 
         intValue: 0
+        additionalConditions: []
+        logicOperator: 0
       action:
-        actionType: 5
+        actionType: 6
         actionValue: WarrantFusionPanel
         intValue: 0
     onEnterAction:
@@ -490,11 +552,18 @@ MonoBehaviour:
       intValue: 0
     onEnterActions: []
     onExitAction:
-      actionType: 8
-      actionValue: WarrantTree
+      actionType: 0
+      actionValue: 
       intValue: 0
     onExitActions: []
     condition:
       conditionType: 6
-      conditionValue: warrant_fusion_tutorial
+      conditionValue: warrant_tutorial
       intValue: 0
+      additionalConditions:
+      - conditionType: 6
+        conditionValue: warrant_fusion_tutorial
+        intValue: 0
+        additionalConditions: []
+        logicOperator: 0
+      logicOperator: 0
