@@ -29,6 +29,12 @@ public class WarrantBoardStateController : MonoBehaviour
 
     private readonly HashSet<string> validSocketIds = new HashSet<string>();
 
+    /// <summary>
+    /// Event fired when a warrant is assigned or removed from the board.
+    /// Subscribers can refresh their displays when warrants change.
+    /// </summary>
+    public event Action OnWarrantChanged;
+
     public IReadOnlyList<WarrantBoardPageData> Pages => pages;
     public int ActivePageIndex => Mathf.Clamp(activePageIndex, 0, pages.Count > 0 ? pages.Count - 1 : 0);
     public WarrantBoardPageData ActivePage => pages.Count == 0 ? null : pages[ActivePageIndex];
@@ -190,6 +196,10 @@ public class WarrantBoardStateController : MonoBehaviour
             return true;
 
         activePageIndex = index;
+        
+        // Notify subscribers that the active page changed (which affects displayed warrants)
+        OnWarrantChanged?.Invoke();
+        
         return true;
     }
 
@@ -213,6 +223,9 @@ public class WarrantBoardStateController : MonoBehaviour
         
         // Refresh character warrant modifiers
         RefreshCharacterWarrantModifiers();
+        
+        // Notify subscribers that a warrant was changed
+        OnWarrantChanged?.Invoke();
         
         // Save character to persist warrant board state
         var charManager = CharacterManager.Instance ?? FindFirstObjectByType<CharacterManager>();
@@ -241,6 +254,9 @@ public class WarrantBoardStateController : MonoBehaviour
             
             // Refresh character warrant modifiers
             RefreshCharacterWarrantModifiers();
+            
+            // Notify subscribers that a warrant was changed
+            OnWarrantChanged?.Invoke();
             
             // Save character to persist warrant board state
             var charManager = CharacterManager.Instance ?? FindFirstObjectByType<CharacterManager>();

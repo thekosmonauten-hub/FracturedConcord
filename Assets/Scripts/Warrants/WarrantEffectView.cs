@@ -20,6 +20,11 @@ public class WarrantEffectView : WarrantNodeView, IPointerEnterHandler, IPointer
     [Header("Character Reference")]
     [SerializeField] private Character characterRef;
 
+    [Header("Highlight Objects")]
+    [SerializeField] private GameObject highlight1;
+    [SerializeField] private GameObject highlight2;
+    [SerializeField] private GameObject highlight3;
+
     private const int MaxSearchDepth = 8;
     private PointerEventData lastPointerEvent;
 
@@ -28,6 +33,21 @@ public class WarrantEffectView : WarrantNodeView, IPointerEnterHandler, IPointer
         // Refresh character reference when enabled (scene loaded/object activated)
         RefreshCharacterReference();
         // Don't sync lock state here - wait for Start() to ensure board state is loaded
+        
+        // Subscribe to warrant changes for real-time highlight updates
+        SubscribeToWarrantChanges();
+    }
+    
+    private void OnDisable()
+    {
+        // Unsubscribe from warrant changes
+        UnsubscribeFromWarrantChanges();
+    }
+    
+    private void OnDestroy()
+    {
+        // Clean up subscriptions
+        UnsubscribeFromWarrantChanges();
     }
     
     private void Start()
@@ -35,6 +55,25 @@ public class WarrantEffectView : WarrantNodeView, IPointerEnterHandler, IPointer
         // Sync lock state after board state controller has loaded (in its Awake)
         // Use a small delay to ensure board state is fully loaded
         SyncLockState();
+        
+        // Update highlights based on current warrant state
+        UpdateHighlights();
+    }
+    
+    private void SubscribeToWarrantChanges()
+    {
+        if (boardState != null)
+        {
+            boardState.OnWarrantChanged += UpdateHighlights;
+        }
+    }
+    
+    private void UnsubscribeFromWarrantChanges()
+    {
+        if (boardState != null)
+        {
+            boardState.OnWarrantChanged -= UpdateHighlights;
+        }
     }
 
     /// <summary>
@@ -47,11 +86,15 @@ public class WarrantEffectView : WarrantNodeView, IPointerEnterHandler, IPointer
         {
             SetLocked(true);
             Debug.LogWarning($"[WarrantEffectView] Cannot sync lock state for '{NodeId}': boardState is null or NodeId is empty");
+            UpdateHighlights(); // Update highlights even if state is invalid
             return;
         }
 
         bool unlocked = boardState.IsNodeUnlocked(NodeId);
         SetLocked(!unlocked);
+        
+        // Update highlights when lock state changes
+        UpdateHighlights();
         
         // Debug logging for first few nodes to track state
         if (NodeId.Contains("effect") && (NodeId.Contains("effect1") || NodeId.Contains("effect2") || NodeId.Contains("effect3")))
@@ -62,6 +105,12 @@ public class WarrantEffectView : WarrantNodeView, IPointerEnterHandler, IPointer
 
     public void Configure(WarrantBoardStateController stateController, WarrantLockerGrid grid, ItemTooltipManager tooltip, WarrantBoardRuntimeGraph graph = null)
     {
+        // Unsubscribe from old boardState if it exists
+        if (boardState != null)
+        {
+            boardState.OnWarrantChanged -= UpdateHighlights;
+        }
+        
         boardState = stateController;
         lockerGrid = grid;
         runtimeGraph = graph;
@@ -72,6 +121,12 @@ public class WarrantEffectView : WarrantNodeView, IPointerEnterHandler, IPointer
         
         // Sync lock state after configuration (board state should be loaded by now)
         SyncLockState();
+        
+        // Subscribe to new boardState
+        SubscribeToWarrantChanges();
+        
+        // Update highlights after configuration
+        UpdateHighlights();
     }
     
     /// <summary>
@@ -215,7 +270,25 @@ public class WarrantEffectView : WarrantNodeView, IPointerEnterHandler, IPointer
             return null;
 
         string subtitle = $"{definitions.Count} warrant{(definitions.Count == 1 ? string.Empty : "s")} contributing";
-        return WarrantTooltipUtility.BuildCombinedData($"{NodeId} Effects", definitions, subtitle);
+        
+        // Build title from warrant names instead of node ID
+        string title;
+        if (definitions.Count == 1)
+        {
+            // Single warrant: use its display name
+            var definition = definitions[0];
+            title = string.IsNullOrWhiteSpace(definition.displayName) ? definition.warrantId : definition.displayName;
+        }
+        else
+        {
+            // Multiple warrants: join with " | "
+            var warrantNames = definitions.Select(d => 
+                string.IsNullOrWhiteSpace(d.displayName) ? d.warrantId : d.displayName
+            );
+            title = string.Join(" | ", warrantNames);
+        }
+        
+        return WarrantTooltipUtility.BuildCombinedData(title, definitions, subtitle);
     }
 
     private List<WarrantDefinition> GatherAffectingWarrants()
@@ -250,7 +323,60 @@ public class WarrantEffectView : WarrantNodeView, IPointerEnterHandler, IPointer
         }
 
         UpdateNodeDebugName(result);
+        UpdateHighlights(result.Count);
         return result;
+    }
+    
+    /// <summary>
+    /// Updates the highlight objects based on the number of warrants affecting this node.
+    /// Called automatically when warrants change, or can be called manually.
+    /// </summary>
+    private void UpdateHighlights()
+    {
+        if (IsLocked)
+        {
+            // If locked, hide all highlights
+            SetHighlightActive(highlight1, false);
+            SetHighlightActive(highlight2, false);
+            SetHighlightActive(highlight3, false);
+            return;
+        }
+        
+        var definitions = GatherAffectingWarrants();
+        UpdateHighlights(definitions.Count);
+    }
+    
+    /// <summary>
+    /// Updates the highlight objects based on the number of warrants.
+    /// </summary>
+    private void UpdateHighlights(int warrantCount)
+    {
+        if (IsLocked)
+        {
+            // If locked, hide all highlights
+            SetHighlightActive(highlight1, false);
+            SetHighlightActive(highlight2, false);
+            SetHighlightActive(highlight3, false);
+            return;
+        }
+        
+        // 1 warrant: Activate Highlight1
+        // 2 warrants: Activate Highlight1 AND Highlight2
+        // 2 or more warrants: Activate Highlight1, Highlight2, and Highlight3
+        SetHighlightActive(highlight1, warrantCount >= 1);
+        SetHighlightActive(highlight2, warrantCount >= 2);
+        SetHighlightActive(highlight3, warrantCount >= 2);
+    }
+    
+    /// <summary>
+    /// Safely sets the active state of a highlight GameObject.
+    /// </summary>
+    private void SetHighlightActive(GameObject highlight, bool active)
+    {
+        if (highlight != null)
+        {
+            highlight.SetActive(active);
+        }
     }
 
     private void UpdateNodeDebugName(List<WarrantDefinition> definitions)
