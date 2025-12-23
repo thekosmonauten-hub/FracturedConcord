@@ -1331,64 +1331,13 @@ public class CombatDisplayManager : MonoBehaviour
     {
         if (enemyDisplay == null || defeatedEnemy == null) return;
         
+        Debug.Log($"[DoT Death] {defeatedEnemy.enemyName} defeated by damage over time!");
+        
+        // Use centralized death handling method
         var activeDisplays = enemySpawner != null ? enemySpawner.GetActiveEnemies() : new List<EnemyCombatDisplay>();
         int enemyIndex = activeDisplays.IndexOf(enemyDisplay);
         
-        if (enemyIndex < 0)
-        {
-            Debug.LogWarning($"[DoT Death] Could not find {defeatedEnemy.enemyName} in active displays");
-            return;
-        }
-        
-        Debug.Log($"[DoT Death] {defeatedEnemy.enemyName} defeated by damage over time!");
-        
-        // Award loot and experience (same as regular defeat)
-        if (activeEnemies.Contains(defeatedEnemy))
-        {
-            EnemyData enemyData = enemyDisplay.GetEnemyData();
-            if (enemyData != null)
-            {
-                // Track for end-of-combat loot table
-                if (!defeatedEnemiesData.Contains(enemyData))
-                {
-                    defeatedEnemiesData.Add(enemyData);
-                }
-                // Track Enemy instance for rarity modifiers
-                if (!defeatedEnemies.Contains(defeatedEnemy))
-                {
-                    defeatedEnemies.Add(defeatedEnemy);
-                }
-                
-                // Award character experience for this kill
-                AwardExperienceForKill(enemyData);
-                
-                // Generate immediate loot drops
-                GenerateAndApplyImmediateLoot(enemyData);
-            }
-            
-            // Remove from active enemies
-            OnEnemyDefeated?.Invoke(defeatedEnemy);
-            activeEnemies.Remove(defeatedEnemy);
-            Debug.Log($"[DoT Death] Removed {defeatedEnemy.enemyName} from active enemies. Remaining: {activeEnemies.Count}");
-            
-            // Despawn callback
-            System.Action despawnEnemy = () => {
-                enemyDisplay?.NotifyAbilityRunnerDeath();
-                DespawnEnemyAtIndex(enemyIndex);
-                CheckWaveCompletion();
-            };
-            
-            // Trigger death animation
-            if (enemyDisplay != null && enemyDisplay.gameObject.activeInHierarchy)
-            {
-                enemyDisplay.StartDeathFadeOut(despawnEnemy);
-                StartCoroutine(ForceDespawnAfterDelay(enemyIndex, enemyDisplay, 1.0f));
-            }
-            else
-            {
-                despawnEnemy();
-            }
-        }
+        HandleEnemyDeathIfNeeded(enemyDisplay, defeatedEnemy, enemyIndex);
     }
     
     public void PlayerAttackEnemy(int enemyIndex, float damage, Card playedCard = null)
@@ -1696,12 +1645,10 @@ public class CombatDisplayManager : MonoBehaviour
                 }
             }
             
-				// Check if enemy is defeated
+				// Check if enemy is defeated - use centralized death handling
 				if (targetEnemy.currentHealth <= 0)
 				{
-					Debug.Log($"[Enemy Defeat] {targetEnemy.enemyName} defeated! HP: {targetEnemy.currentHealth}");
-					
-					// Trigger embossing modifier event for enemy killed
+					// Trigger embossing modifier event for enemy killed (before death handling)
 					if (playedCard != null && player != null && Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance != null)
 					{
 						Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance.OnEnemyKilled(
@@ -1709,109 +1656,173 @@ public class CombatDisplayManager : MonoBehaviour
 						);
 					}
 					
-					// Prevent double-defeat by immediately marking enemy as defeated
-					if (activeEnemies.Contains(targetEnemy))
+					// Use centralized death handling method
+					var enemyDisplaysList = enemySpawner != null ? enemySpawner.GetActiveEnemies() : new List<EnemyCombatDisplay>();
+					var disp = (enemyIndex < enemyDisplaysList.Count) ? enemyDisplaysList[enemyIndex] : null;
+					
+					if (disp != null)
 					{
-						// Generate and apply immediate loot drops from this enemy
-						var enemyDisplaysList = enemySpawner != null ? enemySpawner.GetActiveEnemies() : new List<EnemyCombatDisplay>();
-						var disp = (enemyIndex < enemyDisplaysList.Count) ? enemyDisplaysList[enemyIndex] : null;
-						
-						if (disp != null)
-						{
-							EnemyData enemyData = disp.GetEnemyData();
-							Enemy enemy = disp.GetEnemy();
-							if (enemyData != null)
-							{
-								// Track for end-of-combat loot table
-								if (!defeatedEnemiesData.Contains(enemyData))
-								{
-									defeatedEnemiesData.Add(enemyData);
-								}
-								// Track Enemy instance for rarity modifiers
-								if (enemy != null && !defeatedEnemies.Contains(enemy))
-								{
-									defeatedEnemies.Add(enemy);
-								}
-								
-								// Award character experience for this kill
-								AwardExperienceForKill(enemyData);
-								
-								// Generate immediate loot drops
-								GenerateAndApplyImmediateLoot(enemyData);
-							}
-						}
-						
-						// Remove from active enemies IMMEDIATELY to prevent stuck enemies
-						if (activeEnemies.Contains(targetEnemy) == false)
-						{
-							Debug.LogWarning($"[Enemy Defeat] {targetEnemy.enemyName} not found in active list. Rebuilding from spawner.");
-							RebuildActiveEnemiesFromSpawner();
-						}
-
-						if (activeEnemies.Contains(targetEnemy))
-						{
-							OnEnemyDefeated?.Invoke(targetEnemy);
-							int idx = activeEnemies.IndexOf(targetEnemy);
-							if (idx >= 0) 
-							{
-								activeEnemies.RemoveAt(idx);
-								Debug.Log($"[Enemy Defeat] Removed {targetEnemy.enemyName} from active enemies. Remaining: {activeEnemies.Count}");
-							}
-
-							System.Action despawnEnemy = () => {
-								disp?.NotifyAbilityRunnerDeath();
-								DespawnEnemyAtIndex(enemyIndex);
-								Debug.Log($"[Enemy Defeat] Despawned enemy at index {enemyIndex}");
-
-								if (!isAoEAttackInProgress)
-								{
-									CheckWaveCompletion();
-								}
-							};
-
-							if (disp != null && disp.gameObject.activeInHierarchy)
-							{
-								disp.StartDeathFadeOut(despawnEnemy);
-								StartCoroutine(ForceDespawnAfterDelay(enemyIndex, disp, 1.0f));
-							}
-							else
-							{
-								Debug.LogWarning($"[Enemy Defeat] Display null or inactive for {targetEnemy.enemyName}, despawning immediately");
-								despawnEnemy();
-							}
-						}
-						else
-						{
-							Debug.LogError($"[Enemy Defeat] Failed to locate {targetEnemy.enemyName} in active enemies even after rebuild.");
-							System.Action fallbackDespawn = () => {
-								disp?.NotifyAbilityRunnerDeath();
-								DespawnEnemyAtIndex(enemyIndex);
-								if (!isAoEAttackInProgress)
-								{
-									CheckWaveCompletion();
-								}
-							};
-
-							if (disp != null && disp.gameObject.activeInHierarchy)
-							{
-								disp.StartDeathFadeOut(fallbackDespawn);
-								StartCoroutine(ForceDespawnAfterDelay(enemyIndex, disp, 1.0f));
-							}
-							else
-							{
-								fallbackDespawn();
-							}
-						}
+						HandleEnemyDeathIfNeeded(disp, targetEnemy, enemyIndex);
 					}
 					else
 					{
-						Debug.LogWarning($"[Enemy Defeat] {targetEnemy.enemyName} already removed from active enemies (double-defeat prevented)");
+						Debug.LogError($"[Enemy Defeat] Could not find display for {targetEnemy.enemyName} at index {enemyIndex}");
+						// Fallback: try to find display by enemy (reuse activeDisplays from method scope)
+						for (int i = 0; i < activeDisplays.Count; i++)
+						{
+							if (activeDisplays[i] != null && activeDisplays[i].GetEnemy() == targetEnemy)
+							{
+								HandleEnemyDeathIfNeeded(activeDisplays[i], targetEnemy, i);
+								break;
+							}
+						}
 					}
 				}
     }
     
     /// <summary>
-    /// Safety cleanup for enemies stuck at 0 HP
+    /// Check if an enemy is still in the active enemies list (not yet defeated)
+    /// </summary>
+    public bool IsEnemyStillActive(Enemy enemy)
+    {
+        return enemy != null && activeEnemies.Contains(enemy);
+    }
+    
+    /// <summary>
+    /// Centralized method to handle enemy death - ensures proper cleanup regardless of how enemy died
+    /// Call this IMMEDIATELY after any damage that might kill an enemy
+    /// </summary>
+    public void HandleEnemyDeathIfNeeded(EnemyCombatDisplay enemyDisplay, Enemy enemy, int displayIndex = -1)
+    {
+        if (enemyDisplay == null || enemy == null) return;
+        if (enemy.currentHealth > 0) return; // Not dead yet
+        
+        // Check if already being handled (prevent double-processing)
+        if (!activeEnemies.Contains(enemy))
+        {
+            Debug.Log($"[Enemy Death] {enemy.enemyName} already removed from active enemies (skipping duplicate death handling)");
+            return;
+        }
+        
+        Debug.Log($"[Enemy Death] Handling death for {enemy.enemyName} (HP: {enemy.currentHealth})");
+        
+        // Get display index if not provided
+        if (displayIndex < 0 && enemySpawner != null)
+        {
+            var activeDisplays = enemySpawner.GetActiveEnemies();
+            displayIndex = activeDisplays.IndexOf(enemyDisplay);
+        }
+        
+        if (displayIndex < 0)
+        {
+            Debug.LogWarning($"[Enemy Death] Could not determine display index for {enemy.enemyName}, attempting cleanup via display lookup");
+            // Fallback: try to find the display
+            if (enemySpawner != null)
+            {
+                var activeDisplays = enemySpawner.GetActiveEnemies();
+                for (int i = 0; i < activeDisplays.Count; i++)
+                {
+                    if (activeDisplays[i] == enemyDisplay)
+                    {
+                        displayIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Award loot and experience
+        EnemyData enemyData = enemyDisplay.GetEnemyData();
+        if (enemyData != null)
+        {
+            // Track for end-of-combat loot table
+            if (!defeatedEnemiesData.Contains(enemyData))
+            {
+                defeatedEnemiesData.Add(enemyData);
+            }
+            // Track Enemy instance for rarity modifiers
+            if (!defeatedEnemies.Contains(enemy))
+            {
+                defeatedEnemies.Add(enemy);
+            }
+            
+            // Award character experience for this kill
+            AwardExperienceForKill(enemyData);
+            
+            // Generate immediate loot drops
+            try
+            {
+                GenerateAndApplyImmediateLoot(enemyData);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[Enemy Death] Exception generating loot for {enemy.enemyName}: {ex.Message}");
+                // Continue with death handling even if loot generation fails
+            }
+        }
+        
+        // Remove from active enemies IMMEDIATELY
+        OnEnemyDefeated?.Invoke(enemy);
+        activeEnemies.Remove(enemy);
+        Debug.Log($"[Enemy Death] Removed {enemy.enemyName} from active enemies. Remaining: {activeEnemies.Count}");
+        
+        // Despawn callback
+        System.Action despawnEnemy = () => {
+            enemyDisplay?.NotifyAbilityRunnerDeath();
+            if (displayIndex >= 0)
+            {
+                DespawnEnemyAtIndex(displayIndex);
+            }
+            else
+            {
+                // Fallback: try to despawn by finding display
+                if (enemySpawner != null)
+                {
+                    var activeDisplays = enemySpawner.GetActiveEnemies();
+                    for (int i = 0; i < activeDisplays.Count; i++)
+                    {
+                        if (activeDisplays[i] == enemyDisplay)
+                        {
+                            DespawnEnemyAtIndex(i);
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if (!isAoEAttackInProgress)
+            {
+                CheckWaveCompletion();
+            }
+        };
+        
+        // Trigger death animation
+        if (enemyDisplay != null && enemyDisplay.gameObject.activeInHierarchy)
+        {
+            try
+            {
+                enemyDisplay.StartDeathFadeOut(despawnEnemy);
+                if (displayIndex >= 0)
+                {
+                    StartCoroutine(ForceDespawnAfterDelay(displayIndex, enemyDisplay, 1.0f));
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[Enemy Death] Exception starting death fade for {enemy.enemyName}: {ex.Message}");
+                // Fallback: despawn immediately
+                despawnEnemy();
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[Enemy Death] Display null or inactive for {enemy.enemyName}, despawning immediately");
+            despawnEnemy();
+        }
+    }
+    
+    /// <summary>
+    /// Safety cleanup for enemies stuck at 0 HP - checks all active enemies and handles any that should be dead
     /// </summary>
     private void CleanupDefeatedEnemies()
     {
@@ -1827,12 +1838,12 @@ public class CombatDisplayManager : MonoBehaviour
             }
         }
         
-        // Remove them
+        // Remove them using centralized death handling
         foreach (Enemy enemy in enemiesToRemove)
         {
-            Debug.Log($"[Cleanup] Force removing stuck enemy: {enemy.enemyName}");
+            Debug.LogWarning($"[Cleanup] Force removing stuck enemy: {enemy.enemyName}");
             
-            // Find and despawn the display
+            // Find the display and use centralized death handling
             if (enemySpawner != null)
             {
                 var activeDisplays = enemySpawner.GetActiveEnemies();
@@ -1840,13 +1851,11 @@ public class CombatDisplayManager : MonoBehaviour
                 {
                     if (activeDisplays[i] != null && activeDisplays[i].GetEnemy() == enemy)
                     {
-                        DespawnEnemyAtIndex(i);
+                        HandleEnemyDeathIfNeeded(activeDisplays[i], enemy, i);
                         break;
                     }
                 }
             }
-            
-            activeEnemies.Remove(enemy);
         }
         
         if (enemiesToRemove.Count > 0)
@@ -1883,7 +1892,7 @@ public class CombatDisplayManager : MonoBehaviour
             }
         }
         
-        // Remove dead enemies from both active list and despawn displays
+        // Remove dead enemies using centralized death handling
         for (int i = indicesToRemove.Count - 1; i >= 0; i--)
         {
             int index = indicesToRemove[i];
@@ -1895,14 +1904,8 @@ public class CombatDisplayManager : MonoBehaviour
                     var enemy = display.GetEnemy();
                     if (enemy != null)
                     {
-                        // Remove from active enemies list
-                        if (activeEnemies.Contains(enemy))
-                        {
-                            activeEnemies.Remove(enemy);
-                            Debug.Log($"[Force Cleanup] Removed dead enemy from active list: {enemy.enemyName}");
-                        }
-                        
-                        DespawnEnemyAtIndex(index);
+                        // Use centralized death handling
+                        HandleEnemyDeathIfNeeded(display, enemy, index);
                     }
                 }
             }
@@ -2261,8 +2264,16 @@ public class CombatDisplayManager : MonoBehaviour
         
         if (victory)
         {
-            // Generate loot rewards
-            GenerateLootRewards();
+            // Generate loot rewards (with error handling - don't let loot generation prevent combat from ending)
+            try
+            {
+                GenerateLootRewards();
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[Combat] Failed to generate loot rewards: {ex.Message}\n{ex.StackTrace}");
+                Debug.LogWarning("[Combat] Continuing with combat end despite loot generation failure");
+            }
             
             // Check if this is a maze combat encounter
             bool isMazeCombat = PlayerPrefs.HasKey("MazeCombatContext") || PlayerPrefs.HasKey("MazeRunId");

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 public class EnemyCombatDisplay : MonoBehaviour
@@ -1654,9 +1655,21 @@ public class EnemyCombatDisplay : MonoBehaviour
             UpdateStaggerDisplay(); // Update stagger when damage is taken (stagger may have been applied)
             UpdateGuardDisplay(); // Update guard display when damage is taken (guard may have been reduced)
             PlayDamageAnimation();
+            
+            // Check if enemy died and notify combat manager to handle death properly
+            // This ensures enemies disappear even if death happens outside of PlayerAttackEnemy
             if (currentEnemy.currentHealth <= 0)
             {
                 NotifyAbilityRunnerDeath();
+                
+                // Notify combat manager to handle death (if not already handled)
+                // This catches cases where TakeDamage is called directly (e.g., from status effects)
+                var combatManager = UnityEngine.Object.FindFirstObjectByType<CombatDisplayManager>();
+                if (combatManager != null && combatManager.IsEnemyStillActive(currentEnemy))
+                {
+                    // Let combat manager find the display index - it has access to the spawner
+                    combatManager.HandleEnemyDeathIfNeeded(this, currentEnemy, -1);
+                }
             }
         }
     }
@@ -2035,14 +2048,44 @@ public class EnemyCombatDisplay : MonoBehaviour
         CanvasGroup cg = GetComponent<CanvasGroup>();
         if (cg == null) cg = gameObject.AddComponent<CanvasGroup>();
         cg.blocksRaycasts = false;
+        
+        // Cancel any existing tweens on this object
         LeanTween.cancel(gameObject);
-        LeanTween.value(gameObject, cg.alpha, 0f, 0.35f)
-            .setEase(LeanTweenType.easeInQuad)
-            .setOnUpdate((float a) => { if (cg != null) cg.alpha = a; })
-            .setOnComplete(() => {
+        
+        // Store reference to onComplete in case object gets disabled
+        bool callbackFired = false;
+        System.Action safeCallback = () => {
+            if (!callbackFired)
+            {
+                callbackFired = true;
                 onComplete?.Invoke();
-                gameObject.SetActive(false);
+                if (gameObject != null)
+                {
+                    gameObject.SetActive(false);
+                }
+            }
+        };
+        
+        // Fade out animation
+        float fadeDuration = 0.35f;
+        LeanTween.value(gameObject, cg.alpha, 0f, fadeDuration)
+            .setEase(LeanTweenType.easeInQuad)
+            .setOnUpdate((float a) => { 
+                if (cg != null && gameObject != null) 
+                    cg.alpha = a; 
+            })
+            .setOnComplete(() => {
+                safeCallback();
             });
+        
+        // Safety timeout - ensure callback fires even if animation fails
+        StartCoroutine(ForceDeathCallbackAfterDelay(safeCallback, fadeDuration + 0.1f));
+    }
+    
+    private System.Collections.IEnumerator ForceDeathCallbackAfterDelay(System.Action callback, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        callback?.Invoke();
     }
     
     // Getter for current enemy

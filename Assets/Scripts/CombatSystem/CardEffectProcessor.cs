@@ -323,120 +323,172 @@ public class CardEffectProcessor : MonoBehaviour
         DamageBreakdown damageBreakdown = CalculateDamageBreakdown(card, player, totalDamage);
         
         // Apply all damage in batch
+        // IMPORTANT: Wrap each iteration in try-catch to ensure all enemies are hit even if one causes an exception
         for (int n = 0; n < maxTargets; n++)
         {
-            var (enemy, displayIndex) = validTargets[n];
-            
-            // Double-check enemy is still alive before applying
-            if (enemy == null || enemy.currentHealth <= 0)
-            {
-                Debug.Log($"<color=orange>⚠️ Enemy at index {displayIndex} already dead, skipping</color>");
-                continue;
-            }
-            
-            Debug.Log($"<color=yellow>💥 Dealing {totalDamage} damage to {enemy.enemyName} at display index {displayIndex} ({n+1}/{maxTargets})</color>");
-            
-            // Apply Vulnerability multiplier per enemy (AoE)
-            float enemyDamage = totalDamage;
             try
             {
-                var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
-                foreach (var d in enemyDisplays)
+                var (enemy, displayIndex) = validTargets[n];
+                
+                // Double-check enemy is still alive before applying
+                if (enemy == null || enemy.currentHealth <= 0)
                 {
-                    if (d != null && d.GetCurrentEnemy() == enemy)
+                    Debug.Log($"<color=orange>⚠️ Enemy at index {displayIndex} already dead, skipping</color>");
+                    continue;
+                }
+                
+                Debug.Log($"<color=yellow>💥 Dealing {totalDamage} damage to {enemy.enemyName} at display index {displayIndex} ({n+1}/{maxTargets})</color>");
+                
+                // Apply Vulnerability multiplier per enemy (AoE)
+                float enemyDamage = totalDamage;
+                try
+                {
+                    var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+                    foreach (var d in enemyDisplays)
                     {
-                        var statusManager = d.GetComponent<StatusEffectManager>();
-                        if (statusManager != null)
+                        if (d != null && d.GetCurrentEnemy() == enemy)
                         {
-                            // Use GetVulnerabilityDamageMultiplier() which returns 1.2f (20% more) and checks if consumed
-                            float vulnMultiplier = statusManager.GetVulnerabilityDamageMultiplier();
-                            if (vulnMultiplier > 1f)
+                            var statusManager = d.GetComponent<StatusEffectManager>();
+                            if (statusManager != null)
                             {
-                                Debug.Log($"  [Vulnerability] Applying multiplier to {enemy.enemyName}: x{vulnMultiplier:F2} (20% more damage)");
-                                enemyDamage *= vulnMultiplier;
+                                // Use GetVulnerabilityDamageMultiplier() which returns 1.2f (20% more) and checks if consumed
+                                float vulnMultiplier = statusManager.GetVulnerabilityDamageMultiplier();
+                                if (vulnMultiplier > 1f)
+                                {
+                                    Debug.Log($"  [Vulnerability] Applying multiplier to {enemy.enemyName}: x{vulnMultiplier:F2} (20% more damage)");
+                                    enemyDamage *= vulnMultiplier;
+                                }
+                                // Apply Bolster (less damage taken per stack: 2%, max 10 stacks)
+                                float bolsterStacks = Mathf.Min(10f, statusManager.GetTotalMagnitude(StatusEffectType.Bolster));
+                                if (bolsterStacks > 0f)
+                                {
+                                    float lessMultiplier = Mathf.Clamp01(1f - (0.02f * bolsterStacks));
+                                    Debug.Log($"  Bolster stacks: {bolsterStacks}, less dmg multiplier: x{lessMultiplier:F2}");
+                                    enemyDamage *= lessMultiplier;
+                                }
                             }
-                            // Apply Bolster (less damage taken per stack: 2%, max 10 stacks)
-                            float bolsterStacks = Mathf.Min(10f, statusManager.GetTotalMagnitude(StatusEffectType.Bolster));
-                            if (bolsterStacks > 0f)
-                            {
-                                float lessMultiplier = Mathf.Clamp01(1f - (0.02f * bolsterStacks));
-                                Debug.Log($"  Bolster stacks: {bolsterStacks}, less dmg multiplier: x{lessMultiplier:F2}");
-                                enemyDamage *= lessMultiplier;
-                            }
+                            break;
                         }
-                        break;
                     }
                 }
-            }
-            catch { /* safe guard */ }
-            
-            // Play visual effect before damage (AoE)
-            // Note: If card has Area effect, PlayCardEffect will skip per-enemy effects
-            // (Area effect is already played once at AoEAreaIndicator location)
-            PlayCardEffect(card, enemy, displayIndex, true);
-            
-            // Apply damage with vulnerability multiplier
-            combatDisplayManager.PlayerAttackEnemy(displayIndex, enemyDamage, card);
-            
-            // Consume Vulnerability after damage is dealt (AoE)
-            try
-            {
-                var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
-                foreach (var d in enemyDisplays)
+                catch (System.Exception ex) 
+                { 
+                    Debug.LogWarning($"[AoE] Exception applying vulnerability/bolster to {enemy?.enemyName}: {ex.Message}");
+                }
+                
+                // Play visual effect before damage (AoE)
+                // Note: If card has Area effect, PlayCardEffect will skip per-enemy effects
+                // (Area effect is already played once at AoEAreaIndicator location)
+                try
                 {
-                    if (d != null && d.GetCurrentEnemy() == enemy)
+                    PlayCardEffect(card, enemy, displayIndex, true);
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogWarning($"[AoE] Exception playing card effect for {enemy?.enemyName}: {ex.Message}");
+                }
+                
+                // Apply damage with vulnerability multiplier
+                // CRITICAL: This is wrapped in try-catch to ensure the loop continues even if this enemy's death causes issues
+                try
+                {
+                    combatDisplayManager.PlayerAttackEnemy(displayIndex, enemyDamage, card);
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"[AoE] Exception applying damage to {enemy?.enemyName} at index {displayIndex}: {ex.Message}\n{ex.StackTrace}");
+                    // Continue to next enemy even if this one failed
+                }
+                
+                // Consume Vulnerability after damage is dealt (AoE)
+                try
+                {
+                    var enemyDisplays = FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
+                    foreach (var d in enemyDisplays)
                     {
-                        var statusManager = d.GetComponent<StatusEffectManager>();
-                        if (statusManager != null)
+                        if (d != null && d.GetCurrentEnemy() == enemy)
                         {
-                            statusManager.ConsumeVulnerability();
+                            var statusManager = d.GetComponent<StatusEffectManager>();
+                            if (statusManager != null)
+                            {
+                                statusManager.ConsumeVulnerability();
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
-            }
-            catch { /* safe guard */ }
-            
-            // Trigger embossing modifier event for damage dealt (AoE)
-            // Note: PlayerAttackEnemy already triggers this for single-target, but for AoE we need to trigger it here
-            // since PlayerAttackEnemy is called for each enemy in the loop
-            Character playerCharacter = null;
-            if (CharacterManager.Instance != null && CharacterManager.Instance.HasCharacter())
-            {
-                playerCharacter = CharacterManager.Instance.GetCurrentCharacter();
-            }
-            if (card != null && playerCharacter != null && Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance != null)
-            {
-                // Determine primary damage type from breakdown
-                DamageType primaryDamageType = card.primaryDamageType;
-                if (damageBreakdown.fire > 0 && damageBreakdown.fire >= damageBreakdown.physical) primaryDamageType = DamageType.Fire;
-                else if (damageBreakdown.cold > 0 && damageBreakdown.cold >= damageBreakdown.physical) primaryDamageType = DamageType.Cold;
-                else if (damageBreakdown.lightning > 0 && damageBreakdown.lightning >= damageBreakdown.physical) primaryDamageType = DamageType.Lightning;
-                
-                Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance.OnDamageDealt(
-                    card, playerCharacter, enemy, totalDamage, primaryDamageType
-                );
-                
-                // Check if enemy was killed by this damage
-                if (enemy != null && enemy.currentHealth <= 0)
+                catch (System.Exception ex)
                 {
-                    Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance.OnEnemyKilled(
-                        card, playerCharacter, enemy
-                    );
+                    Debug.LogWarning($"[AoE] Exception consuming vulnerability for {enemy?.enemyName}: {ex.Message}");
                 }
+                
+                // Trigger embossing modifier event for damage dealt (AoE)
+                // Note: PlayerAttackEnemy already triggers this for single-target, but for AoE we need to trigger it here
+                // since PlayerAttackEnemy is called for each enemy in the loop
+                try
+                {
+                    Character playerCharacter = null;
+                    if (CharacterManager.Instance != null && CharacterManager.Instance.HasCharacter())
+                    {
+                        playerCharacter = CharacterManager.Instance.GetCurrentCharacter();
+                    }
+                    if (card != null && playerCharacter != null && Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance != null)
+                    {
+                        // Determine primary damage type from breakdown
+                        DamageType primaryDamageType = card.primaryDamageType;
+                        if (damageBreakdown.fire > 0 && damageBreakdown.fire >= damageBreakdown.physical) primaryDamageType = DamageType.Fire;
+                        else if (damageBreakdown.cold > 0 && damageBreakdown.cold >= damageBreakdown.physical) primaryDamageType = DamageType.Cold;
+                        else if (damageBreakdown.lightning > 0 && damageBreakdown.lightning >= damageBreakdown.physical) primaryDamageType = DamageType.Lightning;
+                        
+                        Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance.OnDamageDealt(
+                            card, playerCharacter, enemy, totalDamage, primaryDamageType
+                        );
+                        
+                        // Check if enemy was killed by this damage
+                        if (enemy != null && enemy.currentHealth <= 0)
+                        {
+                            Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance.OnEnemyKilled(
+                                card, playerCharacter, enemy
+                            );
+                        }
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogWarning($"[AoE] Exception processing embossing for {enemy?.enemyName}: {ex.Message}");
+                }
+                
+                // Apply automatic status effects based on damage types
+                try
+                {
+                    ApplyAutomaticStatusEffects(enemy, damageBreakdown, card);
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogWarning($"[AoE] Exception applying status effects to {enemy?.enemyName}: {ex.Message}");
+                }
+                
+                // Process CardEffects that target enemies (e.g., ApplyStatus effects with targetsAllEnemies)
+                // This must be done AFTER damage calculation so status effects can use the damage breakdown
+                try
+                {
+                    if (card.effects != null && card.effects.Count > 0)
+                    {
+                        ProcessCardEffectsForEnemy(card, enemy, player, totalDamage);
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogWarning($"[AoE] Exception processing card effects for {enemy?.enemyName}: {ex.Message}");
+                }
+                
+                Debug.Log($"<color=yellow>  After damage: {enemy.enemyName} HP is now {enemy.currentHealth}/{enemy.maxHealth}</color>");
             }
-            
-            // Apply automatic status effects based on damage types
-            ApplyAutomaticStatusEffects(enemy, damageBreakdown, card);
-            
-            // Process CardEffects that target enemies (e.g., ApplyStatus effects with targetsAllEnemies)
-            // This must be done AFTER damage calculation so status effects can use the damage breakdown
-            if (card.effects != null && card.effects.Count > 0)
+            catch (System.Exception ex)
             {
-                ProcessCardEffectsForEnemy(card, enemy, player, totalDamage);
+                Debug.LogError($"[AoE] Critical exception processing enemy {n+1}/{maxTargets} in AoE loop: {ex.Message}\n{ex.StackTrace}");
+                // Continue to next enemy even if this iteration completely failed
             }
-            
-            Debug.Log($"<color=yellow>  After damage: {enemy.enemyName} HP is now {enemy.currentHealth}/{enemy.maxHealth}</color>");
         }
         
         // After all damage is applied, check for defeated enemies once

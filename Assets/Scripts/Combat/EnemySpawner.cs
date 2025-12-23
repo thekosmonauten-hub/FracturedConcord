@@ -126,11 +126,27 @@ public class EnemySpawner : MonoBehaviour
         // Get area level for scaling (from EncounterManager or maze context)
         int areaLevel = GetAreaLevel();
         
-        // Roll rarity for all enemies (Normal, Magic, or Rare)
-        // Unique enemies are typically scripted/bosses and set manually
-        EnemyRarity rolledRarity = RollRarityForEncounter();
-        Enemy enemy = enemyData.CreateEnemyWithRarity(rolledRarity, areaLevel);
-        Debug.Log($"[EnemySpawner] Spawned {enemyData.enemyName} with rarity {rolledRarity} (Area Level {areaLevel})");
+        // Bosses (tier == Boss or has bossAbilities) always use asset values directly - NO rarity scaling
+        // Regular enemies roll rarity (Normal, Magic, or Rare)
+        bool isBoss = enemyData.tier == EnemyTier.Boss || 
+                     (enemyData.bossAbilities != null && enemyData.bossAbilities.Count > 0);
+        
+        Enemy enemy;
+        if (isBoss)
+        {
+            // Bosses: Create without rarity scaling - use exact asset values
+            // Set rarity to Unique for display/logging, but don't apply modifiers
+            enemy = enemyData.CreateEnemy(areaLevel);
+            enemy.rarity = EnemyRarity.Unique; // Set rarity for display, but no modifiers applied
+            Debug.Log($"[EnemySpawner] Boss detected ({enemyData.enemyName}), using asset values directly (no rarity scaling)");
+        }
+        else
+        {
+            // Regular enemies: Roll rarity and apply scaling
+            EnemyRarity rolledRarity = RollRarityForEncounter();
+            enemy = enemyData.CreateEnemyWithRarity(rolledRarity, areaLevel);
+            Debug.Log($"[EnemySpawner] Spawned {enemyData.enemyName} with rarity {rolledRarity} (Area Level {areaLevel})");
+        }
         
         enemyDisplay.SetEnemy(enemy, enemyData);
         

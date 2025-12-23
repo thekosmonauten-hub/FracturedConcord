@@ -250,7 +250,9 @@ public class AreaLootTable : ScriptableObject
         
         List<BaseItem> allItems = ItemDatabase.Instance.GetAllItems();
         
+        // Filter items, skipping null entries (defensive programming)
         return allItems.Where(item => 
+            item != null && // Null check to prevent NullReferenceException
             item.itemType == itemType && 
             item.requiredLevel >= minLevel && 
             item.requiredLevel <= maxLevel &&

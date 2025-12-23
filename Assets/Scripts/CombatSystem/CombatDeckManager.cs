@@ -65,6 +65,202 @@ public class CombatDeckManager : MonoBehaviour
     private List<CardDataExtended> discardPile = new List<CardDataExtended>();
     private List<GameObject> handVisuals = new List<GameObject>();
     
+    // Track cards currently being played (to prevent interference)
+    private HashSet<GameObject> cardsBeingPlayed = new HashSet<GameObject>();
+    private Dictionary<GameObject, CardPlayState> cardPlayStates = new Dictionary<GameObject, CardPlayState>();
+    
+    // Action Queue System (Phase 1: Best Practice Architecture)
+    private Queue<CardAction> actionQueue = new Queue<CardAction>();
+    private bool isProcessingQueue = false;
+    
+    // Phase 2: Micro Input Lock - prevents visual chaos from rapid clicking
+    [Header("Phase 2: Input Handling")]
+    [Tooltip("Minimum time between card plays (in seconds). Prevents visual chaos while maintaining soft queue.")]
+    [SerializeField] private float inputLockDuration = 0.05f; // 50ms - feels instant but prevents spam
+    private float lastCardPlayTime = -1f;
+    
+    /// <summary>
+    /// Represents a queued card play action - logic is resolved immediately, animations are separate
+    /// </summary>
+    private class CardAction
+    {
+        public CardDataExtended card;
+        public GameObject cardVisual; // Visual representation (clone or original)
+        public int handIndex;
+        public Vector3 targetPosition;
+        public Enemy targetEnemy;
+        public Character playerCharacter;
+        public ComboSystem.ComboApplication comboApp;
+        public bool resolved; // Track if logic has been resolved
+        public float queueTime;
+        
+        public CardAction(CardDataExtended card, GameObject cardVisual, int handIndex, Vector3 targetPosition, Enemy targetEnemy, Character playerCharacter, ComboSystem.ComboApplication comboApp)
+        {
+            this.card = card;
+            this.cardVisual = cardVisual;
+            this.handIndex = handIndex;
+            this.targetPosition = targetPosition;
+            this.targetEnemy = targetEnemy;
+            this.playerCharacter = playerCharacter;
+            this.comboApp = comboApp;
+            this.resolved = false;
+            this.queueTime = Time.time;
+        }
+    }
+    
+    /// <summary>
+    /// Card state for tracking - follows best practice state model
+    /// Phase 2: Enhanced with validation and explicit transitions
+    /// </summary>
+    private enum CardState
+    {
+        InHand,
+        Queued,      // Action queued, waiting to resolve
+        Resolving,   // Effects being applied
+        Resolved,    // Effects applied, waiting for cleanup
+        Discarded,   // In discard pile
+        Exhausted    // Removed from combat
+    }
+    
+    /// <summary>
+    /// Phase 2: Validate if a state transition is allowed
+    /// </summary>
+    private bool IsValidStateTransition(CardState from, CardState to)
+    {
+        // Valid transitions (following best practice state model)
+        switch (from)
+        {
+            case CardState.InHand:
+                return to == CardState.Queued || to == CardState.Discarded || to == CardState.Exhausted;
+            
+            case CardState.Queued:
+                return to == CardState.Resolving || to == CardState.Discarded || to == CardState.Exhausted;
+            
+            case CardState.Resolving:
+                return to == CardState.Resolved || to == CardState.Discarded || to == CardState.Exhausted;
+            
+            case CardState.Resolved:
+                return to == CardState.Discarded || to == CardState.Exhausted;
+            
+            case CardState.Discarded:
+                return to == CardState.InHand; // Card can be drawn back into hand
+            
+            case CardState.Exhausted:
+                return false; // Exhausted is terminal - no transitions allowed
+            
+            default:
+                return false;
+        }
+    }
+    
+    /// <summary>
+    /// Phase 2: Safely transition card state with validation
+    /// </summary>
+    private bool TransitionCardState(GameObject cardObj, CardState newState, string context = "")
+    {
+        if (cardObj == null) return false;
+        
+        if (!cardPlayStates.ContainsKey(cardObj))
+        {
+            Debug.LogWarning($"[State Transition] Card {cardObj.name} not found in cardPlayStates. Context: {context}");
+            return false;
+        }
+        
+        CardState oldState = cardPlayStates[cardObj].state;
+        
+        // Validate transition
+        if (!IsValidStateTransition(oldState, newState))
+        {
+            Debug.LogError($"[State Transition] INVALID transition for {cardPlayStates[cardObj].card?.cardName ?? cardObj.name}: {oldState} → {newState}. Context: {context}");
+            return false;
+        }
+        
+        // Perform transition
+        cardPlayStates[cardObj].state = newState;
+        
+        // Log transition (only in debug mode to avoid spam)
+        if (showDebugLogs)
+        {
+            Debug.Log($"[State Transition] {cardPlayStates[cardObj].card?.cardName ?? cardObj.name}: {oldState} → {newState}. Context: {context}");
+        }
+        
+        return true;
+    }
+    
+    [Header("Phase 2: Debug Settings")]
+    [Tooltip("Enable detailed state transition logging")]
+    [SerializeField] private bool showDebugLogs = false;
+    
+    /// <summary>
+    /// Phase 2: Validate card state integrity - ensures no orphaned or invalid states
+    /// Call this periodically or when suspicious state detected
+    /// </summary>
+    private void ValidateCardStates()
+    {
+        // Check for cards in cardsBeingPlayed that aren't in cardPlayStates
+        foreach (var cardObj in cardsBeingPlayed.ToList())
+        {
+            if (cardObj == null)
+            {
+                Debug.LogWarning("[State Validation] Found null cardObj in cardsBeingPlayed, removing...");
+                cardsBeingPlayed.Remove(cardObj);
+                continue;
+            }
+            
+            if (!cardPlayStates.ContainsKey(cardObj))
+            {
+                Debug.LogWarning($"[State Validation] Card {cardObj.name} in cardsBeingPlayed but not in cardPlayStates! Adding default state...");
+                // Recover by creating default state (shouldn't happen, but better than crashing)
+                cardPlayStates[cardObj] = new CardPlayState
+                {
+                    card = null, // Can't recover card reference
+                    cardObj = cardObj,
+                    effectsApplied = false,
+                    playStartTime = Time.time,
+                    state = CardState.Queued
+                };
+            }
+        }
+        
+        // Check for cards in cardPlayStates that are null or destroyed
+        var keysToRemove = new List<GameObject>();
+        foreach (var kvp in cardPlayStates)
+        {
+            if (kvp.Key == null)
+            {
+                Debug.LogWarning("[State Validation] Found null key in cardPlayStates, marking for removal...");
+                keysToRemove.Add(kvp.Key);
+                continue;
+            }
+            
+            // Check for stuck states (cards that have been resolving for too long)
+            if (kvp.Value.state == CardState.Resolving || kvp.Value.state == CardState.Resolved)
+            {
+                float timeSincePlay = Time.time - kvp.Value.playStartTime;
+                if (timeSincePlay > 10f) // 10 seconds is way too long
+                {
+                    Debug.LogError($"[State Validation] Card {kvp.Value.card?.cardName ?? kvp.Key.name} stuck in {kvp.Value.state} state for {timeSincePlay:F1}s! This indicates a bug.");
+                }
+            }
+        }
+        
+        // Remove invalid entries
+        foreach (var key in keysToRemove)
+        {
+            cardPlayStates.Remove(key);
+            cardsBeingPlayed.Remove(key);
+        }
+    }
+    
+    private class CardPlayState
+    {
+        public CardDataExtended card;
+        public GameObject cardObj;
+        public bool effectsApplied;
+        public float playStartTime;
+        public CardState state = CardState.InHand; // Track state explicitly
+    }
+    
     // Events
     public System.Action<CardDataExtended> OnCardDrawn;
     public System.Action<CardDataExtended> OnCardPlayed;
@@ -810,6 +1006,123 @@ public class CombatDeckManager : MonoBehaviour
         });
     }
     
+    #region Action Queue System (Phase 1: Best Practice Architecture)
+    
+    /// <summary>
+    /// Process the next action in the queue immediately (logic resolution, not animation)
+    /// </summary>
+    private void ProcessActionQueue()
+    {
+        if (isProcessingQueue || actionQueue.Count == 0)
+            return;
+        
+        isProcessingQueue = true;
+        
+        while (actionQueue.Count > 0)
+        {
+            CardAction action = actionQueue.Dequeue();
+            if (action.resolved)
+                continue; // Skip already resolved actions (safety check)
+            
+            ResolveCardAction(action);
+        }
+        
+        isProcessingQueue = false;
+    }
+    
+    /// <summary>
+    /// Resolve a card action - apply all game logic immediately, independent of animations
+    /// </summary>
+    private void ResolveCardAction(CardAction action)
+    {
+        if (action.resolved)
+        {
+            Debug.LogWarning($"[ActionQueue] Action for {action.card.cardName} already resolved!");
+            return;
+        }
+        
+        Debug.Log($"<color=cyan>[ActionQueue] Resolving {action.card.cardName} (logic only, animations separate)</color>");
+        
+        // Phase 2: Update state to Resolving with validation
+        TransitionCardState(action.cardVisual, CardState.Resolving, "ResolveCardAction");
+        
+        // Apply all card effects immediately (this handles channeling, combos, damage, etc.)
+        // OnCardPlayed event is fired inside ApplyCardEffectsInternal
+        ApplyCardEffectsInternal(action.card, action.cardVisual, action.targetEnemy, action.playerCharacter, action.targetPosition, action.comboApp);
+        
+        // Add card to discard pile (logical state - card is played, it goes to discard)
+        // Note: Visual animation to discard pile happens separately
+        if (!discardPile.Contains(action.card))
+        {
+            discardPile.Add(action.card);
+            // OnCardDiscarded is invoked later during visual cleanup, not here
+        }
+        
+        // Mark as resolved
+        action.resolved = true;
+        
+        // Phase 2: Update state to Resolved with validation
+        if (cardPlayStates.ContainsKey(action.cardVisual))
+        {
+            TransitionCardState(action.cardVisual, CardState.Resolved, "ResolveCardAction - effects applied");
+            cardPlayStates[action.cardVisual].effectsApplied = true;
+        }
+        
+        Debug.Log($"<color=green>[ActionQueue] {action.card.cardName} resolved - effects applied, card in discard pile, animation can now proceed independently</color>");
+    }
+    
+    /// <summary>
+    /// Clean up card after play is complete (visual only - logic already resolved)
+    /// </summary>
+    private void CleanupCardAfterPlay(CardAction action)
+    {
+        if (action == null || action.cardVisual == null)
+            return;
+        
+        CleanupCardAfterPlay(action.cardVisual, action.card);
+    }
+    
+    /// <summary>
+    /// Clean up card after play is complete (visual only - logic already resolved)
+    /// </summary>
+    private void CleanupCardAfterPlay(GameObject cardObj, CardDataExtended card)
+    {
+        if (cardObj == null || card == null)
+            return;
+        
+        // Ensure card is in discard pile (should already be there, but safety check)
+        if (!discardPile.Contains(card))
+        {
+            discardPile.Add(card);
+            OnCardDiscarded?.Invoke(card);
+        }
+        
+        // Return card to pool
+        if (cardRuntimeManager != null)
+        {
+            cardRuntimeManager.ReturnCardToPool(cardObj);
+        }
+        else
+        {
+            Destroy(cardObj);
+        }
+        
+        // Phase 2: Clean up tracking with validated state transition
+        cardsBeingPlayed.Remove(cardObj);
+        if (cardPlayStates.ContainsKey(cardObj))
+        {
+            TransitionCardState(cardObj, CardState.Discarded, "CleanupCardAfterPlay");
+            cardPlayStates.Remove(cardObj);
+        }
+        
+        Debug.Log($"<color=green>[Cleanup] {card.cardName} cleaned up and returned to pool</color>");
+        
+        // Phase 2: Validate states after cleanup to catch any inconsistencies
+        ValidateCardStates();
+    }
+    
+    #endregion
+    
     /// <summary>
     /// Play a card from hand
     /// </summary>
@@ -874,6 +1187,9 @@ public class CombatDeckManager : MonoBehaviour
             }
         }
         
+        // Get target enemy early (used in both delayed and normal play paths)
+        Enemy targetEnemy = GetTargetEnemy();
+        
         // Check if card should be delayed (Temporal Savant, etc.)
         int delayTurns = GetCardDelayTurns(card, player);
         if (delayTurns > 0)
@@ -896,7 +1212,6 @@ public class CombatDeckManager : MonoBehaviour
             }
             
             // Queue as delayed action instead of playing immediately
-            Enemy targetEnemy = GetTargetEnemy();
             DelayedAction delayedAction = new DelayedAction(card, delayTurns, targetEnemy, targetPosition);
             player.delayedActions.Add(delayedAction);
             
@@ -1018,469 +1333,132 @@ public class CombatDeckManager : MonoBehaviour
             Debug.Log($"[Discard Check] Card {card.cardName} is NOT a discard card - proceeding with normal play");
         }
         
+        // Phase 2: Update input lock time (micro input lock for visual stability)
+        lastCardPlayTime = Time.time;
+        
+        // PHASE 1 REFACTOR: Action Queue System
         // Remove from hand and visuals IMMEDIATELY
-        // This prevents the card from being repositioned while animating
         hand.RemoveAt(handIndex);
         handVisuals.RemoveAt(handIndex);
+
+        Debug.Log($"<color=yellow>[ActionQueue] Queueing card: {card.cardName}</color>");
         
-        Debug.Log($"<color=yellow>Playing card: {card.cardName}</color>");
-        Debug.Log($"  Card GameObject: {cardObj.name}");
-        Debug.Log($"  Current position: {cardObj.transform.position}");
+        // Get player character BEFORE queuing (targetEnemy already obtained above)
+        Character playerCharacter = characterManager != null && characterManager.HasCharacter() ? 
+            characterManager.GetCurrentCharacter() : null;
         
-        // Reposition remaining cards with SMOOTH ANIMATION (squeeze together effect!)
-        // Use handVisuals list (not activeCards) to ensure correct cards are repositioned
-        if (cardRuntimeManager != null)
+        // Create action and queue it
+        CardAction action = new CardAction(card, cardObj, handIndex, targetPosition, targetEnemy, playerCharacter, comboApp);
+        actionQueue.Enqueue(action);
+        
+        // Track this card as being played (update state to Queued)
+        if (!cardsBeingPlayed.Contains(cardObj))
         {
-            cardRuntimeManager.RepositionCards(handVisuals, animated: true, duration: 0.3f);
+            cardsBeingPlayed.Add(cardObj);
+            cardPlayStates[cardObj] = new CardPlayState
+            {
+                card = card,
+                cardObj = cardObj,
+                effectsApplied = false,
+                playStartTime = Time.time,
+                state = CardState.Queued
+            };
+        }
+        else
+        {
+            // Phase 2: Update existing state with validation
+            TransitionCardState(cardObj, CardState.Queued, "PlayCard - card already being played");
         }
         
-        Debug.Log($"  Repositioning complete. Starting play animation to {targetPosition}...");
+        // Process action queue IMMEDIATELY (resolve logic before animations)
+        ProcessActionQueue();
         
-        // CRITICAL: Cancel ALL LeanTween animations on this card!
-        // There may be stale hover/draw/reposition animations still running
+        // Effects are now applied! Animation can proceed independently
+        Debug.Log($"<color=green>[ActionQueue] {card.cardName} logic resolved. Starting animations (fire-and-forget)...</color>");
+        
+        // Reposition remaining cards
+        if (cardRuntimeManager != null)
+        {
+            List<GameObject> cardsToReposition = handVisuals.Where(v => v != null && !cardsBeingPlayed.Contains(v)).ToList();
+            if (cardsToReposition.Count > 0)
+            {
+                cardRuntimeManager.RepositionCards(cardsToReposition, animated: true, duration: 0.3f);
+            }
+        }
+        
+        // CRITICAL: Cancel ALL LeanTween animations on this card ONLY!
         LeanTween.cancel(cardObj);
-        LeanTween.cancel(cardObj, false); // Cancel all tweens including delayed ones
-        Debug.Log($"  ✓ Cancelled all LeanTween animations on {cardObj.name}");
+        LeanTween.cancel(cardObj, false);
         
         // Reset any transform changes that might be stuck
         cardObj.transform.localScale = Vector3.one;
         cardObj.transform.localRotation = Quaternion.identity;
         
-        // ALSO disable CardHoverEffect and ALL interaction to prevent interference
+        // Disable CardHoverEffect and interaction
         CardHoverEffect hoverEffect = cardObj.GetComponent<CardHoverEffect>();
         if (hoverEffect != null)
         {
             hoverEffect.enabled = false;
-            Debug.Log($"  ✓ Disabled CardHoverEffect on {cardObj.name}");
         }
-        
-        // Disable all interaction so the card can't be clicked again mid-animation
         SetCardInteractable(cardObj, false);
         
-        // ANIMATION SEQUENCE:
-        // 1. Fly to target (enemy/player)
-        // 2. Perform card effect
-        // 3. Fly to discard pile
-        // 4. Disappear (return to pool)
+        // ANIMATIONS ARE NOW FIRE-AND-FORGET - logic is already resolved!
+        // Validate card object is still valid before starting animation
+        if (cardObj == null || !cardObj.activeInHierarchy)
+        {
+            Debug.LogWarning($"[ActionQueue] Card object invalid for {card.cardName}! CardObj: {(cardObj != null ? "exists but inactive" : "null")}. Cleaning up...");
+            CleanupCardAfterPlay(action);
+            return;
+        }
         
         // Check if we have animation support
         if (animationManager == null)
         {
             Debug.LogError("CombatAnimationManager is NULL! Cannot animate card play!");
+            // Even without animation, card is already resolved - just clean up
+            CleanupCardAfterPlay(action);
+            return;
         }
+        
+        // Phase 2: Animation Kill Switch support
+        // If CombatAnimationManager.disableAllAnimations is true, animations are skipped
+        // and callbacks fire immediately. This validates that logic is independent of visuals.
         
         if (cardRuntimeManager != null && animationManager != null)
         {
-            // Get target enemy for the card
-            Enemy targetEnemy = GetTargetEnemy();
-            Character playerCharacter = characterManager != null && characterManager.HasCharacter() ? 
-                characterManager.GetCurrentCharacter() : null;
+            // Add safety timeout to ensure card is cleaned up even if animation fails
+            StartCoroutine(SafetyTimeoutForCardAnimationCleanup(cardObj, card, action, 5.0f));
             
-            Debug.Log($"  Animation manager found. Flying card to enemy...");
-            
-            // Add safety timeout for stuck animations
-            StartCoroutine(SafetyTimeoutForCardAnimation(cardObj, card, 3.0f));
-            
-            // Step 1: Animate to target position (play effect)
-            // Use animationManager directly (not cardRuntimeManager.AnimateCardPlay which returns to pool!)
+            // Start play animation (fire-and-forget - effects already applied!)
+            // Note: If disableAllAnimations is true, this will immediately invoke the callback
             animationManager.AnimateCardPlay(cardObj, targetPosition, () => {
+                // Animation complete callback - only handle visual cleanup, NO LOGIC
+                Debug.Log($"  <color=cyan>[Animation] Card play animation complete for {card.cardName} - effects already applied</color>");
                 
-                Debug.Log($"  <color=green>Card reached target! Applying effects...</color>");
-                Debug.Log($"  Card still exists? {cardObj != null}, Active? {(cardObj != null ? cardObj.activeInHierarchy.ToString() : "null")}");
+                // Card is already in discard pile (added during ResolveCardAction)
+                // Just invoke discard event for UI updates
+                OnCardDiscarded?.Invoke(card);
                 
-                // Step 2: Apply card effect (DEAL DAMAGE!)
-                Debug.Log($"<color=cyan>Applying card effects for {card.cardName}...</color>");
-                Debug.Log($"  CardEffectProcessor: {(cardEffectProcessor != null ? "Found" : "NULL")}");
-                Debug.Log($"  TargetingManager: {(targetingManager != null ? "Found" : "NULL")}");
-                Debug.Log($"  Target Enemy: {(targetEnemy != null ? targetEnemy.enemyName : "NULL")}");
-                Debug.Log($"  Player Character: {(playerCharacter != null ? playerCharacter.characterName : "NULL")}");
-                Debug.Log($"  Is AoE Card: {card.isAoE}");
-                
-                // DIVINE FAVOR: Check if next card should apply discarded effect
-                if (nextCardAppliesDiscardedEffect && !string.IsNullOrEmpty(card.ifDiscardedEffect))
-                {
-                    Debug.Log($"<color=yellow>[Divine Favor] {card.cardName} applies its discarded effect!</color>");
-                    ProcessIfDiscardedEffect(card, playerCharacter);
-                    nextCardAppliesDiscardedEffect = false; // Consume the effect
-                }
-                
-                var channelingState = UpdateChannelingState(playerCharacter, card);
-                bool channelingBonusApplied = false;
-                if (playerCharacter != null)
-                {
-                    if (channelingState.startedThisCast)
-                    {
-                        Debug.Log($"<color=cyan>[Channeling]</color> {playerCharacter.characterName} began channeling {channelingState.activeGroupKey} ({channelingState.consecutiveCasts} casts).");
-                        ShowChannelingPopup("Channeling!", ChannelingStartColor);
-                    }
-                    else if (channelingState.isChanneling)
-                    {
-                        Debug.Log($"<color=cyan>[Channeling]</color> Channeling continues ({channelingState.consecutiveCasts} casts).");
-                    }
-                    else if (channelingState.stoppedThisCast && !channelingState.startedThisCast)
-                    {
-                        Debug.Log($"<color=cyan>[Channeling]</color> Channeling ended before playing {card.cardName}.");
-                        ShowChannelingPopup("Channeling Broken", ChannelingEndColor);
-                    }
-                }
-
-                ProcessSpeedMeters(card, playerCharacter);
-                
-                if (cardEffectProcessor != null)
-                {
-                    // TEMPORARY: Convert CardDataExtended to Card for CardEffectProcessor
-                    // (CardEffectProcessor will be updated to use CardDataExtended in the future)
-                    #pragma warning disable CS0618 // Type or member is obsolete
-                    Card cardForProcessor = card.ToCard();
-                    #pragma warning restore CS0618
-                    
-                    // Apply charge modifiers to the card
-                    ApplyCardModifiers(cardForProcessor, card);
-                    int requiredStacks = Mathf.Max(1, card.channelingMinStacks);
-                    if (card.channelingBonusEnabled && channelingState.consecutiveCasts >= requiredStacks)
-                    {
-                        if (!Mathf.Approximately(card.channelingAdditionalGuard, 0f))
-                        {
-                            cardForProcessor.baseGuard += card.channelingAdditionalGuard;
-                        }
-                        if (!Mathf.Approximately(card.channelingDamageIncreasedPercent, 0f))
-                        {
-                            cardForProcessor.baseDamage = Mathf.Max(0f, cardForProcessor.baseDamage * (1f + card.channelingDamageIncreasedPercent / 100f));
-                        }
-                        if (!Mathf.Approximately(card.channelingDamageMorePercent, 0f))
-                        {
-                            cardForProcessor.baseDamage = Mathf.Max(0f, cardForProcessor.baseDamage * (1f + card.channelingDamageMorePercent / 100f));
-                        }
-                        if (!Mathf.Approximately(card.channelingGuardIncreasedPercent, 0f) || !Mathf.Approximately(card.channelingGuardMorePercent, 0f))
-                        {
-                            float guardValue = cardForProcessor.baseGuard;
-                            guardValue *= (1f + card.channelingGuardIncreasedPercent / 100f);
-                            guardValue *= (1f + card.channelingGuardMorePercent / 100f);
-                            cardForProcessor.baseGuard = guardValue;
-                        }
-                        channelingBonusApplied = true;
-                        Debug.Log($"<color=cyan>[Channeling]</color> Bonus applied → Damage +{card.channelingDamageIncreasedPercent}% inc, +{card.channelingDamageMorePercent}% more, Guard +{card.channelingGuardIncreasedPercent}% inc / +{card.channelingGuardMorePercent}% more, +{card.channelingAdditionalGuard} flat");
-                    }
-                    ApplyChannelingMetadata(cardForProcessor, channelingState, card, channelingBonusApplied);
-                    
-                    // Apply combo logic modifications to the runtime Card passed to processor
-                    if (comboApp != null)
-                    {
-                        if (comboApp.logic == ComboLogicType.Instead)
-                        {
-                            // Replace base values entirely
-                            cardForProcessor.baseDamage = Mathf.Max(0f, comboApp.attackIncrease);
-                            cardForProcessor.baseGuard = Mathf.Max(0f, comboApp.guardIncrease);
-                            cardForProcessor.isAoE = comboApp.isAoEOverride;
-                        }
-                        else // Additive
-                        {
-                            cardForProcessor.baseDamage = Mathf.Max(0f, cardForProcessor.baseDamage + comboApp.attackIncrease);
-                            cardForProcessor.baseGuard = Mathf.Max(0f, cardForProcessor.baseGuard + comboApp.guardIncrease);
-                            // Only override AoE if true, otherwise keep original
-                            cardForProcessor.isAoE = comboApp.isAoEOverride || cardForProcessor.isAoE;
-                        }
-                        
-                        // Pass ailment fields from combo override
-                        cardForProcessor.comboAilmentId = comboApp.comboAilmentId;
-                        cardForProcessor.comboAilmentPortion = comboApp.comboAilmentPortion;
-                        cardForProcessor.comboAilmentDuration = comboApp.comboAilmentDuration;
-                        
-                        // If combo-specific consume enabled on asset, propagate it for this play
-                        if (card.comboConsumeAilment && card.comboConsumeAilmentId != AilmentId.None)
-                        {
-                            cardForProcessor.consumeAilmentEnabled = true;
-                            cardForProcessor.consumeAilmentId = card.comboConsumeAilmentId;
-                        }
-                    }
-                    else
-                    {
-                        // No combo override: allow per-card ailment application on play
-                        if (card.comboAilment != AilmentId.None && card.comboAilmentPortion > 0f && card.comboAilmentDuration > 0)
-                        {
-                            cardForProcessor.comboAilmentId = card.comboAilment;
-                            cardForProcessor.comboAilmentPortion = card.comboAilmentPortion;
-                            cardForProcessor.comboAilmentDuration = card.comboAilmentDuration;
-                        }
-                    }
-                    
-                    // Always pass consume fields directly from the asset (not combo-only)
-                    cardForProcessor.consumeAilmentEnabled = card.consumeAilment;
-                    cardForProcessor.consumeAilmentId = card.consumeAilmentId;
-                    
-                    // For AoE cards, we don't need a specific target enemy
-                    if (cardForProcessor.isAoE)
-                    {
-                        Debug.Log($"  → Calling cardEffectProcessor.ApplyCardToEnemy for AoE card...");
-                        cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, null, playerCharacter, targetPosition);
-                    }
-                    else if (targetEnemy != null)
-                    {
-                        Debug.Log($"  → Calling cardEffectProcessor.ApplyCardToEnemy for single target...");
-                        cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, targetEnemy, playerCharacter, targetPosition);
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Cannot apply {card.cardName}: No target enemy for single-target card!");
-                        return;
-                    }
-                    
-                    // Play combat effects based on card type
-                    if (combatEffectManager != null)
-                    {
-                        Debug.Log($"  → Calling PlayCardEffects...");
-                        // Pass CardDataExtended to visual effects (legacy Card not needed here)
-                        PlayCardEffects(card, targetEnemy, playerCharacter);
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"  → CombatEffectManager is NULL!");
-                    }
-                    
-                    CardAbilityRouter.ApplyCardPlay(card, cardForProcessor, playerCharacter, targetEnemy, targetPosition);
-
-                    // Apply "hits twice" effect if Aggression charge is active
-                    if (ShouldHitTwice() && targetEnemy != null && !cardForProcessor.isAoE)
-                    {
-                        Debug.Log($"<color=yellow>[ChargeModifier] HitsTwice: Applying card effect again!</color>");
-                        cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, targetEnemy, playerCharacter, targetPosition);
-                    }
-                    
-                    // Boss Ability Handler - card played
-                    cardsPlayedThisTurn++;
-                    BossAbilityHandler.OnPlayerCardPlayed(cardForProcessor, cardsPlayedThisTurn);
-                }
-                else
-                {
-                    Debug.LogWarning($"Cannot apply {card.cardName}: No effect processor!");
-                }
-				
-                // Trigger event for other systems
-                OnCardPlayed?.Invoke(card);
-                Debug.Log($"  → Card effect triggered: {card.cardName}");
-                
-                // Consume charge modifiers after card is played
-                ConsumeChargeModifiers();
-                
-                // Apply combo post-effects: mana refund, draw, ailments, buffs
-                if (comboApp != null)
-                {
-                    // Mana refund
-                    if (comboApp.manaRefund > 0 && playerCharacter != null)
-                    {
-                        playerCharacter.RestoreMana(comboApp.manaRefund);
-                        Debug.Log($"<color=green>[Combo] Refunded {comboApp.manaRefund} mana</color>");
-                        var playerDisplayRefund = FindFirstObjectByType<PlayerCombatDisplay>();
-                        if (playerDisplayRefund != null) playerDisplayRefund.UpdateManaDisplay();
-                    }
-                    
-                    // Draw cards on combo
-                    if (comboApp.comboDrawCards > 0)
-                    {
-                        Debug.Log($"<color=green>[Combo] Draw {comboApp.comboDrawCards} card(s)</color>");
-                        DrawCards(comboApp.comboDrawCards);
-                    }
-                    
-                    // Ailment (hook into status/effect manager)
-                    if (!string.IsNullOrEmpty(comboApp.ailmentId) && targetEnemy != null)
-                    {
-                        Debug.Log($"[Combo] Apply ailment: {comboApp.ailmentId} to {targetEnemy.enemyName}");
-                        // TODO: integrate with StatusEffectManager once ailment mapping is defined
-                    }
-                    
-                    // Buffs on player (list)
-                    if (comboApp.buffIds != null && comboApp.buffIds.Count > 0)
-                    {
-                        Debug.Log($"[Combo] Apply buffs to player: {string.Join(", ", comboApp.buffIds)}");
-                        // Simple integration: support Bolster stacks (2-turn default)
-                        var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
-                        var statusManager = playerDisplay != null ? playerDisplay.GetStatusEffectManager() : null;
-                        if (statusManager != null)
-                        {
-                            foreach (var buff in comboApp.buffIds)
-                            {
-                                if (string.Equals(buff, "Bolster", System.StringComparison.OrdinalIgnoreCase))
-                                {
-                                    int stacks = 1; // base stack
-                                    if (playerCharacter != null && card != null)
-                                    {
-                                        switch (card.comboScaling)
-                                        {
-                                            case ComboScalingType.Strength:
-                                                if (card.comboScalingDivisor > 0f)
-                                                {
-                                                    stacks += Mathf.FloorToInt(playerCharacter.strength / card.comboScalingDivisor);
-                                                }
-                                                break;
-                                            case ComboScalingType.Dexterity:
-                                                if (card.comboScalingDivisor > 0f)
-                                                {
-                                                    stacks += Mathf.FloorToInt(playerCharacter.dexterity / card.comboScalingDivisor);
-                                                }
-                                                break;
-                                            case ComboScalingType.Intelligence:
-                                                if (card.comboScalingDivisor > 0f)
-                                                {
-                                                    stacks += Mathf.FloorToInt(playerCharacter.intelligence / card.comboScalingDivisor);
-                                                }
-                                                break;
-                                            default:
-                                                break;
-                                        }
-                                    }
-                                    // Clamp effective benefit elsewhere, but ensure at least 1
-                                    stacks = Mathf.Max(1, stacks);
-                                    var effect = new StatusEffect(StatusEffectType.Bolster, "Bolster", stacks, 2, false);
-                                    statusManager.AddStatusEffect(effect);
-                                    Debug.Log($"[Combo] Applied Bolster ({stacks} stack(s), 2 turns)");
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                // Trigger player sprite animations based on card type
-                TriggerPlayerAnimation(card);
-                
-                // Notify combat manager that a card was played
-                if (combatDisplayManager != null)
-                {
-                    combatDisplayManager.OnCardPlayed();
-                }
-                
-                // Notify combo system that a card was played (legacy), and register last played for new system
-                if (comboSystem != null)
-                {
-                    // TEMPORARY: Convert CardDataExtended to Card for ComboSystem
-                    #pragma warning disable CS0618
-                    Card cardForCombo = card.ToCard();
-                    #pragma warning restore CS0618
-                    ApplyChannelingMetadata(cardForCombo, channelingState, card, channelingBonusApplied);
-                    comboSystem.OnCardPlayed(cardForCombo);
-                }
-                if (ComboSystem.Instance != null)
-                {
-					string groupKey = string.IsNullOrEmpty(card.groupKey) ? card.cardName : card.groupKey;
-					ComboSystem.Instance.RegisterLastPlayed(card.GetCardTypeEnum(), card.cardName, groupKey);
-                    // Refresh highlights after registering last played
-                    UpdateComboHighlights();
-                }
-                
-                // Step 3: After a brief pause, animate to discard pile
-                float effectDuration = 0.3f; // Time to show the card effect
-                
-                // IMPORTANT: Capture cardObj in local variable to keep strong reference
-                GameObject cardToDiscard = cardObj;
-                
+                // Animate to discard pile (visual only)
+                float effectDuration = 0.3f; // Brief pause to show effect
                 LeanTween.delayedCall(gameObject, effectDuration, () => {
-                    
-                    Debug.Log($"  Delayed callback fired after {effectDuration}s. Checking card object...");
-                    
-                    // Safety check - make sure card object still exists
-                    if (cardToDiscard == null)
+                    if (cardObj != null && discardPileTransform != null)
                     {
-                        Debug.LogError($"Card GameObject was destroyed before discard animation!");
-                        Debug.Log($"  This means something else destroyed/pooled the card during the {effectDuration}s delay!");
-                        discardPile.Add(card);
-                        OnCardDiscarded?.Invoke(card);
-                        return;
+                        AnimateToDiscardPile(cardObj, card);
                     }
-                    
-                    Debug.Log($"  Card still exists: {cardToDiscard.name}, Active: {cardToDiscard.activeInHierarchy}");
-                    
-                    Debug.Log($"  → Starting discard animation for {card.cardName}...");
-                    
-                    if (discardPileTransform != null)
+                    else if (cardObj != null)
                     {
-                        // Animate to discard pile
-                        AnimateToDiscardPile(cardToDiscard, card);
+                        // No discard animation - just clean up
+                        CleanupCardAfterPlay(action);
                     }
-                    else
-                    {
-                        // No discard pile position - just return to pool immediately
-                        Debug.LogWarning("DiscardPileTransform not set! Card will disappear without animation.");
-                        discardPile.Add(card);
-                        OnCardDiscarded?.Invoke(card);
-                        
-                        if (cardRuntimeManager != null)
-                        {
-                            cardRuntimeManager.ReturnCardToPool(cardToDiscard);
-                        }
-                        else
-                        {
-                            Destroy(cardToDiscard);
-                        }
-                        
-                        Debug.Log($"  → {card.cardName} discarded (no animation)");
-                    }
-                    
-                    // NOTE: Remaining cards already repositioned earlier!
                 });
             });
         }
         else
         {
-            // No animation - immediate play
-            var channelingState = UpdateChannelingState(player, card);
-            bool channelingBonusAppliedInstant = false;
-            int requiredStacksInstant = Mathf.Max(1, card.channelingMinStacks);
-            if (card.channelingBonusEnabled && channelingState.consecutiveCasts >= requiredStacksInstant)
-            {
-                channelingBonusAppliedInstant = true;
-                Debug.Log($"<color=cyan>[Channeling]</color> Bonus applied → Damage +{card.channelingDamageIncreasedPercent}% inc, +{card.channelingDamageMorePercent}% more, Guard +{card.channelingGuardIncreasedPercent}% inc / +{card.channelingGuardMorePercent}% more, +{card.channelingAdditionalGuard} flat");
-            }
-            if (player != null)
-            {
-                if (channelingState.startedThisCast)
-                {
-                    Debug.Log($"<color=cyan>[Channeling]</color> {player.characterName} began channeling {channelingState.activeGroupKey} ({channelingState.consecutiveCasts} casts).");
-                    ShowChannelingPopup("Channeling!", ChannelingStartColor);
-                }
-                else if (channelingState.isChanneling)
-                {
-                    Debug.Log($"<color=cyan>[Channeling]</color> Channeling continues ({channelingState.consecutiveCasts} casts).");
-                }
-                else if (channelingState.stoppedThisCast && !channelingState.startedThisCast)
-                {
-                    Debug.Log($"<color=cyan>[Channeling]</color> Channeling ended before playing {card.cardName}.");
-                    ShowChannelingPopup("Channeling Broken", ChannelingEndColor);
-                }
-            }
-
-            ProcessSpeedMeters(card, player);
-            discardPile.Add(card);
-            OnCardPlayed?.Invoke(card);
-            OnCardDiscarded?.Invoke(card);
-            
-            // Notify combat manager that a card was played
-            if (combatDisplayManager != null)
-            {
-                combatDisplayManager.OnCardPlayed();
-            }
-            
-            // Notify combo system that a card was played
-            if (comboSystem != null)
-            {
-                // TEMPORARY: Convert CardDataExtended to Card for ComboSystem
-                #pragma warning disable CS0618 // Type or member is obsolete
-                Card cardForCombo = card.ToCard();
-                #pragma warning restore CS0618
-                ApplyChannelingMetadata(cardForCombo, channelingState, card, channelingBonusAppliedInstant);
-                comboSystem.OnCardPlayed(cardForCombo);
-            }
-            
-            if (cardObj != null)
-            {
-                Destroy(cardObj);
-            }
-            
-            // Reposition remaining cards
-            if (cardRuntimeManager != null)
-            {
-                cardRuntimeManager.RepositionAllCards();
-            }
-            
-            Debug.Log($"Played (instant): {card.cardName}");
+            // No animation support - action already processed, just clean up
+            Debug.Log($"<color=yellow>[ActionQueue] No animation support - {card.cardName} effects already applied, cleaning up...</color>");
+            CleanupCardAfterPlay(action);
         }
         UpdateComboHighlights(); // Update highlights after playing
     }
@@ -2057,6 +2035,17 @@ public class CombatDeckManager : MonoBehaviour
     
     public void OnCardClicked(GameObject clickedCardObj, bool isRightClick = false, bool isShiftClick = false)
     {
+        // Phase 2: Micro Input Lock - prevent rapid clicking from causing visual chaos
+        // Note: This is a VERY short lock (50ms default) - feels instant but prevents spam
+        // Actions are still queued, so logic remains unaffected - this is purely for visual stability
+        float currentTime = Time.time;
+        if (lastCardPlayTime >= 0f && (currentTime - lastCardPlayTime) < inputLockDuration)
+        {
+            float timeSinceLastPlay = currentTime - lastCardPlayTime;
+            Debug.Log($"<color=orange>[Input Lock] Ignoring rapid click (last play {timeSinceLastPlay * 1000:F1}ms ago, lock: {inputLockDuration * 1000}ms)</color>");
+            return; // Ignore this click - too soon after last one
+        }
+        
         Debug.Log($"<color=cyan>═══ CARD CLICK DEBUG ═══</color>");
         Debug.Log($"Clicked card GameObject: {clickedCardObj.name}");
         Debug.Log($"Hand visuals count: {handVisuals.Count}");
@@ -2098,7 +2087,7 @@ public class CombatDeckManager : MonoBehaviour
         Debug.Log($"<color=yellow>Card clicked: {clickedCard.cardName} (Index: {handIndex}), Target pos: {targetPos}</color>");
         Debug.Log($"About to call PlayCard({handIndex}, {targetPos})");
         
-        // Play the card
+        // Play the card (this will update lastCardPlayTime)
         PlayCard(handIndex, targetPos);
         
         Debug.Log($"<color=cyan>═══ END CLICK DEBUG ═══</color>");
@@ -2245,50 +2234,97 @@ public class CombatDeckManager : MonoBehaviour
     #endregion
     
     /// <summary>
-    /// Safety timeout for stuck card animations
+    /// Phase 2: Safety timeout for card animation cleanup - ensures card is cleaned up even if animation fails
+    /// Enhanced with state validation
     /// </summary>
-    private IEnumerator SafetyTimeoutForCardAnimation(GameObject cardObj, CardDataExtended card, float timeout)
+    private IEnumerator SafetyTimeoutForCardAnimationCleanup(GameObject cardObj, CardDataExtended card, CardAction action, float timeout)
+    {
+        yield return new WaitForSeconds(timeout);
+        
+        // Check if card is still in cardsBeingPlayed (means animation didn't complete)
+        if (cardObj != null && cardsBeingPlayed.Contains(cardObj))
+        {
+            Debug.LogWarning($"[Safety Timeout] Card {card.cardName} animation timeout after {timeout}s! Animation likely failed. Force cleaning up...");
+            
+            // Phase 2: Validate state before cleanup
+            if (cardPlayStates.ContainsKey(cardObj))
+            {
+                CardState currentState = cardPlayStates[cardObj].state;
+                Debug.LogWarning($"[Safety Timeout] Card state at timeout: {currentState}");
+                
+                // If card is stuck in Resolving or Resolved, log it as a bug
+                if (currentState == CardState.Resolving || currentState == CardState.Resolved)
+                {
+                    Debug.LogError($"[Safety Timeout] Card {card.cardName} stuck in {currentState} state - this indicates logic was applied but cleanup failed!");
+                }
+            }
+            
+            // Cancel any animations on this card
+            LeanTween.cancel(cardObj);
+            
+            // Force cleanup using the action
+            CleanupCardAfterPlay(action);
+        }
+    }
+    
+    /// <summary>
+    /// Safety timeout for stuck card animations - ensures effects are applied and card is cleaned up
+    /// </summary>
+    private IEnumerator SafetyTimeoutForCardAnimation(GameObject cardObj, CardDataExtended card, Enemy targetEnemy, Character playerCharacter, Vector3 targetPosition, ComboSystem.ComboApplication comboApp, float timeout)
     {
         yield return new WaitForSeconds(timeout);
         
         // Check if card is still active (animation might be stuck)
         if (cardObj != null && cardObj.activeInHierarchy)
         {
-            Debug.LogWarning($"[Safety Timeout] Card animation stuck for {card.cardName}! Force completing...");
+            Debug.LogWarning($"[Safety Timeout] Card animation stuck for {card.cardName}! Force applying effects and cleaning up...");
             
             // Cancel all animations
             LeanTween.cancel(cardObj);
             
-            // Force apply card effects
-            Enemy targetEnemy = GetTargetEnemy();
-            Character playerCharacter = characterManager != null && characterManager.HasCharacter() ? 
-                characterManager.GetCurrentCharacter() : null;
-            
-            if (cardEffectProcessor != null && targetEnemy != null && playerCharacter != null)
+            // Check if effects have been applied - if not, apply them now
+            if (!cardPlayStates.ContainsKey(cardObj) || !cardPlayStates[cardObj].effectsApplied)
             {
-                Debug.Log($"[Safety Timeout] Force applying effects for {card.cardName}");
-                // Convert CardDataExtended to Card for the processor
-                Card legacyCard = new Card
-                {
-                    cardName = card.cardName,
-                    baseDamage = card.GetBaseDamage(), // Use method instead of property
-                    manaCost = card.playCost, // Use playCost instead of manaCost
-                    isAoE = card.isAoE,
-                    aoeTargets = card.aoeTargets,
-                    scalesWithMeleeWeapon = card.scalesWithMeleeWeapon,
-                    primaryDamageType = card.primaryDamageType // Use primaryDamageType instead of damageType
-                };
-                cardEffectProcessor.ApplyCardToEnemy(legacyCard, targetEnemy, playerCharacter, Vector3.zero);
+                Debug.LogWarning($"[Safety Timeout] Effects NOT applied for {card.cardName}! Applying now...");
+                ApplyCardEffectsInternal(card, cardObj, targetEnemy, playerCharacter, targetPosition, comboApp);
             }
             
-            // Return to pool
+            // Ensure card is added to discard pile if not already
+            if (!discardPile.Contains(card))
+            {
+                discardPile.Add(card);
+                OnCardDiscarded?.Invoke(card);
+                Debug.Log($"[Safety Timeout] Added {card.cardName} to discard pile");
+            }
+            
+            // Force return card to pool - this ensures it's cleaned up
             if (cardRuntimeManager != null)
             {
-                cardRuntimeManager.ReturnCardToPool(cardObj);
+                var activeCardsList = cardRuntimeManager.GetActiveCards();
+                if (activeCardsList.Contains(cardObj))
+                {
+                    cardRuntimeManager.RemoveCard(cardObj);
+                }
+                else
+                {
+                    cardRuntimeManager.ReturnCardToPool(cardObj);
+                }
+                Debug.Log($"[Safety Timeout] Force returned {card.cardName} to pool");
             }
             else
             {
                 Destroy(cardObj);
+                Debug.Log($"[Safety Timeout] Destroyed {card.cardName} (no pool manager)");
+            }
+            
+            // Clean up tracking
+            if (cardsBeingPlayed.Contains(cardObj))
+            {
+                cardsBeingPlayed.Remove(cardObj);
+            }
+            if (cardPlayStates.ContainsKey(cardObj))
+            {
+                cardPlayStates.Remove(cardObj);
             }
         }
     }
@@ -2496,27 +2532,330 @@ public class CombatDeckManager : MonoBehaviour
     }
     
     /// <summary>
+    /// Apply card effects - extracted method that can be called independently of animation callbacks
+    /// </summary>
+    private void ApplyCardEffectsInternal(CardDataExtended card, GameObject cardObj, Enemy targetEnemy, Character playerCharacter, Vector3 targetPosition, ComboSystem.ComboApplication comboApp)
+    {
+        // Check if effects have already been applied for this card
+        if (cardPlayStates.ContainsKey(cardObj) && cardPlayStates[cardObj].effectsApplied)
+        {
+            Debug.LogWarning($"  → [CardPlay] Effects already applied for {card.cardName}! Skipping duplicate application.");
+            return;
+        }
+        
+        Debug.Log($"<color=cyan>Applying card effects for {card.cardName}...</color>");
+        Debug.Log($"  CardEffectProcessor: {(cardEffectProcessor != null ? "Found" : "NULL")}");
+        Debug.Log($"  TargetingManager: {(targetingManager != null ? "Found" : "NULL")}");
+        Debug.Log($"  Target Enemy: {(targetEnemy != null ? targetEnemy.enemyName : "NULL")}");
+        Debug.Log($"  Player Character: {(playerCharacter != null ? playerCharacter.characterName : "NULL")}");
+        Debug.Log($"  Is AoE Card: {card.isAoE}");
+        
+        // Mark effects as applied
+        if (cardPlayStates.ContainsKey(cardObj))
+        {
+            cardPlayStates[cardObj].effectsApplied = true;
+        }
+        
+        // DIVINE FAVOR: Check if next card should apply discarded effect
+        if (nextCardAppliesDiscardedEffect && !string.IsNullOrEmpty(card.ifDiscardedEffect))
+        {
+            Debug.Log($"<color=yellow>[Divine Favor] {card.cardName} applies its discarded effect!</color>");
+            ProcessIfDiscardedEffect(card, playerCharacter);
+            nextCardAppliesDiscardedEffect = false; // Consume the effect
+        }
+        
+        var channelingState = UpdateChannelingState(playerCharacter, card);
+        bool channelingBonusApplied = false;
+        if (playerCharacter != null)
+        {
+            if (channelingState.startedThisCast)
+            {
+                Debug.Log($"<color=cyan>[Channeling]</color> {playerCharacter.characterName} began channeling {channelingState.activeGroupKey} ({channelingState.consecutiveCasts} casts).");
+                ShowChannelingPopup("Channeling!", ChannelingStartColor);
+            }
+            else if (channelingState.isChanneling)
+            {
+                Debug.Log($"<color=cyan>[Channeling]</color> Channeling continues ({channelingState.consecutiveCasts} casts).");
+            }
+            else if (channelingState.stoppedThisCast && !channelingState.startedThisCast)
+            {
+                Debug.Log($"<color=cyan>[Channeling]</color> Channeling ended before playing {card.cardName}.");
+                ShowChannelingPopup("Channeling Broken", ChannelingEndColor);
+            }
+        }
+
+        ProcessSpeedMeters(card, playerCharacter);
+        
+        if (cardEffectProcessor != null)
+        {
+            // TEMPORARY: Convert CardDataExtended to Card for CardEffectProcessor
+            #pragma warning disable CS0618 // Type or member is obsolete
+            Card cardForProcessor = card.ToCard();
+            #pragma warning restore CS0618
+            
+            // Apply charge modifiers to the card
+            ApplyCardModifiers(cardForProcessor, card);
+            int requiredStacks = Mathf.Max(1, card.channelingMinStacks);
+            if (card.channelingBonusEnabled && channelingState.consecutiveCasts >= requiredStacks)
+            {
+                if (!Mathf.Approximately(card.channelingAdditionalGuard, 0f))
+                {
+                    cardForProcessor.baseGuard += card.channelingAdditionalGuard;
+                }
+                if (!Mathf.Approximately(card.channelingDamageIncreasedPercent, 0f))
+                {
+                    cardForProcessor.baseDamage = Mathf.Max(0f, cardForProcessor.baseDamage * (1f + card.channelingDamageIncreasedPercent / 100f));
+                }
+                if (!Mathf.Approximately(card.channelingDamageMorePercent, 0f))
+                {
+                    cardForProcessor.baseDamage = Mathf.Max(0f, cardForProcessor.baseDamage * (1f + card.channelingDamageMorePercent / 100f));
+                }
+                if (!Mathf.Approximately(card.channelingGuardIncreasedPercent, 0f) || !Mathf.Approximately(card.channelingGuardMorePercent, 0f))
+                {
+                    float guardValue = cardForProcessor.baseGuard;
+                    guardValue *= (1f + card.channelingGuardIncreasedPercent / 100f);
+                    guardValue *= (1f + card.channelingGuardMorePercent / 100f);
+                    cardForProcessor.baseGuard = guardValue;
+                }
+                channelingBonusApplied = true;
+                Debug.Log($"<color=cyan>[Channeling]</color> Bonus applied → Damage +{card.channelingDamageIncreasedPercent}% inc, +{card.channelingDamageMorePercent}% more, Guard +{card.channelingGuardIncreasedPercent}% inc / +{card.channelingGuardMorePercent}% more, +{card.channelingAdditionalGuard} flat");
+            }
+            ApplyChannelingMetadata(cardForProcessor, channelingState, card, channelingBonusApplied);
+            
+            // Apply combo logic modifications to the runtime Card passed to processor
+            if (comboApp != null)
+            {
+                if (comboApp.logic == ComboLogicType.Instead)
+                {
+                    // Replace base values entirely
+                    cardForProcessor.baseDamage = Mathf.Max(0f, comboApp.attackIncrease);
+                    cardForProcessor.baseGuard = Mathf.Max(0f, comboApp.guardIncrease);
+                    cardForProcessor.isAoE = comboApp.isAoEOverride;
+                }
+                else // Additive
+                {
+                    cardForProcessor.baseDamage = Mathf.Max(0f, cardForProcessor.baseDamage + comboApp.attackIncrease);
+                    cardForProcessor.baseGuard = Mathf.Max(0f, cardForProcessor.baseGuard + comboApp.guardIncrease);
+                    // Only override AoE if true, otherwise keep original
+                    cardForProcessor.isAoE = comboApp.isAoEOverride || cardForProcessor.isAoE;
+                }
+                
+                // Pass ailment fields from combo override
+                cardForProcessor.comboAilmentId = comboApp.comboAilmentId;
+                cardForProcessor.comboAilmentPortion = comboApp.comboAilmentPortion;
+                cardForProcessor.comboAilmentDuration = comboApp.comboAilmentDuration;
+                
+                // If combo-specific consume enabled on asset, propagate it for this play
+                if (card.comboConsumeAilment && card.comboConsumeAilmentId != AilmentId.None)
+                {
+                    cardForProcessor.consumeAilmentEnabled = true;
+                    cardForProcessor.consumeAilmentId = card.comboConsumeAilmentId;
+                }
+            }
+            else
+            {
+                // No combo override: allow per-card ailment application on play
+                if (card.comboAilment != AilmentId.None && card.comboAilmentPortion > 0f && card.comboAilmentDuration > 0)
+                {
+                    cardForProcessor.comboAilmentId = card.comboAilment;
+                    cardForProcessor.comboAilmentPortion = card.comboAilmentPortion;
+                    cardForProcessor.comboAilmentDuration = card.comboAilmentDuration;
+                }
+            }
+            
+            // Always pass consume fields directly from the asset (not combo-only)
+            cardForProcessor.consumeAilmentEnabled = card.consumeAilment;
+            cardForProcessor.consumeAilmentId = card.consumeAilmentId;
+            
+            // For AoE cards, we don't need a specific target enemy
+            if (cardForProcessor.isAoE)
+            {
+                Debug.Log($"  → Calling cardEffectProcessor.ApplyCardToEnemy for AoE card...");
+                cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, null, playerCharacter, targetPosition);
+            }
+            else if (targetEnemy != null)
+            {
+                Debug.Log($"  → Calling cardEffectProcessor.ApplyCardToEnemy for single target...");
+                cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, targetEnemy, playerCharacter, targetPosition);
+            }
+            else
+            {
+                Debug.LogWarning($"Cannot apply {card.cardName}: No target enemy for single-target card!");
+                return;
+            }
+            
+            // Play combat effects based on card type
+            if (combatEffectManager != null)
+            {
+                Debug.Log($"  → Calling PlayCardEffects...");
+                // Pass CardDataExtended to visual effects (legacy Card not needed here)
+                PlayCardEffects(card, targetEnemy, playerCharacter);
+            }
+            else
+            {
+                Debug.LogWarning($"  → CombatEffectManager is NULL!");
+            }
+            
+            CardAbilityRouter.ApplyCardPlay(card, cardForProcessor, playerCharacter, targetEnemy, targetPosition);
+
+            // Apply "hits twice" effect if Aggression charge is active
+            if (ShouldHitTwice() && targetEnemy != null && !cardForProcessor.isAoE)
+            {
+                Debug.Log($"<color=yellow>[ChargeModifier] HitsTwice: Applying card effect again!</color>");
+                cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, targetEnemy, playerCharacter, targetPosition);
+            }
+            
+            // Boss Ability Handler - card played
+            cardsPlayedThisTurn++;
+            BossAbilityHandler.OnPlayerCardPlayed(cardForProcessor, cardsPlayedThisTurn);
+        }
+        else
+        {
+            Debug.LogWarning($"Cannot apply {card.cardName}: No effect processor!");
+        }
+        
+        // Trigger event for other systems
+        OnCardPlayed?.Invoke(card);
+        Debug.Log($"  → Card effect triggered: {card.cardName}");
+        
+        // Consume charge modifiers after card is played
+        ConsumeChargeModifiers();
+        
+        // Apply combo post-effects: mana refund, draw, ailments, buffs
+        if (comboApp != null)
+        {
+            // Mana refund
+            if (comboApp.manaRefund > 0 && playerCharacter != null)
+            {
+                playerCharacter.RestoreMana(comboApp.manaRefund);
+                Debug.Log($"<color=green>[Combo] Refunded {comboApp.manaRefund} mana</color>");
+                var playerDisplayRefund = FindFirstObjectByType<PlayerCombatDisplay>();
+                if (playerDisplayRefund != null) playerDisplayRefund.UpdateManaDisplay();
+            }
+            
+            // Draw cards on combo
+            if (comboApp.comboDrawCards > 0)
+            {
+                Debug.Log($"<color=green>[Combo] Draw {comboApp.comboDrawCards} card(s)</color>");
+                DrawCards(comboApp.comboDrawCards);
+            }
+            
+            // Ailment (hook into status/effect manager)
+            if (!string.IsNullOrEmpty(comboApp.ailmentId) && targetEnemy != null)
+            {
+                Debug.Log($"[Combo] Apply ailment: {comboApp.ailmentId} to {targetEnemy.enemyName}");
+                // TODO: integrate with StatusEffectManager once ailment mapping is defined
+            }
+            
+            // Buffs on player (list)
+            if (comboApp.buffIds != null && comboApp.buffIds.Count > 0)
+            {
+                Debug.Log($"[Combo] Apply buffs to player: {string.Join(", ", comboApp.buffIds)}");
+                // Simple integration: support Bolster stacks (2-turn default)
+                var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+                var statusManager = playerDisplay != null ? playerDisplay.GetStatusEffectManager() : null;
+                if (statusManager != null)
+                {
+                    foreach (var buff in comboApp.buffIds)
+                    {
+                        if (string.Equals(buff, "Bolster", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            int stacks = 1; // base stack
+                            if (playerCharacter != null && card != null)
+                            {
+                                switch (card.comboScaling)
+                                {
+                                    case ComboScalingType.Strength:
+                                        if (card.comboScalingDivisor > 0f)
+                                        {
+                                            stacks += Mathf.FloorToInt(playerCharacter.strength / card.comboScalingDivisor);
+                                        }
+                                        break;
+                                    case ComboScalingType.Dexterity:
+                                        if (card.comboScalingDivisor > 0f)
+                                        {
+                                            stacks += Mathf.FloorToInt(playerCharacter.dexterity / card.comboScalingDivisor);
+                                        }
+                                        break;
+                                    case ComboScalingType.Intelligence:
+                                        if (card.comboScalingDivisor > 0f)
+                                        {
+                                            stacks += Mathf.FloorToInt(playerCharacter.intelligence / card.comboScalingDivisor);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            // Clamp effective benefit elsewhere, but ensure at least 1
+                            stacks = Mathf.Max(1, stacks);
+                            var effect = new StatusEffect(StatusEffectType.Bolster, "Bolster", stacks, 2, false);
+                            statusManager.AddStatusEffect(effect);
+                            Debug.Log($"[Combo] Applied Bolster ({stacks} stack(s), 2 turns)");
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Trigger player sprite animations based on card type
+        TriggerPlayerAnimation(card);
+        
+        // Notify combat manager that a card was played
+        if (combatDisplayManager != null)
+        {
+            combatDisplayManager.OnCardPlayed();
+        }
+        
+        // Notify combo system that a card was played (legacy), and register last played for new system
+        if (comboSystem != null)
+        {
+            // TEMPORARY: Convert CardDataExtended to Card for ComboSystem
+            #pragma warning disable CS0618
+            Card cardForCombo = card.ToCard();
+            #pragma warning restore CS0618
+            ApplyChannelingMetadata(cardForCombo, channelingState, card, channelingBonusApplied);
+            comboSystem.OnCardPlayed(cardForCombo);
+        }
+        if (ComboSystem.Instance != null)
+        {
+            string groupKey = string.IsNullOrEmpty(card.groupKey) ? card.cardName : card.groupKey;
+            ComboSystem.Instance.RegisterLastPlayed(card.GetCardTypeEnum(), card.cardName, groupKey);
+            // Refresh highlights after registering last played
+            UpdateComboHighlights();
+        }
+    }
+    
+    /// <summary>
     /// Animate card flying to discard pile and disappearing.
+    /// PURELY VISUAL - card logic is already resolved (fire-and-forget)
     /// </summary>
     private void AnimateToDiscardPile(GameObject cardObj, CardDataExtended card)
     {
         if (cardObj == null)
         {
             Debug.LogError($"Cannot animate discard - cardObj is null for {card.cardName}!");
-            discardPile.Add(card);
-            OnCardDiscarded?.Invoke(card);
+            // Card already added to discard pile in caller
             return;
         }
         
         if (discardPileTransform == null)
         {
             Debug.LogWarning("DiscardPileTransform not set! Using instant discard.");
-            discardPile.Add(card);
-            OnCardDiscarded?.Invoke(card);
+            // Card already added to discard pile in caller
             
+            // Remove from activeCards if still there
             if (cardRuntimeManager != null)
             {
-                cardRuntimeManager.ReturnCardToPool(cardObj);
+                var activeCardsList = cardRuntimeManager.GetActiveCards();
+                if (activeCardsList.Contains(cardObj))
+                {
+                    cardRuntimeManager.RemoveCard(cardObj);
+                }
+                else
+                {
+                    cardRuntimeManager.ReturnCardToPool(cardObj);
+                }
             }
             else
             {
@@ -2525,13 +2864,78 @@ public class CombatDeckManager : MonoBehaviour
             return;
         }
         
-        Vector3 discardPos = discardPileTransform.position;
+        Vector3 discardPosWorld = discardPileTransform.position;
         Vector3 startPos = cardObj.transform.position;
         
-        Debug.Log($"  → Animating {card.cardName} from {startPos} to discard pile at {discardPos}...");
+        Debug.Log($"  → [Discard] Animating {card.cardName} from {startPos} to discard pile at {discardPosWorld}...");
+        Debug.Log($"  → [Discard] DiscardPileTransform name: {discardPileTransform.name}");
+        Debug.Log($"  → [Discard] DiscardPileTransform GameObject: {discardPileTransform.gameObject.name}");
+        
+        // Verify this is actually the discard pile (not draw pile) - check if deckPileTransform is different
+        if (deckPileTransform != null)
+        {
+            float distanceToDiscard = Vector3.Distance(discardPileTransform.position, startPos);
+            float distanceToDraw = Vector3.Distance(deckPileTransform.position, startPos);
+            Debug.Log($"  → [Discard] Distance to discard pile: {distanceToDiscard}, Distance to draw pile: {distanceToDraw}");
+            
+            if (discardPileTransform == deckPileTransform)
+            {
+                Debug.LogError($"  → [Discard] ERROR: DiscardPileTransform and DeckPileTransform are the SAME! Cards will go to wrong pile!");
+            }
+        }
         
         // Cancel any existing animations on this card
         LeanTween.cancel(cardObj);
+        
+        // Get RectTransform for UI elements - use it for move animation if available
+        RectTransform cardRect = cardObj.GetComponent<RectTransform>();
+        Vector3 discardPos = discardPosWorld; // Default to world position
+        
+        // If using RectTransform, convert discard pile world position to local space
+        if (cardRect != null && cardRect.parent != null)
+        {
+            RectTransform parentRect = cardRect.parent as RectTransform;
+            if (parentRect != null)
+            {
+                // Get the canvas for coordinate conversion
+                Canvas canvas = cardObj.GetComponentInParent<Canvas>();
+                if (canvas != null)
+                {
+                    Camera eventCamera = canvas.worldCamera;
+                    if (eventCamera == null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+                    {
+                        eventCamera = Camera.main;
+                    }
+                    
+                    // Convert world position to screen point
+                    Vector2 screenPoint;
+                    if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+                    {
+                        screenPoint = new Vector2(discardPosWorld.x, discardPosWorld.y);
+                    }
+                    else
+                    {
+                        screenPoint = RectTransformUtility.WorldToScreenPoint(eventCamera, discardPosWorld);
+                    }
+                    
+                    // Convert screen point to local position relative to card's parent
+                    Vector2 localPoint;
+                    if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        parentRect, 
+                        screenPoint,
+                        eventCamera,
+                        out localPoint))
+                    {
+                        discardPos = localPoint;
+                        Debug.Log($"  → [Discard] Converted discard position to local space: {discardPos}");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"  → [Discard] Failed to convert discard position to local space, using world position");
+                    }
+                }
+            }
+        }
         
         // Use a counter to ensure all animations complete
         int animationsCompleted = 0;
@@ -2539,48 +2943,75 @@ public class CombatDeckManager : MonoBehaviour
         
         System.Action OnAnimationComplete = () => {
             animationsCompleted++;
-            Debug.Log($"  → Animation step {animationsCompleted}/{totalAnimations} complete for {card.cardName}");
+            Debug.Log($"  → [Discard] Animation step {animationsCompleted}/{totalAnimations} complete for {card.cardName}");
             
             // Only trigger cleanup when ALL animations complete
             if (animationsCompleted >= totalAnimations)
             {
-                Debug.Log($"  → <color=green>All 3 animations complete for {card.cardName}, returning to pool...</color>");
+                Debug.Log($"  → [Discard] <color=green>All 3 animations complete for {card.cardName}, returning to pool...</color>");
                 
                 // Safety check
                 if (cardObj == null)
                 {
-                    Debug.LogError($"Card GameObject became null during discard animation!");
-                    discardPile.Add(card);
-                    OnCardDiscarded?.Invoke(card);
+                    Debug.LogError($"  → [Discard] Card GameObject became null during discard animation!");
+                    // Card already added to discard pile in caller
                     return;
                 }
                 
-                Debug.Log($"  → Card position before pool return: {cardObj.transform.position}");
-                Debug.Log($"  → Card scale before pool return: {cardObj.transform.localScale}");
-                Debug.Log($"  → Card active: {cardObj.activeInHierarchy}");
+                Debug.Log($"  → [Discard] Card position before pool return: {cardObj.transform.position}");
+                Debug.Log($"  → [Discard] Card scale before pool return: {cardObj.transform.localScale}");
+                Debug.Log($"  → [Discard] Card active: {cardObj.activeInHierarchy}");
                 
-                // Add to discard pile
-                discardPile.Add(card);
-                OnCardDiscarded?.Invoke(card);
+                // Card already added to discard pile in caller, just return to pool
                 
-                // Return to pool
+                // Remove from activeCards and return to pool
                 if (cardRuntimeManager != null)
                 {
-                    cardRuntimeManager.ReturnCardToPool(cardObj);
-                    Debug.Log($"  → <color=green>✓✓✓ {card.cardName} RETURNED TO POOL! ✓✓✓</color>");
+                    var activeCardsList = cardRuntimeManager.GetActiveCards();
+                    if (activeCardsList.Contains(cardObj))
+                    {
+                        cardRuntimeManager.RemoveCard(cardObj);
+                    }
+                    else
+                    {
+                        cardRuntimeManager.ReturnCardToPool(cardObj);
+                    }
+                    Debug.Log($"  → [Discard] <color=green>✓✓✓ {card.cardName} RETURNED TO POOL! ✓✓✓</color>");
                 }
                 else
                 {
                     Destroy(cardObj);
-                    Debug.Log($"  → {card.cardName} destroyed (no pool manager)");
+                    Debug.Log($"  → [Discard] {card.cardName} destroyed (no pool manager)");
+                }
+                
+                // Clean up tracking - card is done being played
+                if (cardsBeingPlayed.Contains(cardObj))
+                {
+                    cardsBeingPlayed.Remove(cardObj);
+                    Debug.Log($"  → [CardPlay] Removed {card.cardName} from cardsBeingPlayed set");
+                }
+                if (cardPlayStates.ContainsKey(cardObj))
+                {
+                    cardPlayStates.Remove(cardObj);
                 }
             }
         };
         
-        // Animate to discard pile (position)
-        LeanTween.move(cardObj, discardPos, 0.4f)
-            .setEase(LeanTweenType.easeInQuad)
-            .setOnComplete(OnAnimationComplete);
+        // Animate to discard pile (position) - use RectTransform if available for UI elements
+        if (cardRect != null)
+        {
+            Debug.Log($"  → [Discard] Using RectTransform.move for {card.cardName} to position {discardPos}");
+            LeanTween.move(cardRect, discardPos, 0.4f)
+                .setEase(LeanTweenType.easeInQuad)
+                .setOnComplete(OnAnimationComplete);
+        }
+        else
+        {
+            Debug.Log($"  → [Discard] Using Transform.move for {card.cardName} to position {discardPos}");
+            LeanTween.move(cardObj, discardPos, 0.4f)
+                .setEase(LeanTweenType.easeInQuad)
+                .setOnComplete(OnAnimationComplete);
+        }
         
         // Shrink while moving
         LeanTween.scale(cardObj, Vector3.one * 0.2f, 0.4f)
@@ -2591,6 +3022,43 @@ public class CombatDeckManager : MonoBehaviour
         LeanTween.rotate(cardObj, new Vector3(0, 0, Random.Range(-30f, 30f)), 0.4f)
             .setEase(LeanTweenType.easeInQuad)
             .setOnComplete(OnAnimationComplete);
+        
+        // Safety timeout for discard animation (visual cleanup only - logic already resolved)
+        StartCoroutine(SafetyTimeoutForDiscardAnimation(cardObj, card, 1.5f));
+    }
+    
+    /// <summary>
+    /// Safety timeout coroutine for discard animation - forces cleanup if animation gets stuck
+    /// </summary>
+    private IEnumerator SafetyTimeoutForDiscardAnimation(GameObject cardObj, CardDataExtended card, float timeout)
+    {
+        yield return new WaitForSeconds(timeout);
+        
+        if (cardObj != null && cardObj.activeInHierarchy)
+        {
+            Debug.LogWarning($"  → [Discard] [Safety Timeout] Discard animation stuck for {card.cardName}! Force completing...");
+            LeanTween.cancel(cardObj);
+            
+            // Force return to pool
+            if (cardRuntimeManager != null)
+            {
+                var activeCardsList = cardRuntimeManager.GetActiveCards();
+                if (activeCardsList.Contains(cardObj))
+                {
+                    cardRuntimeManager.RemoveCard(cardObj);
+                }
+                else
+                {
+                    cardRuntimeManager.ReturnCardToPool(cardObj);
+                }
+                Debug.Log($"  → [Discard] [Safety Timeout] Returned {card.cardName} to pool.");
+            }
+            else
+            {
+                Destroy(cardObj);
+                Debug.Log($"  → [Discard] [Safety Timeout] Destroyed {card.cardName} (no pool manager)");
+            }
+        }
     }
     
     #endregion
@@ -3094,72 +3562,63 @@ public class CombatDeckManager : MonoBehaviour
             cardRuntimeManager.RepositionCards(handVisuals, animated: true, duration: 0.3f);
         }
         
-        // Get target enemy
+        // Get target enemy and build combo
         Enemy targetEnemy = GetTargetEnemy();
-        Character playerCharacter = characterManager != null && characterManager.HasCharacter() ? 
+        Character playerCharacter = characterManager != null && characterManager.HasCharacter() ?
             characterManager.GetCurrentCharacter() : null;
         
-        // Continue with animation and effect application
+        ComboSystem.ComboApplication comboApp = null;
+        if (ComboSystem.Instance != null)
+        {
+            comboApp = ComboSystem.Instance.BuildComboApplication(card, playerCharacter);
+        }
+        
+        // Use action queue system (same as normal PlayCard flow)
+        int handIndex = -1; // Not in hand anymore, but action needs a value
+        CardAction action = new CardAction(card, cardObj, handIndex, targetPosition, targetEnemy, playerCharacter, comboApp);
+        actionQueue.Enqueue(action);
+        
+        // Track this card as being played
+        if (!cardsBeingPlayed.Contains(cardObj))
+        {
+            cardsBeingPlayed.Add(cardObj);
+            cardPlayStates[cardObj] = new CardPlayState
+            {
+                card = card,
+                cardObj = cardObj,
+                effectsApplied = false,
+                playStartTime = Time.time,
+                state = CardState.Queued
+            };
+        }
+        
+        // Process action queue immediately (resolve logic)
+        ProcessActionQueue();
+        
+        Debug.Log($"<color=green>[ActionQueue] {card.cardName} (discard card) logic resolved. Starting animations...</color>");
+        
+        // Cancel any existing animations and prepare for play animation
+        LeanTween.cancel(cardObj);
+        cardObj.transform.localScale = Vector3.one;
+        cardObj.transform.localRotation = Quaternion.identity;
+        
+        CardHoverEffect hoverEffect = cardObj.GetComponent<CardHoverEffect>();
+        if (hoverEffect != null)
+        {
+            hoverEffect.enabled = false;
+        }
+        SetCardInteractable(cardObj, false);
+        
+        // Start play animation (fire-and-forget - effects already applied!)
         if (animationManager != null && cardRuntimeManager != null)
         {
-            StartCoroutine(SafetyTimeoutForCardAnimation(cardObj, card, 3.0f));
-            
-            // Animate to target position
             animationManager.AnimateCardPlay(cardObj, targetPosition, () => {
-                // Apply card effects
-                if (cardEffectProcessor != null)
-                {
-                    #pragma warning disable CS0618
-                    Card cardForProcessor = card.ToCard();
-                    #pragma warning restore CS0618
-                    
-                    // Build combo application
-                    ComboSystem.ComboApplication comboApp = null;
-                    if (ComboSystem.Instance != null)
-                    {
-                        comboApp = ComboSystem.Instance.BuildComboApplication(card, playerCharacter);
-                    }
-                    
-                    // Apply modifiers
-                    ApplyCardModifiers(cardForProcessor, card);
-                    var channelingState = UpdateChannelingState(playerCharacter, card);
-                    ApplyChannelingMetadata(cardForProcessor, channelingState, card, false);
-                    
-                    // Apply combo
-                    if (comboApp != null)
-                    {
-                        if (comboApp.logic == ComboLogicType.Instead)
-                        {
-                            cardForProcessor.baseDamage = Mathf.Max(0f, comboApp.attackIncrease);
-                            cardForProcessor.baseGuard = Mathf.Max(0f, comboApp.guardIncrease);
-                            cardForProcessor.isAoE = comboApp.isAoEOverride;
-                        }
-                        else
-                        {
-                            cardForProcessor.baseDamage = Mathf.Max(0f, cardForProcessor.baseDamage + comboApp.attackIncrease);
-                            cardForProcessor.baseGuard = Mathf.Max(0f, cardForProcessor.baseGuard + comboApp.guardIncrease);
-                            cardForProcessor.isAoE = comboApp.isAoEOverride || cardForProcessor.isAoE;
-                        }
-                    }
-                    
-                    // Apply card effect
-                    if (cardForProcessor.isAoE)
-                    {
-                        cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, null, playerCharacter, targetPosition);
-                    }
-                    else if (targetEnemy != null)
-                    {
-                        cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, targetEnemy, playerCharacter, targetPosition);
-                    }
-                }
+                Debug.Log($"  <color=cyan>[Animation] Card play animation complete for {card.cardName} (discard card) - effects already applied</color>");
                 
-                // Play visual effects
-                if (combatEffectManager != null)
-                {
-                    PlayCardEffects(card, targetEnemy, playerCharacter);
-                }
+                // Card already in discard pile and effects applied, just invoke event
+                OnCardDiscarded?.Invoke(card);
                 
-                // Animate to discard pile
+                // Animate to discard pile (visual only)
                 float effectDuration = 0.3f;
                 LeanTween.delayedCall(gameObject, effectDuration, () => {
                     if (cardObj != null && discardPileTransform != null)
@@ -3168,15 +3627,15 @@ public class CombatDeckManager : MonoBehaviour
                     }
                     else if (cardObj != null)
                     {
-                        discardPile.Add(card);
-                        OnCardDiscarded?.Invoke(card);
-                        if (cardRuntimeManager != null)
-                        {
-                            cardRuntimeManager.ReturnCardToPool(cardObj);
-                        }
+                        CleanupCardAfterPlay(cardObj, card);
                     }
                 });
             });
+        }
+        else
+        {
+            // No animation - just clean up
+            CleanupCardAfterPlay(cardObj, card);
         }
     }
     

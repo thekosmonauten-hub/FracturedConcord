@@ -6,6 +6,10 @@ using System.Collections.Generic;
 /// <summary>
 /// Manages all combat animations using LeanTween.
 /// Provides smooth, professional animations for damage, effects, UI, and more.
+/// 
+/// Phase 2: Animation Kill Switch - Set disableAllAnimations to true to disable all animations.
+/// This validates that game logic is independent of visuals (best practice).
+/// If gameplay breaks when animations are disabled, logic is still tied to visuals.
 /// </summary>
 public class CombatAnimationManager : MonoBehaviour
 {
@@ -13,6 +17,12 @@ public class CombatAnimationManager : MonoBehaviour
     
     [Header("Animation Config")]
     public CombatAnimationConfig config;
+    
+    [Header("Phase 2: Animation Kill Switch (Debug)")]
+    [Tooltip("When enabled, all animations are skipped and callbacks fire immediately. " +
+             "Use this to validate that game logic works independently of animations. " +
+             "If gameplay breaks when this is enabled, logic is still tied to visuals - fix before adding more content.")]
+    public static bool disableAllAnimations = false;
     
     [Header("Damage Number Pool")]
     [SerializeField] private GameObject damageNumberPrefab;
@@ -389,6 +399,17 @@ public class CombatAnimationManager : MonoBehaviour
     /// </summary>
     public void AnimateCardDraw(GameObject cardObject, Vector3 startPosition, Vector3 endPosition, Vector3 targetScale, System.Action onComplete = null)
     {
+        // Phase 2: Animation Kill Switch - skip animation if disabled
+        if (disableAllAnimations)
+        {
+            Debug.Log($"<color=yellow>[Animation Kill Switch] Skipping AnimateCardDraw for {cardObject.name} - instant positioning</color>");
+            cardObject.transform.position = endPosition;
+            cardObject.transform.localScale = targetScale;
+            cardObject.transform.rotation = Quaternion.identity;
+            onComplete?.Invoke();
+            return;
+        }
+        
         cardObject.transform.position = startPosition;
         cardObject.transform.localScale = targetScale * 0.3f; // Start at 30% of target scale
         cardObject.transform.rotation = Quaternion.Euler(0, 0, Random.Range(-15f, 15f));
@@ -409,9 +430,9 @@ public class CombatAnimationManager : MonoBehaviour
             button.interactable = false;
         }
         
-        // Move to hand position
+        // Move directly to hand position (no detour - use linear ease for straight path)
         LeanTween.move(cardObject, endPosition, config.cardDrawDuration)
-            .setEase(config.cardDrawEase);
+            .setEase(LeanTweenType.easeOutQuad); // Changed from config.cardDrawEase to ensure direct path
         
         // Scale up to TARGET scale (not just Vector3.one!)
         LeanTween.scale(cardObject, targetScale, config.cardDrawDuration)
@@ -422,6 +443,9 @@ public class CombatAnimationManager : MonoBehaviour
             .setEase(LeanTweenType.easeOutQuad)
             .setOnComplete(() => 
             {
+                // CRITICAL: Ensure scale is exactly at target (in case animation was slightly off)
+                cardObject.transform.localScale = targetScale;
+                
                 // Re-enable raycasting when animation completes
                 SetCardRaycastTargets(cardObject, true);
                 
@@ -429,6 +453,8 @@ public class CombatAnimationManager : MonoBehaviour
                 if (hoverEffect != null)
                 {
                     hoverEffect.enabled = true;
+                    // Store the correct scale for hover effects (now that animation is complete)
+                    hoverEffect.StoreBaseScale();
                 }
                 
                 if (button != null)
@@ -467,20 +493,32 @@ public class CombatAnimationManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Animate card being played
+    /// Animate card being played - goes to center, shrinks, then callback triggers discard
     /// </summary>
     public void AnimateCardPlay(GameObject cardObject, Vector3 targetPosition, System.Action onComplete = null)
     {
+        // Phase 2: Animation Kill Switch - skip animation if disabled
+        if (disableAllAnimations)
+        {
+            Debug.Log($"<color=yellow>[Animation Kill Switch] Skipping AnimateCardPlay for {cardObject.name} - callback firing immediately</color>");
+            onComplete?.Invoke();
+            return;
+        }
+        
         Debug.Log($"<color=cyan>▶ AnimateCardPlay START</color>");
         Debug.Log($"  Card: {cardObject.name}");
         Debug.Log($"  From: {cardObject.transform.position}");
-        Debug.Log($"  To: {targetPosition}");
+        Debug.Log($"  To center, then discard");
         Debug.Log($"  Duration: {config.cardPlayDuration}s");
         Debug.Log($"  Has callback: {onComplete != null}");
         
         Vector3 startPosition = cardObject.transform.position;
         
-        // Fade out
+        // Get screen center position
+        Vector3 screenCenter = GetScreenCenterPosition(cardObject);
+        Debug.Log($"  Screen center: {screenCenter}");
+        
+        // Get CanvasGroup for fade effects
         CanvasGroup canvasGroup = cardObject.GetComponent<CanvasGroup>();
         if (canvasGroup == null)
         {
@@ -488,61 +526,53 @@ public class CombatAnimationManager : MonoBehaviour
             Debug.Log($"  Added CanvasGroup to {cardObject.name}");
         }
         
-        // Arc motion towards target - THIS IS THE MAIN ANIMATION with the callback!
-        // For UI elements, we MUST use the RectTransform directly!
         RectTransform rectTransform = cardObject.GetComponent<RectTransform>();
-        int tweenId = LeanTween.move(rectTransform, targetPosition, config.cardPlayDuration)
-            .setEase(config.cardPlayEase)
-            .setOnComplete(() => {
-                Debug.Log($"<color=green>▶ AnimateCardPlay COMPLETE - Callback firing!</color>");
-                Debug.Log($"  Card still exists: {cardObject != null}");
-                Debug.Log($"  Card active: {(cardObject != null ? cardObject.activeInHierarchy.ToString() : "null")}");
-                
-                // Reset alpha to full for next animation phase
-                if (canvasGroup != null)
-                    canvasGroup.alpha = 1f;
-                    
-                // DON'T destroy the card - let the caller (CombatDeckManager) handle it!
-                Debug.Log($"  About to invoke callback...");
-                onComplete?.Invoke();
-                Debug.Log($"  Callback invoked!");
-            }).id;
-        
-        Debug.Log($"  LeanTween ID: {tweenId}");
-        
-        // Debug check every 0.1 seconds to see if card survives
-        float checkInterval = 0.1f;
-        int checkCount = Mathf.CeilToInt(config.cardPlayDuration / checkInterval);
-        for (int i = 1; i <= checkCount; i++)
+        if (rectTransform == null)
         {
-            float delay = i * checkInterval;
-            int checkNum = i;
-            LeanTween.delayedCall(gameObject, delay, () => {
-                if (cardObject == null)
-                {
-                    Debug.LogError($"  ⚠️ Check #{checkNum} ({delay:F1}s): Card is NULL! Animation cancelled!");
-                }
-                else if (!cardObject.activeInHierarchy)
-                {
-                    Debug.LogWarning($"  ⚠️ Check #{checkNum} ({delay:F1}s): Card is inactive!");
-                }
-                else
-                {
-                    Debug.Log($"  ✓ Check #{checkNum} ({delay:F1}s): Card still alive at {cardObject.transform.position}");
-                }
-            });
+            Debug.LogError($"Card {cardObject.name} has no RectTransform! Cannot animate.");
+            onComplete?.Invoke();
+            return;
         }
         
-        // Scale down as it moves (parallel animation)
-        LeanTween.scale(cardObject, Vector3.one * 0.5f, config.cardPlayDuration)
+        // Step 1: Move to screen center
+        float moveToCenterDuration = config.cardPlayDuration * 0.4f; // 40% of total time to reach center
+        LeanTween.move(rectTransform, screenCenter, moveToCenterDuration)
+            .setEase(LeanTweenType.easeOutQuad)
+            .setOnComplete(() => {
+                Debug.Log($"  Card reached center, starting shrink...");
+                
+                // Step 2: Shrink at center
+                float shrinkDuration = config.cardPlayDuration * 0.3f; // 30% of total time to shrink
+                Vector3 currentScale = cardObject.transform.localScale;
+                LeanTween.scale(cardObject, currentScale * 0.3f, shrinkDuration)
+                    .setEase(LeanTweenType.easeInQuad)
+                    .setOnComplete(() => {
+                        Debug.Log($"<color=green>▶ AnimateCardPlay COMPLETE - Callback firing!</color>");
+                        Debug.Log($"  Card still exists: {cardObject != null}");
+                        Debug.Log($"  Card active: {(cardObject != null ? cardObject.activeInHierarchy.ToString() : "null")}");
+                        
+                        // Reset alpha to full for next animation phase
+                        if (canvasGroup != null)
+                            canvasGroup.alpha = 1f;
+                            
+                        // DON'T destroy the card - let the caller (CombatDeckManager) handle it!
+                        Debug.Log($"  About to invoke callback...");
+                        onComplete?.Invoke();
+                        Debug.Log($"  Callback invoked!");
+                    });
+            });
+        
+        // Scale down as it moves to center (parallel animation)
+        Vector3 currentScale = cardObject.transform.localScale;
+        LeanTween.scale(cardObject, currentScale * 0.7f, moveToCenterDuration)
             .setEase(LeanTweenType.easeInQuad);
         
         // Slight rotation for effect (parallel animation)
-        LeanTween.rotate(cardObject, new Vector3(0, 0, Random.Range(-30f, 30f)), config.cardPlayDuration * 0.5f)
+        LeanTween.rotate(cardObject, new Vector3(0, 0, Random.Range(-15f, 15f)), moveToCenterDuration)
             .setEase(LeanTweenType.easeOutQuad);
         
-        // Fade animation (parallel)
-        LeanTween.value(cardObject, 1f, 0.7f, config.cardPlayDuration)
+        // Fade animation (parallel) - slight fade as it moves to center
+        LeanTween.value(cardObject, 1f, 0.9f, moveToCenterDuration)
             .setOnUpdate((float alpha) => {
                 if (canvasGroup != null)
                     canvasGroup.alpha = alpha;
@@ -550,10 +580,92 @@ public class CombatAnimationManager : MonoBehaviour
     }
     
     /// <summary>
+    /// Get the screen center position in the same coordinate space as the card
+    /// </summary>
+    private Vector3 GetScreenCenterPosition(GameObject cardObject)
+    {
+        RectTransform cardRect = cardObject.GetComponent<RectTransform>();
+        if (cardRect == null)
+        {
+            Debug.LogWarning($"Card {cardObject.name} has no RectTransform, using fallback center position");
+            return new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
+        }
+        
+        // Get the Canvas that the card belongs to
+        Canvas canvas = cardObject.GetComponentInParent<Canvas>();
+        if (canvas == null)
+        {
+            Debug.LogWarning($"Could not find Canvas for card {cardObject.name}, using fallback center position");
+            return new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
+        }
+        
+        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+        if (canvasRect == null)
+        {
+            Debug.LogWarning($"Canvas {canvas.name} has no RectTransform, using fallback center position");
+            return new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
+        }
+        
+        // Get center of canvas in world space
+        Vector3[] corners = new Vector3[4];
+        canvasRect.GetWorldCorners(corners);
+        Vector3 centerWorld = (corners[0] + corners[2]) * 0.5f;
+        
+        // Convert world position to screen point
+        Camera eventCamera = canvas.worldCamera;
+        if (eventCamera == null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+        {
+            eventCamera = Camera.main;
+        }
+        
+        Vector2 screenPoint;
+        if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        {
+            // For overlay, world position is already in screen coordinates
+            screenPoint = new Vector2(centerWorld.x, centerWorld.y);
+        }
+        else
+        {
+            // Convert world to screen
+            screenPoint = RectTransformUtility.WorldToScreenPoint(eventCamera, centerWorld);
+        }
+        
+        // Convert screen point to local position relative to card's parent
+        if (cardRect.parent != null)
+        {
+            RectTransform parentRect = cardRect.parent as RectTransform;
+            if (parentRect != null)
+            {
+                Vector2 localPoint;
+                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    parentRect, 
+                    screenPoint,
+                    eventCamera,
+                    out localPoint))
+                {
+                    return localPoint;
+                }
+            }
+        }
+        
+        // Fallback: return world position (should work for most cases)
+        return centerWorld;
+    }
+    
+    /// <summary>
     /// Animate card discard
     /// </summary>
     public void AnimateCardDiscard(GameObject cardObject, Vector3 discardPosition, System.Action onComplete = null)
     {
+        // Phase 2: Animation Kill Switch - skip animation if disabled
+        if (disableAllAnimations)
+        {
+            Debug.Log($"<color=yellow>[Animation Kill Switch] Skipping AnimateCardDiscard for {cardObject.name} - callback firing immediately</color>");
+            cardObject.SetActive(false);
+            onComplete?.Invoke();
+            return;
+        }
+        
         // Quick movement to discard pile
         LeanTween.move(cardObject, discardPosition, config.cardDiscardDuration)
             .setEase(config.cardDiscardEase);

@@ -428,7 +428,16 @@ public class CardRuntimeManager : MonoBehaviour
             {
                 Debug.Log($"  Repositioning card {i}: {cardList[i].name}");
                 
+                // CRITICAL: Ensure scale is correct BEFORE canceling animations
+                // This prevents cards from staying small if their scale animation was interrupted
+                if (cardList[i].transform.localScale != cardScale)
+                {
+                    Debug.Log($"  Fixing scale for {cardList[i].name}: {cardList[i].transform.localScale} → {cardScale}");
+                    cardList[i].transform.localScale = cardScale;
+                }
+                
                 // Additional safety: Cancel any existing position tweens before repositioning
+                // Note: We already ensured scale above, so canceling won't leave cards at wrong scale
                 LeanTween.cancel(cardList[i], false);
                 
                 // Update sibling index immediately to ensure proper z-ordering
@@ -462,6 +471,13 @@ public class CardRuntimeManager : MonoBehaviour
         EnsureCardParent(cardObj);
         Vector3 targetLocalPos = CalculateCardPosition(index, totalCards);
         SetSiblingIndex(cardObj.transform, index);
+        
+        // CRITICAL: Ensure scale is correct (in case it was interrupted by reposition)
+        // This ensures cards are always at proper size even if scale animation was cancelled
+        if (cardObj.transform.localScale != cardScale)
+        {
+            cardObj.transform.localScale = cardScale;
+        }
 
         LeanTween.cancel(cardObj, false);
 
@@ -474,6 +490,8 @@ public class CardRuntimeManager : MonoBehaviour
                 {
                     rect.anchoredPosition3D = targetLocalPos;
                     rect.localRotation = Quaternion.identity;
+                    // Ensure scale is still correct after animation completes
+                    cardObj.transform.localScale = cardScale;
                     FinalizeCardPlacement(cardObj);
                 });
         }
@@ -485,6 +503,8 @@ public class CardRuntimeManager : MonoBehaviour
                 {
                     cardObj.transform.localPosition = targetLocalPos;
                     cardObj.transform.localRotation = Quaternion.identity;
+                    // Ensure scale is still correct after animation completes
+                    cardObj.transform.localScale = cardScale;
                     FinalizeCardPlacement(cardObj);
                 });
         }
@@ -804,13 +824,26 @@ public class CardRuntimeManager : MonoBehaviour
 
     private void FinalizeCardPlacement(GameObject cardObj)
     {
+        // CRITICAL: Ensure scale is correct before storing it for hover effects
+        // This prevents cards from storing a small scale if their animation was interrupted
+        if (cardObj.transform.localScale != cardScale)
+        {
+            cardObj.transform.localScale = cardScale;
+        }
+        
         // Ensure raycasting is enabled (safety check in case it was disabled during animation/repositioning)
         EnsureCardRaycastEnabled(cardObj);
         
         CardHoverEffect hoverEffect = cardObj.GetComponent<CardHoverEffect>();
         if (hoverEffect != null)
         {
+            // Store original position AND scale (now that we've ensured scale is correct)
             hoverEffect.StoreOriginalPosition();
+            
+            // CRITICAL: Force update the stored base scale to the correct cardScale
+            // This ensures hover scaling works correctly even if scale was wrong before
+            hoverEffect.StoreBaseScale();
+            
             // If card is currently hovering, update its hover position
             if (hoverEffect.IsHovering())
             {
