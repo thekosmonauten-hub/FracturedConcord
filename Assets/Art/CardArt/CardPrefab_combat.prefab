@@ -484,6 +484,22 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8058889733975688725, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 8058889733975688725, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8058889733975688725, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 8058889733975688725, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 270
+      objectReference: {fileID: 0}
     - target: {fileID: 8176228420737421169, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
       propertyPath: raiseByCanvas
       value: 0
