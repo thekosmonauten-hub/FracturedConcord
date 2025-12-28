@@ -17,6 +17,10 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 	[HideInInspector]
 	public CombatAnimationManager animationManager;
 	
+	[Header("Debug Logging")]
+	[Tooltip("Log card hover operations (can be verbose)")]
+	[SerializeField] private bool logHoverOperations = false;
+	
 	private bool isHovering = false;
 	private Vector3 originalPosition;
 	private bool hasStoredPosition = false;
@@ -238,7 +242,10 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
         {
             originalSiblingIndex = transform.GetSiblingIndex();
             transform.SetAsLastSibling();
-            Debug.Log($"[CardHover] {gameObject.name}: Raised to last sibling (index {originalSiblingIndex} → {transform.GetSiblingIndex()})");
+            if (logHoverOperations)
+            {
+                Debug.Log($"[CardHover] {gameObject.name}: Raised to last sibling (index {originalSiblingIndex} → {transform.GetSiblingIndex()})");
+            }
         }
 
         // Prefer raising via canvas sorting which doesn't alter layout order
@@ -253,7 +260,10 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
                 hadCanvas = false; // Track that we created this canvas
                 originalOverrideSorting = false;
                 originalSortingOrder = 0;
-                Debug.Log($"[CardHover] {gameObject.name}: Added Canvas component for sorting");
+                    if (logHoverOperations)
+                    {
+                        Debug.Log($"[CardHover] {gameObject.name}: Added Canvas component for sorting");
+                    }
                 
                 // CRITICAL: Ensure canvas doesn't block raycasts or interfere with pointer events
                 var graphicRaycaster = gameObject.GetComponent<UnityEngine.UI.GraphicRaycaster>();
@@ -261,7 +271,10 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
                 {
                     // Remove GraphicRaycaster if it was auto-added (it blocks pointer events)
                     Destroy(graphicRaycaster);
-                    Debug.Log($"[CardHover] {gameObject.name}: Removed GraphicRaycaster to prevent pointer blocking");
+                        if (logHoverOperations)
+                        {
+                            Debug.Log($"[CardHover] {gameObject.name}: Removed GraphicRaycaster to prevent pointer blocking");
+                        }
                 }
                 
                 // ADDITIONAL FIX: Ensure the card's own graphics remain raycast targets
@@ -277,7 +290,10 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
                     }
                 }
                 
-                Debug.Log($"[CardHover] {gameObject.name}: Ensured card graphics remain raycast targets ({cardGraphics.Length} graphics checked)");
+                        if (logHoverOperations)
+                        {
+                            Debug.Log($"[CardHover] {gameObject.name}: Ensured card graphics remain raycast targets ({cardGraphics.Length} graphics checked)");
+                        }
             }
             else if (!hadCanvas && cardCanvas != null)
             {
@@ -302,11 +318,17 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
             
             if (stayWithinMask && forceRaiseOnHover)
             {
-                Debug.Log($"[CardHover] {gameObject.name}: Canvas sorting forced to {HoverSortingOrder} (forceRaiseOnHover=true)");
+                if (logHoverOperations)
+                {
+                    Debug.Log($"[CardHover] {gameObject.name}: Canvas sorting forced to {HoverSortingOrder} (forceRaiseOnHover=true)");
+                }
             }
             else
             {
-                Debug.Log($"[CardHover] {gameObject.name}: Canvas sorting set to {HoverSortingOrder} (bring to front)");
+                if (logHoverOperations)
+                {
+                    Debug.Log($"[CardHover] {gameObject.name}: Canvas sorting set to {HoverSortingOrder} (bring to front)");
+                }
             }
         }
         else if (raiseByCanvas && stayWithinMask && !forceRaiseOnHover)
@@ -890,7 +912,10 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 				int maxIndex = transform.parent.childCount - 1;
 				int target = Mathf.Clamp(currentIndex, 0, maxIndex);
 				transform.SetSiblingIndex(target);
-				Debug.Log($"[CardHover] {gameObject.name}: Restored sibling index to {target} (current hand index: {currentIndex})");
+				if (logHoverOperations)
+				{
+					Debug.Log($"[CardHover] {gameObject.name}: Restored sibling index to {target} (current hand index: {currentIndex})");
+				}
 			}
 			else if (originalSiblingIndex >= 0)
 			{
@@ -898,7 +923,10 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 				int maxIndex = transform.parent.childCount - 1;
 				int target = Mathf.Clamp(originalSiblingIndex, 0, maxIndex);
 				transform.SetSiblingIndex(target);
-				Debug.Log($"[CardHover] {gameObject.name}: Restored sibling index to {target} (using original index)");
+				if (logHoverOperations)
+				{
+					Debug.Log($"[CardHover] {gameObject.name}: Restored sibling index to {target} (using original index)");
+				}
 			}
 		}
 		originalSiblingIndex = -1;
@@ -911,7 +939,10 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
                 // Canvas existed before we modified it - restore original settings
                 cardCanvas.overrideSorting = originalOverrideSorting;
                 cardCanvas.sortingOrder = originalSortingOrder;
-                Debug.Log($"[CardHover] {gameObject.name}: Restored canvas to original (override={originalOverrideSorting}, order={originalSortingOrder})");
+                if (logHoverOperations)
+                {
+                    Debug.Log($"[CardHover] {gameObject.name}: Restored canvas to original (override={originalOverrideSorting}, order={originalSortingOrder})");
+                }
             }
             else
             {
@@ -919,7 +950,10 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
                 // (Removing canvas causes pointer flicker)
                 cardCanvas.overrideSorting = false;
                 cardCanvas.sortingOrder = 0;
-                Debug.Log($"[CardHover] {gameObject.name}: Reset canvas sorting (canvas kept for performance)");
+                if (logHoverOperations)
+                {
+                    Debug.Log($"[CardHover] {gameObject.name}: Reset canvas sorting (canvas kept for performance)");
+                }
             }
         }
 	}

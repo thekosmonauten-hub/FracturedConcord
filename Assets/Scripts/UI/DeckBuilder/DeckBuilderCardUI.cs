@@ -760,7 +760,8 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
             return;
         }
 
-        Debug.Log($"[DeckBuilderCardUI] Refreshing embossing slots for {cardData?.cardName ?? card?.cardName ?? "Unknown"} - slots:{slotCount}, embossings:{embossings?.Count ?? 0}");
+        // Embossing slot logging disabled by default (too verbose) - uncomment if needed for debugging
+        // Debug.Log($"[DeckBuilderCardUI] Refreshing embossing slots for {cardData?.cardName ?? card?.cardName ?? "Unknown"} - slots:{slotCount}, embossings:{embossings?.Count ?? 0}");
 
         for (int i = 0; i < 5; i++)
         {

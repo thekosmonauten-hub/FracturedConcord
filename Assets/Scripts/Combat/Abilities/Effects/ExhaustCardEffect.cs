@@ -57,7 +57,9 @@ public class ExhaustCardEffect : AbilityEffect
                 {
                     int randomIndex = Random.Range(0, discardPile.Count);
                     var exhaustedCard = discardPile[randomIndex];
-                    discardPile.RemoveAt(randomIndex);
+                    
+                    // Use proper exhaust method for tracking
+                    deckManager.ExhaustCardFromDiscardPile(randomIndex);
                     
                     Debug.Log($"[ExhaustCardEffect] Exhausted {exhaustedCard.cardName} from discard pile");
                     
@@ -65,6 +67,10 @@ public class ExhaustCardEffect : AbilityEffect
                     {
                         combatUI.LogMessage($"<color=grey>Exhausted!</color> {exhaustedCard.cardName} was removed from discard.");
                     }
+                }
+                else
+                {
+                    Debug.Log($"[ExhaustCardEffect] No cards in discard pile to exhaust");
                 }
             }
         }

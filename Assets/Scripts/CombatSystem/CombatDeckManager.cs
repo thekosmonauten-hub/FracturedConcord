@@ -58,6 +58,15 @@ public class CombatDeckManager : MonoBehaviour
     [SerializeField] private int debugDrawPileCount = 0;
     [SerializeField] private int debugHandCount = 0;
     [SerializeField] private int debugDiscardCount = 0;
+    [SerializeField] private int debugTotalCardCount = 0;
+    [SerializeField] private int debugInitialDeckSize = 0;
+    
+    // Deck state tracking for debugging card loss bug
+    private int initialDeckSize = 0; // Track expected total card count
+    private bool deckInitialized = false; // Prevent mid-combat deck reloads
+    [Header("Card Loss Debugging")]
+    [Tooltip("Enable detailed card count validation logging")]
+    [SerializeField] private bool enableCardCountValidation = true;
     
     // Deck piles - NOW USING CardDataExtended (no conversion!)
     private List<CardDataExtended> drawPile = new List<CardDataExtended>();
@@ -85,14 +94,19 @@ public class CombatDeckManager : MonoBehaviour
     private class CardAction
     {
         public CardDataExtended card;
-        public GameObject cardVisual; // Visual representation (clone or original)
-        public int handIndex;
+        public GameObject cardVisual; // Visual representation (clone or original) - null for unleashed cards
+        public int handIndex; // -1 for unleashed cards
         public Vector3 targetPosition;
         public Enemy targetEnemy;
         public Character playerCharacter;
         public ComboSystem.ComboApplication comboApp;
         public bool resolved; // Track if logic has been resolved
         public float queueTime;
+        
+        // Unleash-specific data (null for regular card plays)
+        public float? unleashDamage; // Pre-calculated unleash damage (includes preparation multiplier)
+        public float? unleashMultiplier; // Preparation multiplier for momentum-based cards
+        public bool isUnleash; // Flag to indicate this is an unleashed card
         
         public CardAction(CardDataExtended card, GameObject cardVisual, int handIndex, Vector3 targetPosition, Enemy targetEnemy, Character playerCharacter, ComboSystem.ComboApplication comboApp)
         {
@@ -105,6 +119,26 @@ public class CombatDeckManager : MonoBehaviour
             this.comboApp = comboApp;
             this.resolved = false;
             this.queueTime = Time.time;
+            this.isUnleash = false;
+            this.unleashDamage = null;
+            this.unleashMultiplier = null;
+        }
+        
+        // Constructor for unleashed cards
+        public CardAction(CardDataExtended card, Vector3 targetPosition, Enemy targetEnemy, Character playerCharacter, float unleashDamage, float unleashMultiplier)
+        {
+            this.card = card;
+            this.cardVisual = null; // Unleashed cards don't have visuals in hand
+            this.handIndex = -1; // Not from hand
+            this.targetPosition = targetPosition;
+            this.targetEnemy = targetEnemy;
+            this.playerCharacter = playerCharacter;
+            this.comboApp = null;
+            this.resolved = false;
+            this.queueTime = Time.time;
+            this.isUnleash = true;
+            this.unleashDamage = unleashDamage;
+            this.unleashMultiplier = unleashMultiplier;
         }
     }
     
@@ -178,8 +212,8 @@ public class CombatDeckManager : MonoBehaviour
         // Perform transition
         cardPlayStates[cardObj].state = newState;
         
-        // Log transition (only in debug mode to avoid spam)
-        if (showDebugLogs)
+        // Log transition (only if enabled to avoid spam)
+        if (logStateTransitions || showDebugLogs)
         {
             Debug.Log($"[State Transition] {cardPlayStates[cardObj].card?.cardName ?? cardObj.name}: {oldState} → {newState}. Context: {context}");
         }
@@ -187,9 +221,47 @@ public class CombatDeckManager : MonoBehaviour
         return true;
     }
     
-    [Header("Phase 2: Debug Settings")]
+    [Header("Debug Logging Settings")]
     [Tooltip("Enable detailed state transition logging")]
     [SerializeField] private bool showDebugLogs = false;
+    
+    [Tooltip("Log card draw operations")]
+    [SerializeField] private bool logCardDraws = true;
+    
+    [Tooltip("Log card play/discard operations")]
+    [SerializeField] private bool logCardOperations = true;
+    
+    [Tooltip("Log animation events (card play animations, discard animations, etc.)")]
+    [SerializeField] private bool logAnimations = false;
+    
+    [Tooltip("Log card effect processing (channeling, combos, damage calculations)")]
+    [SerializeField] private bool logCardEffects = false;
+    
+    [Tooltip("Log card state transitions (Queued -> Resolving -> Resolved, etc.)")]
+    [SerializeField] private bool logStateTransitions = false;
+    
+    [Tooltip("Always log critical errors and card loss detection (recommended: always enabled)")]
+    [SerializeField] private bool logCriticalErrors = true;
+    
+    [Tooltip("Log detailed card click debug information")]
+    [SerializeField] private bool logCardClickDebug = false;
+    
+    [Tooltip("Log card hover operations (raise to top, restore layer)")]
+    [SerializeField] private bool logCardHover = false;
+    
+    [Tooltip("Log card adapter initialization (card setting, image checks)")]
+    [SerializeField] private bool logCardAdapter = false;
+    
+    [Tooltip("Log combo glow state changes")]
+    [SerializeField] private bool logComboGlow = false;
+    
+    [Tooltip("Log discard check operations")]
+    [SerializeField] private bool logDiscardCheck = false;
+    
+    /// <summary>
+    /// Public getter for damage calculation logging (used by DamageCalculator)
+    /// </summary>
+    public bool ShouldLogCardEffects => logCardEffects;
     
     /// <summary>
     /// Phase 2: Validate card state integrity - ensures no orphaned or invalid states
@@ -431,6 +503,14 @@ public class CombatDeckManager : MonoBehaviour
         debugDrawPileCount = drawPile.Count;
         debugHandCount = hand.Count;
         debugDiscardCount = discardPile.Count;
+        debugTotalCardCount = GetTotalCardCount();
+        debugInitialDeckSize = initialDeckSize;
+        
+        // Validate card count if enabled (check every 60 frames to reduce log spam)
+        if (enableCardCountValidation && deckInitialized && Time.frameCount % 60 == 0)
+        {
+            ValidateCardCount("Periodic Update Check");
+        }
         
         // Update UI text every frame (simple and works)
         UpdateDeckCountUI();
@@ -476,7 +556,23 @@ public class CombatDeckManager : MonoBehaviour
     /// </summary>
     public void LoadDeckForClass(string characterClass)
     {
+        // SAFETY: Prevent deck reload during active combat (would cause card loss bug)
+        if (deckInitialized)
+        {
+            Debug.LogWarning($"<color=red>[CARD LOSS PREVENTION] LoadDeckForClass called but deck already initialized! " +
+                           $"This would reset the deck mid-combat and cause card loss. Blocking reload.</color>");
+            Debug.LogWarning($"Current state - Draw: {drawPile.Count}, Hand: {hand.Count}, Discard: {discardPile.Count}, Total: {GetTotalCardCount()}");
+            return;
+        }
+        
         Debug.Log($"<color=yellow>=== Loading deck for: {characterClass} ===</color>");
+        
+        // Log state before clearing (for debugging)
+        int cardsBeforeClear = GetTotalCardCount();
+        if (cardsBeforeClear > 0)
+        {
+            Debug.LogWarning($"<color=yellow>[DECK LOAD] Clearing {cardsBeforeClear} existing cards before loading new deck</color>");
+        }
         
         // Clear existing deck
         drawPile.Clear();
@@ -528,12 +624,97 @@ public class CombatDeckManager : MonoBehaviour
                 Debug.Log($"First card in draw pile: {drawPile[0].cardName}");
             }
             
+            // Track initial deck size for validation
+            initialDeckSize = drawPile.Count;
+            deckInitialized = true;
+            
+            Debug.Log($"<color=green>[DECK INITIALIZED] Initial deck size set to: {initialDeckSize} cards</color>");
+            
             LogDeckComposition();
+            ValidateCardCount("After LoadDeckForClass");
         }
         else
         {
             Debug.LogError($"<color=red>✗ Failed to load deck for {characterClass}!</color>");
         }
+    }
+    
+    /// <summary>
+    /// Get total card count across all piles (for validation)
+    /// Includes prepared cards since they're temporarily removed from hand
+    /// </summary>
+    private int GetTotalCardCount()
+    {
+        int preparedCount = 0;
+        var prepManager = PreparationManager.Instance;
+        if (prepManager != null)
+        {
+            var preparedCards = prepManager.GetPreparedCards();
+            preparedCount = preparedCards != null ? preparedCards.Count : 0;
+        }
+        
+        return drawPile.Count + hand.Count + discardPile.Count + preparedCount;
+    }
+    
+    /// <summary>
+    /// Validate that card count matches expected initial size (debugging card loss bug)
+    /// </summary>
+    private void ValidateCardCount(string context)
+    {
+        if (!deckInitialized || initialDeckSize == 0)
+            return; // Can't validate if deck hasn't been initialized yet
+        
+        int currentTotal = GetTotalCardCount();
+        
+        if (currentTotal != initialDeckSize)
+        {
+            int preparedCount = 0;
+            var prepManager = PreparationManager.Instance;
+            if (prepManager != null)
+            {
+                var preparedCards = prepManager.GetPreparedCards();
+                preparedCount = preparedCards != null ? preparedCards.Count : 0;
+            }
+            
+            Debug.LogError($"<color=red>[CARD LOSS DETECTED] Card count mismatch during {context}! " +
+                         $"Expected: {initialDeckSize}, Actual: {currentTotal}, Lost: {initialDeckSize - currentTotal} cards</color>");
+            Debug.LogError($"  Draw Pile: {drawPile.Count}, Hand: {hand.Count}, Discard: {discardPile.Count}, Prepared: {preparedCount}");
+            Debug.LogError($"  Stack trace: {System.Environment.StackTrace}");
+        }
+        else if (enableCardCountValidation)
+        {
+            // Only log validation success in verbose mode (every 10th validation to reduce spam)
+            if (Time.frameCount % 600 == 0)
+            {
+                int preparedCount = 0;
+                var prepManager = PreparationManager.Instance;
+                if (prepManager != null)
+                {
+                    var preparedCards = prepManager.GetPreparedCards();
+                    preparedCount = preparedCards != null ? preparedCards.Count : 0;
+                }
+                
+                Debug.Log($"<color=green>[CARD COUNT VALID] {context}: {currentTotal} cards (Draw: {drawPile.Count}, Hand: {hand.Count}, Discard: {discardPile.Count}, Prepared: {preparedCount})</color>");
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Log current deck state for debugging
+    /// </summary>
+    private void LogDeckState(string context)
+    {
+        int total = GetTotalCardCount();
+        int preparedCount = 0;
+        var prepManager = PreparationManager.Instance;
+        if (prepManager != null)
+        {
+            var preparedCards = prepManager.GetPreparedCards();
+            preparedCount = preparedCards != null ? preparedCards.Count : 0;
+        }
+        
+        Debug.Log($"[DECK STATE] {context} | Draw: {drawPile.Count}, Hand: {hand.Count}, Discard: {discardPile.Count}, Prepared: {preparedCount}, Total: {total}" +
+                 (deckInitialized ? $" (Expected: {initialDeckSize})" : " (Not initialized)"));
     }
     
     private void LogDeckComposition()
@@ -865,8 +1046,12 @@ public class CombatDeckManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"<color=yellow>=== DrawCards called: Drawing {count} cards ===</color>");
-        Debug.Log($"Current state - Draw pile: {drawPile.Count}, Hand: {hand.Count}, Discard: {discardPile.Count}");
+        if (logCardDraws)
+        {
+            Debug.Log($"<color=yellow>=== DrawCards called: Drawing {count} cards ===</color>");
+            LogDeckState("Before DrawCards");
+        }
+        ValidateCardCount("Before DrawCards");
         
         // Check CardRuntimeManager
         if (cardRuntimeManager == null)
@@ -900,14 +1085,36 @@ public class CombatDeckManager : MonoBehaviour
                 // Reshuffle discard pile into draw pile
                 if (discardPile.Count > 0)
                 {
-                    Debug.Log("Draw pile empty! Reshuffling discard pile...");
+                    int discardCountBefore = discardPile.Count;
+                    if (logCardDraws)
+                    {
+                        Debug.Log($"<color=cyan>Draw pile empty! Reshuffling {discardCountBefore} cards from discard pile...</color>");
+                        LogDeckState("Before Reshuffle");
+                    }
+                    
                     drawPile.AddRange(discardPile);
                     discardPile.Clear();
+                    
+                    // Validate cards weren't lost during transfer (always check, even if logging disabled)
+                    if (drawPile.Count != discardCountBefore)
+                    {
+                        if (logCriticalErrors)
+                        {
+                            Debug.LogError($"<color=red>[RESHUFFLE BUG] Card count mismatch! Expected {discardCountBefore} cards in draw pile after transfer, got {drawPile.Count}</color>");
+                        }
+                    }
+                    
                     ShuffleDeck();
+                    if (logCardDraws)
+                    {
+                        LogDeckState("After Reshuffle");
+                    }
+                    ValidateCardCount("After Reshuffle");
                 }
                 else
                 {
-                    Debug.LogWarning("No cards left to draw!");
+                    Debug.LogWarning($"<color=yellow>No cards left to draw! Draw: {drawPile.Count}, Hand: {hand.Count}, Discard: {discardPile.Count}</color>");
+                    ValidateCardCount("Draw Pile Empty");
                     break;
                 }
             }
@@ -919,27 +1126,25 @@ public class CombatDeckManager : MonoBehaviour
                 drawPile.RemoveAt(0);
                 hand.Add(drawnCard);
                 
-                Debug.Log($"<color=cyan>Drawing card #{i+1}: {drawnCard.cardName}</color>");
+                if (logCardDraws)
+                {
+                    Debug.Log($"<color=cyan>Drawing card #{i+1}: {drawnCard.cardName}</color>");
+                }
                 
                 // Create visual card with draw animation - NO CONVERSION!
-                Debug.Log($"Creating visual for: {drawnCard.cardName}...");
                 GameObject cardObj = CreateAnimatedCard(drawnCard, player, i);
                 
                 if (cardObj != null)
                 {
-                    Debug.Log($"<color=green>✓ Card GameObject created: {cardObj.name}</color>");
-                    Debug.Log($"  Position: {cardObj.transform.position} (Local: {cardObj.transform.localPosition})");
-                    Debug.Log($"  Active: {cardObj.activeInHierarchy}");
-                    Debug.Log($"  Parent: {cardObj.transform.parent?.name ?? "NULL"}");
-                    
-                    // Verify parent is correct
-                    if (cardRuntimeManager.cardHandParent != null)
+                    if (logCardDraws)
                     {
-                        if (cardObj.transform.parent == cardRuntimeManager.cardHandParent)
-                        {
-                            Debug.Log($"  <color=green>✓ Correctly parented to CardHandParent</color>");
-                        }
-                        else
+                        Debug.Log($"<color=green>✓ Card GameObject created: {cardObj.name}</color>");
+                    }
+                    
+                    // Verify parent is correct (only log if verbose logging enabled)
+                    if (showDebugLogs && cardRuntimeManager.cardHandParent != null)
+                    {
+                        if (cardObj.transform.parent != cardRuntimeManager.cardHandParent)
                         {
                             Debug.LogWarning($"  <color=yellow>⚠ Wrong parent! Expected: {cardRuntimeManager.cardHandParent.name}</color>");
                         }
@@ -952,14 +1157,22 @@ public class CombatDeckManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError($"<color=red>✗ Failed to create GameObject for: {drawnCard.cardName}</color>");
+                    if (logCriticalErrors)
+                    {
+                        Debug.LogError($"<color=red>✗ Failed to create GameObject for: {drawnCard.cardName}</color>");
+                    }
                 }
                 
                 OnCardDrawn?.Invoke(drawnCard);
             }
         }
         
-        Debug.Log($"<color=yellow>=== Draw complete: {hand.Count} cards in hand, {handVisuals.Count} visuals created ===</color>");
+        if (logCardDraws)
+        {
+            Debug.Log($"<color=yellow>=== Draw complete: {hand.Count} cards in hand, {handVisuals.Count} visuals created ===</color>");
+            LogDeckState("After DrawCards");
+        }
+        ValidateCardCount("After DrawCards");
         
         // IMPORTANT: Wait for all draw animations to complete, then reposition all cards together
         // This ensures all cards use the same "total cards" in their position calculation
@@ -977,7 +1190,10 @@ public class CombatDeckManager : MonoBehaviour
         LeanTween.delayedCall(gameObject, totalWaitTime, () => {
             if (cardRuntimeManager != null && handVisuals.Count > 0)
             {
-                Debug.Log($"<color=green>All cards drawn! Repositioning {handVisuals.Count} cards to final positions...</color>");
+                if (logAnimations)
+                {
+                    Debug.Log($"<color=green>All cards drawn! Repositioning {handVisuals.Count} cards to final positions...</color>");
+                }
                 cardRuntimeManager.RepositionCards(handVisuals, animated: true, duration: 0.3f);
                 
                 // IMPORTANT: Ensure ALL cards are interactable after draw completes
@@ -986,15 +1202,25 @@ public class CombatDeckManager : MonoBehaviour
                     if (cardObj != null)
                     {
                         SetCardInteractable(cardObj, true);
-                        int siblingIndex = cardObj.transform.GetSiblingIndex();
+                        
+                        // Get button component once and reuse
                         UnityEngine.UI.Button button = cardObj.GetComponent<UnityEngine.UI.Button>();
-                        bool buttonInteractable = button != null ? button.interactable : false;
-                        Debug.Log($"  Re-enabled interaction for {cardObj.name} [Sibling: {siblingIndex}, Button: {buttonInteractable}]");
+                        
+                        // Only log interaction details if verbose logging enabled
+                        if (showDebugLogs)
+                        {
+                            int siblingIndex = cardObj.transform.GetSiblingIndex();
+                            bool buttonInteractable = button != null ? button.interactable : false;
+                            Debug.Log($"  Re-enabled interaction for {cardObj.name} [Sibling: {siblingIndex}, Button: {buttonInteractable}]");
+                        }
                         
                         // Double-check: Force button interactable if it's still false
                         if (button != null && !button.interactable)
                         {
-                            Debug.LogWarning($"  ⚠️ Button still disabled for {cardObj.name}! Force-enabling...");
+                            if (logCriticalErrors)
+                            {
+                                Debug.LogWarning($"  ⚠️ Button still disabled for {cardObj.name}! Force-enabling...");
+                            }
                             button.interactable = true;
                         }
                     }
@@ -1041,34 +1267,57 @@ public class CombatDeckManager : MonoBehaviour
             return;
         }
         
-        Debug.Log($"<color=cyan>[ActionQueue] Resolving {action.card.cardName} (logic only, animations separate)</color>");
+        if (logCardOperations)
+        {
+            Debug.Log($"<color=cyan>[ActionQueue] Resolving {action.card.cardName} (logic only, animations separate){(action.isUnleash ? " [UNLEASHED]" : "")}</color>");
+        }
         
-        // Phase 2: Update state to Resolving with validation
-        TransitionCardState(action.cardVisual, CardState.Resolving, "ResolveCardAction");
+        // Phase 2: Update state to Resolving with validation (skip for unleashed cards - they don't have visuals)
+        if (action.cardVisual != null)
+        {
+            TransitionCardState(action.cardVisual, CardState.Resolving, "ResolveCardAction");
+        }
         
-        // Apply all card effects immediately (this handles channeling, combos, damage, etc.)
-        // OnCardPlayed event is fired inside ApplyCardEffectsInternal
-        ApplyCardEffectsInternal(action.card, action.cardVisual, action.targetEnemy, action.playerCharacter, action.targetPosition, action.comboApp);
+        // Handle unleashed cards differently - they use the preparation system's effect pipeline
+        if (action.isUnleash)
+        {
+            ApplyUnleashEffects(action);
+        }
+        else
+        {
+            // Apply all card effects immediately (this handles channeling, combos, damage, etc.)
+            // OnCardPlayed event is fired inside ApplyCardEffectsInternal
+            ApplyCardEffectsInternal(action.card, action.cardVisual, action.targetEnemy, action.playerCharacter, action.targetPosition, action.comboApp);
+        }
         
         // Add card to discard pile (logical state - card is played, it goes to discard)
         // Note: Visual animation to discard pile happens separately
         if (!discardPile.Contains(action.card))
         {
             discardPile.Add(action.card);
+            LogDeckState($"After Adding Card to Discard in ResolveCardAction: {action.card.cardName}");
+            ValidateCardCount($"After ResolveCardAction - card added to discard: {action.card.cardName}");
             // OnCardDiscarded is invoked later during visual cleanup, not here
+        }
+        else
+        {
+            Debug.LogWarning($"[ResolveCardAction] Card {action.card.cardName} already in discard pile! (duplicate add prevented)");
         }
         
         // Mark as resolved
         action.resolved = true;
         
-        // Phase 2: Update state to Resolved with validation
-        if (cardPlayStates.ContainsKey(action.cardVisual))
+        // Phase 2: Update state to Resolved with validation (skip for unleashed cards)
+        if (action.cardVisual != null && cardPlayStates.ContainsKey(action.cardVisual))
         {
             TransitionCardState(action.cardVisual, CardState.Resolved, "ResolveCardAction - effects applied");
             cardPlayStates[action.cardVisual].effectsApplied = true;
         }
         
-        Debug.Log($"<color=green>[ActionQueue] {action.card.cardName} resolved - effects applied, card in discard pile, animation can now proceed independently</color>");
+        if (logCardOperations)
+        {
+            Debug.Log($"<color=green>[ActionQueue] {action.card.cardName} resolved - effects applied, card in discard pile, animation can now proceed independently</color>");
+        }
     }
     
     /// <summary>
@@ -1093,8 +1342,10 @@ public class CombatDeckManager : MonoBehaviour
         // Ensure card is in discard pile (should already be there, but safety check)
         if (!discardPile.Contains(card))
         {
+            Debug.LogWarning($"[CleanupCardAfterPlay] Card {card.cardName} not in discard pile! Adding now (possible card loss bug)");
             discardPile.Add(card);
             OnCardDiscarded?.Invoke(card);
+            ValidateCardCount($"After CleanupCardAfterPlay - card added to discard: {card.cardName}");
         }
         
         // Return card to pool
@@ -1115,7 +1366,10 @@ public class CombatDeckManager : MonoBehaviour
             cardPlayStates.Remove(cardObj);
         }
         
-        Debug.Log($"<color=green>[Cleanup] {card.cardName} cleaned up and returned to pool</color>");
+        if (logCardOperations)
+        {
+            Debug.Log($"<color=green>[Cleanup] {card.cardName} cleaned up and returned to pool</color>");
+        }
         
         // Phase 2: Validate states after cleanup to catch any inconsistencies
         ValidateCardStates();
@@ -1263,7 +1517,10 @@ public class CombatDeckManager : MonoBehaviour
             comboApp = ComboSystem.Instance.BuildComboApplication(card, comboPlayer);
             if (comboApp != null)
             {
-                Debug.Log($"<color=yellow>[Combo] Combo will apply to {card.cardName}: Logic={comboApp.logic}, +Atk={comboApp.attackIncrease}, +Guard={comboApp.guardIncrease}, AoE={comboApp.isAoEOverride}, ManaRefund={comboApp.manaRefund}</color>");
+                if (logCardEffects)
+                {
+                    Debug.Log($"<color=yellow>[Combo] Combo will apply to {card.cardName}: Logic={comboApp.logic}, +Atk={comboApp.attackIncrease}, +Guard={comboApp.guardIncrease}, AoE={comboApp.isAoEOverride}, ManaRefund={comboApp.manaRefund}</color>");
+                }
             }
         }
         
@@ -1281,10 +1538,13 @@ public class CombatDeckManager : MonoBehaviour
         bool hasDiscardInDescription = DiscardCardParser.RequiresDiscard(card.description);
         bool isDiscardCard = hasIsDiscardCardFlag || hasDiscardInDescription;
         
-        Debug.Log($"[Discard Check] Card: {card.cardName}");
-        Debug.Log($"[Discard Check]   - isDiscardCard property: {hasIsDiscardCardFlag}");
-        Debug.Log($"[Discard Check]   - Has discard in description: {hasDiscardInDescription}");
-        Debug.Log($"[Discard Check]   - Final isDiscardCard result: {isDiscardCard}");
+        if (logDiscardCheck)
+        {
+            Debug.Log($"[Discard Check] Card: {card.cardName}");
+            Debug.Log($"[Discard Check]   - isDiscardCard property: {hasIsDiscardCardFlag}");
+            Debug.Log($"[Discard Check]   - Has discard in description: {hasDiscardInDescription}");
+            Debug.Log($"[Discard Check]   - Final isDiscardCard result: {isDiscardCard}");
+        }
         
         if (isDiscardCard)
         {
@@ -1330,7 +1590,10 @@ public class CombatDeckManager : MonoBehaviour
         }
         else
         {
-            Debug.Log($"[Discard Check] Card {card.cardName} is NOT a discard card - proceeding with normal play");
+            if (logDiscardCheck)
+            {
+                Debug.Log($"[Discard Check] Card {card.cardName} is NOT a discard card - proceeding with normal play");
+            }
         }
         
         // Phase 2: Update input lock time (micro input lock for visual stability)
@@ -1338,10 +1601,18 @@ public class CombatDeckManager : MonoBehaviour
         
         // PHASE 1 REFACTOR: Action Queue System
         // Remove from hand and visuals IMMEDIATELY
+        // Note: Validation is intentionally skipped here because the card is in a transitional state
+        // (removed from hand but not yet added to discard). Validation happens later after the card
+        // is added to discard in ResolveCardAction.
+        LogDeckState($"Before Removing Card from Hand: {card.cardName}");
         hand.RemoveAt(handIndex);
         handVisuals.RemoveAt(handIndex);
+        LogDeckState($"After Removing Card from Hand: {card.cardName} (transitional state - card not yet in discard)");
 
-        Debug.Log($"<color=yellow>[ActionQueue] Queueing card: {card.cardName}</color>");
+        if (logCardOperations)
+        {
+            Debug.Log($"<color=yellow>[ActionQueue] Queueing card: {card.cardName}</color>");
+        }
         
         // Get player character BEFORE queuing (targetEnemy already obtained above)
         Character playerCharacter = characterManager != null && characterManager.HasCharacter() ? 
@@ -1374,7 +1645,10 @@ public class CombatDeckManager : MonoBehaviour
         ProcessActionQueue();
         
         // Effects are now applied! Animation can proceed independently
-        Debug.Log($"<color=green>[ActionQueue] {card.cardName} logic resolved. Starting animations (fire-and-forget)...</color>");
+        if (logCardOperations)
+        {
+            Debug.Log($"<color=green>[ActionQueue] {card.cardName} logic resolved. Starting animations (fire-and-forget)...</color>");
+        }
         
         // Reposition remaining cards
         if (cardRuntimeManager != null)
@@ -1433,7 +1707,10 @@ public class CombatDeckManager : MonoBehaviour
             // Note: If disableAllAnimations is true, this will immediately invoke the callback
             animationManager.AnimateCardPlay(cardObj, targetPosition, () => {
                 // Animation complete callback - only handle visual cleanup, NO LOGIC
-                Debug.Log($"  <color=cyan>[Animation] Card play animation complete for {card.cardName} - effects already applied</color>");
+                if (logAnimations)
+                {
+                    Debug.Log($"  <color=cyan>[Animation] Card play animation complete for {card.cardName} - effects already applied</color>");
+                }
                 
                 // Card is already in discard pile (added during ResolveCardAction)
                 // Just invoke discard event for UI updates
@@ -1457,7 +1734,10 @@ public class CombatDeckManager : MonoBehaviour
         else
         {
             // No animation support - action already processed, just clean up
-            Debug.Log($"<color=yellow>[ActionQueue] No animation support - {card.cardName} effects already applied, cleaning up...</color>");
+            if (logCardOperations)
+            {
+                Debug.Log($"<color=yellow>[ActionQueue] No animation support - {card.cardName} effects already applied, cleaning up...</color>");
+            }
             CleanupCardAfterPlay(action);
         }
         UpdateComboHighlights(); // Update highlights after playing
@@ -1489,6 +1769,9 @@ public class CombatDeckManager : MonoBehaviour
                 discardPile.Add(card);
                 OnCardDiscarded?.Invoke(card);
                 
+                // Validate card was properly discarded
+                ValidateCardCount($"After Discard: {card.cardName}");
+                
                 // Reposition remaining cards with smooth animation
                 cardRuntimeManager.RepositionCards(handVisuals, animated: true, duration: 0.3f);
             });
@@ -1499,13 +1782,19 @@ public class CombatDeckManager : MonoBehaviour
             discardPile.Add(card);
             OnCardDiscarded?.Invoke(card);
             
+            ValidateCardCount($"After Immediate Discard: {card.cardName}");
+            
             if (cardObj != null)
             {
                 Destroy(cardObj);
             }
         }
         
-        Debug.Log($"Discarded: {card.cardName}");
+        if (logCardOperations)
+        {
+            Debug.Log($"Discarded: {card.cardName}");
+            LogDeckState($"After Discard: {card.cardName}");
+        }
         
         // Refresh highlights after discard
         UpdateComboHighlights();
@@ -1760,7 +2049,10 @@ public class CombatDeckManager : MonoBehaviour
         selectedFocusEffect = effect;
         focusModifierConsumed = false;
         OnFocusModifierSelected?.Invoke(effect);
-        Debug.Log($"[ChargeModifiers] Selected Focus effect: {effect}");
+        if (logCardEffects)
+        {
+            Debug.Log($"[ChargeModifiers] Selected Focus effect: {effect}");
+        }
         return true;
     }
 
@@ -1803,7 +2095,10 @@ public class CombatDeckManager : MonoBehaviour
         if (GetFocusChargeEffect() == FocusChargeEffect.HalfManaCost)
         {
             modifiedCost = Mathf.Max(0, Mathf.RoundToInt(modifiedCost * 0.5f));
-            Debug.Log($"[ChargeModifiers] Half Mana Cost applied: {baseManaCost} -> {modifiedCost}");
+            if (logCardEffects)
+            {
+                Debug.Log($"[ChargeModifiers] Half Mana Cost applied: {baseManaCost} -> {modifiedCost}");
+            }
         }
         
         // Apply momentum threshold cost reduction (e.g., "6+ Momentum: This card costs 1 less")
@@ -1845,7 +2140,10 @@ public class CombatDeckManager : MonoBehaviour
         if (GetFocusChargeEffect() == FocusChargeEffect.DoubleDamage)
         {
             float modified = baseDamage * 2f;
-            Debug.Log($"[ChargeModifiers] Double Damage applied: {baseDamage} -> {modified}");
+            if (logCardEffects)
+            {
+                Debug.Log($"[ChargeModifiers] Double Damage applied: {baseDamage} -> {modified}");
+            }
             return modified;
         }
         return baseDamage;
@@ -1858,13 +2156,22 @@ public class CombatDeckManager : MonoBehaviour
         {
             case AggressionChargeEffect.HitsAllEnemies:
                 card.isAoE = true;
-                Debug.Log("[ChargeModifiers] Aggression effect: Hits All Enemies");
+                if (logCardEffects)
+                {
+                    Debug.Log("[ChargeModifiers] Aggression effect: Hits All Enemies");
+                }
                 break;
             case AggressionChargeEffect.AlwaysCrit:
-                Debug.Log("[ChargeModifiers] Aggression effect: Always Crit");
+                if (logCardEffects)
+                {
+                    Debug.Log("[ChargeModifiers] Aggression effect: Always Crit");
+                }
                 break;
             case AggressionChargeEffect.IgnoresGuardArmor:
-                Debug.Log("[ChargeModifiers] Aggression effect: Ignores Guard/Armor");
+                if (logCardEffects)
+                {
+                    Debug.Log("[ChargeModifiers] Aggression effect: Ignores Guard/Armor");
+                }
                 break;
         }
     }
@@ -1901,6 +2208,7 @@ public class CombatDeckManager : MonoBehaviour
     
     /// <summary>
     /// Add a card directly to the discard pile (without animation)
+    /// Used when unleashed cards need to be added to discard
     /// </summary>
     public void AddCardToDiscardPile(CardDataExtended card)
     {
@@ -1910,7 +2218,18 @@ public class CombatDeckManager : MonoBehaviour
             return;
         }
         
+        // Prevent duplicates
+        if (discardPile.Contains(card))
+        {
+            Debug.LogWarning($"[CombatDeckManager] Card {card.cardName} already in discard pile, skipping duplicate add");
+            return;
+        }
+        
+        LogDeckState($"Before Adding Unleashed Card to Discard: {card.cardName}");
         discardPile.Add(card);
+        LogDeckState($"After Adding Unleashed Card to Discard: {card.cardName}");
+        ValidateCardCount($"After Adding Unleashed Card to Discard: {card.cardName}");
+        
         OnCardDiscarded?.Invoke(card);
         Debug.Log($"[CombatDeckManager] Added {card.cardName} to discard pile (count: {discardPile.Count})");
     }
@@ -2046,28 +2365,43 @@ public class CombatDeckManager : MonoBehaviour
             return; // Ignore this click - too soon after last one
         }
         
-        Debug.Log($"<color=cyan>═══ CARD CLICK DEBUG ═══</color>");
-        Debug.Log($"Clicked card GameObject: {clickedCardObj.name}");
-        Debug.Log($"Hand visuals count: {handVisuals.Count}");
-        Debug.Log($"Hand data count: {hand.Count}");
-        Debug.Log($"Right-click: {isRightClick}, Shift-click: {isShiftClick}");
+        if (logCardClickDebug)
+        {
+            Debug.Log($"<color=cyan>═══ CARD CLICK DEBUG ═══</color>");
+            Debug.Log($"Clicked card GameObject: {clickedCardObj.name}");
+            Debug.Log($"Hand visuals count: {handVisuals.Count}");
+            Debug.Log($"Hand data count: {hand.Count}");
+            Debug.Log($"Right-click: {isRightClick}, Shift-click: {isShiftClick}");
+        }
         
         // Find the index of this card in the hand visuals
         int handIndex = handVisuals.IndexOf(clickedCardObj);
         
-        Debug.Log($"Card index in handVisuals: {handIndex}");
+        if (logCardClickDebug)
+        {
+            Debug.Log($"Card index in handVisuals: {handIndex}");
+        }
         
         if (handIndex < 0)
         {
-            Debug.LogWarning($"Clicked card not found in hand visuals!");
-            Debug.Log($"Card active: {clickedCardObj.activeInHierarchy}");
-            Debug.Log($"Card parent: {clickedCardObj.transform.parent?.name}");
+            if (logCriticalErrors)
+            {
+                Debug.LogWarning($"Clicked card not found in hand visuals!");
+            }
+            if (logCardClickDebug)
+            {
+                Debug.Log($"Card active: {clickedCardObj.activeInHierarchy}");
+                Debug.Log($"Card parent: {clickedCardObj.transform.parent?.name}");
+            }
             return;
         }
         
         if (handIndex >= hand.Count)
         {
-            Debug.LogWarning($"Hand index out of range! Index: {handIndex}, Hand count: {hand.Count}");
+            if (logCriticalErrors)
+            {
+                Debug.LogWarning($"Hand index out of range! Index: {handIndex}, Hand count: {hand.Count}");
+            }
             return;
         }
         
@@ -2084,13 +2418,22 @@ public class CombatDeckManager : MonoBehaviour
         // Get target position from first available enemy
         Vector3 targetPos = GetTargetScreenPosition();
         
-        Debug.Log($"<color=yellow>Card clicked: {clickedCard.cardName} (Index: {handIndex}), Target pos: {targetPos}</color>");
-        Debug.Log($"About to call PlayCard({handIndex}, {targetPos})");
+        if (logCardClickDebug || logCardOperations)
+        {
+            Debug.Log($"<color=yellow>Card clicked: {clickedCard.cardName} (Index: {handIndex}), Target pos: {targetPos}</color>");
+        }
+        if (logCardClickDebug)
+        {
+            Debug.Log($"About to call PlayCard({handIndex}, {targetPos})");
+        }
         
         // Play the card (this will update lastCardPlayTime)
         PlayCard(handIndex, targetPos);
         
-        Debug.Log($"<color=cyan>═══ END CLICK DEBUG ═══</color>");
+        if (logCardClickDebug)
+        {
+            Debug.Log($"<color=cyan>═══ END CLICK DEBUG ═══</color>");
+        }
     }
     
     /// <summary>
@@ -2128,6 +2471,9 @@ public class CombatDeckManager : MonoBehaviour
         }
         
         // Prepare the card
+        // Note: Card is removed from hand but NOT added to discard - it's now in "prepared" state
+        // Card count validation includes prepared cards, so no mismatch should occur
+        LogDeckState($"Before Preparing Card: {card.cardName}");
         bool success = prepManager.PrepareCard(card, player);
         
         if (success)
@@ -2148,6 +2494,9 @@ public class CombatDeckManager : MonoBehaviour
             {
                 cardRuntimeManager.RepositionCards(handVisuals, animated: true, duration: 0.3f);
             }
+            
+            LogDeckState($"After Preparing Card: {card.cardName} (card now in prepared state, not in discard)");
+            ValidateCardCount($"After Preparing Card: {card.cardName}");
             
             Debug.Log($"<color=green>[Preparation] {card.cardName} prepared successfully!</color>");
             
@@ -2199,7 +2548,10 @@ public class CombatDeckManager : MonoBehaviour
                     img.color = ComboSystem.Instance.comboHighlightColor;
                 }
                 t.gameObject.SetActive(eligible);
-                Debug.Log($"[ComboGlow] {cardData.cardName}: GlowEffect set to {(eligible ? "ACTIVE" : "INACTIVE")}");
+                if (logComboGlow)
+                {
+                    Debug.Log($"[ComboGlow] {cardData.cardName}: GlowEffect set to {(eligible ? "ACTIVE" : "INACTIVE")}");
+                }
                 
                 // Attach pulse effect if present
                 var pulse = t.GetComponent<ComboGlowPulse>();
@@ -2531,6 +2883,194 @@ public class CombatDeckManager : MonoBehaviour
         return new Vector3(Screen.width * 0.7f, Screen.height * 0.6f, 0);
     }
     
+    #region Unleash Card Handling (Best Practice Pipeline)
+    
+    /// <summary>
+    /// Queue an unleashed card action for processing through the action queue system
+    /// Follows the same pipeline as regular card plays: Queue → Resolve → Discard
+    /// </summary>
+    public void QueueUnleashCard(CardDataExtended card, Vector3 targetPosition, Enemy targetEnemy, Character playerCharacter, float unleashDamage, float unleashMultiplier)
+    {
+        if (card == null || playerCharacter == null)
+        {
+            Debug.LogError("[CombatDeckManager] Cannot queue unleash: Invalid card or player!");
+            return;
+        }
+        
+        if (logCardOperations)
+        {
+            Debug.Log($"<color=yellow>[ActionQueue] Queueing unleashed card: {card.cardName}</color>");
+        }
+        
+        // Create action for unleashed card (no cardVisual since it's not in hand)
+        CardAction action = new CardAction(card, targetPosition, targetEnemy, playerCharacter, unleashDamage, unleashMultiplier);
+        actionQueue.Enqueue(action);
+        
+        // Process immediately (same as regular cards)
+        ProcessActionQueue();
+        
+        if (logCardOperations)
+        {
+            Debug.Log($"<color=green>[ActionQueue] {card.cardName} (unleashed) logic resolved. Effects applied through action queue.</color>");
+        }
+    }
+    
+    /// <summary>
+    /// Apply unleash-specific effects (preparation multipliers, etc.) through the same pipeline as regular cards
+    /// </summary>
+    private void ApplyUnleashEffects(CardAction action)
+    {
+        if (!action.isUnleash || !action.unleashDamage.HasValue)
+        {
+            Debug.LogError("[CombatDeckManager] ApplyUnleashEffects called on non-unleash action!");
+            return;
+        }
+        
+        CardDataExtended card = action.card;
+        Character player = action.playerCharacter;
+        float unleashDamage = action.unleashDamage.Value;
+        float unleashMultiplier = action.unleashMultiplier ?? 0f;
+        
+        if (logCardEffects)
+        {
+            Debug.Log($"<color=cyan>Applying unleash effects for {card.cardName} (damage: {unleashDamage:F1}, multiplier: {unleashMultiplier:F2})...</color>");
+        }
+        
+        // Get CardEffectProcessor to use the full card processing pipeline
+        if (cardEffectProcessor == null)
+        {
+            Debug.LogError("[CombatDeckManager] CardEffectProcessor not found! Cannot apply unleash effects.");
+            return;
+        }
+        
+        // Convert CardDataExtended to Card for processing
+        #pragma warning disable CS0618 // Type or member is obsolete
+        Card cardForProcessor = card.ToCard();
+        #pragma warning restore CS0618
+        
+        // Apply preparation multipliers to the card before processing
+        // This mirrors the logic from PreparationManager.DealUnleashDamage
+        // Check if card has momentum-based effects using MomentumEffectParser
+        bool isMomentumBased = MomentumEffectParser.HasPerMomentumSpent(card.description);
+        if (!isMomentumBased)
+        {
+            // For non-momentum cards, use the calculated unleash damage directly
+            cardForProcessor.baseDamage = unleashDamage;
+        }
+        else
+        {
+            // For momentum-based cards, apply preparation multiplier to baseDamage per momentum
+            float originalBaseDamage = cardForProcessor.baseDamage;
+            float preparationMultiplier = 1f + unleashMultiplier;
+            cardForProcessor.baseDamage = originalBaseDamage * preparationMultiplier;
+            if (logCardEffects)
+            {
+                Debug.Log($"<color=cyan>[Preparation] Momentum-based card {card.cardName} - applying multiplier: {originalBaseDamage} * {preparationMultiplier:F2} = {cardForProcessor.baseDamage:F1} per momentum</color>");
+            }
+        }
+        
+        // Apply charge modifiers (same as regular cards)
+        ApplyCardModifiers(cardForProcessor, card);
+        
+        // Process speed meters (same as regular cards)
+        ProcessSpeedMeters(card, player);
+        
+        // Check card type - Guard cards apply guard, others deal damage
+        if (card.GetCardTypeEnum() == CardType.Guard)
+        {
+            // Guard cards: Apply base guard using CardEffectProcessor
+            cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, null, player, Vector3.zero, false);
+            
+            // Apply prepared card guard bonus (handled here instead of PreparationManager for pipeline consistency)
+            if (card.preparedCardGuardBase > 0f || 
+                (card.preparedCardGuardScaling != null && 
+                 (card.preparedCardGuardScaling.strengthDivisor > 0f || 
+                  card.preparedCardGuardScaling.dexterityDivisor > 0f || 
+                  card.preparedCardGuardScaling.intelligenceDivisor > 0f ||
+                  card.preparedCardGuardScaling.strengthScaling > 0f ||
+                  card.preparedCardGuardScaling.dexterityScaling > 0f ||
+                  card.preparedCardGuardScaling.intelligenceScaling > 0f)))
+            {
+                // Calculate guard per prepared card (including scaling)
+                float guardPerCard = card.preparedCardGuardBase;
+                if (card.preparedCardGuardScaling != null)
+                {
+                    guardPerCard += card.preparedCardGuardScaling.CalculateScalingBonus(player);
+                }
+                
+                // Get the number of prepared cards (this card was already removed from the list in ExecuteUnleash)
+                var prepManager = PreparationManager.Instance;
+                int preparedCount = 1; // This card itself
+                if (prepManager != null)
+                {
+                    var remainingPrepared = prepManager.GetPreparedCards();
+                    preparedCount += (remainingPrepared != null ? remainingPrepared.Count : 0);
+                }
+                
+                // Apply guard with preparation multiplier
+                float bonusGuard = guardPerCard * preparedCount * (1f + unleashMultiplier);
+                player.AddGuard(bonusGuard);
+                
+                if (logCardEffects)
+                {
+                    Debug.Log($"<color=cyan>[Preparation Bonus] {card.cardName} gained {bonusGuard:F1} bonus guard from preparation (base: {card.preparedCardGuardBase} per card, scaling: {card.preparedCardGuardScaling?.CalculateScalingBonus(player) ?? 0f}, prepared count: {preparedCount}, multiplier: {1f + unleashMultiplier:F2})</color>");
+                }
+                
+                // Update guard display
+                PlayerCombatDisplay playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
+                if (playerDisplay != null)
+                {
+                    playerDisplay.UpdateGuardDisplay();
+                }
+            }
+        }
+        else
+        {
+            // Attack/Spell cards: Deal damage using CardEffectProcessor (handles AoE, targeting, etc.)
+            if (cardForProcessor.isAoE)
+            {
+                cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, null, player, action.targetPosition);
+            }
+            else if (action.targetEnemy != null)
+            {
+                cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, action.targetEnemy, player, action.targetPosition);
+            }
+            else
+            {
+                Debug.LogWarning($"Cannot apply unleash {card.cardName}: No target enemy for single-target card!");
+                return;
+            }
+        }
+        
+        // Play combat effects (same as regular cards)
+        if (combatEffectManager != null)
+        {
+            PlayCardEffects(card, action.targetEnemy, player);
+        }
+        
+        // Apply card abilities (same as regular cards)
+        CardAbilityRouter.ApplyCardPlay(card, cardForProcessor, player, action.targetEnemy, action.targetPosition);
+        
+        // Trigger "hits twice" effect if applicable (same as regular cards)
+        if (ShouldHitTwice() && action.targetEnemy != null && !cardForProcessor.isAoE)
+        {
+            if (logCardEffects)
+            {
+                Debug.Log($"<color=yellow>[ChargeModifier] HitsTwice: Applying unleash effect again!</color>");
+            }
+            cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, action.targetEnemy, player, action.targetPosition);
+        }
+        
+        // Boss Ability Handler - card played (same as regular cards)
+        cardsPlayedThisTurn++;
+        BossAbilityHandler.OnPlayerCardPlayed(cardForProcessor, cardsPlayedThisTurn);
+        
+        // Fire OnCardPlayed event (same as regular cards) - pass CardDataExtended, not Card
+        OnCardPlayed?.Invoke(card);
+    }
+    
+    #endregion
+    
     /// <summary>
     /// Apply card effects - extracted method that can be called independently of animation callbacks
     /// </summary>
@@ -2543,12 +3083,15 @@ public class CombatDeckManager : MonoBehaviour
             return;
         }
         
-        Debug.Log($"<color=cyan>Applying card effects for {card.cardName}...</color>");
-        Debug.Log($"  CardEffectProcessor: {(cardEffectProcessor != null ? "Found" : "NULL")}");
-        Debug.Log($"  TargetingManager: {(targetingManager != null ? "Found" : "NULL")}");
-        Debug.Log($"  Target Enemy: {(targetEnemy != null ? targetEnemy.enemyName : "NULL")}");
-        Debug.Log($"  Player Character: {(playerCharacter != null ? playerCharacter.characterName : "NULL")}");
-        Debug.Log($"  Is AoE Card: {card.isAoE}");
+        if (logCardEffects)
+        {
+            Debug.Log($"<color=cyan>Applying card effects for {card.cardName}...</color>");
+            Debug.Log($"  CardEffectProcessor: {(cardEffectProcessor != null ? "Found" : "NULL")}");
+            Debug.Log($"  TargetingManager: {(targetingManager != null ? "Found" : "NULL")}");
+            Debug.Log($"  Target Enemy: {(targetEnemy != null ? targetEnemy.enemyName : "NULL")}");
+            Debug.Log($"  Player Character: {(playerCharacter != null ? playerCharacter.characterName : "NULL")}");
+            Debug.Log($"  Is AoE Card: {card.isAoE}");
+        }
         
         // Mark effects as applied
         if (cardPlayStates.ContainsKey(cardObj))
@@ -2559,7 +3102,10 @@ public class CombatDeckManager : MonoBehaviour
         // DIVINE FAVOR: Check if next card should apply discarded effect
         if (nextCardAppliesDiscardedEffect && !string.IsNullOrEmpty(card.ifDiscardedEffect))
         {
-            Debug.Log($"<color=yellow>[Divine Favor] {card.cardName} applies its discarded effect!</color>");
+            if (logCardEffects)
+            {
+                Debug.Log($"<color=yellow>[Divine Favor] {card.cardName} applies its discarded effect!</color>");
+            }
             ProcessIfDiscardedEffect(card, playerCharacter);
             nextCardAppliesDiscardedEffect = false; // Consume the effect
         }
@@ -2570,16 +3116,25 @@ public class CombatDeckManager : MonoBehaviour
         {
             if (channelingState.startedThisCast)
             {
-                Debug.Log($"<color=cyan>[Channeling]</color> {playerCharacter.characterName} began channeling {channelingState.activeGroupKey} ({channelingState.consecutiveCasts} casts).");
+                if (logCardEffects)
+                {
+                    Debug.Log($"<color=cyan>[Channeling]</color> {playerCharacter.characterName} began channeling {channelingState.activeGroupKey} ({channelingState.consecutiveCasts} casts).");
+                }
                 ShowChannelingPopup("Channeling!", ChannelingStartColor);
             }
             else if (channelingState.isChanneling)
             {
-                Debug.Log($"<color=cyan>[Channeling]</color> Channeling continues ({channelingState.consecutiveCasts} casts).");
+                if (logCardEffects)
+                {
+                    Debug.Log($"<color=cyan>[Channeling]</color> Channeling continues ({channelingState.consecutiveCasts} casts).");
+                }
             }
             else if (channelingState.stoppedThisCast && !channelingState.startedThisCast)
             {
-                Debug.Log($"<color=cyan>[Channeling]</color> Channeling ended before playing {card.cardName}.");
+                if (logCardEffects)
+                {
+                    Debug.Log($"<color=cyan>[Channeling]</color> Channeling ended before playing {card.cardName}.");
+                }
                 ShowChannelingPopup("Channeling Broken", ChannelingEndColor);
             }
         }
@@ -2618,7 +3173,10 @@ public class CombatDeckManager : MonoBehaviour
                     cardForProcessor.baseGuard = guardValue;
                 }
                 channelingBonusApplied = true;
-                Debug.Log($"<color=cyan>[Channeling]</color> Bonus applied → Damage +{card.channelingDamageIncreasedPercent}% inc, +{card.channelingDamageMorePercent}% more, Guard +{card.channelingGuardIncreasedPercent}% inc / +{card.channelingGuardMorePercent}% more, +{card.channelingAdditionalGuard} flat");
+                if (logCardEffects)
+                {
+                    Debug.Log($"<color=cyan>[Channeling]</color> Bonus applied → Damage +{card.channelingDamageIncreasedPercent}% inc, +{card.channelingDamageMorePercent}% more, Guard +{card.channelingGuardIncreasedPercent}% inc / +{card.channelingGuardMorePercent}% more, +{card.channelingAdditionalGuard} flat");
+                }
             }
             ApplyChannelingMetadata(cardForProcessor, channelingState, card, channelingBonusApplied);
             
@@ -2701,7 +3259,10 @@ public class CombatDeckManager : MonoBehaviour
             // Apply "hits twice" effect if Aggression charge is active
             if (ShouldHitTwice() && targetEnemy != null && !cardForProcessor.isAoE)
             {
-                Debug.Log($"<color=yellow>[ChargeModifier] HitsTwice: Applying card effect again!</color>");
+                if (logCardEffects)
+                {
+                    Debug.Log($"<color=yellow>[ChargeModifier] HitsTwice: Applying card effect again!</color>");
+                }
                 cardEffectProcessor.ApplyCardToEnemy(cardForProcessor, targetEnemy, playerCharacter, targetPosition);
             }
             
@@ -2728,7 +3289,10 @@ public class CombatDeckManager : MonoBehaviour
             if (comboApp.manaRefund > 0 && playerCharacter != null)
             {
                 playerCharacter.RestoreMana(comboApp.manaRefund);
-                Debug.Log($"<color=green>[Combo] Refunded {comboApp.manaRefund} mana</color>");
+                if (logCardEffects)
+                {
+                    Debug.Log($"<color=green>[Combo] Refunded {comboApp.manaRefund} mana</color>");
+                }
                 var playerDisplayRefund = FindFirstObjectByType<PlayerCombatDisplay>();
                 if (playerDisplayRefund != null) playerDisplayRefund.UpdateManaDisplay();
             }
@@ -2736,21 +3300,30 @@ public class CombatDeckManager : MonoBehaviour
             // Draw cards on combo
             if (comboApp.comboDrawCards > 0)
             {
-                Debug.Log($"<color=green>[Combo] Draw {comboApp.comboDrawCards} card(s)</color>");
+                if (logCardEffects)
+                {
+                    Debug.Log($"<color=green>[Combo] Draw {comboApp.comboDrawCards} card(s)</color>");
+                }
                 DrawCards(comboApp.comboDrawCards);
             }
             
             // Ailment (hook into status/effect manager)
             if (!string.IsNullOrEmpty(comboApp.ailmentId) && targetEnemy != null)
             {
-                Debug.Log($"[Combo] Apply ailment: {comboApp.ailmentId} to {targetEnemy.enemyName}");
+                if (logCardEffects)
+                {
+                    Debug.Log($"[Combo] Apply ailment: {comboApp.ailmentId} to {targetEnemy.enemyName}");
+                }
                 // TODO: integrate with StatusEffectManager once ailment mapping is defined
             }
             
             // Buffs on player (list)
             if (comboApp.buffIds != null && comboApp.buffIds.Count > 0)
             {
-                Debug.Log($"[Combo] Apply buffs to player: {string.Join(", ", comboApp.buffIds)}");
+                if (logCardEffects)
+                {
+                    Debug.Log($"[Combo] Apply buffs to player: {string.Join(", ", comboApp.buffIds)}");
+                }
                 // Simple integration: support Bolster stacks (2-turn default)
                 var playerDisplay = FindFirstObjectByType<PlayerCombatDisplay>();
                 var statusManager = playerDisplay != null ? playerDisplay.GetStatusEffectManager() : null;
@@ -2791,7 +3364,10 @@ public class CombatDeckManager : MonoBehaviour
                             stacks = Mathf.Max(1, stacks);
                             var effect = new StatusEffect(StatusEffectType.Bolster, "Bolster", stacks, 2, false);
                             statusManager.AddStatusEffect(effect);
-                            Debug.Log($"[Combo] Applied Bolster ({stacks} stack(s), 2 turns)");
+                            if (logCardEffects)
+                            {
+                                Debug.Log($"[Combo] Applied Bolster ({stacks} stack(s), 2 turns)");
+                            }
                         }
                     }
                 }
@@ -2867,20 +3443,27 @@ public class CombatDeckManager : MonoBehaviour
         Vector3 discardPosWorld = discardPileTransform.position;
         Vector3 startPos = cardObj.transform.position;
         
-        Debug.Log($"  → [Discard] Animating {card.cardName} from {startPos} to discard pile at {discardPosWorld}...");
-        Debug.Log($"  → [Discard] DiscardPileTransform name: {discardPileTransform.name}");
-        Debug.Log($"  → [Discard] DiscardPileTransform GameObject: {discardPileTransform.gameObject.name}");
+        if (logAnimations)
+        {
+            Debug.Log($"  → [Discard] Animating {card.cardName} from {startPos} to discard pile at {discardPosWorld}...");
+        }
         
         // Verify this is actually the discard pile (not draw pile) - check if deckPileTransform is different
         if (deckPileTransform != null)
         {
             float distanceToDiscard = Vector3.Distance(discardPileTransform.position, startPos);
             float distanceToDraw = Vector3.Distance(deckPileTransform.position, startPos);
-            Debug.Log($"  → [Discard] Distance to discard pile: {distanceToDiscard}, Distance to draw pile: {distanceToDraw}");
+            if (showDebugLogs)
+            {
+                Debug.Log($"  → [Discard] Distance to discard pile: {distanceToDiscard}, Distance to draw pile: {distanceToDraw}");
+            }
             
             if (discardPileTransform == deckPileTransform)
             {
-                Debug.LogError($"  → [Discard] ERROR: DiscardPileTransform and DeckPileTransform are the SAME! Cards will go to wrong pile!");
+                if (logCriticalErrors)
+                {
+                    Debug.LogError($"  → [Discard] ERROR: DiscardPileTransform and DeckPileTransform are the SAME! Cards will go to wrong pile!");
+                }
             }
         }
         
@@ -2927,11 +3510,17 @@ public class CombatDeckManager : MonoBehaviour
                         out localPoint))
                     {
                         discardPos = localPoint;
-                        Debug.Log($"  → [Discard] Converted discard position to local space: {discardPos}");
+                        if (showDebugLogs)
+                        {
+                            Debug.Log($"  → [Discard] Converted discard position to local space: {discardPos}");
+                        }
                     }
                     else
                     {
-                        Debug.LogWarning($"  → [Discard] Failed to convert discard position to local space, using world position");
+                        if (logCriticalErrors)
+                        {
+                            Debug.LogWarning($"  → [Discard] Failed to convert discard position to local space, using world position");
+                        }
                     }
                 }
             }
@@ -2943,24 +3532,36 @@ public class CombatDeckManager : MonoBehaviour
         
         System.Action OnAnimationComplete = () => {
             animationsCompleted++;
-            Debug.Log($"  → [Discard] Animation step {animationsCompleted}/{totalAnimations} complete for {card.cardName}");
+            if (logAnimations)
+            {
+                Debug.Log($"  → [Discard] Animation step {animationsCompleted}/{totalAnimations} complete for {card.cardName}");
+            }
             
             // Only trigger cleanup when ALL animations complete
             if (animationsCompleted >= totalAnimations)
             {
-                Debug.Log($"  → [Discard] <color=green>All 3 animations complete for {card.cardName}, returning to pool...</color>");
+                if (logAnimations)
+                {
+                    Debug.Log($"  → [Discard] <color=green>All 3 animations complete for {card.cardName}, returning to pool...</color>");
+                }
                 
                 // Safety check
                 if (cardObj == null)
                 {
-                    Debug.LogError($"  → [Discard] Card GameObject became null during discard animation!");
+                    if (logCriticalErrors)
+                    {
+                        Debug.LogError($"  → [Discard] Card GameObject became null during discard animation!");
+                    }
                     // Card already added to discard pile in caller
                     return;
                 }
                 
-                Debug.Log($"  → [Discard] Card position before pool return: {cardObj.transform.position}");
-                Debug.Log($"  → [Discard] Card scale before pool return: {cardObj.transform.localScale}");
-                Debug.Log($"  → [Discard] Card active: {cardObj.activeInHierarchy}");
+                if (showDebugLogs)
+                {
+                    Debug.Log($"  → [Discard] Card position before pool return: {cardObj.transform.position}");
+                    Debug.Log($"  → [Discard] Card scale before pool return: {cardObj.transform.localScale}");
+                    Debug.Log($"  → [Discard] Card active: {cardObj.activeInHierarchy}");
+                }
                 
                 // Card already added to discard pile in caller, just return to pool
                 
@@ -2976,7 +3577,10 @@ public class CombatDeckManager : MonoBehaviour
                     {
                         cardRuntimeManager.ReturnCardToPool(cardObj);
                     }
-                    Debug.Log($"  → [Discard] <color=green>✓✓✓ {card.cardName} RETURNED TO POOL! ✓✓✓</color>");
+                    if (logAnimations)
+                    {
+                        Debug.Log($"  → [Discard] <color=green>✓✓✓ {card.cardName} RETURNED TO POOL! ✓✓✓</color>");
+                    }
                 }
                 else
                 {
@@ -3000,14 +3604,20 @@ public class CombatDeckManager : MonoBehaviour
         // Animate to discard pile (position) - use RectTransform if available for UI elements
         if (cardRect != null)
         {
-            Debug.Log($"  → [Discard] Using RectTransform.move for {card.cardName} to position {discardPos}");
+            if (showDebugLogs)
+            {
+                Debug.Log($"  → [Discard] Using RectTransform.move for {card.cardName} to position {discardPos}");
+            }
             LeanTween.move(cardRect, discardPos, 0.4f)
                 .setEase(LeanTweenType.easeInQuad)
                 .setOnComplete(OnAnimationComplete);
         }
         else
         {
-            Debug.Log($"  → [Discard] Using Transform.move for {card.cardName} to position {discardPos}");
+            if (showDebugLogs)
+            {
+                Debug.Log($"  → [Discard] Using Transform.move for {card.cardName} to position {discardPos}");
+            }
             LeanTween.move(cardObj, discardPos, 0.4f)
                 .setEase(LeanTweenType.easeInQuad)
                 .setOnComplete(OnAnimationComplete);
@@ -3036,7 +3646,10 @@ public class CombatDeckManager : MonoBehaviour
         
         if (cardObj != null && cardObj.activeInHierarchy)
         {
-            Debug.LogWarning($"  → [Discard] [Safety Timeout] Discard animation stuck for {card.cardName}! Force completing...");
+            if (logCriticalErrors)
+            {
+                Debug.LogWarning($"  → [Discard] [Safety Timeout] Discard animation stuck for {card.cardName}! Force completing...");
+            }
             LeanTween.cancel(cardObj);
             
             // Force return to pool
@@ -3051,7 +3664,10 @@ public class CombatDeckManager : MonoBehaviour
                 {
                     cardRuntimeManager.ReturnCardToPool(cardObj);
                 }
-                Debug.Log($"  → [Discard] [Safety Timeout] Returned {card.cardName} to pool.");
+                if (logAnimations)
+                {
+                    Debug.Log($"  → [Discard] [Safety Timeout] Returned {card.cardName} to pool.");
+                }
             }
             else
             {
@@ -3092,6 +3708,8 @@ public class CombatDeckManager : MonoBehaviour
         }
         
         CardDataExtended exhaustedCard = hand[handIndex];
+        LogDeckState($"Before Exhaust: {exhaustedCard.cardName}");
+        
         hand.RemoveAt(handIndex);
         
         // Remove visual
@@ -3112,7 +3730,44 @@ public class CombatDeckManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"[ExhaustCard] Exhausted {exhaustedCard.cardName} from hand");
+        Debug.Log($"<color=orange>[ExhaustCard] Exhausted {exhaustedCard.cardName} from hand</color>");
+        LogDeckState($"After Exhaust: {exhaustedCard.cardName}");
+        
+        // Note: Exhausted cards are intentionally removed - validation will show mismatch, which is expected
+        // We track exhausts separately rather than modifying initialDeckSize to maintain integrity checks
+        ValidateCardCount($"After Exhaust: {exhaustedCard.cardName} (Expected -1 due to exhaust)");
+    }
+    
+    /// <summary>
+    /// Exhaust a card from discard pile (used by ExhaustCardEffect)
+    /// This is called externally, so we track it for debugging
+    /// </summary>
+    public void ExhaustCardFromDiscardPile(int discardIndex)
+    {
+        if (discardIndex < 0 || discardIndex >= discardPile.Count)
+        {
+            Debug.LogWarning($"[ExhaustCard] Invalid discard index: {discardIndex}");
+            return;
+        }
+        
+        CardDataExtended exhaustedCard = discardPile[discardIndex];
+        LogDeckState($"Before Exhaust from Discard: {exhaustedCard.cardName}");
+        
+        discardPile.RemoveAt(discardIndex);
+        
+        Debug.Log($"<color=orange>[ExhaustCard] Exhausted {exhaustedCard.cardName} from discard pile</color>");
+        LogDeckState($"After Exhaust from Discard: {exhaustedCard.cardName}");
+        ValidateCardCount($"After Exhaust from Discard: {exhaustedCard.cardName} (Expected -1 due to exhaust)");
+    }
+    
+    /// <summary>
+    /// Reset deck state tracking (call when combat ends)
+    /// </summary>
+    public void ResetDeckStateTracking()
+    {
+        deckInitialized = false;
+        initialDeckSize = 0;
+        Debug.Log("[CombatDeckManager] Deck state tracking reset");
     }
     
     public int GetHandCount()
@@ -3613,7 +4268,10 @@ public class CombatDeckManager : MonoBehaviour
         if (animationManager != null && cardRuntimeManager != null)
         {
             animationManager.AnimateCardPlay(cardObj, targetPosition, () => {
-                Debug.Log($"  <color=cyan>[Animation] Card play animation complete for {card.cardName} (discard card) - effects already applied</color>");
+                if (logAnimations)
+                {
+                    Debug.Log($"  <color=cyan>[Animation] Card play animation complete for {card.cardName} (discard card) - effects already applied</color>");
+                }
                 
                 // Card already in discard pile and effects applied, just invoke event
                 OnCardDiscarded?.Invoke(card);

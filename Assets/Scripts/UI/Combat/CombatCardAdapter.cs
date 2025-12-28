@@ -21,6 +21,10 @@ public class CombatCardAdapter : MonoBehaviour
         public Image iconImage;
     }
 
+    [Header("Debug Logging")]
+    [Tooltip("Log card adapter initialization (can be verbose on card updates)")]
+    [SerializeField] private bool logAdapterOperations = false;
+
     private DeckBuilderCardUI deckBuilderCard;
     private Card currentCard;
     private Character ownerCharacter;
@@ -182,9 +186,12 @@ public class CombatCardAdapter : MonoBehaviour
     /// </summary>
     public void SetCardDataExtended(CardDataExtended cardData, Character character)
     {
-        Debug.Log($"<color=lime>[CardDataExtended] CombatCardAdapter: Setting card {cardData.cardName}</color>");
-        Debug.Log($"<color=lime>[CardDataExtended]   - Card Image: {(cardData.cardImage != null ? "✅ PRESENT" : "❌ NULL")}</color>");
-        Debug.Log($"<color=lime>[CardDataExtended]   - Character: {(character != null ? character.characterName : "NULL")}</color>");
+        if (logAdapterOperations)
+        {
+            Debug.Log($"<color=lime>[CardDataExtended] CombatCardAdapter: Setting card {cardData.cardName}</color>");
+            Debug.Log($"<color=lime>[CardDataExtended]   - Card Image: {(cardData.cardImage != null ? "✅ PRESENT" : "❌ NULL")}</color>");
+            Debug.Log($"<color=lime>[CardDataExtended]   - Character: {(character != null ? character.characterName : "NULL")}</color>");
+        }
         
         if (deckBuilderCard != null)
         {
@@ -192,7 +199,10 @@ public class CombatCardAdapter : MonoBehaviour
             // This enables dynamic descriptions with calculated values
             deckBuilderCard.Initialize(cardData, null, character);
             
-            Debug.Log($"<color=lime>[CardDataExtended] ✓ Card initialized with dynamic descriptions!</color>");
+            if (logAdapterOperations)
+            {
+                Debug.Log($"<color=lime>[CardDataExtended] ✓ Card initialized with dynamic descriptions!</color>");
+            }
         }
         else
         {

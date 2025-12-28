@@ -52,6 +52,10 @@ public class CardRuntimeManager : MonoBehaviour
     [Tooltip("Where cards animate to when discarded")]
     [SerializeField] private Transform discardPosition;
     
+    [Header("Debug Logging")]
+    [Tooltip("Log card repositioning operations (can be verbose on hover)")]
+    [SerializeField] private bool logRepositioning = false;
+    
     // Card pool
     private Queue<GameObject> cardPool = new Queue<GameObject>();
     private List<GameObject> activeCards = new List<GameObject>();
@@ -407,7 +411,10 @@ public class CardRuntimeManager : MonoBehaviour
     /// </summary>
     public void RepositionCards(List<GameObject> cardList, bool animated = true, float duration = 0.3f)
     {
-        Debug.Log($"<color=magenta>Repositioning {cardList.Count} cards (animated: {animated})...</color>");
+        if (logRepositioning)
+        {
+            Debug.Log($"<color=magenta>Repositioning {cardList.Count} cards (animated: {animated})...</color>");
+        }
         
         // Additional safety check: Remove any null cards from the list
         cardList.RemoveAll(card => card == null);
@@ -426,13 +433,19 @@ public class CardRuntimeManager : MonoBehaviour
         {
             if (cardList[i] != null && cardList[i].activeInHierarchy)
             {
-                Debug.Log($"  Repositioning card {i}: {cardList[i].name}");
+                if (logRepositioning)
+                {
+                    Debug.Log($"  Repositioning card {i}: {cardList[i].name}");
+                }
                 
                 // CRITICAL: Ensure scale is correct BEFORE canceling animations
                 // This prevents cards from staying small if their scale animation was interrupted
                 if (cardList[i].transform.localScale != cardScale)
                 {
-                    Debug.Log($"  Fixing scale for {cardList[i].name}: {cardList[i].transform.localScale} → {cardScale}");
+                    if (logRepositioning)
+                    {
+                        Debug.Log($"  Fixing scale for {cardList[i].name}: {cardList[i].transform.localScale} → {cardScale}");
+                    }
                     cardList[i].transform.localScale = cardScale;
                 }
                 
@@ -458,7 +471,10 @@ public class CardRuntimeManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"<color=green>✓ Reposition complete for {cardList.Count} cards</color>");
+        if (logRepositioning)
+        {
+            Debug.Log($"<color=green>✓ Reposition complete for {cardList.Count} cards</color>");
+        }
     }
     
     /// <summary>
@@ -744,7 +760,10 @@ public class CardRuntimeManager : MonoBehaviour
         Debug.Log($"  Card Scale: {cardScale}");
         
         RepositionAllCards(animated: false);
-        Debug.Log($"✓ Repositioned {activeCards.Count} cards");
+        if (logRepositioning)
+        {
+            Debug.Log($"✓ Repositioned {activeCards.Count} cards");
+        }
     }
     
     [ContextMenu("Create Test Card")]

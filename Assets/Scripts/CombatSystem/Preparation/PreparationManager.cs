@@ -192,13 +192,15 @@ public class PreparationManager : MonoBehaviour
     
     /// <summary>
     /// Execute the unleash effect and cleanup
+    /// Now uses the action queue system (same pipeline as regular card plays)
     /// </summary>
     private bool ExecuteUnleash(PreparedCard prepared, Character player, bool isDecay)
     {
-        // Calculate final damage
+        // Calculate final damage and multiplier BEFORE removing from prepared list
         float unleashDamage = prepared.CalculateUnleashDamage();
+        float unleashMultiplier = prepared.currentMultiplier;
         
-        // Remove from prepared list BEFORE applying effect to prevent recursive consumption
+        // Remove from prepared list BEFORE queuing action to prevent recursive consumption
         // (e.g., if Perfect Strike is prepared and gets unleashed, it shouldn't consume itself)
         preparedCards.Remove(prepared);
         
@@ -208,8 +210,62 @@ public class PreparationManager : MonoBehaviour
         
         try
         {
-            // Apply the card's effect with stored/modified values
-            ApplyUnleashEffect(prepared, player, unleashDamage);
+            // Get target enemy using the same targeting system as regular cards
+            Enemy targetEnemy = null;
+            Vector3 targetScreenPosition = Vector3.zero;
+            
+            var combatDeckManager = CombatDeckManager.Instance;
+            if (combatDeckManager == null)
+            {
+                combatDeckManager = FindFirstObjectByType<CombatDeckManager>();
+            }
+            
+            // Get target enemy (same logic as DealUnleashDamage but done here before queuing)
+            CardDataExtended card = prepared.sourceCard;
+            #pragma warning disable CS0618
+            Card cardForTargeting = card.ToCard();
+            #pragma warning restore CS0618
+            
+            if (!cardForTargeting.isAoE)
+            {
+                if (EnemyTargetingManager.Instance != null)
+                {
+                    targetEnemy = EnemyTargetingManager.Instance.GetTargetedEnemy();
+                    targetScreenPosition = EnemyTargetingManager.Instance.GetTargetedEnemyPosition();
+                    
+                    if (targetEnemy == null)
+                    {
+                        var combatDisplay = FindFirstObjectByType<CombatDisplayManager>();
+                        if (combatDisplay != null && combatDisplay.enemySpawner != null)
+                        {
+                            var activeDisplays = combatDisplay.enemySpawner.GetActiveEnemies();
+                            if (activeDisplays != null && activeDisplays.Count > 0)
+                            {
+                                var firstEnemyDisplay = activeDisplays[0];
+                                if (firstEnemyDisplay != null)
+                                {
+                                    targetEnemy = firstEnemyDisplay.GetEnemy();
+                                    if (targetEnemy != null && firstEnemyDisplay.transform != null)
+                                    {
+                                        targetScreenPosition = firstEnemyDisplay.transform.position;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Queue the unleash action (follows same pipeline as regular card plays)
+            if (combatDeckManager != null)
+            {
+                combatDeckManager.QueueUnleashCard(card, targetScreenPosition, targetEnemy, player, unleashDamage, unleashMultiplier);
+            }
+            else
+            {
+                Debug.LogError("[PreparationManager] CombatDeckManager not found! Cannot queue unleash action.");
+                return false;
+            }
         }
         finally
         {
@@ -220,7 +276,7 @@ public class PreparationManager : MonoBehaviour
         // Track unleash count
         unleashedThisTurn++;
         
-        // Notify events
+        // Notify events (fire after queuing, before effects resolve)
         if (isDecay)
         {
             OnCardDecayed?.Invoke(prepared);
@@ -230,25 +286,15 @@ public class PreparationManager : MonoBehaviour
             OnCardUnleashed?.Invoke(prepared);
         }
         
-        // Update UI
+        // Update UI (remove visual representation)
         if (preparedCardsUI != null)
         {
             preparedCardsUI.RemovePreparedCard(prepared);
         }
         
-        Debug.Log($"<color=green>[PreparationManager] ✓ Unleashed: {prepared.sourceCard.cardName} (Damage: {unleashDamage:F1})</color>");
+        Debug.Log($"<color=green>[PreparationManager] ✓ Unleashed: {prepared.sourceCard.cardName} (Damage: {unleashDamage:F1}) - queued through action system</color>");
         
-        // Add unleashed card to discard pile
-        var combatDeckManager = FindFirstObjectByType<CombatDeckManager>();
-        if (combatDeckManager != null)
-        {
-            combatDeckManager.AddCardToDiscardPile(prepared.sourceCard);
-            Debug.Log($"<color=cyan>[PreparationManager] Added {prepared.sourceCard.cardName} to discard pile</color>");
-        }
-        else
-        {
-            Debug.LogWarning("[PreparationManager] CombatDeckManager not found - cannot add unleashed card to discard pile");
-        }
+        // Note: Card is added to discard pile by CombatDeckManager.ResolveCardAction (same as regular cards)
         
         return true;
     }

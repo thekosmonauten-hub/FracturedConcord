@@ -343,12 +343,15 @@ public class DamageCalculator : MonoBehaviour
 			);
 		}
 
-		// 8) Debug logging
-		Debug.Log($"<color=cyan>CalculateCardDamage Debug for {card.cardName} (unified stats):</color>");
-		Debug.Log($"  Base Damage: {card.baseDamage}");
-		Debug.Log($"  Scaling Bonus: {scalingBonus}");
-		Debug.Log($"  Before Modifiers (with weapon + embossing flats): {baseWithScaling}");
-		Debug.Log($"  Final Damage (after stats/warrants/embossing multipliers): {totalDamage}");
+		// 8) Debug logging (controlled by CombatDeckManager.logCardEffects)
+		if (CombatDeckManager.Instance != null && CombatDeckManager.Instance.ShouldLogCardEffects)
+		{
+			Debug.Log($"<color=cyan>CalculateCardDamage Debug for {card.cardName} (unified stats):</color>");
+			Debug.Log($"  Base Damage: {card.baseDamage}");
+			Debug.Log($"  Scaling Bonus: {scalingBonus}");
+			Debug.Log($"  Before Modifiers (with weapon + embossing flats): {baseWithScaling}");
+			Debug.Log($"  Final Damage (after stats/warrants/embossing multipliers): {totalDamage}");
+		}
 
 		return totalDamage;
 	}
