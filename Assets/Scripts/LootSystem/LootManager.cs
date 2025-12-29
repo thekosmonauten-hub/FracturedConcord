@@ -56,7 +56,15 @@ public class LootManager : MonoBehaviour
     private void InitializeCurrencySystem()
     {
         // Load currency database
-        currencyDatabase = Resources.Load<CurrencyDatabase>("CurrencyDatabase");
+        // Use preloader if available
+        if (AssetPreloader.Instance != null)
+        {
+            currencyDatabase = AssetPreloader.Instance.GetPreloadedAsset<CurrencyDatabase>("CurrencyDatabase");
+        }
+        if (currencyDatabase == null)
+        {
+            currencyDatabase = Resources.Load<CurrencyDatabase>("CurrencyDatabase");
+        }
         if (currencyDatabase == null)
         {
             Debug.LogWarning("[LootManager] CurrencyDatabase not found in Resources folder!");

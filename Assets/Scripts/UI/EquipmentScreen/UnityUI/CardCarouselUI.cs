@@ -551,8 +551,16 @@ public class CardCarouselUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
             visualRootFieldInfo.SetValue(cardDisplay, visualRoot as RectTransform);
         }
         
-        // Load visual assets from Resources
-        var visualAssets = Resources.Load<CardVisualAssets>("CardVisualAssets");
+        // Load visual assets from Resources (use preloader if available)
+        CardVisualAssets visualAssets = null;
+        if (AssetPreloader.Instance != null)
+        {
+            visualAssets = AssetPreloader.Instance.GetPreloadedAsset<CardVisualAssets>("CardVisualAssets");
+        }
+        if (visualAssets == null)
+        {
+            visualAssets = Resources.Load<CardVisualAssets>("CardVisualAssets");
+        }
         if (visualAssets != null)
         {
             var visualAssetsField = cardDisplayType.GetField("visualAssets", bindingFlags);

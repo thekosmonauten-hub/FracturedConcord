@@ -175,17 +175,21 @@ public class TransitionManager : MonoBehaviour
     
     public void TransitionToScene(string sceneName)
     {
+        Debug.Log($"[TransitionManager] Starting transition to scene: {sceneName}");
         StartCoroutine(TransitionCoroutine(sceneName));
     }
     
     private IEnumerator TransitionCoroutine(string sceneName)
     {
+        Debug.Log($"[TransitionManager] TransitionCoroutine started for: {sceneName}");
+        
         if (transitionCanvas == null)
         {
             SetupTransitionUI();
         }
         
         transitionCanvas.SetActive(true);
+        Debug.Log("[TransitionManager] Transition canvas activated");
         if (transitionCanvasGroup == null)
         {
             transitionCanvasGroup = transitionCanvas.GetComponent<CanvasGroup>();
@@ -195,9 +199,21 @@ public class TransitionManager : MonoBehaviour
         transitionCanvasGroup.alpha = 0f;
     if (leftCurtainRect != null) leftCurtainRect.gameObject.SetActive(false);
     if (rightCurtainRect != null) rightCurtainRect.gameObject.SetActive(false);
-        if (backgroundImageOverlay != null) backgroundImageOverlay.enabled = true;
         
-        // Fade in the transition frame
+        // Hide white frame, use black background instead
+        if (transitionFrame != null)
+        {
+            transitionFrame.gameObject.SetActive(false);
+        }
+        
+        if (backgroundImageOverlay != null)
+        {
+            backgroundImageOverlay.enabled = true;
+            // Ensure background is black
+            backgroundImageOverlay.color = Color.black;
+        }
+        
+        // Fade in the black background
         float elapsedTime = 0f;
         
         while (elapsedTime < transitionDuration * 0.5f)
@@ -215,11 +231,25 @@ public class TransitionManager : MonoBehaviour
         }
         
         transitionCanvasGroup.alpha = 1f;
+        Debug.Log("[TransitionManager] Fade-in complete, starting async scene load");
         
-        // Load the new scene
-        SceneManager.LoadScene(sceneName);
+        // Check if Bootstrap scene is loaded (means we're using additive loading)
+        Scene bootstrapScene = SceneManager.GetSceneByName("BootstrapScene");
+        bool useAdditive = bootstrapScene.IsValid();
         
-        // Wait a frame to ensure scene is loaded
+        if (useAdditive)
+        {
+            // Use additive loading - Bootstrap scene stays loaded
+            yield return StartCoroutine(LoadSceneAdditiveWithTransition(sceneName));
+        }
+        else
+        {
+            // Fallback to single scene loading (backward compatibility)
+            yield return StartCoroutine(LoadSceneSingle(sceneName));
+        }
+        
+        Debug.Log("[TransitionManager] Scene activated, starting fade-out");
+        // Wait an additional frame to ensure scene is fully initialized
         yield return null;
         
         // Fade out
@@ -242,6 +272,102 @@ public class TransitionManager : MonoBehaviour
         
         // Hide transition UI
         transitionCanvas.SetActive(false);
+    }
+    
+    /// <summary>
+    /// Load scene additively (Bootstrap pattern)
+    /// </summary>
+    private IEnumerator LoadSceneAdditiveWithTransition(string sceneName)
+    {
+        // Get current active scene name (don't unload Bootstrap)
+        Scene currentScene = SceneManager.GetActiveScene();
+        string currentSceneName = currentScene.name;
+        
+        // Load new scene additively
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+        asyncLoad.allowSceneActivation = false;
+        
+        // Wait for scene to load
+        while (asyncLoad.progress < 0.9f)
+        {
+            yield return null;
+        }
+        
+        // Ensure minimum transition time
+        float minTransitionTime = transitionDuration * 0.3f;
+        yield return new WaitForSeconds(minTransitionTime);
+        
+        // Activate the scene
+        asyncLoad.allowSceneActivation = true;
+        
+        // Wait for scene to fully activate
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+        
+        // Set as active scene
+        Scene loadedScene = SceneManager.GetSceneByName(sceneName);
+        if (loadedScene.IsValid())
+        {
+            SceneManager.SetActiveScene(loadedScene);
+        }
+        
+        // Initialize the scene
+        if (SceneInitializationManager.Instance != null)
+        {
+            SceneInitializationManager.Instance.InitializeScene(loadedScene);
+        }
+        
+        // Wait a frame
+        yield return null;
+        
+        // Unload old scene (but not Bootstrap)
+        if (currentSceneName != "BootstrapScene" && currentScene.IsValid())
+        {
+            AsyncOperation asyncUnload = SceneManager.UnloadSceneAsync(currentScene);
+            while (!asyncUnload.isDone)
+            {
+                yield return null;
+            }
+            Debug.Log($"[TransitionManager] Unloaded old scene: {currentSceneName}");
+        }
+    }
+    
+    /// <summary>
+    /// Load scene in single mode (backward compatibility)
+    /// </summary>
+    private IEnumerator LoadSceneSingle(string sceneName)
+    {
+        // Start loading the new scene asynchronously in the background
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+        asyncLoad.allowSceneActivation = false; // Don't activate immediately
+        
+        // Wait for scene to load while keeping transition visible
+        // Continue showing the transition overlay while loading
+        while (asyncLoad.progress < 0.9f)
+        {
+            yield return null; // Keep animation smooth while loading
+        }
+        
+        Debug.Log($"[TransitionManager] Scene loaded ({asyncLoad.progress * 100:F1}%), waiting minimum transition time");
+        
+        // Ensure we've shown the transition for at least a minimum duration
+        // This prevents very fast scene loads from skipping the transition
+        float minTransitionTime = transitionDuration * 0.3f; // At least 30% of transition duration
+        yield return new WaitForSeconds(minTransitionTime);
+        
+        Debug.Log("[TransitionManager] Activating scene");
+        // Scene is ready, activate it
+        asyncLoad.allowSceneActivation = true;
+        
+        // Wait for scene to fully activate
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+        
+        // Scene loading complete - fade-out handled in TransitionCoroutine
     }
     
     // Alternative transition with scale effect
@@ -298,10 +424,30 @@ public class TransitionManager : MonoBehaviour
         transitionCanvasGroup.alpha = 1f;
         frameRect.localScale = Vector3.one;
         
-        // Load the new scene
-        SceneManager.LoadScene(sceneName);
+        // Start loading the new scene asynchronously in the background
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+        asyncLoad.allowSceneActivation = false; // Don't activate immediately
         
-        // Wait a frame to ensure scene is loaded
+        // Wait for scene to load while keeping transition visible
+        while (asyncLoad.progress < 0.9f)
+        {
+            yield return null; // Keep animation smooth while loading
+        }
+        
+        // Ensure we've shown the transition for at least a minimum duration
+        float minTransitionTime = transitionDuration * 0.3f;
+        yield return new WaitForSeconds(minTransitionTime);
+        
+        // Scene is ready, activate it
+        asyncLoad.allowSceneActivation = true;
+        
+        // Wait for scene to fully activate
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+        
+        // Wait an additional frame to ensure scene is fully initialized
         yield return null;
         
         // Scale out effect
@@ -359,6 +505,8 @@ public class TransitionManager : MonoBehaviour
         if (backgroundImageOverlay != null)
         {
             backgroundImageOverlay.enabled = true;
+            // Ensure background is black
+            backgroundImageOverlay.color = Color.black;
             Color overlayColor = backgroundImageOverlay.color;
             overlayColor.a = 0f;
             backgroundImageOverlay.color = overlayColor;
@@ -405,8 +553,81 @@ public class TransitionManager : MonoBehaviour
 
         yield return closeSequence.WaitForCompletion();
 
-        SceneManager.LoadScene(sceneName);
-        yield return null;
+        // Check if Bootstrap scene is loaded (means we're using additive loading)
+        Scene bootstrapScene = SceneManager.GetSceneByName("BootstrapScene");
+        bool useAdditive = bootstrapScene.IsValid();
+        
+        if (useAdditive)
+        {
+            // Use additive loading
+            Scene currentScene = SceneManager.GetActiveScene();
+            string currentSceneName = currentScene.name;
+            
+            // Load new scene additively
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+            asyncLoad.allowSceneActivation = false;
+            
+            while (asyncLoad.progress < 0.9f)
+            {
+                yield return null;
+            }
+            
+            float minTransitionTime = transitionDuration * 0.3f;
+            yield return new WaitForSeconds(minTransitionTime);
+            
+            asyncLoad.allowSceneActivation = true;
+            
+            while (!asyncLoad.isDone)
+            {
+                yield return null;
+            }
+            
+            Scene loadedScene = SceneManager.GetSceneByName(sceneName);
+            if (loadedScene.IsValid())
+            {
+                SceneManager.SetActiveScene(loadedScene);
+            }
+            
+            if (SceneInitializationManager.Instance != null)
+            {
+                SceneInitializationManager.Instance.InitializeScene(loadedScene);
+            }
+            
+            yield return null;
+            
+            // Unload old scene (but not Bootstrap)
+            if (currentSceneName != "BootstrapScene" && currentScene.IsValid())
+            {
+                AsyncOperation asyncUnload = SceneManager.UnloadSceneAsync(currentScene);
+                while (!asyncUnload.isDone)
+                {
+                    yield return null;
+                }
+            }
+        }
+        else
+        {
+            // Fallback to single scene loading
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+            asyncLoad.allowSceneActivation = false;
+            
+            while (asyncLoad.progress < 0.9f)
+            {
+                yield return null;
+            }
+            
+            float minTransitionTime = transitionDuration * 0.3f;
+            yield return new WaitForSeconds(minTransitionTime);
+            
+            asyncLoad.allowSceneActivation = true;
+            
+            while (!asyncLoad.isDone)
+            {
+                yield return null;
+            }
+            
+            yield return null;
+        }
 
         float openDuration = transitionDuration * 0.5f;
         Sequence openSequence = DOTween.Sequence();

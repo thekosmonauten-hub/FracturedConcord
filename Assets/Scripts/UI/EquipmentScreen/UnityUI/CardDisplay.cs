@@ -152,7 +152,15 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         // Load visual assets if not assigned
         if (visualAssets == null)
         {
-            visualAssets = Resources.Load<CardVisualAssets>("CardVisualAssets");
+            // Use preloader if available
+            if (AssetPreloader.Instance != null)
+            {
+                visualAssets = AssetPreloader.Instance.GetPreloadedAsset<CardVisualAssets>("CardVisualAssets");
+            }
+            if (visualAssets == null)
+            {
+                visualAssets = Resources.Load<CardVisualAssets>("CardVisualAssets");
+            }
         }
     }
     
@@ -952,7 +960,15 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         
         if (visualAssets == null)
         {
-            visualAssets = Resources.Load<CardVisualAssets>("CardVisualAssets");
+            // Use preloader if available
+            if (AssetPreloader.Instance != null)
+            {
+                visualAssets = AssetPreloader.Instance.GetPreloadedAsset<CardVisualAssets>("CardVisualAssets");
+            }
+            if (visualAssets == null)
+            {
+                visualAssets = Resources.Load<CardVisualAssets>("CardVisualAssets");
+            }
             if (visualAssets != null)
             {
                 Debug.Log("[CardDisplay] Loaded CardVisualAssets from Resources");

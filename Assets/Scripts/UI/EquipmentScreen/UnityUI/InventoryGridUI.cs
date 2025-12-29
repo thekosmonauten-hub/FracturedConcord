@@ -40,7 +40,8 @@ public class InventoryGridUI : MonoBehaviour
         GenerateGrid();
         if (refreshOnEnable)
         {
-            RefreshFromDataSource();
+            // Defer refresh to next frame to prevent blocking scene load
+            StartCoroutine(DeferredRefresh());
         }
     }
 
@@ -51,8 +52,18 @@ public class InventoryGridUI : MonoBehaviour
         
         if (refreshOnEnable)
         {
-            RefreshFromDataSource();
+            // Defer refresh to next frame to prevent blocking scene load
+            StartCoroutine(DeferredRefresh());
         }
+    }
+    
+    /// <summary>
+    /// Defer refresh to next frame to prevent blocking scene initialization
+    /// </summary>
+    private System.Collections.IEnumerator DeferredRefresh()
+    {
+        yield return null; // Wait one frame
+        RefreshFromDataSource();
     }
 
     private void OnDisable()

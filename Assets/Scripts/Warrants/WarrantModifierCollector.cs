@@ -81,16 +81,32 @@ public static class WarrantModifierCollector
         // Rebuild unlocked node cache after deserialization
         activePage.RebuildUnlockedCache();
 
-        // Load warrant database
-        WarrantDatabase warrantDatabase = Resources.Load<WarrantDatabase>("WarrantDatabase");
+        // Load warrant database (use preloader if available for faster loading)
+        WarrantDatabase warrantDatabase = null;
+        if (AssetPreloader.Instance != null)
+        {
+            warrantDatabase = AssetPreloader.Instance.GetPreloadedAsset<WarrantDatabase>("WarrantDatabase");
+        }
+        if (warrantDatabase == null)
+        {
+            warrantDatabase = Resources.Load<WarrantDatabase>("WarrantDatabase");
+        }
         if (warrantDatabase == null)
         {
             Debug.LogWarning("[WarrantModifierCollector] WarrantDatabase not found in Resources. Cannot load warrant definitions.");
             return;
         }
 
-        // Load notable database
-        WarrantNotableDatabase notableDatabase = Resources.Load<WarrantNotableDatabase>("WarrantNotableDatabase");
+        // Load notable database (use preloader if available)
+        WarrantNotableDatabase notableDatabase = null;
+        if (AssetPreloader.Instance != null)
+        {
+            notableDatabase = AssetPreloader.Instance.GetPreloadedAsset<WarrantNotableDatabase>("WarrantNotableDatabase");
+        }
+        if (notableDatabase == null)
+        {
+            notableDatabase = Resources.Load<WarrantNotableDatabase>("WarrantNotableDatabase");
+        }
         if (notableDatabase == null)
         {
             Debug.LogWarning("[WarrantModifierCollector] WarrantNotableDatabase not found in Resources. Notable modifiers may not be applied.");

@@ -54,10 +54,17 @@ namespace Dexiled.UI.EquipmentScreen
                 return;
             }
 
-            // Load database if it's in Resources
+            // Load database if it's in Resources (use preloader if available)
             if (currencyDatabase == null)
             {
-                currencyDatabase = Resources.Load<CurrencyDatabase>("CurrencyDatabase");
+                if (AssetPreloader.Instance != null)
+                {
+                    currencyDatabase = AssetPreloader.Instance.GetPreloadedAsset<CurrencyDatabase>("CurrencyDatabase");
+                }
+                if (currencyDatabase == null)
+                {
+                    currencyDatabase = Resources.Load<CurrencyDatabase>("CurrencyDatabase");
+                }
                 if (currencyDatabase == null)
                 {
                     Debug.LogError("[CurrencyManager] Could not load CurrencyDatabase from Resources!");

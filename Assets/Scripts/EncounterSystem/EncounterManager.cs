@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 #if UNITY_EDITOR
@@ -97,24 +98,39 @@ public partial class EncounterManager : MonoBehaviour
     
     /// <summary>
     /// Initialize the encounter system.
+    /// Deferred to prevent blocking scene load.
     /// </summary>
     private void InitializeSystem()
     {
+        // Defer heavy initialization to prevent blocking
+        StartCoroutine(InitializeSystemCoroutine());
+    }
+    
+    /// <summary>
+    /// Initialize the encounter system across multiple frames.
+    /// </summary>
+    private IEnumerator InitializeSystemCoroutine()
+    {
         EnsureEnemyDatabase();
+        yield return null; // Wait one frame
         
         // Initialize component managers
         graphBuilder = new EncounterGraphBuilder();
         stateManager = new EncounterStateManager(graphBuilder);
         progressionManager = new EncounterProgressionManager(graphBuilder, stateManager);
+        yield return null; // Wait one frame
         
-        // Load encounters
+        // Load encounters (this can be heavy with Resources.Load)
         LoadEncounters();
+        yield return null; // Wait one frame
         
         // Build graph
         BuildEncounterGraph();
+        yield return null; // Wait one frame
         
         // Apply character progression (this ensures encounter 1 is unlocked)
         ApplyCharacterProgression();
+        yield return null; // Wait one frame
         
         // Double-check: Ensure encounter 1 is unlocked after progression is applied
         var encounter1Prog = progressionManager.GetProgression(1);
@@ -153,6 +169,7 @@ public partial class EncounterManager : MonoBehaviour
     
     /// <summary>
     /// Load encounters from Resources or use fallback data.
+    /// Optimized to spread loading across frames for better performance.
     /// </summary>
     private void LoadEncounters()
         {
@@ -162,6 +179,7 @@ public partial class EncounterManager : MonoBehaviour
         if (loadFromResources)
         {
             // Load from Resources using EncounterDataLoader
+            // This is deferred in InitializeSystemCoroutine to prevent blocking
             encountersByAct = EncounterDataLoader.LoadAllEncounters(
                 act1ResourcesPath,
                 act2ResourcesPath,
@@ -397,7 +415,35 @@ public partial class EncounterManager : MonoBehaviour
         PlayerPrefs.Save();
         
         Debug.Log($"[EncounterManager] Starting encounter {encounterID}: {encounter.encounterName} (Scene: {encounter.sceneName}, Non-Combat: {isNonCombatEncounter})");
-        SceneManager.LoadScene(encounter.sceneName);
+        
+        // Use TransitionManager if available for smooth transitions
+        if (TransitionManager.Instance != null)
+        {
+            TransitionManager.Instance.TransitionToScene(encounter.sceneName);
+        }
+        else
+        {
+            // Fallback to async loading if no transition manager
+            StartCoroutine(LoadSceneAsyncCoroutine(encounter.sceneName));
+        }
+    }
+    
+    /// <summary>
+    /// Load scene asynchronously (fallback when TransitionManager is not available)
+    /// </summary>
+    private IEnumerator LoadSceneAsyncCoroutine(string sceneName)
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+        asyncLoad.allowSceneActivation = false;
+        
+        // Wait for scene to load
+        while (asyncLoad.progress < 0.9f)
+        {
+            yield return null;
+        }
+        
+        // Activate the scene
+        asyncLoad.allowSceneActivation = true;
     }
     
     /// <summary>

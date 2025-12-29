@@ -68,14 +68,47 @@ public class EquipmentScreenUI : MonoBehaviour
     
     void Start()
     {
-        // Set initial tab state
+        // Defer heavy initialization to spread load across frames
+        StartCoroutine(DeferredInitialization());
+    }
+    
+    /// <summary>
+    /// Spread initialization across multiple frames to prevent freezing
+    /// </summary>
+    private System.Collections.IEnumerator DeferredInitialization()
+    {
+        // Critical: Set initial tab state (lightweight)
         SetCurrencyTab("Orbs");
+        yield return null; // Wait one frame
         
-        // Update player details
+        // Update player details (lightweight)
         UpdatePlayerDetails();
+        yield return null; // Wait one frame
         
-        // Configure grid modes
+        // Configure grids (may be heavier)
         ConfigureGrids();
+        yield return null; // Wait one frame
+        
+        // Refresh inventory grid (potentially heavy)
+        if (inventoryGrid != null)
+        {
+            inventoryGrid.RefreshFromDataSource();
+            yield return null; // Wait one frame
+        }
+        
+        // Refresh stash grid (potentially heavy)
+        if (stashGrid != null)
+        {
+            stashGrid.RefreshFromDataSource();
+            yield return null; // Wait one frame
+        }
+        
+        // Refresh equipment slots (lightweight)
+        RefreshEquipmentSlots();
+        yield return null; // Wait one frame
+        
+        // Refresh currency display (may load from resources)
+        RefreshCurrencyDisplay();
     }
     
     /// <summary>

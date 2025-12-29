@@ -143,7 +143,15 @@ public class WarrantFusionUI : MonoBehaviour
                 if (iconLibrary == null)
                 {
                     // Try to load from Resources
-                    iconLibrary = Resources.Load<WarrantIconLibrary>("WarrantIconLibrary");
+                    // Use preloader if available
+                    if (AssetPreloader.Instance != null)
+                    {
+                        iconLibrary = AssetPreloader.Instance.GetPreloadedAsset<WarrantIconLibrary>("WarrantIconLibrary");
+                    }
+                    if (iconLibrary == null)
+                    {
+                        iconLibrary = Resources.Load<WarrantIconLibrary>("WarrantIconLibrary");
+                    }
                 }
             }
             

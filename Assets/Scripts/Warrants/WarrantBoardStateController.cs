@@ -58,6 +58,18 @@ public class WarrantBoardStateController : MonoBehaviour
     
     private void Start()
     {
+        // Defer heavy initialization to prevent blocking scene load
+        StartCoroutine(DeferredStart());
+    }
+    
+    /// <summary>
+    /// Defer heavy initialization to spread across frames.
+    /// </summary>
+    private System.Collections.IEnumerator DeferredStart()
+    {
+        // Wait a frame to ensure all components are initialized
+        yield return null;
+        
         // Refresh character warrant modifiers after Start() to ensure all components are initialized
         // This ensures warrants from locker grid are loaded and board state is ready
         RefreshCharacterWarrantModifiers();

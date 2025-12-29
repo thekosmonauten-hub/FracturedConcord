@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 /// <summary>
 /// Simple component to attach to buttons for scene transitions with curtain effect.
@@ -85,6 +87,24 @@ public class SceneTransitionButton : MonoBehaviour
     public string GetTargetScene()
     {
         return targetSceneName;
+    }
+    
+    /// <summary>
+    /// Fallback async scene loading if TransitionManager is unavailable
+    /// </summary>
+    private IEnumerator LoadSceneAsyncFallback(string sceneName)
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+        asyncLoad.allowSceneActivation = false;
+        
+        // Wait for scene to load
+        while (asyncLoad.progress < 0.9f)
+        {
+            yield return null;
+        }
+        
+        // Activate the scene
+        asyncLoad.allowSceneActivation = true;
     }
 }
 
