@@ -13,7 +13,7 @@
 - [x] Implement Stagger system (meter, threshold, stun on fill, guard protection, energy costs for enemy actions)
 - [ ] Test and verify stagger system: confirm stagger values display correctly, guard reduces stagger by 50%, enemies/player skip turns when staggered, stagger bars update properly
 - [x] Fix Vulnerability debuff: enemies now take 20% more damage and the debuff is consumed after one damage instance
-
+- [x] Sometime during combat, the discard or drawpile is cleared, leaving the player with very few cards at wave 4-5. (Duplicate cards in discard caused the card to be destroyed instead of discarded) 
 
 ## Combat Effects
 - [ ] Implement Curses
@@ -73,15 +73,15 @@
 
 ## TownScene
 - [x] Setup TownScene
-- [ ] Implement "Seer" panel
+- [x] Implement "Seer" panel
 - [ ] Implement "Questgiver" panel
-- [ ] Implement "Forge" panel
-- [ ] Implement "PeacekeepersFaction" Panel
-- [ ] Implement Card Generation from "The Seer"
+- [x] Implement "Forge" panel
+- [x] Implement "PeacekeepersFaction" Panel
+- [x] Implement Card Generation from "The Seer"
 - [ ] Implement Card Vendor from "The Seer"
 - [ ] Implement Quests from "Questgiver"
-- [ ] Implement Salvage from "Forge"
-- [ ] Implement "Warrants" for the "PeacekeepersFaction"
+- [x] Implement Salvage from "Forge"
+- [x] Implement "Warrants" for the "PeacekeepersFaction"
 - [ ] 
 - [ ] 
 

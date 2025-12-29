@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Cleave
   m_EditorClassIdentifier: Assembly-CSharp::EffectData
   effectName: Cleave
-  description: Ground slam Explosion
+  description: Horizonal Arc for Cleave card
   associatedCardName: Cleave
-  effectType: 3
+  effectType: 7
   category: 9
   damageType: 1
-  effectPrefab: {fileID: 7913782463787465176, guid: 2eafa1417776ab443b63cae050c4c853, type: 3}
+  effectPrefab: {fileID: 3153472991145048103, guid: 3407e378c048bb5438424b28c7740b48, type: 3}
   useUIParticle: 1
   uiParticleScale: 90
   isProjectile: 0
@@ -31,4 +31,4 @@ MonoBehaviour:
   delay: 0
   requirements: []
   tags:
-  - Ground Slam
+  - Cleave

@@ -502,6 +502,12 @@ public static class WarrantModifierCollector
             character.warrantFlatModifiers = new System.Collections.Generic.Dictionary<string, float>();
         }
         
+        // Ensure warrantAttributeBonuses dictionary exists
+        if (character.warrantAttributeBonuses == null)
+        {
+            character.warrantAttributeBonuses = new System.Collections.Generic.Dictionary<string, int>();
+        }
+        
         // Group modifiers by ID to aggregate values
         var groupedModifiers = new System.Collections.Generic.Dictionary<string, float>();
         
@@ -610,29 +616,63 @@ public static class WarrantModifierCollector
             }
             // ===== ATTRIBUTE MODIFIERS (Applied directly to character attributes) =====
             // These are flat values (60 = +60 strength), not percentages
+            // Track bonuses separately so they can be properly removed when warrants are unequipped
             else if (modIdLower == "strength")
             {
+                // Track the bonus amount
+                int bonusAmount = Mathf.RoundToInt(value);
+                if (character.warrantAttributeBonuses.ContainsKey("strength"))
+                {
+                    character.warrantAttributeBonuses["strength"] += bonusAmount;
+                }
+                else
+                {
+                    character.warrantAttributeBonuses["strength"] = bonusAmount;
+                }
+                
                 // Apply as flat value to character strength
-                character.strength += Mathf.RoundToInt(value);
+                character.strength += bonusAmount;
                 applied = true;
                 statModifierCount++;
-                Debug.Log($"[WarrantModifierCollector] Applied {value} flat strength to character (new total: {character.strength})");
+                Debug.Log($"[WarrantModifierCollector] Applied {value} flat strength to character (new total: {character.strength}, tracked bonus: {character.warrantAttributeBonuses["strength"]})");
             }
             else if (modIdLower == "dexterity")
             {
+                // Track the bonus amount
+                int bonusAmount = Mathf.RoundToInt(value);
+                if (character.warrantAttributeBonuses.ContainsKey("dexterity"))
+                {
+                    character.warrantAttributeBonuses["dexterity"] += bonusAmount;
+                }
+                else
+                {
+                    character.warrantAttributeBonuses["dexterity"] = bonusAmount;
+                }
+                
                 // Apply as flat value to character dexterity
-                character.dexterity += Mathf.RoundToInt(value);
+                character.dexterity += bonusAmount;
                 applied = true;
                 statModifierCount++;
-                Debug.Log($"[WarrantModifierCollector] Applied {value} flat dexterity to character (new total: {character.dexterity})");
+                Debug.Log($"[WarrantModifierCollector] Applied {value} flat dexterity to character (new total: {character.dexterity}, tracked bonus: {character.warrantAttributeBonuses["dexterity"]})");
             }
             else if (modIdLower == "intelligence")
             {
+                // Track the bonus amount
+                int bonusAmount = Mathf.RoundToInt(value);
+                if (character.warrantAttributeBonuses.ContainsKey("intelligence"))
+                {
+                    character.warrantAttributeBonuses["intelligence"] += bonusAmount;
+                }
+                else
+                {
+                    character.warrantAttributeBonuses["intelligence"] = bonusAmount;
+                }
+                
                 // Apply as flat value to character intelligence
-                character.intelligence += Mathf.RoundToInt(value);
+                character.intelligence += bonusAmount;
                 applied = true;
                 statModifierCount++;
-                Debug.Log($"[WarrantModifierCollector] Applied {value} flat intelligence to character (new total: {character.intelligence})");
+                Debug.Log($"[WarrantModifierCollector] Applied {value} flat intelligence to character (new total: {character.intelligence}, tracked bonus: {character.warrantAttributeBonuses["intelligence"]})");
             }
             // ===== LIFE REGENERATION MODIFIERS =====
             // These can be flat (1.5 = +1.5 per turn) or percentage (1.5% = 1.5% increased)
