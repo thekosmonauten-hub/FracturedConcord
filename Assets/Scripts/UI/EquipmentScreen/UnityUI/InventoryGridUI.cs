@@ -17,13 +17,20 @@ public class InventoryGridUI : MonoBehaviour
     }
     
     [Header("Grid Settings")]
-    public int gridWidth = 10;
-    public int gridHeight = 6;
+    [Tooltip("Grid width (columns). Default: 12 for InventoryGrid, 14 for StashGrid")]
+    public int gridWidth = 12;
+    [Tooltip("Grid height (rows). Default: 4 for both Inventory and Stash")]
+    public int gridHeight = 4;
     public Vector2 cellSize = new Vector2(60, 60);
     public Vector2 spacing = new Vector2(2, 2);
     
     [Header("References")]
+    [Tooltip("Prefab for individual slots (used if gridPrefab is not set)")]
     public GameObject slotPrefab;
+    
+    [Tooltip("Complete grid prefab with all slots already set up (FASTER - recommended)")]
+    public GameObject gridPrefab;
+    
     public Transform gridContainer;
     
     [Header("Data Source")]
@@ -37,12 +44,166 @@ public class InventoryGridUI : MonoBehaviour
     
     void Start()
     {
-        GenerateGrid();
+        // Defer grid generation to prevent blocking scene load
+        // Grid generation can instantiate 60+ GameObjects which is very expensive
+        StartCoroutine(DeferredGridGeneration());
+    }
+    
+    /// <summary>
+    /// Generate grid progressively across multiple frames to prevent blocking
+    /// </summary>
+    private System.Collections.IEnumerator DeferredGridGeneration()
+    {
+        // Wait a frame to let scene settle
+        yield return null;
+        
+        // Generate grid progressively (a few slots per frame)
+        yield return StartCoroutine(GenerateGridProgressive());
+        
+        // Refresh after grid is generated
         if (refreshOnEnable)
         {
-            // Defer refresh to next frame to prevent blocking scene load
-            StartCoroutine(DeferredRefresh());
+            yield return null; // Wait one more frame
+            RefreshFromDataSource();
         }
+    }
+    
+    /// <summary>
+    /// Generate grid slots progressively to prevent frame spikes
+    /// Uses prefab grid if available (much faster), otherwise generates dynamically
+    /// </summary>
+    private System.Collections.IEnumerator GenerateGridProgressive()
+    {
+        // Clear existing slots
+        foreach (Transform child in gridContainer)
+        {
+            Destroy(child.gameObject);
+        }
+        slots.Clear();
+        
+        // FAST PATH: Use prefab grid if available (instantiate once, much faster)
+        if (gridPrefab != null)
+        {
+            yield return null; // Wait one frame
+            
+            // Instantiate the prefab as a single object - it already has GridLayoutGroup and all cells laid out
+            GameObject gridInstance = Instantiate(gridPrefab, gridContainer);
+            gridInstance.name = "InventoryGrid";
+            
+            // Ensure the prefab grid fills the container properly
+            RectTransform gridRect = gridInstance.GetComponent<RectTransform>();
+            if (gridRect != null)
+            {
+                gridRect.anchoredPosition = Vector2.zero;
+                gridRect.anchorMin = Vector2.zero;
+                gridRect.anchorMax = Vector2.one;
+                gridRect.sizeDelta = Vector2.zero;
+                gridRect.localScale = Vector3.one;
+            }
+            
+            // Disable container's GridLayoutGroup if it exists (prefab has its own)
+            GridLayoutGroup containerLayout = gridContainer.GetComponent<GridLayoutGroup>();
+            if (containerLayout != null)
+            {
+                containerLayout.enabled = false;
+            }
+            
+            // Collect all slots from the prefab (they're already laid out by the prefab's GridLayoutGroup)
+            InventorySlotUI[] prefabSlots = gridInstance.GetComponentsInChildren<InventorySlotUI>();
+            slots.AddRange(prefabSlots);
+            
+            // Initialize all slots (set positions and event handlers)
+            for (int i = 0; i < slots.Count; i++)
+            {
+                InventorySlotUI slotUI = slots[i];
+                if (slotUI != null)
+                {
+                    // Calculate position from index (assuming left-to-right, top-to-bottom)
+                    int x = i % gridWidth;
+                    int y = i / gridWidth;
+                    slotUI.SetPosition(x, y);
+                    
+                    // Capture coordinates for lambda
+                    int capturedX = x;
+                    int capturedY = y;
+                    slotUI.OnSlotClicked += () => OnSlotClicked(capturedX, capturedY);
+                    slotUI.OnSlotHovered += () => OnSlotHovered(capturedX, capturedY);
+                    
+                    // Drag & drop events
+                    slotUI.OnDragStarted += (dragX, dragY) => OnDragBegin(dragX, dragY);
+                    slotUI.OnDragging += (dragX, dragY, pos) => OnDragUpdate(dragX, dragY, pos);
+                    slotUI.OnDragEnded += (dragX, dragY) => OnDragEnd(dragX, dragY);
+                }
+            }
+            
+            Debug.Log($"[InventoryGridUI] Loaded {slots.Count} slots from prefab grid ({gridWidth}x{gridHeight}) - FAST PATH (1 instantiate)");
+            yield break; // Done!
+        }
+        
+        // SLOW PATH: Generate dynamically (fallback if no prefab)
+        // Set up GridLayoutGroup on container for dynamic generation
+        GridLayoutGroup gridLayout = gridContainer.GetComponent<GridLayoutGroup>();
+        if (gridLayout == null)
+            gridLayout = gridContainer.gameObject.AddComponent<GridLayoutGroup>();
+        
+        gridLayout.enabled = true; // Re-enable if it was disabled
+        gridLayout.cellSize = cellSize;
+        gridLayout.spacing = spacing;
+        gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        gridLayout.constraintCount = gridWidth;
+        gridLayout.startCorner = GridLayoutGroup.Corner.UpperLeft;
+        gridLayout.startAxis = GridLayoutGroup.Axis.Horizontal;
+        gridLayout.childAlignment = TextAnchor.UpperLeft;
+        
+        // SLOW PATH: Generate dynamically (fallback if no prefab)
+        if (slotPrefab == null)
+        {
+            Debug.LogError("[InventoryGridUI] Neither gridPrefab nor slotPrefab is set! Cannot generate grid.");
+            yield break;
+        }
+        
+        // Generate slots progressively (5 slots per frame to prevent blocking)
+        const int slotsPerFrame = 5;
+        int slotsGenerated = 0;
+        int totalSlots = gridWidth * gridHeight;
+        
+        for (int y = 0; y < gridHeight; y++)
+        {
+            for (int x = 0; x < gridWidth; x++)
+            {
+                GameObject slotObj = Instantiate(slotPrefab, gridContainer);
+                slotObj.name = $"Slot_{x}_{y}";
+                
+                InventorySlotUI slotUI = slotObj.GetComponent<InventorySlotUI>();
+                if (slotUI != null)
+                {
+                    slotUI.SetPosition(x, y);
+                    
+                    // Capture coordinates for lambda
+                    int capturedX = x;
+                    int capturedY = y;
+                    slotUI.OnSlotClicked += () => OnSlotClicked(capturedX, capturedY);
+                    slotUI.OnSlotHovered += () => OnSlotHovered(capturedX, capturedY);
+                    
+                    // Drag & drop events
+                    slotUI.OnDragStarted += (dragX, dragY) => OnDragBegin(dragX, dragY);
+                    slotUI.OnDragging += (dragX, dragY, pos) => OnDragUpdate(dragX, dragY, pos);
+                    slotUI.OnDragEnded += (dragX, dragY) => OnDragEnd(dragX, dragY);
+                    
+                    slots.Add(slotUI);
+                }
+                
+                slotsGenerated++;
+                
+                // Yield every few slots to prevent blocking
+                if (slotsGenerated % slotsPerFrame == 0)
+                {
+                    yield return null;
+                }
+            }
+        }
+        
+        Debug.Log($"[InventoryGridUI] Generated {slots.Count} slots ({gridWidth}x{gridHeight}) progressively - SLOW PATH");
     }
 
     private void OnEnable()

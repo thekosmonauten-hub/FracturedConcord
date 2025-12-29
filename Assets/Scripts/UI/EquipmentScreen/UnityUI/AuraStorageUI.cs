@@ -26,7 +26,12 @@ public class AuraStorageUI : MonoBehaviour
     [SerializeField] private float gridPadding = 10f;
     
     [Header("References")]
+    [Tooltip("Prefab for individual slots (used if gridPrefab is not set)")]
     [SerializeField] private GameObject slotPrefab; // Prefab for individual aura slots
+    
+    [Tooltip("Complete grid prefab with all slots already set up (FASTER - recommended)")]
+    [SerializeField] private GameObject gridPrefab;
+    
     [SerializeField] private Transform gridContainer; // Container where slots are created
     
     [Header("Visual Settings")]
@@ -42,19 +47,32 @@ public class AuraStorageUI : MonoBehaviour
     
     void Start()
     {
-        GenerateGrid();
+        // Defer grid generation to prevent blocking scene load
+        StartCoroutine(DeferredGridGeneration());
+    }
+    
+    /// <summary>
+    /// Generate grid progressively across multiple frames
+    /// </summary>
+    private System.Collections.IEnumerator DeferredGridGeneration()
+    {
+        yield return null; // Wait a frame
+        yield return StartCoroutine(GenerateGridProgressive());
+        
+        // Load auras after grid is ready
         LoadAuras();
     }
     
     /// <summary>
     /// Generate the fixed grid of slots (always visible, like inventory)
+    /// Uses prefab grid if available (much faster), otherwise generates dynamically
     /// </summary>
-    void GenerateGrid()
+    private System.Collections.IEnumerator GenerateGridProgressive()
     {
         if (gridContainer == null)
         {
             Debug.LogError("[AuraStorageUI] Grid container is null!");
-            return;
+            yield break;
         }
         
         // Clear existing slots
@@ -64,11 +82,61 @@ public class AuraStorageUI : MonoBehaviour
         }
         slots.Clear();
         
-        // Set up GridLayoutGroup
+        // FAST PATH: Use prefab grid if available (instantiate once, much faster)
+        if (gridPrefab != null)
+        {
+            yield return null; // Wait one frame
+            
+            // Instantiate the prefab as a single object - it already has GridLayoutGroup and all slots laid out
+            GameObject gridInstance = Instantiate(gridPrefab, gridContainer);
+            gridInstance.name = "AuraGrid";
+            
+            // Ensure the prefab grid fills the container properly
+            RectTransform gridRect = gridInstance.GetComponent<RectTransform>();
+            if (gridRect != null)
+            {
+                gridRect.anchoredPosition = Vector2.zero;
+                gridRect.anchorMin = Vector2.zero;
+                gridRect.anchorMax = Vector2.one;
+                gridRect.sizeDelta = Vector2.zero;
+                gridRect.localScale = Vector3.one;
+            }
+            
+            // Disable container's GridLayoutGroup if it exists (prefab has its own)
+            GridLayoutGroup containerLayout = gridContainer.GetComponent<GridLayoutGroup>();
+            if (containerLayout != null)
+            {
+                containerLayout.enabled = false;
+            }
+            
+            // Collect all slots from the prefab (they're already laid out by the prefab's GridLayoutGroup)
+            AuraSlotUI[] prefabSlots = gridInstance.GetComponentsInChildren<AuraSlotUI>();
+            slots.AddRange(prefabSlots);
+            
+            // Set up event handlers for all slots
+            for (int i = 0; i < slots.Count; i++)
+            {
+                AuraSlotUI slotUI = slots[i];
+                if (slotUI != null)
+                {
+                    // Subscribe to events
+                    slotUI.OnAuraClicked += HandleAuraClicked;
+                    slotUI.OnAuraHovered += HandleAuraHovered;
+                    slotUI.OnAuraUnhovered += HandleAuraUnhovered;
+                }
+            }
+            
+            Debug.Log($"[AuraStorageUI] Loaded {slots.Count} slots from prefab grid ({gridColumns}x{gridRows}) - FAST PATH (1 instantiate)");
+            yield break; // Done!
+        }
+        
+        // SLOW PATH: Generate dynamically (fallback if no prefab)
+        // Set up GridLayoutGroup on container for dynamic generation
         GridLayoutGroup gridLayout = gridContainer.GetComponent<GridLayoutGroup>();
         if (gridLayout == null)
             gridLayout = gridContainer.gameObject.AddComponent<GridLayoutGroup>();
         
+        gridLayout.enabled = true; // Re-enable if it was disabled
         gridLayout.cellSize = new Vector2(cellSize, cellSize);
         gridLayout.spacing = new Vector2(cellSpacing, cellSpacing);
         gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
@@ -90,9 +158,9 @@ public class AuraStorageUI : MonoBehaviour
         
         sizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
         sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-        
-        // Generate all slots (total capacity)
         int totalSlots = gridColumns * gridRows;
+        const int slotsPerFrame = 5;
+        int slotsGenerated = 0;
         
         for (int i = 0; i < totalSlots; i++)
         {
@@ -130,9 +198,25 @@ public class AuraStorageUI : MonoBehaviour
             slotUI.OnAuraUnhovered += HandleAuraUnhovered;
             
             slots.Add(slotUI);
+            
+            slotsGenerated++;
+            
+            // Yield every few slots to prevent blocking
+            if (slotsGenerated % slotsPerFrame == 0)
+            {
+                yield return null;
+            }
         }
         
-        Debug.Log($"[AuraStorageUI] Generated {slots.Count} slots ({gridColumns}x{gridRows})");
+        Debug.Log($"[AuraStorageUI] Generated {slots.Count} slots ({gridColumns}x{gridRows}) progressively - SLOW PATH");
+    }
+    
+    /// <summary>
+    /// Legacy method for backward compatibility
+    /// </summary>
+    void GenerateGrid()
+    {
+        StartCoroutine(GenerateGridProgressive());
     }
     
     /// <summary>

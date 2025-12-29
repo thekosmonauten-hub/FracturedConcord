@@ -28,7 +28,12 @@ public class EmbossingGridUI : MonoBehaviour
     [SerializeField] private float gridPadding = 10f;
     
     [Header("References")]
+    [Tooltip("Prefab for individual cells (used if gridPrefab is not set)")]
     [SerializeField] private GameObject cellPrefab; // Prefab for individual cells
+    
+    [Tooltip("Complete grid prefab with all cells already set up (FASTER - recommended)")]
+    [SerializeField] private GameObject gridPrefab;
+    
     [SerializeField] private Transform gridContainer; // Container where cells are created
     
     [Header("Visual Settings")]
@@ -48,11 +53,10 @@ public class EmbossingGridUI : MonoBehaviour
     
     void Start()
     {
-        GenerateGrid();
-        
+        // Grid generation is deferred in Awake
         if (autoLoadFromResources)
         {
-            LoadEmbossingsFromResources();
+            // LoadEmbossingsFromResources is called after grid generation in DeferredGridGeneration
         }
     }
     
@@ -61,10 +65,19 @@ public class EmbossingGridUI : MonoBehaviour
     /// </summary>
     void GenerateGrid()
     {
+        // Legacy method - use GenerateGridProgressive instead
+        StartCoroutine(GenerateGridProgressive());
+    }
+    
+    /// <summary>
+    /// Generate grid progressively to prevent blocking
+    /// </summary>
+    private System.Collections.IEnumerator GenerateGridProgressive()
+    {
         if (gridContainer == null)
         {
             Debug.LogError("[EmbossingGridUI] Grid container is null!");
-            return;
+            yield break;
         }
         
         // Clear existing cells
@@ -101,8 +114,39 @@ public class EmbossingGridUI : MonoBehaviour
         sizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
         sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
         
-        // Generate all cells (total capacity)
+        // FAST PATH: Use prefab grid if available (instantiate once, much faster)
+        if (gridPrefab != null)
+        {
+            yield return null; // Wait one frame
+            
+            GameObject gridInstance = Instantiate(gridPrefab, gridContainer);
+            gridInstance.name = "EmbossingGrid";
+            
+            // Collect all cells from the prefab
+            EmbossingSlotUI[] prefabCells = gridInstance.GetComponentsInChildren<EmbossingSlotUI>();
+            cells.AddRange(prefabCells);
+            
+            // Initialize all cells (set positions)
+            for (int i = 0; i < cells.Count; i++)
+            {
+                EmbossingSlotUI slotUI = cells[i];
+                if (slotUI != null)
+                {
+                    // Calculate position from index
+                    int col = i % gridColumns;
+                    int row = i / gridColumns;
+                    slotUI.Initialize(col, row, emptyCellColor);
+                }
+            }
+            
+            Debug.Log($"[EmbossingGridUI] Loaded {cells.Count} cells from prefab grid ({gridColumns}x{gridRows}) - FAST PATH");
+            yield break; // Done!
+        }
+        
+        // SLOW PATH: Generate dynamically (fallback if no prefab)
         int totalCells = gridColumns * gridRows;
+        const int cellsPerFrame = 5;
+        int cellsGenerated = 0;
         
         for (int i = 0; i < totalCells; i++)
         {
@@ -141,9 +185,17 @@ public class EmbossingGridUI : MonoBehaviour
             
             slotUI.Initialize(col, row, emptyCellColor);
             cells.Add(slotUI);
+            
+            cellsGenerated++;
+            
+            // Yield every few cells to prevent blocking
+            if (cellsGenerated % cellsPerFrame == 0)
+            {
+                yield return null;
+            }
         }
         
-        Debug.Log($"[EmbossingGridUI] Generated {cells.Count} cells ({gridColumns}x{gridRows})");
+        Debug.Log($"[EmbossingGridUI] Generated {cells.Count} cells ({gridColumns}x{gridRows}) progressively - SLOW PATH");
     }
     
     /// <summary>

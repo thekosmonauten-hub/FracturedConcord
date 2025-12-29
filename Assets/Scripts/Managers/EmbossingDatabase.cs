@@ -88,19 +88,57 @@ public class EmbossingDatabase : MonoBehaviour
     }
     
     /// <summary>
-    /// Load all embossing effects from Resources
+    /// Load all embossing effects from Resources or ScriptableObject database
     /// </summary>
     void LoadAllEmbossings()
     {
         embossingsByID.Clear();
         allEmbossings.Clear();
         
-        Debug.Log($"[EmbossingDatabase] Loading embossings from Resources/{embossingResourcePath}");
+        // Try to load from ScriptableObject database first (faster, preloadable)
+        EmbossingDatabaseAsset soDatabase = null;
+        if (AssetPreloader.Instance != null)
+        {
+            soDatabase = AssetPreloader.Instance.GetPreloadedAsset<EmbossingDatabaseAsset>("EmbossingDatabase");
+        }
+        if (soDatabase == null)
+        {
+            soDatabase = Resources.Load<EmbossingDatabaseAsset>("EmbossingDatabase");
+        }
+        
+        if (soDatabase != null)
+        {
+            Debug.Log($"[EmbossingDatabase] Loading embossings from ScriptableObject database (fast path)");
+            allEmbossings = soDatabase.GetAllEmbossings();
+            
+            // Build lookup dictionary
+            foreach (EmbossingEffect embossing in allEmbossings)
+            {
+                if (embossing == null) continue;
+                
+                string id = embossing.embossingId;
+                if (string.IsNullOrEmpty(id)) continue;
+                
+                id = id.Trim();
+                if (!embossingsByID.ContainsKey(id))
+                {
+                    embossingsByID[id] = embossing;
+                }
+            }
+            
+            Debug.Log($"[EmbossingDatabase] Successfully loaded {allEmbossings.Count} embossing effects from database");
+            return;
+        }
+        
+        // Fallback to Resources.LoadAll (slower, but backward compatible)
+        Debug.Log($"[EmbossingDatabase] ScriptableObject database not found, falling back to Resources.LoadAll from Resources/{embossingResourcePath}");
         EmbossingEffect[] loadedEmbossings = Resources.LoadAll<EmbossingEffect>(embossingResourcePath);
         
         if (loadedEmbossings == null || loadedEmbossings.Length == 0)
         {
-            Debug.LogError($"[EmbossingDatabase] No embossings found at Resources/{embossingResourcePath}! Check that embossing assets are in the correct folder.");
+            Debug.LogError($"[EmbossingDatabase] No embossings found! Check that:\n" +
+                          $"1. EmbossingDatabase ScriptableObject exists at Resources/EmbossingDatabase.asset, OR\n" +
+                          $"2. EmbossingEffect assets exist at Resources/{embossingResourcePath}");
             return;
         }
         
@@ -134,7 +172,7 @@ public class EmbossingDatabase : MonoBehaviour
             allEmbossings.Add(embossing);
         }
         
-        Debug.Log($"[EmbossingDatabase] Successfully loaded {allEmbossings.Count} embossing effects");
+        Debug.Log($"[EmbossingDatabase] Successfully loaded {allEmbossings.Count} embossing effects (fallback method)");
         
         // Debug: Log all loaded IDs (first 20)
         if (embossingsByID.Count > 0)

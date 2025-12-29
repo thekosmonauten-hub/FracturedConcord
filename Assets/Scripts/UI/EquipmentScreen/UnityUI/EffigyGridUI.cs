@@ -12,7 +12,7 @@ public class EffigyGridUI : MonoBehaviour
 {
     [Header("Grid Settings")]
     private const int GRID_WIDTH = 6;
-    private const int GRID_HEIGHT = 4;
+    private const int GRID_HEIGHT = 20; // Updated to 20 rows
     
     [Tooltip("Size of each cell in pixels")]
     [SerializeField] private float cellSize = 60f;
@@ -21,7 +21,12 @@ public class EffigyGridUI : MonoBehaviour
     [SerializeField] private float cellSpacing = 2f;
     
     [Header("References")]
+    [Tooltip("Prefab for individual cells (used if gridPrefab is not set)")]
     [SerializeField] private GameObject cellPrefab;
+    
+    [Tooltip("Complete grid prefab with all cells already set up (FASTER - recommended)")]
+    [SerializeField] private GameObject gridPrefab;
+    
     [SerializeField] private Transform gridContainer;
     [SerializeField] private EffigyStorageUI effigyStorage; // Reference to return unequipped effigies
     
@@ -48,7 +53,17 @@ public class EffigyGridUI : MonoBehaviour
     
     void Awake()
     {
-        GenerateGrid();
+        // Defer grid generation to prevent blocking scene load
+        StartCoroutine(DeferredGridGeneration());
+    }
+    
+    /// <summary>
+    /// Generate grid progressively across multiple frames
+    /// </summary>
+    private System.Collections.IEnumerator DeferredGridGeneration()
+    {
+        yield return null; // Wait a frame
+        yield return StartCoroutine(GenerateGridProgressive());
     }
     
     void Start()
@@ -64,7 +79,145 @@ public class EffigyGridUI : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Legacy method for backward compatibility
+    /// </summary>
     void GenerateGrid()
+    {
+        // This method is kept for backward compatibility but should use DeferredGridGeneration
+        StartCoroutine(GenerateGridProgressive());
+    }
+    
+    /// <summary>
+    /// Generate grid progressively to prevent blocking
+    /// Uses prefab grid if available (much faster), otherwise generates dynamically
+    /// </summary>
+    private System.Collections.IEnumerator GenerateGridProgressive()
+    {
+        // Clear existing cells
+        foreach (Transform child in gridContainer)
+        {
+            Destroy(child.gameObject);
+        }
+        gridCells.Clear();
+        
+        // FAST PATH: Use prefab grid if available (instantiate once, much faster)
+        if (gridPrefab != null)
+        {
+            yield return null; // Wait one frame
+            
+            // Instantiate the prefab as a single object - it already has GridLayoutGroup and all cells laid out
+            GameObject gridInstance = Instantiate(gridPrefab, gridContainer);
+            gridInstance.name = "EffigyGrid";
+            
+            // Ensure the prefab grid fills the container properly
+            RectTransform gridRect = gridInstance.GetComponent<RectTransform>();
+            if (gridRect != null)
+            {
+                gridRect.anchoredPosition = Vector2.zero;
+                gridRect.anchorMin = Vector2.zero;
+                gridRect.anchorMax = Vector2.one;
+                gridRect.sizeDelta = Vector2.zero;
+                gridRect.localScale = Vector3.one;
+            }
+            
+            // Disable container's GridLayoutGroup if it exists (prefab has its own)
+            GridLayoutGroup containerLayout = gridContainer.GetComponent<GridLayoutGroup>();
+            if (containerLayout != null)
+            {
+                containerLayout.enabled = false;
+            }
+            
+            // Collect all cells from the prefab (they're already laid out by the prefab's GridLayoutGroup)
+            EffigyGridCellUI[] prefabCells = gridInstance.GetComponentsInChildren<EffigyGridCellUI>();
+            gridCells.AddRange(prefabCells);
+            
+            // Set up event handlers for all cells
+            for (int i = 0; i < gridCells.Count; i++)
+            {
+                EffigyGridCellUI cellUI = gridCells[i];
+                if (cellUI != null)
+                {
+                    // Calculate position from index (assuming left-to-right, top-to-bottom)
+                    int x = i % GRID_WIDTH;
+                    int y = i / GRID_WIDTH;
+                    cellUI.cellX = x;
+                    cellUI.cellY = y;
+                    cellUI.OnCellMouseDown += OnCellMouseDown;
+                    cellUI.OnCellMouseEnter += OnCellMouseEnter;
+                    cellUI.OnCellMouseExit += OnCellMouseExit;
+                    cellUI.OnCellMouseUp += OnCellMouseUp;
+                }
+            }
+            
+            Debug.Log($"[EffigyGridUI] Loaded {gridCells.Count} cells from prefab grid ({GRID_WIDTH}x{GRID_HEIGHT}) - FAST PATH (1 instantiate)");
+            yield break; // Done!
+        }
+        
+        // SLOW PATH: Generate dynamically (fallback if no prefab)
+        // Set up GridLayoutGroup on container for dynamic generation
+        GridLayoutGroup gridLayout = gridContainer.GetComponent<GridLayoutGroup>();
+        if (gridLayout == null)
+            gridLayout = gridContainer.gameObject.AddComponent<GridLayoutGroup>();
+        
+        gridLayout.enabled = true; // Re-enable if it was disabled
+        gridLayout.cellSize = new Vector2(cellSize, cellSize);
+        gridLayout.spacing = new Vector2(cellSpacing, cellSpacing);
+        gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        gridLayout.constraintCount = GRID_WIDTH;
+        gridLayout.startCorner = GridLayoutGroup.Corner.UpperLeft;
+        gridLayout.startAxis = GridLayoutGroup.Axis.Horizontal;
+        gridLayout.childAlignment = TextAnchor.MiddleCenter; // Center the grid cells
+        
+        // SLOW PATH: Generate dynamically (fallback if no prefab)
+        if (cellPrefab == null)
+        {
+            Debug.LogError("[EffigyGridUI] Neither gridPrefab nor cellPrefab is set! Cannot generate grid.");
+            yield break;
+        }
+        
+        // Generate cells progressively (5 per frame)
+        const int cellsPerFrame = 5;
+        int cellsGenerated = 0;
+        int totalCells = GRID_WIDTH * GRID_HEIGHT;
+        
+        for (int y = 0; y < GRID_HEIGHT; y++)
+        {
+            for (int x = 0; x < GRID_WIDTH; x++)
+            {
+                GameObject cellObj = Instantiate(cellPrefab, gridContainer);
+                cellObj.name = $"EffigyCell_{x}_{y}";
+                
+                EffigyGridCellUI cellUI = cellObj.GetComponent<EffigyGridCellUI>();
+                if (cellUI != null)
+                {
+                    cellUI.cellX = x;
+                    cellUI.cellY = y;
+                    cellUI.OnCellMouseDown += OnCellMouseDown;
+                    cellUI.OnCellMouseEnter += OnCellMouseEnter;
+                    cellUI.OnCellMouseExit += OnCellMouseExit;
+                    cellUI.OnCellMouseUp += OnCellMouseUp;
+                    
+                    gridCells.Add(cellUI);
+                }
+                
+                cellsGenerated++;
+                
+                // Yield every few cells to prevent blocking
+                if (cellsGenerated % cellsPerFrame == 0)
+                {
+                    yield return null;
+                }
+            }
+        }
+        
+        Debug.Log($"[EffigyGridUI] Generated {gridCells.Count} cells ({GRID_WIDTH}x{GRID_HEIGHT}) progressively - SLOW PATH");
+    }
+    
+    /// <summary>
+    /// Legacy GenerateGrid implementation (for backward compatibility)
+    /// </summary>
+    private void GenerateGridLegacy()
     {
         // Clear existing cells
         foreach (Transform child in gridContainer)

@@ -86,12 +86,13 @@ public class AssetPreloader : MonoBehaviour
             "CurrencyDatabase",           // ⚠️ CRITICAL - Loaded in CurrencyManager, LootManager, etc.
             "CardVisualAssets",           // ⚠️ CRITICAL - Loaded in CardCarouselUI, CardDisplay
             "ItemDatabase",               // Used by inventory grids
+            "EmbossingDatabase",          // ⚠️ CRITICAL - Replaces slow Resources.LoadAll for embossings
             
             // Warrant system (already partially preloaded, but ensure completeness)
             "WarrantDatabase",
             "WarrantNotableDatabase",
             "WarrantAffixDatabase",
-            "WarrantIconLibrary",         // Used in WarrantFusionUI
+            "WarrantIconLibrary",
             
             // Affix databases (used for item generation/display)
             "AffixDatabase",

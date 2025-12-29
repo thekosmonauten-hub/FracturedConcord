@@ -12,7 +12,7 @@ public class EffigyStorageUI : MonoBehaviour
 {
     [Header("Grid Settings")]
     [Tooltip("Number of columns in the storage grid")]
-    [SerializeField] private int gridColumns = 4;
+    [SerializeField] private int gridColumns = 6;
     
     [Tooltip("Number of rows in the storage grid (defines total capacity)")]
     [SerializeField] private int gridRows = 20;
@@ -27,7 +27,12 @@ public class EffigyStorageUI : MonoBehaviour
     [SerializeField] private float gridPadding = 10f;
     
     [Header("References")]
+    [Tooltip("Prefab for individual cells (used if gridPrefab is not set)")]
     [SerializeField] private GameObject cellPrefab; // Prefab for individual cells
+    
+    [Tooltip("Complete grid prefab with all cells already set up (FASTER - recommended)")]
+    [SerializeField] private GameObject gridPrefab;
+    
     [SerializeField] private Transform gridContainer; // Container where cells are created
     [SerializeField] private EffigyGridUI effigyGrid; // Reference to main effigy grid for drag
     
@@ -40,19 +45,32 @@ public class EffigyStorageUI : MonoBehaviour
     
     void Start()
     {
-        GenerateGrid();
+        // Defer grid generation to prevent blocking scene load
+        StartCoroutine(DeferredGridGeneration());
+    }
+    
+    /// <summary>
+    /// Generate grid progressively across multiple frames
+    /// </summary>
+    private System.Collections.IEnumerator DeferredGridGeneration()
+    {
+        yield return null; // Wait a frame
+        yield return StartCoroutine(GenerateGridProgressive());
+        
+        // Load effigies after grid is ready
         LoadEffigiesFromResources();
     }
     
     /// <summary>
     /// Generate the fixed grid of cells (always visible, like inventory)
+    /// Uses prefab grid if available (much faster), otherwise generates dynamically
     /// </summary>
-    void GenerateGrid()
+    private System.Collections.IEnumerator GenerateGridProgressive()
     {
         if (gridContainer == null)
         {
             Debug.LogError("[EffigyStorageUI] Grid container is null!");
-            return;
+            yield break;
         }
         
         // Clear existing cells
@@ -62,11 +80,61 @@ public class EffigyStorageUI : MonoBehaviour
         }
         cells.Clear();
         
-        // Set up GridLayoutGroup
+        // FAST PATH: Use prefab grid if available (instantiate once, much faster)
+        if (gridPrefab != null)
+        {
+            yield return null; // Wait one frame
+            
+            // Instantiate the prefab as a single object - it already has GridLayoutGroup and all cells laid out
+            GameObject gridInstance = Instantiate(gridPrefab, gridContainer);
+            gridInstance.name = "EffigyStorageGrid";
+            
+            // Ensure the prefab grid fills the container properly
+            RectTransform gridRect = gridInstance.GetComponent<RectTransform>();
+            if (gridRect != null)
+            {
+                gridRect.anchoredPosition = Vector2.zero;
+                gridRect.anchorMin = Vector2.zero;
+                gridRect.anchorMax = Vector2.one;
+                gridRect.sizeDelta = Vector2.zero;
+                gridRect.localScale = Vector3.one;
+            }
+            
+            // Disable container's GridLayoutGroup if it exists (prefab has its own)
+            GridLayoutGroup containerLayout = gridContainer.GetComponent<GridLayoutGroup>();
+            if (containerLayout != null)
+            {
+                containerLayout.enabled = false;
+            }
+            
+            // Collect all cells from the prefab (they're already laid out by the prefab's GridLayoutGroup)
+            EffigyStorageSlotUI[] prefabCells = gridInstance.GetComponentsInChildren<EffigyStorageSlotUI>();
+            cells.AddRange(prefabCells);
+            
+            // Initialize all cells (set positions and references)
+            for (int i = 0; i < cells.Count; i++)
+            {
+                EffigyStorageSlotUI slotUI = cells[i];
+                if (slotUI != null)
+                {
+                    // Calculate position from index
+                    int col = i % gridColumns;
+                    int row = i / gridColumns;
+                    slotUI.Initialize(col, row, emptyCellColor, effigyGrid);
+                }
+            }
+            
+            Debug.Log($"[EffigyStorageUI] Loaded {cells.Count} cells from prefab grid ({gridColumns}x{gridRows}) - FAST PATH (1 instantiate)");
+            yield break; // Done!
+        }
+        
+        // SLOW PATH: Generate dynamically (fallback if no prefab)
+        // Set up GridLayoutGroup on container for dynamic generation
         GridLayoutGroup gridLayout = gridContainer.GetComponent<GridLayoutGroup>();
         if (gridLayout == null)
             gridLayout = gridContainer.gameObject.AddComponent<GridLayoutGroup>();
         
+        gridLayout.enabled = true; // Re-enable if it was disabled
         gridLayout.cellSize = new Vector2(cellSize, cellSize);
         gridLayout.spacing = new Vector2(cellSpacing, cellSpacing);
         gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
@@ -88,9 +156,9 @@ public class EffigyStorageUI : MonoBehaviour
         
         sizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
         sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-        
-        // Generate all cells (total capacity)
         int totalCells = gridColumns * gridRows;
+        const int cellsPerFrame = 5;
+        int cellsGenerated = 0;
         
         for (int i = 0; i < totalCells; i++)
         {
@@ -129,9 +197,25 @@ public class EffigyStorageUI : MonoBehaviour
             
             slotUI.Initialize(col, row, emptyCellColor, effigyGrid);
             cells.Add(slotUI);
+            
+            cellsGenerated++;
+            
+            // Yield every few cells to prevent blocking
+            if (cellsGenerated % cellsPerFrame == 0)
+            {
+                yield return null;
+            }
         }
         
-        Debug.Log($"[EffigyStorageUI] Generated {cells.Count} cells ({gridColumns}x{gridRows})");
+        Debug.Log($"[EffigyStorageUI] Generated {cells.Count} cells ({gridColumns}x{gridRows}) progressively - SLOW PATH");
+    }
+    
+    /// <summary>
+    /// Legacy method for backward compatibility
+    /// </summary>
+    void GenerateGrid()
+    {
+        StartCoroutine(GenerateGridProgressive());
     }
     
     /// <summary>
