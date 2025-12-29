@@ -1292,17 +1292,12 @@ public class CombatDeckManager : MonoBehaviour
         
         // Add card to discard pile (logical state - card is played, it goes to discard)
         // Note: Visual animation to discard pile happens separately
-        if (!discardPile.Contains(action.card))
-        {
-            discardPile.Add(action.card);
-            LogDeckState($"After Adding Card to Discard in ResolveCardAction: {action.card.cardName}");
-            ValidateCardCount($"After ResolveCardAction - card added to discard: {action.card.cardName}");
-            // OnCardDiscarded is invoked later during visual cleanup, not here
-        }
-        else
-        {
-            Debug.LogWarning($"[ResolveCardAction] Card {action.card.cardName} already in discard pile! (duplicate add prevented)");
-        }
+        // IMPORTANT: Always add the card - decks can have multiple copies of the same card type
+        // Each card instance should be tracked separately, even if they reference the same CardDataExtended ScriptableObject
+        discardPile.Add(action.card);
+        LogDeckState($"After Adding Card to Discard in ResolveCardAction: {action.card.cardName}");
+        ValidateCardCount($"After ResolveCardAction - card added to discard: {action.card.cardName}");
+        // OnCardDiscarded is invoked later during visual cleanup, not here
         
         // Mark as resolved
         action.resolved = true;

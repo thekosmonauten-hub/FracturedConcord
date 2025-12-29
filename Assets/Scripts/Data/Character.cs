@@ -228,6 +228,9 @@ public class Character
     [Tooltip("Flat warrant modifiers (e.g., maxHealthFlat, maxManaFlat). Applied before percentage modifiers.")]
     public Dictionary<string, float> warrantFlatModifiers = new Dictionary<string, float>();
     
+    [Tooltip("Warrant attribute bonuses (strength, dexterity, intelligence). Tracked separately so they can be properly removed when warrants are unequipped.")]
+    public Dictionary<string, int> warrantAttributeBonuses = new Dictionary<string, int>();
+    
     [Header("Base Defense Values from Items")]
     [Tooltip("Base defense values from equipped items (before increased modifiers). Used for scaling with evasionIncreased, armourIncreased, energyShieldIncreased.")]
     public float baseEvasionFromItems = 0f;
@@ -304,42 +307,7 @@ public class Character
     // Initialize stats based on Path of Exile-style class system
     private void InitializeStats()
     {
-        switch (characterClass.ToLower())
-        {
-            // Primary Classes (Single Attribute Focus)
-            case "marauder":
-                strength = 32;
-                dexterity = 14;
-                intelligence = 14;
-                break;
-            case "ranger":
-                strength = 14;
-                dexterity = 32;
-                intelligence = 14;
-                break;
-            case "witch":
-                strength = 14;
-                dexterity = 14;
-                intelligence = 32;
-                break;
-            
-            // Hybrid Classes (Dual Attribute Focus)
-            case "brawler":
-                strength = 23;
-                dexterity = 23;
-                intelligence = 14;
-                break;
-            case "thief":
-                strength = 14;
-                dexterity = 23;
-                intelligence = 23;
-                break;
-            case "apostle":
-                strength = 23;
-                dexterity = 14;
-                intelligence = 23;
-                break;
-        }
+        ResetAttributesToBase();
         
         // All classes start with 30 Mana and 200 Reliance
         mana = 30;
@@ -353,6 +321,66 @@ public class Character
         guardPersistenceFraction = 0.25f;
 
         CalculateDerivedStats();
+    }
+    
+    /// <summary>
+    /// Reset attributes to their base values based on character class and level
+    /// Used when clearing warrant modifiers to restore base attributes (including level-up gains)
+    /// </summary>
+    private void ResetAttributesToBase()
+    {
+        // Get base attributes for this class
+        int baseStr, baseDex, baseInt;
+        switch (characterClass.ToLower())
+        {
+            // Primary Classes (Single Attribute Focus)
+            case "marauder":
+                baseStr = 32;
+                baseDex = 14;
+                baseInt = 14;
+                break;
+            case "ranger":
+                baseStr = 14;
+                baseDex = 32;
+                baseInt = 14;
+                break;
+            case "witch":
+                baseStr = 14;
+                baseDex = 14;
+                baseInt = 32;
+                break;
+            
+            // Hybrid Classes (Dual Attribute Focus)
+            case "brawler":
+                baseStr = 23;
+                baseDex = 23;
+                baseInt = 14;
+                break;
+            case "thief":
+                baseStr = 14;
+                baseDex = 23;
+                baseInt = 23;
+                break;
+            case "apostle":
+                baseStr = 23;
+                baseDex = 14;
+                baseInt = 23;
+                break;
+            default:
+                // Default fallback (shouldn't happen, but safety)
+                baseStr = 14;
+                baseDex = 14;
+                baseInt = 14;
+                break;
+        }
+        
+        // Add level-up gains (level 1 is base, so we gain (level - 1) times)
+        var (strGain, dexGain, intGain) = GetLevelUpGains();
+        int levelsGained = Mathf.Max(0, level - 1);
+        
+        strength = baseStr + (strGain * levelsGained);
+        dexterity = baseDex + (dexGain * levelsGained);
+        intelligence = baseInt + (intGain * levelsGained);
     }
 
     public void ResetRuntimeState()
@@ -1263,6 +1291,32 @@ public class Character
     /// </summary>
     private void ClearAllWarrantModifiers()
     {
+        // First, restore base attributes by subtracting tracked warrant bonuses
+        if (warrantAttributeBonuses != null && warrantAttributeBonuses.Count > 0)
+        {
+            if (warrantAttributeBonuses.ContainsKey("strength"))
+            {
+                strength -= warrantAttributeBonuses["strength"];
+            }
+            if (warrantAttributeBonuses.ContainsKey("dexterity"))
+            {
+                dexterity -= warrantAttributeBonuses["dexterity"];
+            }
+            if (warrantAttributeBonuses.ContainsKey("intelligence"))
+            {
+                intelligence -= warrantAttributeBonuses["intelligence"];
+            }
+            warrantAttributeBonuses.Clear();
+        }
+        else
+        {
+            // If warrantAttributeBonuses is empty (e.g., after loading from save),
+            // we need to reset attributes to their base values by recalculating from class
+            // This handles the case where saved attributes already include warrant bonuses
+            // but the tracking dictionary wasn't saved/loaded
+            ResetAttributesToBase();
+        }
+        
         // Clear damage modifiers
         damageModifiers.increasedPhysicalDamage.Clear();
         damageModifiers.increasedFireDamage.Clear();
