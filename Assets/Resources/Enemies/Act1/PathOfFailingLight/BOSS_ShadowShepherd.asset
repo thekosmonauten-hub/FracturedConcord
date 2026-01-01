@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Shadow Shepherd
   description: A dark entity that commands the shadows of the fallen. It shepherds
     lost souls through the failing light.
-  enemySprite: {fileID: 1438215945726200906, guid: c4698343d3acd314fb991d19959e1b34, type: 3}
+  enemySprite: {fileID: 21300000, guid: c4698343d3acd314fb991d19959e1b34, type: 3}
   tier: 2
   rarity: 2
   category: 4

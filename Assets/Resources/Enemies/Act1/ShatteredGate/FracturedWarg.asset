@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   enemyName: Fractured Warg
   description: A wolf-like beast with jagged shard growths around the jaw and shoulders.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: 21300000, guid: dbdf06a044b56ab488ac791532de09d9, type: 3}
   tier: 0
   rarity: 0
   category: 0
@@ -47,6 +47,7 @@ MonoBehaviour:
   specialAbilities: []
   abilities:
   - {fileID: 11400000, guid: bddf0b7c8205e4a418fd8c2d4f40c020, type: 2}
+  bossAbilities: 
   summonPool: []
   spiritTags: 
   guaranteedSpiritDrop: 0

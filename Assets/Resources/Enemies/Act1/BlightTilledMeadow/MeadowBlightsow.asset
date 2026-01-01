@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Meadow Blightsow
   description: A corrupted boar with fungal blooms on its back and pale spores puffing
     with each step.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: 21300000, guid: f931a2e55bafe23429fa925340a438f5, type: 3}
   tier: 0
   rarity: 0
   category: 0
@@ -48,6 +48,7 @@ MonoBehaviour:
   specialAbilities: []
   abilities:
   - {fileID: 11400000, guid: ade18b5bbf0c5dc479d14711d0ecc185, type: 2}
+  bossAbilities: 
   summonPool: []
   spiritTags: 
   guaranteedSpiritDrop: 0

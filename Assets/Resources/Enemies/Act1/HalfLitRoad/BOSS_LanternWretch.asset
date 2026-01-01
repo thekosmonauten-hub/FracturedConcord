@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: The Lantern Wretch
   description: A twisted entity carrying a broken lantern, casting erratic light
     that blinds and disorients.
-  enemySprite: {fileID: -1482676198310808740, guid: 03377f1f193454c4cac9193d597d2e7d, type: 3}
+  enemySprite: {fileID: 21300000, guid: 03377f1f193454c4cac9193d597d2e7d, type: 3}
   tier: 2
   rarity: 2
   category: 2

@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Fieldborn Aberrant
   description: A grotesque amalgamation of corrupted crops and twisted vines, birthed
     from the blighted soil of the meadow.
-  enemySprite: {fileID: -5616635226587662501, guid: eddde8957df82a64793f5ccfa08df50c, type: 3}
+  enemySprite: {fileID: 21300000, guid: eddde8957df82a64793f5ccfa08df50c, type: 3}
   tier: 2
   rarity: 2
   category: 2

@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Lumen-Drip Beast
   description: A creature whose body leaks faint blue-white luminescence that drips
     like liquid.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: 21300000, guid: 1400cb58845f9b44b87228c140247658, type: 3}
   tier: 0
   rarity: 0
   category: 0
@@ -48,6 +48,7 @@ MonoBehaviour:
   specialAbilities: []
   abilities:
   - {fileID: 11400000, guid: 707b14787a61ddd4fb8da1a7befbaa2f, type: 2}
+  bossAbilities: 
   summonPool: []
   spiritTags: 
   guaranteedSpiritDrop: 0

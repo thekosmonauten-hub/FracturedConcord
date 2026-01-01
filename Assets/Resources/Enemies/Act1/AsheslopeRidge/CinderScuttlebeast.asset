@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   enemyName: Cinder Scuttlebeast
   description: A small canine-like creature with ember-like spots on its fur.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: 21300000, guid: 89e93885e8f7888459c0a66df74edff4, type: 3}
   tier: 0
   rarity: 0
   category: 0
@@ -47,6 +47,7 @@ MonoBehaviour:
   specialAbilities: []
   abilities:
   - {fileID: 11400000, guid: 68a76a3a1e218e645befa0aa49af7bb7, type: 2}
+  bossAbilities: 
   summonPool: []
   spiritTags: 
   guaranteedSpiritDrop: 0

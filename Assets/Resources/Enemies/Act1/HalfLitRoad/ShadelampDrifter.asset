@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Shadelamp Drifter
   description: A wandering figure with a lantern that flickers between natural and
     arcane light.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: 21300000, guid: 90e6db48d2ae08c4aa7456f312038f23, type: 3}
   tier: 0
   rarity: 0
   category: 2
@@ -48,6 +48,7 @@ MonoBehaviour:
   specialAbilities: []
   abilities:
   - {fileID: 11400000, guid: 0e293cfcdd73b7446be2d5ca81a39e87, type: 2}
+  bossAbilities: 
   summonPool: []
   spiritTags: 
   guaranteedSpiritDrop: 0

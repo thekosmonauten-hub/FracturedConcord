@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Gate Warden of Vassara
   description: The final guardian of the shattered gate to Vassara, wielding ancient
     laws to deny passage to the unworthy.
-  enemySprite: {fileID: -8403505614708831197, guid: f92461b3d21077545a3b384b87d16b24, type: 3}
+  enemySprite: {fileID: 21300000, guid: f92461b3d21077545a3b384b87d16b24, type: 3}
   tier: 2
   rarity: 3
   category: 3

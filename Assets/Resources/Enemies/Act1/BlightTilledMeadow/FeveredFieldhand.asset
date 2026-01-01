@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Fevered Fieldhand
   description: A sickly worker clutching tools, with faint glowing blotches forming
     under the skin.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: 21300000, guid: ab8297f6a6cc7ec4b9c179c58b4cc838, type: 3}
   tier: 0
   rarity: 0
   category: 0
@@ -48,6 +48,7 @@ MonoBehaviour:
   specialAbilities: []
   abilities:
   - {fileID: 11400000, guid: e8e752eaa2034ad44a32bac02e0ad1c3, type: 2}
+  bossAbilities: 
   summonPool: []
   spiritTags: 
   guaranteedSpiritDrop: 0

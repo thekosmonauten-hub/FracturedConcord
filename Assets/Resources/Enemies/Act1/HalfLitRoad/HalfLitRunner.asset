@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Half-Lit Runner
   description: A roadside bandit whose shadow doesn't match their movements, creating
     eerie mismatches.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: 21300000, guid: 35019c74b261b2c4887d4dce0e3616f9, type: 3}
   tier: 0
   rarity: 0
   category: 0
@@ -48,6 +48,7 @@ MonoBehaviour:
   specialAbilities: []
   abilities:
   - {fileID: 11400000, guid: 9e6dfe0929c2d284ea58ddbf13ad4f63, type: 2}
+  bossAbilities: 
   summonPool: []
   spiritTags: 
   guaranteedSpiritDrop: 0

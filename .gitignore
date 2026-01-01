@@ -88,3 +88,6 @@ Temp/
 temp/
 *.tmp
 *.temp
+
+# Archive folder (documentation and archived files)
+Archive/

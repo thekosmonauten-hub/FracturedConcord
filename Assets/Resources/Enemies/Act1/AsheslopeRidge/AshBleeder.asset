@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Ash-Bleeder
   description: A humanoid covered in soot; when struck, ash bursts from cracks in
     their skin.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: 21300000, guid: 8a15be6157ab8994ba130b26aa21da98, type: 3}
   tier: 0
   rarity: 0
   category: 0
@@ -48,6 +48,7 @@ MonoBehaviour:
   specialAbilities: []
   abilities:
   - {fileID: 11400000, guid: 6d67408e93848e04e988dfb16b34f222, type: 2}
+  bossAbilities: 
   summonPool: []
   spiritTags: 
   guaranteedSpiritDrop: 0

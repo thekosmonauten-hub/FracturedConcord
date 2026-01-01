@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: River-Sworn Rotmass
   description: A bloated mass of decay and pestilence sworn to the corrupted creek,
     seeping poison with every movement.
-  enemySprite: {fileID: -5627291168705007400, guid: 78fc7cd0a8317684286236331516c3f5, type: 3}
+  enemySprite: {fileID: 21300000, guid: 78fc7cd0a8317684286236331516c3f5, type: 3}
   tier: 2
   rarity: 3
   category: 3

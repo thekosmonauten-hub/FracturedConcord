@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Grainwisp Vermin
   description: Small field rodents trailing drifting golden dust; their bodies twitch
     with erratic energy.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: -8622831139191833795, guid: 477c15bcbfae78f46b8f586011014423, type: 3}
   tier: 0
   rarity: 0
   category: 5
@@ -48,6 +48,7 @@ MonoBehaviour:
   specialAbilities: []
   abilities:
   - {fileID: 11400000, guid: 81dd787b9c7b93b4580bedbe4b6d210e, type: 2}
+  bossAbilities: 
   summonPool: []
   spiritTags: 
   guaranteedSpiritDrop: 0

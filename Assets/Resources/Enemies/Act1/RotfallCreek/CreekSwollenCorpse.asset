@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Creek-Swollen Corpse
   description: A waterlogged undead that bloats and leaks murky creekwater with each
     step.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: 21300000, guid: 738215156ab0d30479577a7420c3c202, type: 3}
   tier: 0
   rarity: 0
   category: 3
@@ -48,6 +48,7 @@ MonoBehaviour:
   specialAbilities: []
   abilities:
   - {fileID: 11400000, guid: 31000fd346a6dcc40a1136036453ef8f, type: 2}
+  bossAbilities: 
   summonPool: []
   spiritTags: 
   guaranteedSpiritDrop: 0
