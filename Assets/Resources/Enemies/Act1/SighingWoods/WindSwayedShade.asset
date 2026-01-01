@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Wind-Swayed Shade
   description: Vague humanoid shapes made of drifting mist and old cloth scraps caught
     on branches.
-  enemySprite: {fileID: 0}
+  enemySprite: {fileID: 21300000, guid: 9d4b0b35172d3ad4fba872bfa1b57bfa, type: 3}
   tier: 0
   rarity: 0
   category: 2
@@ -48,6 +48,7 @@ MonoBehaviour:
   specialAbilities: []
   abilities:
   - {fileID: 11400000, guid: c926d0983071d1b4cb7892b4370af915, type: 2}
+  bossAbilities: 
   summonPool: []
   spiritTags: 
   guaranteedSpiritDrop: 0

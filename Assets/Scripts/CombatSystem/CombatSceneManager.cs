@@ -25,7 +25,7 @@ public class CombatSceneManager : MonoBehaviour
     {
         InitializeCombatScene();
         SetupUI();
-        SetMazeCombatBackground();
+        SetCombatBackground();
     }
     
     private void InitializeCombatScene()
@@ -224,66 +224,100 @@ public class CombatSceneManager : MonoBehaviour
     }
     
     /// <summary>
+    /// Sets the combat background with priority:
+    /// 1. Encounter-specific background (if set in EncounterData)
+    /// 2. Maze combat background (if maze combat)
+    /// 3. Default background (unchanged)
+    /// </summary>
+    private void SetCombatBackground()
+    {
+        // Try to find background image if not assigned
+        if (combatBackgroundImage == null && autoFindBackgroundImage)
+        {
+            FindBackgroundImage();
+        }
+        
+        if (combatBackgroundImage == null)
+        {
+            Debug.LogWarning("[CombatSceneManager] No combat background image found! Backgrounds will not be applied.");
+            return;
+        }
+        
+        // Priority 1: Check for encounter-specific background
+        EncounterData currentEncounter = null;
+        if (EncounterManager.Instance != null)
+        {
+            currentEncounter = EncounterManager.Instance.GetCurrentEncounter();
+        }
+        
+        if (currentEncounter != null && currentEncounter.combatBackgroundSprite != null)
+        {
+            combatBackgroundImage.sprite = currentEncounter.combatBackgroundSprite;
+            Debug.Log($"[CombatSceneManager] Applied encounter-specific background: {currentEncounter.combatBackgroundSprite.name} (Encounter {currentEncounter.encounterID}: {currentEncounter.encounterName})");
+            return;
+        }
+        
+        // Priority 2: Check if this is a maze combat encounter
+        bool isMazeCombat = PlayerPrefs.HasKey("MazeCombatContext") || PlayerPrefs.HasKey("MazeRunId");
+        
+        if (isMazeCombat)
+        {
+            SetMazeCombatBackground();
+        }
+        else
+        {
+            Debug.Log("[CombatSceneManager] No encounter-specific or maze background found. Using default background.");
+        }
+    }
+    
+    /// <summary>
+    /// Helper method to find the background image component automatically.
+    /// </summary>
+    private void FindBackgroundImage()
+    {
+        // Try to find by name
+        GameObject bgObj = GameObject.Find("Background");
+        if (bgObj != null)
+        {
+            combatBackgroundImage = bgObj.GetComponent<UnityEngine.UI.Image>();
+        }
+        
+        // Try to find by tag
+        if (combatBackgroundImage == null)
+        {
+            bgObj = GameObject.FindGameObjectWithTag("Background");
+            if (bgObj != null)
+            {
+                combatBackgroundImage = bgObj.GetComponent<UnityEngine.UI.Image>();
+            }
+        }
+        
+        // Try to find any UI Image component with "background" in name
+        if (combatBackgroundImage == null)
+        {
+            var allImages = FindObjectsByType<UnityEngine.UI.Image>(FindObjectsSortMode.None);
+            foreach (var img in allImages)
+            {
+                if (img.name.ToLower().Contains("background"))
+                {
+                    combatBackgroundImage = img;
+                    break;
+                }
+            }
+        }
+        
+        if (combatBackgroundImage != null)
+        {
+            Debug.Log($"[CombatSceneManager] Auto-found combat background image: {combatBackgroundImage.name}");
+        }
+    }
+    
+    /// <summary>
     /// Sets the background for maze combat encounters.
     /// Uses the randomized background selected when entering combat.
     /// </summary>
     private void SetMazeCombatBackground()
     {
-        // Check if this is a maze combat encounter
-        bool isMazeCombat = PlayerPrefs.HasKey("MazeCombatContext") || PlayerPrefs.HasKey("MazeRunId");
-        
-        if (!isMazeCombat)
-        {
-            // Not a maze combat - use default background or don't change
-            return;
-        }
-        
-        // Try to find background image if not assigned
-        if (combatBackgroundImage == null && autoFindBackgroundImage)
-        {
-            // Try to find by name
-            GameObject bgObj = GameObject.Find("Background");
-            if (bgObj != null)
-            {
-                combatBackgroundImage = bgObj.GetComponent<UnityEngine.UI.Image>();
-            }
-            
-            // Try to find by tag
-            if (combatBackgroundImage == null)
-            {
-                bgObj = GameObject.FindGameObjectWithTag("Background");
-                if (bgObj != null)
-                {
-                    combatBackgroundImage = bgObj.GetComponent<UnityEngine.UI.Image>();
-                }
-            }
-            
-            // Try to find any UI Image component with "background" in name
-            if (combatBackgroundImage == null)
-            {
-                var allImages = FindObjectsByType<UnityEngine.UI.Image>(FindObjectsSortMode.None);
-                foreach (var img in allImages)
-                {
-                    if (img.name.ToLower().Contains("background"))
-                    {
-                        combatBackgroundImage = img;
-                        break;
-                    }
-                }
-            }
-            
-            if (combatBackgroundImage != null)
-            {
-                Debug.Log($"[CombatSceneManager] Auto-found combat background image: {combatBackgroundImage.name}");
-            }
-        }
-        
-        if (combatBackgroundImage == null)
-        {
-            Debug.LogWarning("[CombatSceneManager] No combat background image found! Maze combat backgrounds will not be applied.");
-            return;
-        }
-        
         // Get the maze run manager to access background config
         if (MazeRunManager.Instance != null && MazeRunManager.Instance.mazeConfig != null)
         {

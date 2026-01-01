@@ -13,6 +13,9 @@ public class EncounterDataAsset : ScriptableObject
 	[Min(1)] public int actNumber = 1;
 	[Tooltip("Icon displayed on encounter selection and world map nodes.")]
 	public Sprite encounterSprite;
+	[Header("Combat Visuals")]
+	[Tooltip("Optional: Background sprite for combat scene. If not set, will use default or maze backgrounds.")]
+	public Sprite combatBackgroundSprite;
 
 	[Header("Progression")]
 	[Tooltip("Encounters that must be completed before this node unlocks.")]

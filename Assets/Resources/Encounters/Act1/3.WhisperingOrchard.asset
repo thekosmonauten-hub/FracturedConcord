@@ -17,6 +17,7 @@ MonoBehaviour:
   sceneName: CombatScene
   actNumber: 1
   encounterSprite: {fileID: -6470460504253458178, guid: aa39b61b8ab556b45bfa1eafb7896d87, type: 3}
+  combatBackgroundSprite: {fileID: -7145866978300709596, guid: 9f89c54ef332caa4aaf618a42221f47b, type: 3}
   prerequisiteEncounters:
   - {fileID: 11400000, guid: 3657c45e6d13da145b2102452303c834, type: 2}
   areaLevel: 3

@@ -12,6 +12,9 @@ public class EncounterData
     public int actNumber = 1;
     [Tooltip("Icon shown on encounter selection / world map nodes.")]
     public Sprite encounterSprite;
+    [Header("Combat Visuals")]
+    [Tooltip("Optional: Background sprite for combat scene. If not set, will use default or maze backgrounds.")]
+    public Sprite combatBackgroundSprite;
     [Header("Progression")]
     public List<int> prerequisiteEncounterIDs = new List<int>();
     public List<int> unlockedEncounterIDs = new List<int>();

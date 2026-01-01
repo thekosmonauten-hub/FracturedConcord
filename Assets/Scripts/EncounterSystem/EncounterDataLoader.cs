@@ -67,6 +67,7 @@ public static class EncounterDataLoader
             areaLootTable = asset.areaLootTable,
             actNumber = asset.actNumber,
             encounterSprite = asset.encounterSprite,
+            combatBackgroundSprite = asset.combatBackgroundSprite,
             // Encounter 1 is always unlocked, regardless of prerequisites
             isUnlocked = (asset.encounterID == 1) || !hasPrereqs,
             // Copy encounter-specific enemy pool
