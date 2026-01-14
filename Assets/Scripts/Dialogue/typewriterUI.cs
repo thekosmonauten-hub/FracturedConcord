@@ -79,6 +79,50 @@ public class typewriterUI : MonoBehaviour
 	}
 	
 	/// <summary>
+	/// Start the typewriter effect with the provided text directly.
+	/// This avoids the need to set text in the component first, preventing it from being visible before typing starts.
+	/// </summary>
+	public void StartTypewriterEffect(string textToType)
+	{
+		// Stop any existing coroutines first
+		StopTypewriterEffect();
+		
+		InitializeComponents();
+		
+		if (string.IsNullOrEmpty(textToType))
+		{
+			Debug.LogWarning("[typewriterUI] StartTypewriterEffect: textToType is null or empty!");
+			return;
+		}
+		
+		writer = textToType;
+		
+		// Clear text immediately to prevent it from being visible
+		bool startedCoroutine = false;
+		
+		if (_text != null)
+		{
+			_text.text = "";
+			textCoroutine = StartCoroutine(TypeWriterText());
+			startedCoroutine = true;
+			Debug.Log($"[typewriterUI] Started typewriter coroutine for Text component with {textToType.Length} characters");
+		}
+		
+		if (_tmpProText != null)
+		{
+			_tmpProText.text = "";
+			tmpCoroutine = StartCoroutine(TypeWriterTMP());
+			startedCoroutine = true;
+			Debug.Log($"[typewriterUI] Started typewriter coroutine for TextMeshPro component with {textToType.Length} characters");
+		}
+		
+		if (!startedCoroutine)
+		{
+			Debug.LogError("[typewriterUI] StartTypewriterEffect: Neither Text nor TextMeshPro component found! Cannot start typewriter effect.");
+		}
+	}
+	
+	/// <summary>
 	/// Stop any currently running typewriter effects
 	/// </summary>
 	public void StopTypewriterEffect()

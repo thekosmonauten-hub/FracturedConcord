@@ -1717,8 +1717,26 @@ public class DialogueUI : MonoBehaviour
                 // Trim any leading/trailing whitespace from the paragraph text
                 string trimmedParagraph = paragraphs[i].Trim();
                 
-                // Ensure text is set
-                textsToUse[i].text = trimmedParagraph;
+                // Check if this paragraph has a typewriter component
+                typewriterUI typewriter = textsToUse[i].GetComponent<typewriterUI>();
+                bool hasTypewriter = typewriter != null;
+                
+                // If using typewriter, DON'T set the text - it will be set when the paragraph is shown
+                // This prevents the text from being visible when the GameObject is activated
+                if (!hasTypewriter)
+                {
+                    // No typewriter - set text normally
+                    textsToUse[i].text = trimmedParagraph;
+                    
+                    // Force text update
+                    textsToUse[i].ForceMeshUpdate();
+                }
+                else
+                {
+                    // Has typewriter - keep text empty to prevent flicker
+                    textsToUse[i].text = "";
+                    Debug.Log($"[DialogueUI] PreloadParagraphs: Paragraph {i + 1} has typewriter - keeping text empty to prevent flicker");
+                }
                 
                 // Ensure text color is visible
                 if (textsToUse[i].color.a < 1f)
@@ -1729,13 +1747,10 @@ public class DialogueUI : MonoBehaviour
                     Debug.Log($"[DialogueUI] PreloadParagraphs: Fixed text color alpha for paragraph {i + 1}");
                 }
                 
-                // Force text update
-                textsToUse[i].ForceMeshUpdate();
-                
                 // Keep GameObject inactive for now - will be activated by ShowCurrentParagraph
                 textsToUse[i].gameObject.SetActive(false);
                 
-                Debug.Log($"[DialogueUI] Preloaded paragraph {i + 1} into GameObject '{textsToUse[i].gameObject.name}': '{trimmedParagraph.Substring(0, Mathf.Min(50, trimmedParagraph.Length))}...' (text length: {trimmedParagraph.Length})");
+                Debug.Log($"[DialogueUI] Preloaded paragraph {i + 1} into GameObject '{textsToUse[i].gameObject.name}': '{trimmedParagraph.Substring(0, Mathf.Min(50, trimmedParagraph.Length))}...' (text length: {trimmedParagraph.Length}, hasTypewriter: {hasTypewriter})");
             }
             else
             {
@@ -1803,27 +1818,50 @@ public class DialogueUI : MonoBehaviour
             {
                 TextMeshProUGUI currentParagraphText = textsToUse[currentParagraphIndex];
                 
-                // Read text from currentParagraphs list to ensure we have the correct text
+                // Read text from currentParagraphs list (this is the source of truth)
                 string paragraphText = "";
                 if (currentParagraphs != null && currentParagraphIndex < currentParagraphs.Count)
                 {
                     paragraphText = currentParagraphs[currentParagraphIndex].Trim();
+                    Debug.Log($"[DialogueUI] ShowCurrentParagraph: Retrieved paragraph {currentParagraphIndex + 1} from currentParagraphs: '{paragraphText.Substring(0, Mathf.Min(50, paragraphText.Length))}...'");
                 }
                 else
                 {
-                    Debug.LogWarning($"[DialogueUI] ShowCurrentParagraph: currentParagraphs[{currentParagraphIndex}] is null or out of range!");
+                    Debug.LogWarning($"[DialogueUI] ShowCurrentParagraph: currentParagraphs[{currentParagraphIndex}] is null or out of range! currentParagraphs.Count: {currentParagraphs?.Count ?? 0}");
                 }
                 
-                // If text is empty, try to read from the GameObject (it should have been preloaded)
+                // Check if typewriter effect will be used
+                typewriterUI typewriter = currentParagraphText.GetComponent<typewriterUI>();
+                bool willUseTypewriter = typewriter != null;
+                
+                Debug.Log($"[DialogueUI] ShowCurrentParagraph: Activating paragraph {currentParagraphIndex + 1}, text length: {paragraphText?.Length ?? 0}, hasTypewriter: {willUseTypewriter}");
+                
+                // Validate that we have text to display
                 if (string.IsNullOrEmpty(paragraphText))
                 {
+                    Debug.LogError($"[DialogueUI] ShowCurrentParagraph: paragraphText is empty! Cannot display paragraph {currentParagraphIndex + 1}");
+                    // Try to read from GameObject as last resort (shouldn't happen, but safety fallback)
                     paragraphText = currentParagraphText.text?.Trim() ?? "";
+                    if (string.IsNullOrEmpty(paragraphText))
+                    {
+                        Debug.LogError($"[DialogueUI] ShowCurrentParagraph: Both currentParagraphs and GameObject text are empty! Cannot display paragraph.");
+                        return;
+                    }
                 }
                 
-                Debug.Log($"[DialogueUI] ShowCurrentParagraph: Activating paragraph {currentParagraphIndex + 1}, text length: {paragraphText?.Length ?? 0}");
-                
-                // Ensure text is set (from preload or currentParagraphs)
-                currentParagraphText.text = paragraphText;
+                // IMPORTANT: Always clear text before activating if using typewriter
+                // This prevents any pre-filled text from showing before typewriter starts
+                // PreloadParagraphs should have kept it empty, but clear it again as a safety measure
+                if (willUseTypewriter)
+                {
+                    // Clear text before activating so it doesn't flash the full text
+                    currentParagraphText.text = "";
+                }
+                else
+                {
+                    // No typewriter - set text normally
+                    currentParagraphText.text = paragraphText;
+                }
                 
                 // Activate the GameObject
                 currentParagraphText.gameObject.SetActive(true);
@@ -1854,11 +1892,19 @@ public class DialogueUI : MonoBehaviour
                 }
                 
                 // Trigger typewriter effect if the component exists
-                typewriterUI typewriter = currentParagraphText.GetComponent<typewriterUI>();
                 if (typewriter != null)
                 {
-                    // Manually trigger the typewriter effect since Start() only runs once
-                    typewriter.StartTypewriterEffect();
+                    // Validate text before passing to typewriter
+                    if (string.IsNullOrEmpty(paragraphText))
+                    {
+                        Debug.LogError($"[DialogueUI] ShowCurrentParagraph: Cannot start typewriter - paragraphText is empty!");
+                        return;
+                    }
+                    
+                    Debug.Log($"[DialogueUI] ShowCurrentParagraph: Starting typewriter with text length: {paragraphText.Length}");
+                    // Use the overload that accepts text directly to avoid setting it in the component first
+                    // This prevents the text from being visible before the typewriter starts
+                    typewriter.StartTypewriterEffect(paragraphText);
                 }
                 
                 // Force update
@@ -2125,6 +2171,26 @@ public class DialogueUI : MonoBehaviour
     
     private void OnContinueClicked()
     {
+        // Check if typewriter is currently running - need to stop it first
+        TextMeshProUGUI[] textsToUse = resolvedParagraphTexts != null ? resolvedParagraphTexts : paragraphTexts;
+        if (textsToUse != null && currentParagraphIndex >= 0 && currentParagraphIndex < textsToUse.Length && 
+            textsToUse[currentParagraphIndex] != null)
+        {
+            // Check if current paragraph has a typewriter that's running
+            typewriterUI currentTypewriter = textsToUse[currentParagraphIndex].GetComponent<typewriterUI>();
+            if (currentTypewriter != null)
+            {
+                // Stop the typewriter and show full text immediately
+                currentTypewriter.StopTypewriterEffect();
+                // Set the full text so it's visible
+                if (currentParagraphs != null && currentParagraphIndex < currentParagraphs.Count)
+                {
+                    textsToUse[currentParagraphIndex].text = currentParagraphs[currentParagraphIndex].Trim();
+                    textsToUse[currentParagraphIndex].ForceMeshUpdate();
+                }
+            }
+        }
+        
         if (isTyping)
         {
             // Skip typewriter effect
@@ -2137,21 +2203,17 @@ public class DialogueUI : MonoBehaviour
                 dialogueText.text = currentParagraphs[currentParagraphIndex];
             }
             isTyping = false;
-            return;
         }
         
-        // DIRECT APPROACH: Manually switch paragraph GameObjects
-        // Use resolved paragraph texts (scene instances) if available
-        TextMeshProUGUI[] textsToUse = resolvedParagraphTexts != null ? resolvedParagraphTexts : paragraphTexts;
-        
-        if (textsToUse != null && textsToUse.Length > 0 && 
-            currentParagraphs != null && currentParagraphs.Count > 0)
+        // DIRECT APPROACH: Use ShowCurrentParagraph to properly advance to next paragraph
+        // This ensures text is set correctly and typewriter starts if needed
+        if (currentParagraphs != null && currentParagraphs.Count > 0)
         {
             // Check if there are more paragraphs to show
             if (currentParagraphIndex < currentParagraphs.Count - 1)
             {
-                // Deactivate current paragraph GameObject
-                if (currentParagraphIndex >= 0 && currentParagraphIndex < textsToUse.Length && 
+                // Deactivate current paragraph GameObject first
+                if (textsToUse != null && currentParagraphIndex >= 0 && currentParagraphIndex < textsToUse.Length && 
                     textsToUse[currentParagraphIndex] != null)
                 {
                     textsToUse[currentParagraphIndex].gameObject.SetActive(false);
@@ -2160,28 +2222,13 @@ public class DialogueUI : MonoBehaviour
                 // Increment to next paragraph
                 currentParagraphIndex++;
                 
-                // Activate next paragraph GameObject
-                if (currentParagraphIndex < textsToUse.Length && 
-                    textsToUse[currentParagraphIndex] != null)
-                {
-                    textsToUse[currentParagraphIndex].gameObject.SetActive(true);
-                    ActivateParentChain(textsToUse[currentParagraphIndex].gameObject);
-                    textsToUse[currentParagraphIndex].ForceMeshUpdate();
-                    Canvas.ForceUpdateCanvases();
-                    
-                    // Update continue button text
-                    if (continueButton != null)
-                    {
-                        bool hasMoreParagraphs = currentParagraphIndex < currentParagraphs.Count - 1;
-                        var buttonText = continueButton.GetComponentInChildren<TextMeshProUGUI>();
-                        if (buttonText != null)
-                        {
-                            buttonText.text = hasMoreParagraphs ? "Next" : "Continue";
-                        }
-                    }
-                    
-                    return; // Exit early - we've shown the next paragraph
-                }
+                Debug.Log($"[DialogueUI] OnContinueClicked: Advancing to paragraph {currentParagraphIndex + 1} of {currentParagraphs.Count}");
+                
+                // Use ShowCurrentParagraph to properly display the next paragraph
+                // This will set the text, activate the GameObject, and start typewriter if needed
+                ShowCurrentParagraph();
+                
+                return; // Exit early - ShowCurrentParagraph handled everything
             }
         }
         
