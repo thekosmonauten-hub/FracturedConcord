@@ -93,6 +93,12 @@ public partial class EncounterManager : MonoBehaviour
         if (_instance == this)
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
+            
+            // Unsubscribe from character loaded event
+            if (CharacterManager.Instance != null)
+            {
+                CharacterManager.Instance.OnCharacterLoaded -= OnCharacterLoaded;
+            }
         }
     }
     
@@ -162,9 +168,51 @@ public partial class EncounterManager : MonoBehaviour
         
         SceneManager.sceneLoaded += OnSceneLoaded;
         
+        // Subscribe to character loaded event to re-apply progression when character loads
+        if (CharacterManager.Instance != null)
+        {
+            CharacterManager.Instance.OnCharacterLoaded += OnCharacterLoaded;
+        }
+        
+        // If character is already loaded, apply progression now
+        // This handles the case where MainGameUI loads and character was loaded before EncounterManager initialized
+        if (CharacterManager.Instance != null && CharacterManager.Instance.GetCurrentCharacter() != null)
+        {
+            Debug.Log("[EncounterManager] Character already loaded when system initialized. Applying progression now...");
+            ApplyCharacterProgression();
+        }
+        
         isInitialized = true;
         EncounterEvents.InvokeSystemInitialized();
         Debug.Log($"[EncounterManager] System initialized - Encounter 1 is always available. Loaded {allEncounters.Count} encounters.");
+    }
+    
+    /// <summary>
+    /// Handle character loaded event - re-apply progression when character loads.
+    /// This ensures progression is properly initialized when loading a saved character.
+    /// </summary>
+    private void OnCharacterLoaded(Character character)
+    {
+        if (character == null)
+        {
+            return;
+        }
+        
+        Debug.Log($"[EncounterManager] Character loaded: {character.characterName}. Re-applying progression...");
+        
+        // Only apply progression if system is initialized
+        if (isInitialized)
+        {
+            ApplyCharacterProgression();
+            
+            // Notify UI to refresh (in case buttons were already created)
+            EncounterEvents.InvokeProgressionApplied();
+            Debug.Log($"[EncounterManager] Progression re-applied for {character.characterName}");
+        }
+        else
+        {
+            Debug.Log("[EncounterManager] Character loaded but system not initialized yet. Progression will be applied during initialization.");
+        }
     }
     
     /// <summary>
