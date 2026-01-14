@@ -1849,25 +1849,58 @@ public class DialogueUI : MonoBehaviour
                     }
                 }
                 
-                // IMPORTANT: Always clear text before activating if using typewriter
-                // This prevents any pre-filled text from showing before typewriter starts
-                // PreloadParagraphs should have kept it empty, but clear it again as a safety measure
+                // CRITICAL: For typewriter, we need to ensure text is NEVER visible before typing starts
+                // Strategy: Clear text, start typewriter (which clears again), THEN activate GameObject
                 if (willUseTypewriter)
                 {
-                    // Clear text before activating so it doesn't flash the full text
+                    // Step 1: Ensure text is empty BEFORE any activation
                     currentParagraphText.text = "";
+                    
+                    // Step 2: Start typewriter BEFORE activating GameObject
+                    // This way the typewriter coroutine is ready and will clear text immediately when GameObject activates
+                    if (typewriter != null)
+                    {
+                        // Validate text before passing to typewriter
+                        if (string.IsNullOrEmpty(paragraphText))
+                        {
+                            Debug.LogError($"[DialogueUI] ShowCurrentParagraph: Cannot start typewriter - paragraphText is empty!");
+                            return;
+                        }
+                        
+                        Debug.Log($"[DialogueUI] ShowCurrentParagraph: Starting typewriter BEFORE activation with text length: {paragraphText.Length}");
+                        // Start typewriter with text - it will clear the text component immediately
+                        // The coroutine will start when GameObject becomes active
+                        typewriter.StartTypewriterEffect(paragraphText);
+                    }
+                    
+                    // Step 3: NOW activate the GameObject (typewriter is already set up and will clear text on first frame)
+                    currentParagraphText.gameObject.SetActive(true);
+                    
+                    // Step 4: Ensure parent chain is active
+                    ActivateParentChain(currentParagraphText.gameObject);
+                    
+                    // Step 5: Force typewriter to clear text immediately (safety check)
+                    // The typewriter should have already cleared it, but ensure it's empty
+                    currentParagraphText.text = "";
+                    
+                    // Step 6: DON'T call ForceMeshUpdate/ForceUpdateCanvases here - let typewriter handle updates
+                    // This prevents any frame where text might be visible
                 }
                 else
                 {
-                    // No typewriter - set text normally
+                    // No typewriter - set text normally and activate
                     currentParagraphText.text = paragraphText;
+                    
+                    // Activate the GameObject
+                    currentParagraphText.gameObject.SetActive(true);
+                    
+                    // Ensure parent chain is active
+                    ActivateParentChain(currentParagraphText.gameObject);
+                    
+                    // Force update for non-typewriter text
+                    currentParagraphText.ForceMeshUpdate();
+                    Canvas.ForceUpdateCanvases();
                 }
-                
-                // Activate the GameObject
-                currentParagraphText.gameObject.SetActive(true);
-                
-                // Ensure parent chain is active
-                ActivateParentChain(currentParagraphText.gameObject);
                 
                 // Ensure text is visible (check color alpha)
                 if (currentParagraphText.color.a < 1f)
@@ -1890,26 +1923,6 @@ public class DialogueUI : MonoBehaviour
                         }
                     }
                 }
-                
-                // Trigger typewriter effect if the component exists
-                if (typewriter != null)
-                {
-                    // Validate text before passing to typewriter
-                    if (string.IsNullOrEmpty(paragraphText))
-                    {
-                        Debug.LogError($"[DialogueUI] ShowCurrentParagraph: Cannot start typewriter - paragraphText is empty!");
-                        return;
-                    }
-                    
-                    Debug.Log($"[DialogueUI] ShowCurrentParagraph: Starting typewriter with text length: {paragraphText.Length}");
-                    // Use the overload that accepts text directly to avoid setting it in the component first
-                    // This prevents the text from being visible before the typewriter starts
-                    typewriter.StartTypewriterEffect(paragraphText);
-                }
-                
-                // Force update
-                currentParagraphText.ForceMeshUpdate();
-                Canvas.ForceUpdateCanvases();
                 
                 Debug.Log($"[DialogueUI] ShowCurrentParagraph: Paragraph {currentParagraphIndex + 1} activated and visible. Text: '{paragraphText.Substring(0, Mathf.Min(50, paragraphText.Length))}...'");
             }
