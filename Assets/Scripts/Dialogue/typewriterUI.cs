@@ -28,6 +28,9 @@ public class typewriterUI : MonoBehaviour
 	
 	// Track if Start() has been called
 	private bool hasStarted = false;
+	
+	// Track if typewriter was manually started (prevents OnEnable from interfering)
+	private bool manuallyStarted = false;
 
 	// Use this for initialization
 	void Start()
@@ -79,6 +82,87 @@ public class typewriterUI : MonoBehaviour
 	}
 	
 	/// <summary>
+	/// Start the typewriter effect with the provided text directly.
+	/// This avoids the need to set text in the component first, preventing it from being visible before typing starts.
+	/// </summary>
+	public void StartTypewriterEffect(string textToType)
+	{
+		// Stop any existing coroutines first
+		StopTypewriterEffect();
+		
+		InitializeComponents();
+		
+		if (string.IsNullOrEmpty(textToType))
+		{
+			Debug.LogWarning("[typewriterUI] StartTypewriterEffect: textToType is null or empty!");
+			return;
+		}
+		
+		writer = textToType;
+		
+		// Mark as manually started to prevent OnEnable from interfering
+		manuallyStarted = true;
+		
+		// Clear text immediately to prevent it from being visible
+		bool startedCoroutine = false;
+		
+		if (_text != null)
+		{
+			_text.text = "";
+			// Only start coroutine if GameObject is active (coroutines need active GameObject)
+			if (gameObject.activeInHierarchy)
+			{
+				textCoroutine = StartCoroutine(TypeWriterText());
+				startedCoroutine = true;
+				Debug.Log($"[typewriterUI] Started typewriter coroutine for Text component with {textToType.Length} characters");
+			}
+			else
+			{
+				// GameObject not active yet - coroutine will start when it becomes active
+				// But we need to ensure text stays empty
+				_text.text = "";
+				Debug.Log($"[typewriterUI] GameObject not active yet - will start typewriter when activated. Text cleared.");
+			}
+		}
+		
+		if (_tmpProText != null)
+		{
+			_tmpProText.text = "";
+			// Only start coroutine if GameObject is active (coroutines need active GameObject)
+			if (gameObject.activeInHierarchy)
+			{
+				tmpCoroutine = StartCoroutine(TypeWriterTMP());
+				startedCoroutine = true;
+				Debug.Log($"[typewriterUI] Started typewriter coroutine for TextMeshPro component with {textToType.Length} characters");
+			}
+			else
+			{
+				// GameObject not active yet - coroutine will start when it becomes active
+				// But we need to ensure text stays empty
+				_tmpProText.text = "";
+				Debug.Log($"[typewriterUI] GameObject not active yet - will start typewriter when activated. Text cleared.");
+			}
+		}
+		
+		// If GameObject wasn't active, start coroutine in OnEnable
+		// But we've already set manuallyStarted = true, so OnEnable won't interfere
+		if (!startedCoroutine)
+		{
+			if (!gameObject.activeInHierarchy)
+			{
+				// GameObject will become active soon - OnEnable will handle it, but we've marked it as manually started
+				// So we need to start the coroutine when it becomes active
+				// We'll do this by checking in OnEnable if manuallyStarted and starting coroutine
+				Debug.Log($"[typewriterUI] GameObject not active - typewriter will start when GameObject becomes active");
+			}
+			else
+			{
+				Debug.LogError("[typewriterUI] StartTypewriterEffect: Neither Text nor TextMeshPro component found! Cannot start typewriter effect.");
+			}
+		}
+	}
+	
+	/// <summary>
 	/// Stop any currently running typewriter effects
 	/// </summary>
 	public void StopTypewriterEffect()
@@ -101,6 +185,38 @@ public class typewriterUI : MonoBehaviour
 	/// </summary>
 	void OnEnable()
 	{
+		// If typewriter was manually started, start the coroutine now that GameObject is active
+		if (manuallyStarted)
+		{
+			manuallyStarted = false; // Reset flag
+			
+			// Ensure text is still empty
+			if (_text != null)
+			{
+				_text.text = "";
+			}
+			if (_tmpProText != null)
+			{
+				_tmpProText.text = "";
+			}
+			
+			// Now start the coroutine since GameObject is active
+			if (!string.IsNullOrEmpty(writer))
+			{
+				if (_text != null && textCoroutine == null)
+				{
+					textCoroutine = StartCoroutine(TypeWriterText());
+					Debug.Log($"[typewriterUI] OnEnable: Started typewriter coroutine for Text component (was waiting for GameObject activation)");
+				}
+				if (_tmpProText != null && tmpCoroutine == null)
+				{
+					tmpCoroutine = StartCoroutine(TypeWriterTMP());
+					Debug.Log($"[typewriterUI] OnEnable: Started typewriter coroutine for TextMeshPro component (was waiting for GameObject activation)");
+				}
+			}
+			return;
+		}
+		
 		// If Start() has already run and the component is active, check if we should retrigger
 		// Wait a frame to ensure text is set before checking (text might be set before activation)
 		if (hasStarted && gameObject.activeInHierarchy)
