@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,6 +67,12 @@ public class SceneInitializationManager : MonoBehaviour
     /// </summary>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // Clean up duplicate EventSystems and AudioListeners when using additive loading
+        if (mode == LoadSceneMode.Additive)
+        {
+            CleanupDuplicateComponents(scene);
+        }
+        
         // Only initialize if this is the active scene (not additive loading)
         if (scene == SceneManager.GetActiveScene())
         {
@@ -80,6 +87,9 @@ public class SceneInitializationManager : MonoBehaviour
     {
         // Wait a frame to ensure all objects are fully instantiated
         yield return null;
+        
+        // Clean up duplicate EventSystems and AudioListeners (handles both additive and single scene loading)
+        CleanupDuplicateComponents(scene);
         
         // Find all ISceneInitializable components in the scene
         var initializables = new List<ISceneInitializable>();
@@ -152,7 +162,165 @@ public class SceneInitializationManager : MonoBehaviour
     /// </summary>
     public void InitializeScene(Scene scene)
     {
+        // Clean up duplicates before initializing
+        CleanupDuplicateComponents(scene);
         StartCoroutine(InitializeSceneCoroutine(scene));
+    }
+    
+    /// <summary>
+    /// Ensures only one EventSystem and one AudioListener exist across all loaded scenes.
+    /// Prefers components from the newly loaded scene over the Bootstrap scene.
+    /// </summary>
+    private void CleanupDuplicateComponents(Scene newlyLoadedScene)
+    {
+        // Check if Bootstrap scene is loaded (indicates additive loading)
+        Scene bootstrapScene = SceneManager.GetSceneByName("BootstrapScene");
+        bool isAdditiveLoading = bootstrapScene.IsValid() && newlyLoadedScene != bootstrapScene;
+        
+        if (!isAdditiveLoading)
+        {
+            // Single scene loading - just ensure one of each exists
+            EnsureSingleEventSystem(null);
+            EnsureSingleAudioListener(null);
+            return;
+        }
+        
+        // Additive loading - prefer components from newly loaded scene, remove duplicates from Bootstrap
+        EnsureSingleEventSystem(newlyLoadedScene);
+        EnsureSingleAudioListener(newlyLoadedScene);
+    }
+    
+    /// <summary>
+    /// Ensures only one EventSystem exists. If preferredScene is provided, keeps the one from that scene.
+    /// </summary>
+    private void EnsureSingleEventSystem(Scene? preferredScene)
+    {
+        EventSystem[] allEventSystems = FindObjectsOfType<EventSystem>(true);
+        
+        if (allEventSystems.Length == 0)
+        {
+            Debug.LogWarning("[SceneInitializationManager] No EventSystem found! Creating one.");
+            GameObject eventSystemGO = new GameObject("EventSystem");
+            eventSystemGO.AddComponent<EventSystem>();
+            eventSystemGO.AddComponent<StandaloneInputModule>();
+            return;
+        }
+        
+        if (allEventSystems.Length == 1)
+        {
+            // Already only one - perfect
+            return;
+        }
+        
+        // Multiple EventSystems found - need to clean up
+        Debug.Log($"[SceneInitializationManager] Found {allEventSystems.Length} EventSystems. Cleaning up duplicates...");
+        
+        EventSystem eventSystemToKeep = null;
+        List<EventSystem> eventSystemsToDestroy = new List<EventSystem>();
+        
+        // If we have a preferred scene, try to keep the EventSystem from that scene
+        if (preferredScene.HasValue && preferredScene.Value.IsValid())
+        {
+            Scene preferredSceneValue = preferredScene.Value;
+            foreach (var es in allEventSystems)
+            {
+                if (es.gameObject.scene == preferredSceneValue)
+                {
+                    eventSystemToKeep = es;
+                    break;
+                }
+            }
+        }
+        
+        // If no preferred scene or didn't find one in preferred scene, keep the first active one
+        if (eventSystemToKeep == null)
+        {
+            eventSystemToKeep = allEventSystems.FirstOrDefault(es => es.gameObject.activeInHierarchy) ?? allEventSystems[0];
+        }
+        
+        // Mark all others for destruction
+        foreach (var es in allEventSystems)
+        {
+            if (es != eventSystemToKeep)
+            {
+                eventSystemsToDestroy.Add(es);
+            }
+        }
+        
+        // Destroy duplicates
+        foreach (var es in eventSystemsToDestroy)
+        {
+            string sceneName = es.gameObject.scene.name;
+            Debug.Log($"[SceneInitializationManager] Destroying duplicate EventSystem '{es.name}' from scene '{sceneName}'");
+            Destroy(es.gameObject);
+        }
+        
+        Debug.Log($"[SceneInitializationManager] Kept EventSystem '{eventSystemToKeep.name}' from scene '{eventSystemToKeep.gameObject.scene.name}'");
+    }
+    
+    /// <summary>
+    /// Ensures only one AudioListener exists. If preferredScene is provided, keeps the one from that scene.
+    /// </summary>
+    private void EnsureSingleAudioListener(Scene? preferredScene)
+    {
+        AudioListener[] allAudioListeners = FindObjectsOfType<AudioListener>(true);
+        
+        if (allAudioListeners.Length == 0)
+        {
+            Debug.LogWarning("[SceneInitializationManager] No AudioListener found!");
+            return;
+        }
+        
+        if (allAudioListeners.Length == 1)
+        {
+            // Already only one - perfect
+            return;
+        }
+        
+        // Multiple AudioListeners found - need to clean up
+        Debug.Log($"[SceneInitializationManager] Found {allAudioListeners.Length} AudioListeners. Cleaning up duplicates...");
+        
+        AudioListener listenerToKeep = null;
+        List<AudioListener> listenersToDestroy = new List<AudioListener>();
+        
+        // If we have a preferred scene, try to keep the AudioListener from that scene
+        if (preferredScene.HasValue && preferredScene.Value.IsValid())
+        {
+            Scene preferredSceneValue = preferredScene.Value;
+            foreach (var al in allAudioListeners)
+            {
+                if (al.gameObject.scene == preferredSceneValue)
+                {
+                    listenerToKeep = al;
+                    break;
+                }
+            }
+        }
+        
+        // If no preferred scene or didn't find one in preferred scene, keep the first active one
+        if (listenerToKeep == null)
+        {
+            listenerToKeep = allAudioListeners.FirstOrDefault(al => al.gameObject.activeInHierarchy) ?? allAudioListeners[0];
+        }
+        
+        // Mark all others for destruction
+        foreach (var al in allAudioListeners)
+        {
+            if (al != listenerToKeep)
+            {
+                listenersToDestroy.Add(al);
+            }
+        }
+        
+        // Destroy duplicates
+        foreach (var al in listenersToDestroy)
+        {
+            string sceneName = al.gameObject.scene.name;
+            Debug.Log($"[SceneInitializationManager] Destroying duplicate AudioListener on '{al.name}' from scene '{sceneName}'");
+            Destroy(al);
+        }
+        
+        Debug.Log($"[SceneInitializationManager] Kept AudioListener on '{listenerToKeep.name}' from scene '{listenerToKeep.gameObject.scene.name}'");
     }
 }
 
