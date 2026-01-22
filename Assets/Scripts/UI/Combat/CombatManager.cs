@@ -886,7 +886,7 @@ public class CombatDisplayManager : MonoBehaviour
         EndEnemyTurn();
     }
     
-    private IEnumerator ExecuteEnemyAction(Enemy enemy, int enemyIndex)
+    private IEnumerator ExecuteEnemyAction(Enemy enemy, int enemyIndex, bool skipRefill = false)
     {
         Debug.Log($"{enemy.enemyName} is taking action...");
         
@@ -963,17 +963,20 @@ public class CombatDisplayManager : MonoBehaviour
         
         var abilityRunner = enemyDisplay != null ? enemyDisplay.GetAbilityRunner() : null;
 
-        if (abilityRunner != null && abilityRunner.HasQueuedAbility)
+        if (abilityRunner != null && abilityRunner.HasQueuedAbility && enemy.intentQueue != null)
         {
-            EnemyAbility executed = abilityRunner.ExecuteQueuedAbility();
-            if (executed != null && executed.consumesTurn)
+            var head = enemy.intentQueue.Peek();
+            bool headIsQueuedAbility = head.HasValue && head.Value.IsAbility && head.Value.AbilityId == abilityRunner.QueuedAbilityId;
+            if (headIsQueuedAbility)
             {
-                int preview = abilityRunner != null ? abilityRunner.LastPreviewDamage : 0;
-                enemyDisplay?.ShowAbilityIntent(executed.displayName, preview > 0 ? preview : (int?)null);
-                yield return new WaitForSeconds(turnDelay);
-                enemy.SetIntent();
-                enemyDisplay?.UpdateIntent();
-                yield break;
+                EnemyAbility executed = abilityRunner.ExecuteQueuedAbility();
+                if (executed != null && executed.consumesTurn)
+                {
+                    yield return new WaitForSeconds(turnDelay);
+                    enemy.SetIntent();
+                    enemyDisplay?.UpdateIntent();
+                    yield break;
+                }
             }
         }
 
@@ -1092,16 +1095,13 @@ public class CombatDisplayManager : MonoBehaviour
                 break;
         }
         
-        // Set new intent for next turn
-        enemy.SetIntent();
-        
-        // Update enemy display
-        if (enemyDisplay != null)
+        if (!skipRefill)
         {
-            enemyDisplay.UpdateIntent();
+            enemy.RefillAfterExecute();
+            if (enemyDisplay != null)
+                enemyDisplay.UpdateIntent();
         }
         
-        // Boss Ability Handler - enemy turn end
         BossAbilityHandler.OnEnemyTurnEnd(enemy, enemyDisplay);
         
         yield return null;
@@ -1165,11 +1165,13 @@ public class CombatDisplayManager : MonoBehaviour
         
         // Execute the action
         int enemyIndex = GetEnemyIndex(enemy);
-        yield return StartCoroutine(ExecuteEnemyAction(enemy, enemyIndex));
+        yield return StartCoroutine(ExecuteEnemyAction(enemy, enemyIndex, skipRefill: true));
         
-        // Restore original intent (for next turn)
+        // Restore original intent (queue unchanged; we executed the delayed copy)
         enemy.currentIntent = originalIntent;
         enemy.intentDamage = originalDamage;
+        if (enemyDisplay != null)
+            enemyDisplay.UpdateIntent();
     }
     
     /// <summary>

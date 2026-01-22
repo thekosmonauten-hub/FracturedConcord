@@ -38,8 +38,16 @@ public class Enemy
     public float defendGuardPercent = 0.1f; // Percentage of max health gained as guard when defending (default 10%)
     
     [Header("AI Behavior")]
+    [Tooltip("Synced from IntentQueue head. Overwritten temporarily during delayed-action execution.")]
     public EnemyIntent currentIntent;
     public int intentDamage;
+    
+    [Header("Intent Queue")]
+    [Tooltip("1–3 upcoming intents. Source of truth; currentIntent/intentDamage mirror head.")]
+    public IntentQueue intentQueue = new IntentQueue();
+    
+    /// <summary>Raised whenever the intent queue changes (SetIntent, dequeue, etc.). Use for immediate UI refresh (Intent Accuracy).</summary>
+    public event Action OnIntentChanged;
     
     [Header("Delayed Actions")]
     [Tooltip("Actions queued for future turns (for Time-Lagged modifier, etc.)")]
@@ -540,63 +548,131 @@ public class Enemy
         return Mathf.RoundToInt(damage);
     }
     
-    public void SetIntent()
+    /// <summary>Sync currentIntent/intentDamage from first non-ability intent. Defaults to Defend/0 if empty.</summary>
+    public void SyncFromQueue()
     {
-        // Energy costs for actions
-        const float attackEnergyCost = 5f;
-        const float defendEnergyCost = 15f;
-        
-        // If enemy uses energy, check if they have enough for actions
-        if (usesEnergy)
+        if (intentQueue == null || intentQueue.IsEmpty)
         {
-            // If not enough energy for either action, regenerate and try to attack next turn
-            if (currentEnergy < attackEnergyCost)
+            currentIntent = EnemyIntent.Defend;
+            intentDamage = 0;
+            return;
+        }
+
+        foreach (var entry in intentQueue.All)
+        {
+            if (!entry.IsAbility)
             {
-                currentIntent = EnemyIntent.Defend; // Can't act, will just wait
-                intentDamage = 0;
+                currentIntent = entry.Type;
+                intentDamage = entry.Damage;
                 return;
             }
-            
-            // Prefer attack if we have energy for it, otherwise defend if we have energy for that
-            float random = UnityEngine.Random.Range(0f, 1f);
-            
-            if (random < 0.7f && currentEnergy >= attackEnergyCost) // 70% chance to attack if we have energy
+        }
+
+        currentIntent = EnemyIntent.Defend;
+        intentDamage = 0;
+    }
+    
+    /// <summary>Remove executed intent from queue and refill. Call after executing current intent.</summary>
+    public void DequeueExecuted()
+    {
+        intentQueue.Dequeue();
+        SyncFromQueue();
+        OnIntentChanged?.Invoke();
+    }
+    
+    const float AttackEnergyCost = 5f;
+    const float DefendEnergyCost = 15f;
+    
+    /// <summary>Generate one intent using current AI. Returns (type, damage).</summary>
+    void GenerateOneIntent(out EnemyIntent type, out int damage)
+    {
+        if (usesEnergy)
+        {
+            if (currentEnergy < AttackEnergyCost)
             {
-                currentIntent = EnemyIntent.Attack;
-                intentDamage = GetAttackDamage();
+                type = EnemyIntent.Defend;
+                damage = 0;
+                return;
             }
-            else if (currentEnergy >= defendEnergyCost) // Defend if we have energy
+            float r = UnityEngine.Random.Range(0f, 1f);
+            if (r < 0.7f && currentEnergy >= AttackEnergyCost)
             {
-                currentIntent = EnemyIntent.Defend;
-                intentDamage = 0;
+                type = EnemyIntent.Attack;
+                damage = GetAttackDamage();
+                return;
             }
-            else if (currentEnergy >= attackEnergyCost) // Fallback to attack if we only have energy for that
+            if (currentEnergy >= DefendEnergyCost)
             {
-                currentIntent = EnemyIntent.Attack;
-                intentDamage = GetAttackDamage();
+                type = EnemyIntent.Defend;
+                damage = 0;
+                return;
             }
-            else // Not enough energy for anything
+            if (currentEnergy >= AttackEnergyCost)
             {
-                currentIntent = EnemyIntent.Defend; // Wait/defend
-                intentDamage = 0;
+                type = EnemyIntent.Attack;
+                damage = GetAttackDamage();
+                return;
             }
+            type = EnemyIntent.Defend;
+            damage = 0;
         }
         else
         {
-            // No energy system - use simple random choice
-            float random = UnityEngine.Random.Range(0f, 1f);
-            
-            if (random < 0.8f) // 80% chance to attack
+            float r = UnityEngine.Random.Range(0f, 1f);
+            if (r < 0.8f)
             {
-                currentIntent = EnemyIntent.Attack;
-                intentDamage = GetAttackDamage();
+                type = EnemyIntent.Attack;
+                damage = GetAttackDamage();
             }
-            else // 20% chance to defend
+            else
             {
-                currentIntent = EnemyIntent.Defend;
-                intentDamage = 0;
+                type = EnemyIntent.Defend;
+                damage = 0;
             }
         }
+    }
+    
+    /// <summary>Dequeue executed intent, generate one new intent, enqueue, sync. Call after normal execute (Attack/Defend).</summary>
+    public void RefillAfterExecute()
+    {
+        if (intentQueue == null)
+            return;
+
+        intentQueue.RemoveFirst(entry => !entry.IsAbility);
+        GenerateOneIntent(out var type, out var damage);
+        intentQueue.Enqueue(new EnemyIntentEntry(type, damage, 0, ThreatTier.Minor));
+        SyncFromQueue();
+        OnIntentChanged?.Invoke();
+    }
+    
+    /// <summary>Clear queue, generate 2–3 intents, enqueue, sync. Use for combat start, time-lag, freeze/stun, ability.</summary>
+    public void SetIntent()
+    {
+        if (intentQueue == null)
+            return;
+
+        var abilityEntries = new List<EnemyIntentEntry>();
+        foreach (var entry in intentQueue.All)
+        {
+            if (entry.IsAbility)
+                abilityEntries.Add(entry);
+        }
+
+        intentQueue.Clear();
+
+        foreach (var entry in abilityEntries)
+        {
+            intentQueue.Enqueue(entry);
+        }
+
+        int count = Mathf.Min(IntentQueue.MaxIntents, 3);
+        while (intentQueue.Count < count)
+        {
+            GenerateOneIntent(out var type, out var damage);
+            intentQueue.Enqueue(new EnemyIntentEntry(type, damage, 0, ThreatTier.Minor));
+        }
+        SyncFromQueue();
+        OnIntentChanged?.Invoke();
     }
     
     public string GetIntentDescription()
@@ -610,6 +686,93 @@ public class Enemy
             default:
                 return "Unknown";
         }
+    }
+
+    public string GetIntentEntryDescription(EnemyIntentEntry entry)
+    {
+        if (entry.IsAbility)
+        {
+            if (!string.IsNullOrEmpty(entry.AbilityName))
+                return entry.AbilityName;
+            return "Ability";
+        }
+
+        switch (entry.Type)
+        {
+            case EnemyIntent.Attack:
+                return $"Attack ({entry.Damage})";
+            case EnemyIntent.Defend:
+                return "Defend";
+            default:
+                return "Unknown";
+        }
+    }
+
+    public string GetIntentQueueBoxDescription()
+    {
+        if (intentQueue == null || intentQueue.IsEmpty)
+            return GetIntentDescription();
+
+        var entries = intentQueue.All;
+        int count = Mathf.Min(entries.Count, IntentQueue.MaxIntents);
+        if (count == 1)
+            return $"|{GetIntentEntryDescription(entries[0])}|";
+
+        var lines = new List<string>(count);
+        for (int i = 0; i < count; i++)
+        {
+            string alphaTag = i == 0 ? "<alpha=#FF>" : (i == 1 ? "<alpha=#99>" : "<alpha=#4D>");
+            lines.Add($"{alphaTag}|{GetIntentEntryDescription(entries[i])}|<alpha=#FF>");
+        }
+
+        return string.Join("\n", lines);
+    }
+
+    public void UpsertAbilityIntent(string abilityId, string abilityName, int abilityValue, Sprite abilityIcon, int insertIndex = 0)
+    {
+        if (intentQueue == null || string.IsNullOrEmpty(abilityId))
+            return;
+
+        int index = intentQueue.FindIndex(entry => entry.IsAbility && entry.AbilityId == abilityId);
+        EnemyIntentEntry entryData = new EnemyIntentEntry(abilityId, abilityName, abilityValue, abilityIcon, 0);
+        if (index >= 0)
+        {
+            intentQueue.RemoveAt(index);
+        }
+        intentQueue.InsertAt(insertIndex, entryData);
+        SyncFromQueue();
+        OnIntentChanged?.Invoke();
+        Debug.Log($"[AbilityIntent] Upserted '{abilityName}' into queue at index {insertIndex}. Queue={GetIntentQueueBoxPlain()}");
+    }
+
+    public void RemoveAbilityIntent(string abilityId)
+    {
+        if (intentQueue == null || string.IsNullOrEmpty(abilityId))
+            return;
+
+        bool removed = intentQueue.RemoveFirst(entry => entry.IsAbility && entry.AbilityId == abilityId);
+        if (removed)
+        {
+            SyncFromQueue();
+            OnIntentChanged?.Invoke();
+            Debug.Log($"[AbilityIntent] Removed ability '{abilityId}' from queue. Queue={GetIntentQueueBoxPlain()}");
+        }
+    }
+
+    public string GetIntentQueueBoxPlain()
+    {
+        if (intentQueue == null || intentQueue.IsEmpty)
+            return GetIntentDescription();
+
+        var entries = intentQueue.All;
+        int count = Mathf.Min(entries.Count, IntentQueue.MaxIntents);
+        var lines = new List<string>(count);
+        for (int i = 0; i < count; i++)
+        {
+            lines.Add($"|{GetIntentEntryDescription(entries[i])}|");
+        }
+
+        return string.Join("\n", lines);
     }
     
     public float GetHealthPercentage()

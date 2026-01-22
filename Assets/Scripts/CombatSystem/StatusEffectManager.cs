@@ -845,7 +845,14 @@ public class StatusEffectManager : MonoBehaviour
     /// </summary>
     private void UpdateStatusEffectVisuals()
     {
-        if (statusEffectContainer == null || statusEffectIconPrefab == null) return;
+        if (statusEffectContainer == null || statusEffectIconPrefab == null)
+        {
+            Debug.LogWarning($"[StatusEffectVisuals] Missing container/prefab on {gameObject.name}. " +
+                             $"container={(statusEffectContainer != null)}, prefab={(statusEffectIconPrefab != null)}");
+            return;
+        }
+
+        Debug.Log($"[StatusEffectVisuals] {gameObject.name} activeEffects={activeStatusEffects.Count} containerChildren={statusEffectContainer.childCount}");
         
         // Clear existing icons
         foreach (Transform child in statusEffectContainer)
@@ -998,6 +1005,30 @@ public class StatusEffectManager : MonoBehaviour
                 {
                     switch (effect.effectType)
                     {
+                        case StatusEffectType.Strength:
+                        {
+                            int delta = Mathf.RoundToInt(effect.magnitude * sign);
+                            character.strength = Mathf.Max(0, character.strength + delta);
+                            character.CalculateDerivedStats();
+                            playerDisplay.RefreshDisplay();
+                            break;
+                        }
+                        case StatusEffectType.Dexterity:
+                        {
+                            int delta = Mathf.RoundToInt(effect.magnitude * sign);
+                            character.dexterity = Mathf.Max(0, character.dexterity + delta);
+                            character.CalculateDerivedStats();
+                            playerDisplay.RefreshDisplay();
+                            break;
+                        }
+                        case StatusEffectType.Intelligence:
+                        {
+                            int delta = Mathf.RoundToInt(effect.magnitude * sign);
+                            character.intelligence = Mathf.Max(0, character.intelligence + delta);
+                            character.CalculateDerivedStats();
+                            playerDisplay.RefreshDisplay();
+                            break;
+                        }
                         case StatusEffectType.TempMaxMana:
                         {
                             int delta = Mathf.RoundToInt(effect.magnitude * sign);

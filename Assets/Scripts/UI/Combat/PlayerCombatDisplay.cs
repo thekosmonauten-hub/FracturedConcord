@@ -99,6 +99,7 @@ public class PlayerCombatDisplay : MonoBehaviour
         {
             statusEffectManager.statusEffectIconPrefab = statusEffectIconPrefab;
         }
+        Debug.Log($"[PlayerStatusFX] container={(statusEffectManager.statusEffectContainer != null)} prefab={(statusEffectManager.statusEffectIconPrefab != null)}");
         
         // Auto-find components if not assigned
         if (characterNameText == null)

@@ -28,6 +28,13 @@ public class EnemyCombatDisplay : MonoBehaviour
     public Image intentIcon;
     public TextMeshProUGUI intentText;
     public TextMeshProUGUI intentDamageText;
+    [SerializeField] private bool enableIntentSlide = false;
+    [SerializeField] private float intentSlideDistance = 12f;
+    [SerializeField] private float intentSlideDuration = 0.12f;
+    [SerializeField] private bool enableIntentSlotScroll = true;
+    [SerializeField] private float intentSlotScrollDuration = 0.12f;
+    [SerializeField] private int intentQueueSlotCount = 3;
+    [SerializeField] private float intentSlotSpacing = 18f;
     
     [Header("Status Effects")]
     public Transform statusEffectsContainer;
@@ -76,6 +83,11 @@ public class EnemyCombatDisplay : MonoBehaviour
     private bool deathNotified = false;
     private bool showingAbilityIntent = false;
     private string activeAbilityIntentName = null;
+    private int? abilityPreviewDamage = null;
+    private string lastIntentHeadKey = null;
+    private Coroutine intentSlideRoutine;
+    private Coroutine intentScrollRoutine;
+    private bool isAnimatingQueue = false;
     
     private Vector2 baseHealthAnchoredPos;
     private Vector2 baseIntentAnchoredPos;
@@ -84,6 +96,19 @@ public class EnemyCombatDisplay : MonoBehaviour
     private bool isInitialized = false;
     private Enemy subscribedEnemyForStacks;
     private Enemy energySubscribedEnemy;
+    private Enemy intentChangedSubscribedEnemy;
+    private class IntentSlot
+    {
+        public GameObject root;
+        public Image icon;
+        public TextMeshProUGUI text;
+        public TextMeshProUGUI value;
+    }
+
+    private readonly List<IntentSlot> intentSlots = new List<IntentSlot>(3);
+    private readonly List<Vector2> intentSlotBasePositions = new List<Vector2>(3);
+    private bool intentSlotPositionsCached = false;
+    private StatusEffectManager statusSubscribedManager;
     
     private class StackIconElements
     {
@@ -126,6 +151,7 @@ public class EnemyCombatDisplay : MonoBehaviour
         {
             statusEffectManager = gameObject.AddComponent<StatusEffectManager>();
         }
+        SubscribeToStatusEffects();
         
         // Set up status effect container
         if (statusEffectsContainer == null)
@@ -259,6 +285,7 @@ public class EnemyCombatDisplay : MonoBehaviour
             stacksContainer = transform.Find("StacksContainer");
         
         EnsureStacksUI();
+        EnsureIntentQueueSlots();
         
         // Set up colors
         if (healthFillImage != null)
@@ -466,12 +493,14 @@ public class EnemyCombatDisplay : MonoBehaviour
     {
         UnsubscribeFromEnemyStacks();
         UnsubscribeFromEnemyEnergy();
+        UnsubscribeFromIntentChanged();
         currentEnemy = enemy;
         enemyData = data;
         deathNotified = false;
         InitializeAbilityRunner();
         SubscribeToEnemyStacks();
         SubscribeToEnemyEnergy();
+        SubscribeToIntentChanged();
         
         // Set up animator when enemy data changes
         SetupEnemyAnimator();
@@ -488,6 +517,7 @@ public class EnemyCombatDisplay : MonoBehaviour
     {
         UnsubscribeFromEnemyStacks();
         UnsubscribeFromEnemyEnergy();
+        UnsubscribeFromIntentChanged();
         currentEnemy = null;
         enemyData = null;
         deathNotified = false;
@@ -546,6 +576,7 @@ public class EnemyCombatDisplay : MonoBehaviour
         
         UnsubscribeFromEnemyStacks();
         UnsubscribeFromEnemyEnergy();
+        UnsubscribeFromIntentChanged();
         enemyData = data;
         
         // Get area level for scaling (from EncounterManager or maze context)
@@ -557,6 +588,7 @@ public class EnemyCombatDisplay : MonoBehaviour
         InitializeAbilityRunner();
         SubscribeToEnemyStacks();
         SubscribeToEnemyEnergy();
+        SubscribeToIntentChanged();
         
         // Set up animator when enemy data changes
         SetupEnemyAnimator();
@@ -810,7 +842,12 @@ public class EnemyCombatDisplay : MonoBehaviour
         {
             intentContainer.SetActive(true);
         }
+
+        EnsureIntentQueueSlots();
         
+        if (isAnimatingQueue)
+            return;
+
         // Check for crowd control status effects (Frozen, Stunned) that prevent actions
         bool isFrozen = statusEffectManager != null && statusEffectManager.HasStatusEffect(StatusEffectType.Freeze);
         bool isStunned = statusEffectManager != null && statusEffectManager.HasStatusEffect(StatusEffectType.Stun);
@@ -818,83 +855,458 @@ public class EnemyCombatDisplay : MonoBehaviour
         // Display crowd control status instead of normal intent
         if (isFrozen)
         {
-            if (intentText != null)
+            if (intentSlots.Count > 0 && intentSlots[0]?.text != null)
             {
-                intentText.text = "FROZEN!";
-                intentText.color = new Color(0.6f, 0.9f, 1f); // Light blue
+                intentSlots[0].text.text = "FROZEN!";
+                intentSlots[0].text.color = new Color(0.6f, 0.9f, 1f, 1f); // Light blue
             }
-            if (intentDamageText != null)
-            {
-                intentDamageText.text = "";
-            }
-            if (intentIcon != null)
-            {
-                intentIcon.sprite = null; // Or use a frozen icon if available
-            }
+            ClearIntentSlotsFromIndex(1);
+            SetAbilityIntentVisible(false);
             return;
         }
         
         if (isStunned)
         {
-            if (intentText != null)
+            if (intentSlots.Count > 0 && intentSlots[0]?.text != null)
             {
-                intentText.text = "STAGGERED!";
-                intentText.color = Color.yellow;
+                intentSlots[0].text.text = "STAGGERED!";
+                intentSlots[0].text.color = new Color(1f, 1f, 0f, 1f);
             }
-            if (intentDamageText != null)
-            {
-                intentDamageText.text = "";
-            }
-            if (intentIcon != null)
-            {
-                intentIcon.sprite = null; // Or use a stunned icon if available
-            }
+            ClearIntentSlotsFromIndex(1);
+            SetAbilityIntentVisible(false);
             return;
         }
         
-        // Normal intent display (if not frozen/stunned)
         if (showingAbilityIntent)
         {
-            intentText.text = activeAbilityIntentName;
+            SetAbilityIntentVisible(true);
             return;
         }
-        
-        if (intentText != null)
+
+        SetAbilityIntentVisible(false);
+
+        string headKey = GetIntentHeadKey();
+        bool headChanged = !string.IsNullOrEmpty(headKey) && headKey != lastIntentHeadKey;
+
+        if (headChanged && enableIntentSlotScroll && !isAnimatingQueue && intentSlots.Count > 1)
         {
-            intentText.text = currentEnemy.GetIntentDescription();
-            intentText.color = Color.white; // Reset to default color
+            StartQueueScrollAnimation();
+            lastIntentHeadKey = headKey;
+            return;
         }
-        
-        if (intentDamageText != null)
+
+        UpdateIntentQueueSlots();
+        if (headChanged && enableIntentSlide)
+            PlayIntentSlide();
+
+        if (headChanged)
+            lastIntentHeadKey = headKey;
+    }
+
+    private string GetIntentHeadKey()
+    {
+        if (currentEnemy == null || currentEnemy.intentQueue == null || currentEnemy.intentQueue.IsEmpty)
+            return null;
+
+        var head = currentEnemy.intentQueue.Peek();
+        if (!head.HasValue)
+            return null;
+
+        if (head.Value.IsAbility)
+            return $"{head.Value.AbilityId}:{head.Value.AbilityValue}";
+
+        return $"{head.Value.Type}:{head.Value.Damage}";
+    }
+
+    private void PlayIntentSlide()
+    {
+        if (intentContainer == null) return;
+        CacheBaseAnchoredPositions();
+
+        RectTransform rect = intentContainer.GetComponent<RectTransform>();
+        if (rect == null) return;
+
+        if (intentSlideRoutine != null)
+            StopCoroutine(intentSlideRoutine);
+
+        intentSlideRoutine = StartCoroutine(AnimateIntentSlide(rect));
+    }
+
+    private IEnumerator AnimateIntentSlide(RectTransform rect)
+    {
+        Vector2 start = baseIntentAnchoredPos - new Vector2(0f, intentSlideDistance);
+        Vector2 end = baseIntentAnchoredPos;
+        float elapsed = 0f;
+
+        rect.anchoredPosition = start;
+        while (elapsed < intentSlideDuration)
         {
-            if (currentEnemy.currentIntent == EnemyIntent.Attack)
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / intentSlideDuration);
+            rect.anchoredPosition = Vector2.Lerp(start, end, t);
+            yield return null;
+        }
+        rect.anchoredPosition = end;
+        intentSlideRoutine = null;
+    }
+
+    private void StartQueueScrollAnimation()
+    {
+        if (!enableIntentSlotScroll || intentSlots.Count == 0)
+            return;
+
+        CacheIntentSlotPositions();
+        if (intentScrollRoutine != null)
+            StopCoroutine(intentScrollRoutine);
+
+        intentScrollRoutine = StartCoroutine(AnimateIntentQueueScroll());
+    }
+
+    private IEnumerator AnimateIntentQueueScroll()
+    {
+        isAnimatingQueue = true;
+
+        Vector2 delta = intentSlotBasePositions.Count > 1
+            ? intentSlotBasePositions[0] - intentSlotBasePositions[1]
+            : new Vector2(0f, intentSlotSpacing);
+
+        float elapsed = 0f;
+        while (elapsed < intentSlotScrollDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / intentSlotScrollDuration);
+
+            for (int i = 0; i < intentSlots.Count; i++)
             {
-                intentDamageText.text = currentEnemy.intentDamage.ToString();
-                intentDamageText.color = attackIntentColor;
+                IntentSlot slot = intentSlots[i];
+                RectTransform rect = slot?.root != null ? slot.root.GetComponent<RectTransform>() : null;
+                if (rect == null) continue;
+
+                Vector2 start = intentSlotBasePositions[i];
+                Vector2 target = i == 0 ? start + delta : intentSlotBasePositions[i - 1];
+                rect.anchoredPosition = Vector2.Lerp(start, target, t);
+
+                float targetAlpha = i == 0 ? 0f : (i == 1 ? 1f : 0.6f);
+                float currentAlpha = Mathf.Lerp(1f, targetAlpha, t);
+                SetSlotAlpha(slot, currentAlpha);
+            }
+
+            yield return null;
+        }
+
+        RestoreIntentSlotPositions();
+        UpdateIntentQueueSlots();
+
+        isAnimatingQueue = false;
+        intentScrollRoutine = null;
+    }
+
+    private void EnsureIntentQueueSlots()
+    {
+        if (intentSlots.Count > 0)
+            return;
+
+        Transform root = intentContainer != null ? intentContainer.transform : transform;
+        for (int i = 1; i <= Mathf.Max(1, intentQueueSlotCount); i++)
+        {
+            string parentName = $"Intent{i}";
+            Transform parent = root.Find(parentName);
+            if (parent == null)
+                parent = transform.Find(parentName);
+
+            if (parent == null)
+                continue;
+
+            IntentSlot slot = new IntentSlot
+            {
+                root = parent.gameObject,
+                icon = parent.Find($"Intent{i}Icon")?.GetComponent<Image>(),
+                text = parent.Find($"Intent{i}Text")?.GetComponent<TextMeshProUGUI>(),
+                value = parent.Find($"Intent{i}Value")?.GetComponent<TextMeshProUGUI>()
+            };
+            intentSlots.Add(slot);
+        }
+
+        if (intentSlots.Count > 0)
+        {
+            if (intentText != null)
+                intentText.gameObject.SetActive(false);
+            if (intentDamageText != null)
+                intentDamageText.gameObject.SetActive(false);
+            if (intentIcon != null && intentIcon.gameObject != null)
+                intentIcon.gameObject.SetActive(false);
+
+            CacheIntentSlotPositions();
+            for (int i = 0; i < intentSlots.Count; i++)
+            {
+                SetSlotActive(intentSlots[i], true);
+            }
+        }
+
+        // Fallback to legacy single intent elements if no slots were found.
+        if (intentSlots.Count == 0 && intentText != null)
+        {
+            intentSlots.Add(new IntentSlot
+            {
+                root = intentText.transform.parent != null ? intentText.transform.parent.gameObject : null,
+                icon = intentIcon,
+                text = intentText,
+                value = intentDamageText
+            });
+        }
+    }
+
+    private void CacheIntentSlotPositions()
+    {
+        if (intentSlotPositionsCached || intentSlots.Count == 0)
+            return;
+
+        intentSlotBasePositions.Clear();
+        for (int i = 0; i < intentSlots.Count; i++)
+        {
+            RectTransform rect = intentSlots[i]?.root != null ? intentSlots[i].root.GetComponent<RectTransform>() : null;
+            intentSlotBasePositions.Add(rect != null ? rect.anchoredPosition : Vector2.zero);
+        }
+
+        intentSlotPositionsCached = true;
+    }
+
+    private void RestoreIntentSlotPositions()
+    {
+        if (!intentSlotPositionsCached) return;
+        for (int i = 0; i < intentSlots.Count; i++)
+        {
+            RectTransform rect = intentSlots[i]?.root != null ? intentSlots[i].root.GetComponent<RectTransform>() : null;
+            if (rect != null && i < intentSlotBasePositions.Count)
+                rect.anchoredPosition = intentSlotBasePositions[i];
+        }
+    }
+
+    private void UpdateIntentQueueSlots()
+    {
+        if (currentEnemy == null || intentSlots.Count == 0)
+            return;
+
+        var entries = currentEnemy.intentQueue != null ? currentEnemy.intentQueue.All : null;
+        int count = entries != null ? Mathf.Min(entries.Count, intentSlots.Count) : 0;
+
+        for (int i = 0; i < intentSlots.Count; i++)
+        {
+            IntentSlot slot = intentSlots[i];
+            if (slot == null) continue;
+
+            if (i < count)
+            {
+                SetSlotFromEntry(slot, entries[i], i);
             }
             else
             {
-                intentDamageText.text = "";
+                ClearSlot(slot);
             }
         }
-        
-        if (intentIcon != null)
+    }
+
+    private void SetSlotFromEntry(IntentSlot slot, EnemyIntentEntry entry, int index)
+    {
+        float alpha = index == 0 ? 1f : (index == 1 ? 0.6f : 0.3f);
+        string label = GetIntentLabel(entry);
+        string value = GetIntentValue(entry, currentEnemy);
+        Sprite icon = GetIntentIcon(entry, out Color iconColor);
+        Color textColor = GetIntentTextColor(entry);
+
+        SetSlotActive(slot, true);
+
+        if (slot.text != null)
         {
-            switch (currentEnemy.currentIntent)
-            {
-                case EnemyIntent.Attack:
-                    intentIcon.sprite = attackIcon;
-                    intentIcon.color = attackIntentColor;
-                    break;
-                case EnemyIntent.Defend:
-                    intentIcon.sprite = defendIcon;
-                    intentIcon.color = defendIntentColor;
-                    break;
-                default:
-                    intentIcon.sprite = null;
-                    break;
-            }
+            slot.text.text = label;
+            slot.text.color = textColor;
+            SetAlpha(slot.text, alpha);
         }
+
+        if (slot.value != null)
+        {
+            slot.value.text = value;
+            slot.value.color = textColor;
+            SetAlpha(slot.value, alpha);
+        }
+
+        if (slot.icon != null)
+        {
+            slot.icon.sprite = icon;
+            slot.icon.color = iconColor;
+            SetAlpha(slot.icon, alpha);
+            slot.icon.enabled = icon != null;
+        }
+    }
+
+    private void ClearSlot(IntentSlot slot)
+    {
+        SetSlotActive(slot, true);
+        if (slot.text != null) slot.text.text = string.Empty;
+        if (slot.value != null) slot.value.text = string.Empty;
+        if (slot.icon != null)
+        {
+            slot.icon.sprite = null;
+            slot.icon.enabled = false;
+        }
+    }
+
+    private void ClearIntentSlotsFromIndex(int startIndex)
+    {
+        for (int i = startIndex; i < intentSlots.Count; i++)
+        {
+            ClearSlot(intentSlots[i]);
+        }
+    }
+
+    private string GetIntentLabel(EnemyIntentEntry entry)
+    {
+        if (entry.IsAbility)
+        {
+            return string.IsNullOrEmpty(entry.AbilityName) ? "Ability" : entry.AbilityName;
+        }
+
+        switch (entry.Type)
+        {
+            case EnemyIntent.Attack:
+                return "Attack";
+            case EnemyIntent.Defend:
+                return "Defend";
+            default:
+                return "Intent";
+        }
+    }
+
+    private string GetIntentValue(EnemyIntentEntry entry, Enemy enemy)
+    {
+        if (entry.IsAbility)
+            return entry.AbilityValue > 0 ? entry.AbilityValue.ToString() : string.Empty;
+
+        switch (entry.Type)
+        {
+            case EnemyIntent.Attack:
+                return entry.Damage > 0 ? entry.Damage.ToString() : string.Empty;
+            case EnemyIntent.Defend:
+                if (enemy != null)
+                {
+                    int guardAmount = Mathf.RoundToInt(enemy.maxHealth * enemy.defendGuardPercent);
+                    return guardAmount > 0 ? guardAmount.ToString() : string.Empty;
+                }
+                return string.Empty;
+            default:
+                return string.Empty;
+        }
+    }
+
+    private Sprite GetIntentIcon(EnemyIntentEntry entry, out Color color)
+    {
+        color = Color.white;
+        if (entry.IsAbility)
+        {
+            color = abilityIntentColor;
+            return entry.AbilityIcon != null ? entry.AbilityIcon : abilityIcon;
+        }
+
+        switch (entry.Type)
+        {
+            case EnemyIntent.Attack:
+                color = attackIntentColor;
+                return attackIcon;
+            case EnemyIntent.Defend:
+                color = defendIntentColor;
+                return defendIcon;
+            default:
+                return null;
+        }
+    }
+
+    private void SetAlpha(Graphic graphic, float alpha)
+    {
+        if (graphic == null) return;
+        Color c = graphic.color;
+        c.a = alpha;
+        graphic.color = c;
+    }
+
+    private void SetSlotActive(IntentSlot slot, bool active)
+    {
+        if (slot == null) return;
+        if (slot.root != null) slot.root.SetActive(active);
+        if (slot.text != null)
+        {
+            slot.text.gameObject.SetActive(active);
+            slot.text.enabled = active;
+        }
+        if (slot.value != null)
+        {
+            slot.value.gameObject.SetActive(active);
+            slot.value.enabled = active;
+        }
+        if (slot.icon != null)
+        {
+            slot.icon.gameObject.SetActive(active);
+            slot.icon.enabled = active;
+        }
+    }
+
+    private void SetSlotAlpha(IntentSlot slot, float alpha)
+    {
+        if (slot == null) return;
+        SetAlpha(slot.text, alpha);
+        SetAlpha(slot.value, alpha);
+        SetAlpha(slot.icon, alpha);
+    }
+
+    private Color GetIntentTextColor(EnemyIntentEntry entry)
+    {
+        if (entry.IsAbility)
+            return abilityIntentColor;
+
+        switch (entry.Type)
+        {
+            case EnemyIntent.Attack:
+                return attackIntentColor;
+            case EnemyIntent.Defend:
+                return defendIntentColor;
+            default:
+                return Color.white;
+        }
+    }
+
+    private void SetAbilityIntentVisible(bool visible)
+    {
+        if (!visible || string.IsNullOrEmpty(activeAbilityIntentName))
+        {
+            abilityPreviewDamage = null;
+            return;
+        }
+
+        if (intentSlots.Count == 0)
+            return;
+
+        IntentSlot slot = intentSlots[0];
+        if (slot == null) return;
+
+        if (slot.text != null)
+        {
+            slot.text.text = activeAbilityIntentName;
+            slot.text.color = abilityIntentColor;
+        }
+        if (slot.value != null)
+        {
+            slot.value.text = abilityPreviewDamage.HasValue && abilityPreviewDamage.Value > 0
+                ? abilityPreviewDamage.Value.ToString()
+                : string.Empty;
+            slot.value.color = abilityIntentColor;
+        }
+        if (slot.icon != null)
+        {
+            slot.icon.sprite = abilityIcon;
+            slot.icon.color = abilityIntentColor;
+            slot.icon.enabled = abilityIcon != null;
+        }
+
+        ClearIntentSlotsFromIndex(1);
     }
     
     private void UpdateStatusEffects()
@@ -1297,6 +1709,61 @@ public class EnemyCombatDisplay : MonoBehaviour
             UpdateEnergyDisplay();
         }
     }
+
+    private void SubscribeToStatusEffects()
+    {
+        if (statusEffectManager == null || statusSubscribedManager == statusEffectManager)
+            return;
+
+        UnsubscribeFromStatusEffects();
+        statusEffectManager.OnStatusEffectAdded += HandleStatusEffectChanged;
+        statusEffectManager.OnStatusEffectRemoved += HandleStatusEffectChanged;
+        statusSubscribedManager = statusEffectManager;
+    }
+
+    private void UnsubscribeFromStatusEffects()
+    {
+        if (statusSubscribedManager == null)
+            return;
+
+        statusSubscribedManager.OnStatusEffectAdded -= HandleStatusEffectChanged;
+        statusSubscribedManager.OnStatusEffectRemoved -= HandleStatusEffectChanged;
+        statusSubscribedManager = null;
+    }
+
+    private void HandleStatusEffectChanged(StatusEffect effect)
+    {
+        UpdateIntentDisplay();
+    }
+
+    private void SubscribeToIntentChanged()
+    {
+        if (currentEnemy == null) return;
+        UnsubscribeFromIntentChanged();
+        currentEnemy.OnIntentChanged += HandleIntentChanged;
+        intentChangedSubscribedEnemy = currentEnemy;
+    }
+
+    private void UnsubscribeFromIntentChanged()
+    {
+        if (intentChangedSubscribedEnemy != null)
+        {
+            intentChangedSubscribedEnemy.OnIntentChanged -= HandleIntentChanged;
+            intentChangedSubscribedEnemy = null;
+        }
+    }
+
+    private void HandleIntentChanged()
+    {
+        RefreshIntentDisplay();
+    }
+
+    /// <summary>Refresh intent UI only (no SetIntent). Use when intent changed externally, e.g. OnIntentChanged.</summary>
+    public void RefreshIntentDisplay()
+    {
+        if (currentEnemy != null)
+            UpdateIntentDisplay();
+    }
     
     private void EnsureGuardUI()
     {
@@ -1554,58 +2021,30 @@ public class EnemyCombatDisplay : MonoBehaviour
         UpdateDisplay();
     }
     
+    /// <summary>Refresh intent UI from currentEnemy. Does not call SetIntent; caller must set intent when changing it.</summary>
     public void UpdateIntent()
     {
-        if (currentEnemy != null)
-        {
-            currentEnemy.SetIntent();
-            UpdateIntentDisplay();
-        }
+        RefreshIntentDisplay();
     }
     
     public void ShowAbilityIntent(string abilityName, int? previewDamage = null)
     {
         showingAbilityIntent = true;
         activeAbilityIntentName = abilityName;
+        abilityPreviewDamage = previewDamage;
         if (intentContainer != null)
         {
             intentContainer.SetActive(true);
         }
-        if (intentText != null)
-        {
-            intentText.text = abilityName;
-        }
-        if (intentDamageText != null)
-        {
-            if (previewDamage.HasValue && previewDamage.Value > 0)
-            {
-                intentDamageText.text = previewDamage.Value.ToString();
-                intentDamageText.color = attackIntentColor;
-            }
-            else
-            {
-                intentDamageText.text = string.Empty;
-            }
-        }
-        if (intentIcon != null)
-        {
-            if (abilityIcon != null)
-            {
-                intentIcon.sprite = abilityIcon;
-                intentIcon.enabled = true;
-                intentIcon.color = abilityIntentColor;
-            }
-            else
-            {
-                intentIcon.sprite = null;
-            }
-        }
+        SetAbilityIntentVisible(true);
+        UpdateIntentDisplay();
     }
     
     public void ClearAbilityIntent()
     {
         showingAbilityIntent = false;
         activeAbilityIntentName = null;
+        abilityPreviewDamage = null;
         UpdateIntentDisplay();
     }
     
@@ -2362,5 +2801,7 @@ public class EnemyCombatDisplay : MonoBehaviour
     {
         UnsubscribeFromEnemyStacks();
         UnsubscribeFromEnemyEnergy();
+        UnsubscribeFromIntentChanged();
+        UnsubscribeFromStatusEffects();
     }
 }

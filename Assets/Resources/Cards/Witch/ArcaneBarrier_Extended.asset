@@ -75,7 +75,18 @@ MonoBehaviour:
     requiredIntelligence: 0
     requiredWeaponTypes: 
     requiredLevel: 1
-  effects: []
+  effects:
+  - effectType: 5
+    effectName: Intelligence
+    description: 
+    value: 2
+    duration: 3
+    damageType: 0
+    targetsSelf: 1
+    targetsEnemy: 0
+    targetsAllEnemies: 0
+    targetsAll: 0
+    condition: 
   enableCombo: 1
   comboWith: 
   comboDescription: 'Light Channelling: 50% increased guard'

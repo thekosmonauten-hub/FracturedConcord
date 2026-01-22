@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Form depleted
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 281592e96d06dd94589438599351dbb7, type: 2}
-  m_sharedMaterial: {fileID: 4326722954951912636, guid: 281592e96d06dd94589438599351dbb7, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 91a1f06a45e4a7d479b83123accf191a, type: 2}
+  m_sharedMaterial: {fileID: -1118447507540419955, guid: 91a1f06a45e4a7d479b83123accf191a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -145,8 +145,20 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 466418990098151981, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 828976659610536215, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4991799026324746716, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5171106297279685414, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: m_hasFontAssetChanged
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5287760728561886596, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
@@ -232,6 +244,14 @@ PrefabInstance:
     - target: {fileID: 7167695235861022892, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
       propertyPath: m_Name
       value: VendorCardPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 8059293111981249993, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8398215819907666492, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8176228420737421169, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}

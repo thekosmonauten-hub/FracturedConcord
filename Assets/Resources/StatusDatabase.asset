@@ -202,8 +202,8 @@ MonoBehaviour:
     description: Increases or decreases the Strength stat for a duration or rest
       of combat.
     iconSprite: {fileID: -3660445793292762471, guid: e3c8a6ca6ec27014ebc4835011b7feaf, type: 3}
-    positiveIconSprite: {fileID: 0}
-    negativeIconSprite: {fileID: 0}
+    positiveIconSprite: {fileID: 8273082078994442743, guid: 45fe60566c73a534b8761e28e6313160, type: 3}
+    negativeIconSprite: {fileID: -1851632909905232416, guid: b3fdd5550c04e7d4f98d2cb2a74493bc, type: 3}
     effectColor: {r: 1, g: 0, b: 0, a: 1}
     isDebuff: 0
     usePositiveNegativeIcons: 0
@@ -218,8 +218,8 @@ MonoBehaviour:
     description: Increases or decreases the Dexterity stat for a duration or rest
       of combat.
     iconSprite: {fileID: -7734031666375071155, guid: 26ade82d8114c7c44ae2dc79b8eb5b1f, type: 3}
-    positiveIconSprite: {fileID: 0}
-    negativeIconSprite: {fileID: 0}
+    positiveIconSprite: {fileID: 8273082078994442743, guid: 45fe60566c73a534b8761e28e6313160, type: 3}
+    negativeIconSprite: {fileID: -1851632909905232416, guid: b3fdd5550c04e7d4f98d2cb2a74493bc, type: 3}
     effectColor: {r: 0, g: 1, b: 0, a: 1}
     isDebuff: 0
     usePositiveNegativeIcons: 0
@@ -234,8 +234,8 @@ MonoBehaviour:
     description: Increases or decreases the Intelligence stat for a duration or rest
       of combat.
     iconSprite: {fileID: 4618382711158860359, guid: e3c8a6ca6ec27014ebc4835011b7feaf, type: 3}
-    positiveIconSprite: {fileID: 0}
-    negativeIconSprite: {fileID: 0}
+    positiveIconSprite: {fileID: 8273082078994442743, guid: 45fe60566c73a534b8761e28e6313160, type: 3}
+    negativeIconSprite: {fileID: -1851632909905232416, guid: b3fdd5550c04e7d4f98d2cb2a74493bc, type: 3}
     effectColor: {r: 0, g: 0, b: 1, a: 1}
     isDebuff: 0
     usePositiveNegativeIcons: 0

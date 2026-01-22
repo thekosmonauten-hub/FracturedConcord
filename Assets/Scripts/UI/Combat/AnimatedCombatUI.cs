@@ -308,7 +308,7 @@ public class AnimatedCombatUI : MonoBehaviour
         
         // Update intent
         if (panel.intentText != null)
-            panel.intentText.text = $"Intent: {enemy.GetIntentDescription()}";
+            panel.intentText.text = $"Intent: {enemy.GetIntentQueueBoxPlain()}";
         
         // Animate health bar
         if (panel.healthBarFill != null && animationManager != null)

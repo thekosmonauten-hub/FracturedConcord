@@ -2324,6 +2324,13 @@ public class CardEffectProcessor : MonoBehaviour
                     }
                 }
             }
+            else if (eff.effectType == EffectType.ApplyStatus)
+            {
+                if (player != null && eff.targetsSelf)
+                {
+                    eff.ApplyEffect(player, player);
+                }
+            }
         }
         
         // Apply momentum threshold modifications to momentum gain

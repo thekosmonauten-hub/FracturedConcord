@@ -91,7 +91,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CombatLogEntry
   logText: {fileID: 3922751106356284177}
   backgroundImage: {fileID: 3491247113882218502}
-  normalColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.8}
+  normalColor: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 0.8}
   hoverColor: {r: 0.2, g: 0.2, b: 0.2, a: 0.9}
 --- !u!1 &1454834652373941225
 GameObject:
@@ -160,8 +160,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: LogText
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 281592e96d06dd94589438599351dbb7, type: 2}
-  m_sharedMaterial: {fileID: 4326722954951912636, guid: 281592e96d06dd94589438599351dbb7, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 91a1f06a45e4a7d479b83123accf191a, type: 2}
+  m_sharedMaterial: {fileID: -1118447507540419955, guid: 91a1f06a45e4a7d479b83123accf191a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -196,6 +196,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

@@ -20,6 +20,7 @@ public class EnemyAbilityRunner : MonoBehaviour
     public int LastPreviewDamage => lastPreviewDamage;
 
     public bool HasQueuedAbility => queuedAbility != null;
+    public string QueuedAbilityId => queuedAbility != null ? queuedAbility.id : null;
     public bool LastExecutionConsumedTurn => lastExecutionConsumedTurn;
     public string GetLastExecutedAbilityName() => lastExecutedAbilityName;
 
@@ -59,7 +60,13 @@ public class EnemyAbilityRunner : MonoBehaviour
     public void OnTurnEnd() { TryAbilities(AbilityTrigger.OnTurnEnd); CheckPhaseGate(); }
     public void OnAttack() { TryAbilities(AbilityTrigger.OnAttack); }
     public void OnDamaged() { TryAbilities(AbilityTrigger.OnDamaged); CheckPhaseGate(); }
-    public void OnDeath() { TryAbilities(AbilityTrigger.OnDeath); queuedAbility = null; display?.ClearAbilityIntent(); }
+    public void OnDeath()
+    {
+        TryAbilities(AbilityTrigger.OnDeath);
+        if (queuedAbility != null && runtimeEnemy != null)
+            runtimeEnemy.RemoveAbilityIntent(queuedAbility.id);
+        queuedAbility = null;
+    }
 
     private void TickCooldowns()
     {
@@ -130,6 +137,10 @@ public class EnemyAbilityRunner : MonoBehaviour
         }
 
         queuedAbility = a;
+        if (runtimeEnemy != null)
+        {
+            Debug.Log($"[AbilityQueue] {runtimeEnemy.enemyName} queued '{a.displayName}' (trigger={a.trigger}, cd={cooldowns[a.id]})");
+        }
         ApplyAbilityIntentPreview(a, true);
 
         if (a.trigger != AbilityTrigger.OnAttack)
@@ -197,11 +208,6 @@ public class EnemyAbilityRunner : MonoBehaviour
             cooldowns[a.id] = Mathf.Max(0, a.cooldownTurns);
         }
 
-        if (showIntent)
-        {
-            ctx.display?.ClearAbilityIntent();
-        }
-
         lastExecutedAbilityName = a.displayName;
         lastExecutionConsumedTurn = a.consumesTurn;
     }
@@ -218,9 +224,14 @@ public class EnemyAbilityRunner : MonoBehaviour
 
         queuedAbility = null;
         CastAbility(ability, false);
-        display?.ClearAbilityIntent();
+        if (runtimeEnemy != null)
+            runtimeEnemy.RemoveAbilityIntent(ability.id);
         lastExecutionConsumedTurn = ability.consumesTurn;
         lastExecutedAbilityName = ability.displayName;
+        if (runtimeEnemy != null)
+        {
+            Debug.Log($"[AbilityExecute] {runtimeEnemy.enemyName} executed '{ability.displayName}' (consumesTurn={ability.consumesTurn})");
+        }
         return ability;
     }
 
@@ -244,7 +255,8 @@ public class EnemyAbilityRunner : MonoBehaviour
 
     public void ClearIntentTelegraph()
     {
-        display?.ClearAbilityIntent();
+        if (queuedAbility != null && runtimeEnemy != null)
+            runtimeEnemy.RemoveAbilityIntent(queuedAbility.id);
     }
 
     private void ApplyAbilityIntentPreview(EnemyAbility ability, bool updateDisplay)
@@ -253,12 +265,23 @@ public class EnemyAbilityRunner : MonoBehaviour
         lastPreviewDamage = previewDamage;
         if (runtimeEnemy != null)
         {
-            runtimeEnemy.intentDamage = previewDamage;
+            Sprite icon = display != null ? display.abilityIcon : null;
+            runtimeEnemy.UpsertAbilityIntent(ability.id, ability.displayName, previewDamage, icon, GetAbilityQueueIndex(ability));
+            Debug.Log($"[AbilityIntent] {runtimeEnemy.enemyName} inserted '{ability.displayName}' into intent queue (preview={previewDamage})");
         }
+    }
 
-        if (updateDisplay && display != null)
+    private int GetAbilityQueueIndex(EnemyAbility ability)
+    {
+        if (ability == null) return 0;
+        switch (ability.trigger)
         {
-            display.ShowAbilityIntent(ability.displayName, previewDamage > 0 ? previewDamage : (int?)null);
+            case AbilityTrigger.OnTurnStart:
+            case AbilityTrigger.OnTurnEnd:
+            case AbilityTrigger.PhaseGate:
+                return 1; // telegraph one slot ahead
+            default:
+                return 0; // immediate/urgent abilities
         }
     }
 

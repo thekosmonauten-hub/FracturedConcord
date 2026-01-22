@@ -87,6 +87,17 @@ MonoBehaviour:
     targetsAllEnemies: 0
     targetsAll: 0
     condition: 
+  - effectType: 5
+    effectName: Intelligence
+    description: 
+    value: 3
+    duration: 3
+    damageType: 0
+    targetsSelf: 1
+    targetsEnemy: 0
+    targetsAllEnemies: 0
+    targetsAll: 0
+    condition: 
   enableCombo: 1
   comboWith: 
   comboDescription: 'Combo: Draw 2 cards instead'

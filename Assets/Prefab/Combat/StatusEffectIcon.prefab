@@ -103,6 +103,7 @@ MonoBehaviour:
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -191,6 +192,7 @@ MonoBehaviour:
   magnitudeText: {fileID: 3407475191636149550}
   buffColor: {r: 0, g: 1, b: 0, a: 0.22745098}
   debuffColor: {r: 1, g: 0, b: 0, a: 0.23529412}
+  statusDatabase: {fileID: 11400000, guid: 2c81a48b4cddec54f9ee541cd7ce35b3, type: 2}
 --- !u!1 &5733992143872877439
 GameObject:
   m_ObjectHideFlags: 0
@@ -371,6 +373,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

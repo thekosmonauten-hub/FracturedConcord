@@ -223,7 +223,7 @@ public class CombatUI : MonoBehaviour
                     enemyHealthFills[i].style.backgroundColor = new Color(1f, 0.2f, 0.2f);
                 
                 enemyHealthTexts[i].text = $"{enemy.currentHealth}/{enemy.maxHealth}";
-                enemyIntentTexts[i].text = $"Intent: {enemy.GetIntentDescription()}";
+                enemyIntentTexts[i].text = $"Intent: {enemy.GetIntentQueueBoxPlain()}";
                 
                 // Show targeting indicator
                 if (i == combatManager.selectedEnemyIndex)

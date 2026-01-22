@@ -248,6 +248,7 @@ public class CardEffect
             if (statusManager != null)
             {
                 statusManager.AddStatusEffect(statusEffect);
+                Debug.Log($"[ApplyStatusEffect] Added {statusType} ({effectName}) to {statusManager.gameObject.name}");
                 Debug.Log($"Applied status effect {effectName} to {target.characterName}");
             }
             else
