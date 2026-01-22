@@ -39,6 +39,10 @@ public class ScalingDamageEffect : AbilityEffect
         }
         
         int totalDamage = baseDamage + scalingBonus;
+        if (ctx.effectMultiplier > 1f)
+        {
+            totalDamage = Mathf.RoundToInt(totalDamage * ctx.effectMultiplier);
+        }
         
         Debug.Log($"[ScalingDamage] Base: {baseDamage}, Scaling: {scalingBonus} ({scalingValue} × {damagePerUnit}), Total: {totalDamage}");
         

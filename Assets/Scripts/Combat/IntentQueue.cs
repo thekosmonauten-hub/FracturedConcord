@@ -23,18 +23,34 @@ public struct EnemyIntentEntry
     /// <summary>Turns until execution (0 = this turn).</summary>
     public int Timing;
     public ThreatTier Tier;
+    public ThreatWord PrimaryThreat;
+    public ThreatWord SecondaryThreat;
+    public bool IsCharged;
+    public float ChargedMultiplier;
+    public int ChargedDelayTurns;
     public bool IsAbility;
     public string AbilityId;
     public string AbilityName;
     public int AbilityValue;
     public Sprite AbilityIcon;
 
-    public EnemyIntentEntry(EnemyIntent type, int damage, int timing = 0, ThreatTier tier = ThreatTier.Minor)
+    public EnemyIntentEntry(
+        EnemyIntent type,
+        int damage,
+        int timing = 0,
+        ThreatTier tier = ThreatTier.Minor,
+        ThreatWord primaryThreat = ThreatWord.None,
+        ThreatWord secondaryThreat = ThreatWord.None)
     {
         Type = type;
         Damage = damage;
         Timing = timing;
         Tier = tier;
+        PrimaryThreat = primaryThreat;
+        SecondaryThreat = secondaryThreat;
+        IsCharged = false;
+        ChargedMultiplier = 1f;
+        ChargedDelayTurns = 0;
         IsAbility = false;
         AbilityId = null;
         AbilityName = null;
@@ -42,12 +58,24 @@ public struct EnemyIntentEntry
         AbilityIcon = null;
     }
 
-    public EnemyIntentEntry(string abilityId, string abilityName, int abilityValue, Sprite abilityIcon, int timing = 0)
+    public EnemyIntentEntry(
+        string abilityId,
+        string abilityName,
+        int abilityValue,
+        Sprite abilityIcon,
+        int timing = 0,
+        ThreatWord primaryThreat = ThreatWord.None,
+        ThreatWord secondaryThreat = ThreatWord.None)
     {
         Type = EnemyIntent.Attack;
         Damage = 0;
         Timing = timing;
         Tier = ThreatTier.Minor;
+        PrimaryThreat = primaryThreat;
+        SecondaryThreat = secondaryThreat;
+        IsCharged = false;
+        ChargedMultiplier = 1f;
+        ChargedDelayTurns = 0;
         IsAbility = true;
         AbilityId = abilityId;
         AbilityName = abilityName;
@@ -105,6 +133,14 @@ public class IntentQueue
     {
         if (index < 0 || index >= _entries.Count) return false;
         _entries.RemoveAt(index);
+        return true;
+    }
+
+    /// <summary>Set entry at index. Returns false if out of range.</summary>
+    public bool SetAt(int index, EnemyIntentEntry entry)
+    {
+        if (index < 0 || index >= _entries.Count) return false;
+        _entries[index] = entry;
         return true;
     }
 

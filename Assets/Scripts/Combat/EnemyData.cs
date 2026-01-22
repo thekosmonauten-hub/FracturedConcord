@@ -94,6 +94,27 @@ public class EnemyData : ScriptableObject
     
     [Tooltip("If true, this enemy guarantees a spirit drop matching its tags (e.g., Fire Pixie always drops Fire Spirit)")]
     public bool guaranteedSpiritDrop = false;
+
+    [Header("Threat Vocabulary")]
+    public ThreatWord primaryThreat = ThreatWord.None;
+    public ThreatWord secondaryThreat = ThreatWord.None;
+
+    [Header("Threat Behavior")]
+    [Tooltip("If true, pick random threats from the provided lists on spawn.")]
+    public bool randomizeThreats = false;
+    [Tooltip("Primary threat pool used when randomizeThreats is enabled.")]
+    public List<ThreatWord> randomPrimaryThreats = new List<ThreatWord>();
+    [Tooltip("Secondary threat pool used when randomizeThreats is enabled.")]
+    public List<ThreatWord> randomSecondaryThreats = new List<ThreatWord>();
+    [Tooltip("Allow secondary threat to remain None when randomizing.")]
+    public bool allowSecondaryNone = true;
+
+    [Tooltip("Chance that a Charging threat will convert an attack/ability into a charged intent.")]
+    [Range(0f, 1f)] public float chargingChance = 0.35f;
+    [Tooltip("Damage/effect multiplier applied when a charged intent executes.")]
+    [Min(1f)] public float chargingDamageMultiplier = 1.5f;
+    [Tooltip("Turns to delay charged intents before execution.")]
+    [Min(1)] public int chargingDelayTurns = 1;
     
     [Header("Loot")]
     public int minGoldDrop = 5;
@@ -145,6 +166,29 @@ public class EnemyData : ScriptableObject
         enemy.criticalMultiplier = criticalMultiplier;
         enemy.accuracyRating = accuracyRating;
         enemy.evasionRating = evasionRating;
+
+        // Threat vocabulary assignment (optional randomization)
+        ThreatWord effectivePrimary = primaryThreat;
+        ThreatWord effectiveSecondary = secondaryThreat;
+        if (randomizeThreats)
+        {
+            if (randomPrimaryThreats != null && randomPrimaryThreats.Count > 0)
+                effectivePrimary = randomPrimaryThreats[Random.Range(0, randomPrimaryThreats.Count)];
+            if (randomSecondaryThreats != null && randomSecondaryThreats.Count > 0)
+                effectiveSecondary = randomSecondaryThreats[Random.Range(0, randomSecondaryThreats.Count)];
+
+            if (!allowSecondaryNone && effectiveSecondary == ThreatWord.None && randomSecondaryThreats != null && randomSecondaryThreats.Count > 0)
+                effectiveSecondary = randomSecondaryThreats[Random.Range(0, randomSecondaryThreats.Count)];
+
+            if (effectiveSecondary == effectivePrimary)
+                effectiveSecondary = ThreatWord.None;
+        }
+
+        enemy.primaryThreat = effectivePrimary;
+        enemy.secondaryThreat = effectiveSecondary;
+        enemy.chargingChance = chargingChance;
+        enemy.chargingDamageMultiplier = chargingDamageMultiplier;
+        enemy.chargingDelayTurns = chargingDelayTurns;
         
         // Apply area level scaling (similar to rarity scaling)
         // Area level 1 = base stats, each level adds ~15% more health and ~10% more damage

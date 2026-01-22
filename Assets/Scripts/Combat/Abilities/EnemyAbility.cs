@@ -19,6 +19,12 @@ public class EnemyAbility : ScriptableObject
     [Header("Targeting")]
     public AbilityTarget target = AbilityTarget.Player;
 
+[Header("Threat Overrides")]
+[Tooltip("If true, this ability uses its own threat words instead of the enemy defaults.")]
+public bool useThreatOverrides = false;
+public ThreatWord primaryThreatOverride = ThreatWord.None;
+public ThreatWord secondaryThreatOverride = ThreatWord.None;
+
 [Header("Energy")]
 [Tooltip("Energy cost paid when this ability fires. Ignored if the enemy has no energy pool.")]
 [Min(0f)] public float energyCost = 0f;

@@ -1161,15 +1161,17 @@ public class EnemyCombatDisplay : MonoBehaviour
 
     private string GetIntentLabel(EnemyIntentEntry entry)
     {
+        string prefix = entry.IsCharged ? "Charging " : string.Empty;
         if (entry.IsAbility)
         {
-            return string.IsNullOrEmpty(entry.AbilityName) ? "Ability" : entry.AbilityName;
+            string name = string.IsNullOrEmpty(entry.AbilityName) ? "Ability" : entry.AbilityName;
+            return $"{prefix}{name}";
         }
 
         switch (entry.Type)
         {
             case EnemyIntent.Attack:
-                return "Attack";
+                return $"{prefix}Attack";
             case EnemyIntent.Defend:
                 return "Defend";
             default:

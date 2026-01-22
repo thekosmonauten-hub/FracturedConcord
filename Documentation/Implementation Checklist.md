@@ -46,36 +46,36 @@ Use this checklist to track implementation progress. Check off items as you comp
 ## Phase 2: Threat Vocabulary Integration
 
 ### 2.1 Threat Word System
-- [ ] Create `ThreatWord` enum/class with 12 core words:
-  - [ ] Charging
-  - [ ] Primed
-  - [ ] Anchoring
-  - [ ] Leeching
-  - [ ] Suppressing
-  - [ ] Escalating
-  - [ ] Volatile
-  - [ ] Retaliating
-  - [ ] Channeling
-  - [ ] Converting
-  - [ ] Shielded
-  - [ ] Terminal
+- [x] Create `ThreatWord` enum/class with 12 core words:
+  - [x] Charging
+  - [x] Primed
+  - [x] Anchoring
+  - [x] Leeching
+  - [x] Suppressing
+  - [x] Escalating
+  - [x] Volatile
+  - [x] Retaliating
+  - [x] Channeling
+  - [x] Converting
+  - [x] Shielded
+  - [x] Terminal
 
-- [ ] Create `ThreatAxis` enum (5 axes):
-  - [ ] Time Pressure
-  - [ ] Punishment
-  - [ ] Disruption
-  - [ ] Protection
-  - [ ] Volatility
+- [x] Create `ThreatAxis` enum (5 axes):
+  - [x] Time Pressure
+  - [x] Punishment
+  - [x] Disruption
+  - [x] Protection
+  - [x] Volatility
 
-- [ ] Link threat words to axes
-- [ ] Create threat word data structure (ScriptableObject or class)
+- [x] Link threat words to axes
+- [x] Create threat word data structure (ScriptableObject or class)
 
 ### 2.2 Enemy Threat Assignment
-- [ ] Add threat word fields to enemy data:
-  - [ ] Primary Threat Word (required)
-  - [ ] Secondary Threat Word (optional, 0-1)
+- [x] Add threat word fields to enemy data:
+  - [x] Primary Threat Word (required)
+  - [x] Secondary Threat Word (optional, 0-1)
   
-- [ ] Update enemy creation/loading to assign threats
+- [x] Update enemy creation/loading to assign threats
 - [ ] Ensure no enemy has more than 2 threat words
 - [ ] Create example enemies with threat combinations:
   - [ ] Crumble Warden (Anchoring + Escalating)
@@ -84,9 +84,23 @@ Use this checklist to track implementation progress. Check off items as you comp
 
 ### 2.3 Intent-to-Threat Mapping
 - [ ] Map intent types to threat words
-- [ ] Ensure intents reflect assigned threat words
-- [ ] Add threat word tags to intents
+- [x] Ensure intents reflect assigned threat words
+- [x] Add threat word tags to intents
 - [ ] Create visual indicators for threat words
+
+### 2.4 Threat Behavior Hooks (Source of Truth)
+- [x] Create `ThreatBehaviorTable` with effects, hooks, counters
+- [ ] Add `ThreatBehaviorProcessor` to call hooks at runtime:
+  - [ ] On intent generation (apply Charging/Escalating flags)
+  - [ ] On turn start (tick Escalating/Channeling timers)
+  - [ ] On damaged (queue Retaliating)
+  - [ ] On execute (apply Suppressing/Leeching/Converting)
+- [ ] Wire hook calls into `Enemy` / `CombatManager`
+- [ ] Define default counters in UI (tooltip/help)
+
+### 2.5 Threat Visuals (UI)
+- [ ] Show primary/secondary threat words on intent slots
+- [ ] Show charged/escalating state with icon or badge
 
 ### 2.4 Wave Composition Rules
 - [ ] Implement wave composition validation:

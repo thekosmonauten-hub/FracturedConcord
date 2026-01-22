@@ -19,6 +19,10 @@ public class DamageEffect : AbilityEffect
             return;
 
         int damage = CalculateDamage(characterManager);
+        if (ctx.effectMultiplier > 1f)
+        {
+            damage = Mathf.RoundToInt(damage * ctx.effectMultiplier);
+        }
 
         switch (ctx.target)
         {

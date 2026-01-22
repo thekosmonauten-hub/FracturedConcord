@@ -932,6 +932,20 @@ public class CombatDisplayManager : MonoBehaviour
             }
             yield break; // Skip this enemy's action
         }
+
+        // Respect timed intents (e.g., Charging). If timing > 0, tick down and skip action.
+        if (enemy.intentQueue != null)
+        {
+            var head = enemy.intentQueue.Peek();
+            if (head.HasValue && head.Value.Timing > 0)
+            {
+                var updated = head.Value;
+                updated.Timing = Mathf.Max(0, updated.Timing - 1);
+                enemy.intentQueue.SetAt(0, updated);
+                enemyDisplay?.UpdateIntent();
+                yield break;
+            }
+        }
         
         // Check if this enemy should delay their action (Time-Lagged modifier)
         int delayTurns = 0;
@@ -1013,7 +1027,7 @@ public class CombatDisplayManager : MonoBehaviour
                 // Attack the player
                 if (characterManager != null && characterManager.HasCharacter())
                 {
-                    int damage = enemy.GetAttackDamage();
+                    int damage = enemy.intentDamage > 0 ? enemy.intentDamage : enemy.GetAttackDamage();
                     Character player = characterManager.GetCurrentCharacter();
                     
                     // Process modifier on-hit effects (e.g., Shock on hit)

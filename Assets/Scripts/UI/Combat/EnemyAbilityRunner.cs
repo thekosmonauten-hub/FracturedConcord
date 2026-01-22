@@ -121,7 +121,7 @@ public class EnemyAbilityRunner : MonoBehaviour
             return;
         }
 
-        CastAbility(a, true);
+        CastAbility(a, true, 1f, false);
     }
 
     private void QueueAbility(EnemyAbility a)
@@ -167,7 +167,7 @@ public class EnemyAbilityRunner : MonoBehaviour
         return false;
     }
 
-    private void CastAbility(EnemyAbility a, bool showIntent)
+    private void CastAbility(EnemyAbility a, bool showIntent, float effectMultiplier, bool isCharged)
     {
         var ctx = new AbilityContext
         {
@@ -177,7 +177,9 @@ public class EnemyAbilityRunner : MonoBehaviour
             characterManager = cm,
             effects = vfx,
             display = display,
-            target = a.target
+            target = a.target,
+            effectMultiplier = effectMultiplier,
+            isCharged = isCharged
         };
 
         ApplyAbilityIntentPreview(a, showIntent);
@@ -223,7 +225,8 @@ public class EnemyAbilityRunner : MonoBehaviour
         }
 
         queuedAbility = null;
-        CastAbility(ability, false);
+        float effectMultiplier = GetChargedMultiplierForQueuedAbility(ability, out bool isCharged);
+        CastAbility(ability, false, effectMultiplier, isCharged);
         if (runtimeEnemy != null)
             runtimeEnemy.RemoveAbilityIntent(ability.id);
         lastExecutionConsumedTurn = ability.consumesTurn;
@@ -266,7 +269,15 @@ public class EnemyAbilityRunner : MonoBehaviour
         if (runtimeEnemy != null)
         {
             Sprite icon = display != null ? display.abilityIcon : null;
-            runtimeEnemy.UpsertAbilityIntent(ability.id, ability.displayName, previewDamage, icon, GetAbilityQueueIndex(ability));
+            GetThreatOverrides(ability, out ThreatWord primaryThreat, out ThreatWord secondaryThreat);
+            runtimeEnemy.UpsertAbilityIntent(
+                ability.id,
+                ability.displayName,
+                previewDamage,
+                icon,
+                GetAbilityQueueIndex(ability),
+                primaryThreat,
+                secondaryThreat);
             Debug.Log($"[AbilityIntent] {runtimeEnemy.enemyName} inserted '{ability.displayName}' into intent queue (preview={previewDamage})");
         }
     }
@@ -314,6 +325,32 @@ public class EnemyAbilityRunner : MonoBehaviour
     private bool TargetsPlayer(AbilityTarget target)
     {
         return target == AbilityTarget.Player || target == AbilityTarget.AllPlayers;
+    }
+
+    private void GetThreatOverrides(EnemyAbility ability, out ThreatWord primary, out ThreatWord secondary)
+    {
+        primary = runtimeEnemy != null ? runtimeEnemy.primaryThreat : ThreatWord.None;
+        secondary = runtimeEnemy != null ? runtimeEnemy.secondaryThreat : ThreatWord.None;
+        if (ability != null && ability.useThreatOverrides)
+        {
+            primary = ability.primaryThreatOverride;
+            secondary = ability.secondaryThreatOverride;
+        }
+    }
+
+    private float GetChargedMultiplierForQueuedAbility(EnemyAbility ability, out bool isCharged)
+    {
+        isCharged = false;
+        if (runtimeEnemy == null || runtimeEnemy.intentQueue == null || ability == null)
+            return 1f;
+        var head = runtimeEnemy.intentQueue.Peek();
+        if (!head.HasValue)
+            return 1f;
+        var entry = head.Value;
+        if (!entry.IsAbility || entry.AbilityId != ability.id || !entry.IsCharged)
+            return 1f;
+        isCharged = true;
+        return Mathf.Max(1f, entry.ChargedMultiplier);
     }
 }
 

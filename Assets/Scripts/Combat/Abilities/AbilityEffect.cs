@@ -14,6 +14,8 @@ public class AbilityContext
     public CombatEffectManager effects;
     public EnemyCombatDisplay display;
     public AbilityTarget target;
+    public float effectMultiplier = 1f;
+    public bool isCharged = false;
 }
 
 

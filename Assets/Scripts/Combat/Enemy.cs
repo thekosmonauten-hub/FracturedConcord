@@ -41,6 +41,15 @@ public class Enemy
     [Tooltip("Synced from IntentQueue head. Overwritten temporarily during delayed-action execution.")]
     public EnemyIntent currentIntent;
     public int intentDamage;
+
+    [Header("Threat Vocabulary")]
+    public ThreatWord primaryThreat = ThreatWord.None;
+    public ThreatWord secondaryThreat = ThreatWord.None;
+
+    [Header("Threat Behavior")]
+    [Range(0f, 1f)] public float chargingChance = 0.35f;
+    [Min(1f)] public float chargingDamageMultiplier = 1.5f;
+    [Min(1)] public int chargingDelayTurns = 1;
     
     [Header("Intent Queue")]
     [Tooltip("1–3 upcoming intents. Source of truth; currentIntent/intentDamage mirror head.")]
@@ -640,7 +649,9 @@ public class Enemy
 
         intentQueue.RemoveFirst(entry => !entry.IsAbility);
         GenerateOneIntent(out var type, out var damage);
-        intentQueue.Enqueue(new EnemyIntentEntry(type, damage, 0, ThreatTier.Minor));
+        var entry = new EnemyIntentEntry(type, damage, 0, ThreatTier.Minor, primaryThreat, secondaryThreat);
+        ApplyChargingIfEligible(ref entry);
+        intentQueue.Enqueue(entry);
         SyncFromQueue();
         OnIntentChanged?.Invoke();
     }
@@ -669,7 +680,9 @@ public class Enemy
         while (intentQueue.Count < count)
         {
             GenerateOneIntent(out var type, out var damage);
-            intentQueue.Enqueue(new EnemyIntentEntry(type, damage, 0, ThreatTier.Minor));
+            var entry = new EnemyIntentEntry(type, damage, 0, ThreatTier.Minor, primaryThreat, secondaryThreat);
+            ApplyChargingIfEligible(ref entry);
+            intentQueue.Enqueue(entry);
         }
         SyncFromQueue();
         OnIntentChanged?.Invoke();
@@ -693,14 +706,14 @@ public class Enemy
         if (entry.IsAbility)
         {
             if (!string.IsNullOrEmpty(entry.AbilityName))
-                return entry.AbilityName;
+                return entry.IsCharged ? $"Charging {entry.AbilityName}" : entry.AbilityName;
             return "Ability";
         }
 
         switch (entry.Type)
         {
             case EnemyIntent.Attack:
-                return $"Attack ({entry.Damage})";
+                return entry.IsCharged ? $"Charging Attack ({entry.Damage})" : $"Attack ({entry.Damage})";
             case EnemyIntent.Defend:
                 return "Defend";
             default:
@@ -728,21 +741,78 @@ public class Enemy
         return string.Join("\n", lines);
     }
 
-    public void UpsertAbilityIntent(string abilityId, string abilityName, int abilityValue, Sprite abilityIcon, int insertIndex = 0)
+    public void UpsertAbilityIntent(
+        string abilityId,
+        string abilityName,
+        int abilityValue,
+        Sprite abilityIcon,
+        int insertIndex = 0,
+        ThreatWord? primaryThreatOverride = null,
+        ThreatWord? secondaryThreatOverride = null)
     {
         if (intentQueue == null || string.IsNullOrEmpty(abilityId))
             return;
 
         int index = intentQueue.FindIndex(entry => entry.IsAbility && entry.AbilityId == abilityId);
-        EnemyIntentEntry entryData = new EnemyIntentEntry(abilityId, abilityName, abilityValue, abilityIcon, 0);
+        ThreatWord effectivePrimary = primaryThreatOverride ?? primaryThreat;
+        ThreatWord effectiveSecondary = secondaryThreatOverride ?? secondaryThreat;
+        EnemyIntentEntry entryData = new EnemyIntentEntry(
+            abilityId,
+            abilityName,
+            abilityValue,
+            abilityIcon,
+            0,
+            effectivePrimary,
+            effectiveSecondary);
         if (index >= 0)
         {
+            var existing = intentQueue.All[index];
+            entryData.Timing = existing.Timing;
+            entryData.IsCharged = existing.IsCharged;
+            entryData.ChargedMultiplier = existing.ChargedMultiplier;
+            entryData.ChargedDelayTurns = existing.ChargedDelayTurns;
+            if (existing.IsCharged)
+                entryData.AbilityValue = existing.AbilityValue;
             intentQueue.RemoveAt(index);
+        }
+        else
+        {
+            ApplyChargingIfEligible(ref entryData);
         }
         intentQueue.InsertAt(insertIndex, entryData);
         SyncFromQueue();
         OnIntentChanged?.Invoke();
         Debug.Log($"[AbilityIntent] Upserted '{abilityName}' into queue at index {insertIndex}. Queue={GetIntentQueueBoxPlain()}");
+    }
+
+    private void ApplyChargingIfEligible(ref EnemyIntentEntry entry)
+    {
+        if (entry.IsCharged)
+            return;
+        if (entry.Type != EnemyIntent.Attack && !entry.IsAbility)
+            return;
+        if (chargingDelayTurns <= 0 || chargingChance <= 0f || chargingDamageMultiplier <= 1f)
+            return;
+
+        bool hasChargingThreat = entry.PrimaryThreat == ThreatWord.Charging || entry.SecondaryThreat == ThreatWord.Charging;
+        if (!hasChargingThreat)
+            return;
+
+        if (UnityEngine.Random.value > chargingChance)
+            return;
+
+        entry.IsCharged = true;
+        entry.ChargedMultiplier = chargingDamageMultiplier;
+        entry.ChargedDelayTurns = chargingDelayTurns;
+        entry.Timing = Mathf.Max(entry.Timing, chargingDelayTurns);
+        if (entry.IsAbility)
+        {
+            entry.AbilityValue = Mathf.RoundToInt(entry.AbilityValue * chargingDamageMultiplier);
+        }
+        else
+        {
+            entry.Damage = Mathf.RoundToInt(entry.Damage * chargingDamageMultiplier);
+        }
     }
 
     public void RemoveAbilityIntent(string abilityId)

@@ -44,8 +44,13 @@ public StackAdjustmentDefinition stackAdjustment;
             return;
         }
 
+        float finalMagnitude = magnitude;
+        if (ctx.effectMultiplier > 1f)
+        {
+            finalMagnitude *= ctx.effectMultiplier;
+        }
         string finalName = string.IsNullOrWhiteSpace(overrideEffectName) ? statusType.ToString() : overrideEffectName.Trim();
-        var effect = new StatusEffect(statusType, finalName, magnitude, durationTurns, isDebuff)
+        var effect = new StatusEffect(statusType, finalName, finalMagnitude, durationTurns, isDebuff)
         {
             stackAdjustment = adjustmentInstance
         };
