@@ -115,6 +115,52 @@ public class EnemyData : ScriptableObject
     [Min(1f)] public float chargingDamageMultiplier = 1.5f;
     [Tooltip("Turns to delay charged intents before execution.")]
     [Min(1)] public int chargingDelayTurns = 1;
+    [Tooltip("Flat damage/value added per turn for Escalating intents.")]
+    [Min(0)] public int escalatingDamagePerTurn = 2;
+    [Tooltip("Percent increased damage dealt/taken per turn for Escalating.")]
+    [Range(0f, 0.5f)] public float escalatingDamagePercentPerTurn = 0.05f;
+    [Tooltip("AoE damage dealt to player each enemy turn while Escalating (base, before scaling).")]
+    [Min(0)] public int escalatingAoEDamagePerTurn = 0;
+    [Tooltip("Multiplier per use for Channeling abilities (stacking).")]
+    [Range(0f, 1f)] public float channelingDamageMultiplierPerUse = 0.2f;
+    [Tooltip("Maximum channeling stacks (0 = unlimited).")]
+    [Min(0)] public int channelingMaxStacks = 0;
+    [Tooltip("Damage multiplier applied to Terminal abilities.")]
+    [Min(1f)] public float terminalDamageMultiplier = 5f;
+    [Tooltip("Primed trigger type.")]
+    public PrimedTriggerType primedTriggerType = PrimedTriggerType.PlayerStatusStacks;
+    [Tooltip("Status effect to check on player when using PlayerStatusStacks trigger.")]
+    public StatusEffectType primedStatusType = StatusEffectType.Poison;
+    [Tooltip("Required status stacks/magnitude to trigger Primed.")]
+    [Min(1)] public int primedStatusThreshold = 5;
+    [Tooltip("Enemy health percent threshold (0-1) to trigger Primed when using EnemyHealthPercent trigger.")]
+    [Range(0f, 1f)] public float primedHealthThreshold = 0.5f;
+    [Tooltip("Damage multiplier applied to the Primed attack intent.")]
+    [Min(1f)] public float primedDamageMultiplier = 1.5f;
+    [Tooltip("Chance to queue a retaliation intent when damaged.")]
+    [Range(0f, 1f)] public float retaliateChance = 0.35f;
+    [Tooltip("Multiplier applied to base attack damage for retaliation intents.")]
+    [Min(0f)] public float retaliateDamageMultiplier = 0.5f;
+    [Tooltip("Percent of incoming damage converted to guard while retaliating.")]
+    [Range(0f, 1f)] public float retaliateGuardGainPercent = 0.1f;
+    [Tooltip("Percent of current guard dealt back as thorns damage.")]
+    [Range(0f, 1f)] public float retaliateThornsPercent = 0.5f;
+    [Tooltip("Multiplier to Focus/Aggression charge gain when Suppressing is active.")]
+    [Range(0f, 1f)] public float suppressingChargeGainMultiplier = 0.5f;
+    [Tooltip("If true, suppressing prevents prepared cards from gaining charges.")]
+    public bool suppressingBlocksPreparedCharges = true;
+    [Tooltip("Guard aura granted to all enemies each enemy turn when Anchoring is alive (percent of anchoring max health).")]
+    [Range(0f, 1f)] public float anchoringAuraGuardPercent = 0.05f;
+    [Tooltip("Percent of damage dealt returned as healing when Leeching is active.")]
+    [Range(0f, 1f)] public float leechingLifestealPercent = 0.2f;
+    [Tooltip("Starting guard percent when Shielded is active.")]
+    [Range(0f, 1f)] public float shieldedGuardPercent = 0.75f;
+    [Tooltip("Percent damage reduction while Shielded is active (capped by design).")]
+    [Range(0f, 1f)] public float shieldedDamageReductionPercent = 0.75f;
+    [Tooltip("Turns of stun applied when Shielded guard breaks.")]
+    [Min(0)] public int shieldedStunTurns = 2;
+    [Tooltip("If true, shielded enemies do not decay guard each turn.")]
+    public bool shieldedNoGuardDecay = true;
     
     [Header("Loot")]
     public int minGoldDrop = 5;
@@ -189,6 +235,29 @@ public class EnemyData : ScriptableObject
         enemy.chargingChance = chargingChance;
         enemy.chargingDamageMultiplier = chargingDamageMultiplier;
         enemy.chargingDelayTurns = chargingDelayTurns;
+        enemy.escalatingDamagePerTurn = escalatingDamagePerTurn;
+        enemy.escalatingDamagePercentPerTurn = escalatingDamagePercentPerTurn;
+        enemy.escalatingAoEDamagePerTurn = escalatingAoEDamagePerTurn;
+        enemy.channelingDamageMultiplierPerUse = channelingDamageMultiplierPerUse;
+        enemy.channelingMaxStacks = channelingMaxStacks;
+        enemy.terminalDamageMultiplier = terminalDamageMultiplier;
+        enemy.primedTriggerType = primedTriggerType;
+        enemy.primedStatusType = primedStatusType;
+        enemy.primedStatusThreshold = primedStatusThreshold;
+        enemy.primedHealthThreshold = primedHealthThreshold;
+        enemy.primedDamageMultiplier = primedDamageMultiplier;
+        enemy.retaliateChance = retaliateChance;
+        enemy.retaliateDamageMultiplier = retaliateDamageMultiplier;
+        enemy.retaliateGuardGainPercent = retaliateGuardGainPercent;
+        enemy.retaliateThornsPercent = retaliateThornsPercent;
+        enemy.suppressingChargeGainMultiplier = suppressingChargeGainMultiplier;
+        enemy.suppressingBlocksPreparedCharges = suppressingBlocksPreparedCharges;
+        enemy.anchoringAuraGuardPercent = anchoringAuraGuardPercent;
+        enemy.leechingLifestealPercent = leechingLifestealPercent;
+        enemy.shieldedGuardPercent = shieldedGuardPercent;
+        enemy.shieldedDamageReductionPercent = shieldedDamageReductionPercent;
+        enemy.shieldedStunTurns = shieldedStunTurns;
+        enemy.shieldedNoGuardDecay = shieldedNoGuardDecay;
         
         // Apply area level scaling (similar to rarity scaling)
         // Area level 1 = base stats, each level adds ~15% more health and ~10% more damage
@@ -200,6 +269,12 @@ public class EnemyData : ScriptableObject
             enemy.maxHealth = Mathf.CeilToInt(enemy.maxHealth * healthMultiplier);
             enemy.currentHealth = enemy.maxHealth;
             enemy.baseDamage = Mathf.CeilToInt(enemy.baseDamage * damageMultiplier);
+        }
+
+        if (enemy.HasThreat(ThreatWord.Shielded))
+        {
+            enemy.maxGuard = enemy.maxHealth;
+            enemy.currentGuard = enemy.maxHealth * Mathf.Clamp01(enemy.shieldedGuardPercent);
         }
         
         // Store tier/rarity on name for UI if needed

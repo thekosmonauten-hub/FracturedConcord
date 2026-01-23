@@ -67,11 +67,17 @@ public class EnemyCombatDisplay : MonoBehaviour
     public Color attackIntentColor = Color.red;
     public Color defendIntentColor = Color.blue;
     public Color abilityIntentColor = DefaultAbilityIntentColor;
+    public Color threatLabelColor = new Color(1f, 0.85f, 0.45f, 1f);
+    public bool showThreatTextFallback = true;
     
     [Header("Intent Icons")]
     public Sprite attackIcon;
     public Sprite defendIcon;
     public Sprite abilityIcon;
+
+    [Header("Enemy Threat Icons")]
+    public Image enemyThreatIconPrimary;
+    public Image enemyThreatIconSecondary;
     
     [Header("Animation")]
     public Animator enemyAnimator; // Animator for enemy sprite animations
@@ -103,6 +109,10 @@ public class EnemyCombatDisplay : MonoBehaviour
         public Image icon;
         public TextMeshProUGUI text;
         public TextMeshProUGUI value;
+        public TextMeshProUGUI threatText;
+        public Image threatIconPrimary;
+        public Image threatIconSecondary;
+        public Image abilityBoundBadge;
     }
 
     private readonly List<IntentSlot> intentSlots = new List<IntentSlot>(3);
@@ -195,6 +205,7 @@ public class EnemyCombatDisplay : MonoBehaviour
         
         EnsureEnergyUI();
         EnsureGuardUI();
+        EnsureEnemyThreatIcons();
         
         // Provide a default runtime status-effect icon prefab if none assigned
         if (statusEffectPrefab == null)
@@ -344,6 +355,29 @@ public class EnemyCombatDisplay : MonoBehaviour
         
         // DON'T auto-create test enemy - let CombatDisplayManager assign real enemies
         // If you want a placeholder, CombatDisplayManager will handle it
+    }
+
+    private void EnsureEnemyThreatIcons()
+    {
+        if (enemyThreatIconPrimary == null)
+        {
+            enemyThreatIconPrimary = FindThreatIconByName("EnemyThreatIconPrimary", "ThreatIconPrimary", "ThreatIcon1");
+        }
+        if (enemyThreatIconSecondary == null)
+        {
+            enemyThreatIconSecondary = FindThreatIconByName("EnemyThreatIconSecondary", "ThreatIconSecondary", "ThreatIcon2");
+        }
+    }
+
+    private Image FindThreatIconByName(params string[] names)
+    {
+        foreach (var name in names)
+        {
+            Transform t = transform.Find(name);
+            if (t != null)
+                return t.GetComponent<Image>();
+        }
+        return null;
     }
     
     /// <summary>
@@ -724,6 +758,7 @@ public class EnemyCombatDisplay : MonoBehaviour
         UpdateStatusEffects();
         UpdateEnergyDisplay();
         UpdateGuardDisplay();
+        UpdateEnemyThreatIcons();
 
         // Apply layout scaling if EnemyData provides displayScale/basePanelHeight
         if (enemyData != null)
@@ -1022,7 +1057,12 @@ public class EnemyCombatDisplay : MonoBehaviour
                 root = parent.gameObject,
                 icon = parent.Find($"Intent{i}Icon")?.GetComponent<Image>(),
                 text = parent.Find($"Intent{i}Text")?.GetComponent<TextMeshProUGUI>(),
-                value = parent.Find($"Intent{i}Value")?.GetComponent<TextMeshProUGUI>()
+                value = parent.Find($"Intent{i}Value")?.GetComponent<TextMeshProUGUI>(),
+                threatText = parent.Find($"Intent{i}Threat")?.GetComponent<TextMeshProUGUI>()
+                             ?? parent.Find($"Intent{i}ThreatText")?.GetComponent<TextMeshProUGUI>(),
+                threatIconPrimary = FindThreatIcon(parent, i, true),
+                threatIconSecondary = FindThreatIcon(parent, i, false),
+                abilityBoundBadge = FindAbilityBoundBadge(parent, i)
             };
             intentSlots.Add(slot);
         }
@@ -1137,6 +1177,27 @@ public class EnemyCombatDisplay : MonoBehaviour
             SetAlpha(slot.icon, alpha);
             slot.icon.enabled = icon != null;
         }
+
+        if (slot.threatText != null)
+        {
+            slot.threatText.text = showThreatTextFallback ? GetThreatLabel(entry) : string.Empty;
+            slot.threatText.color = threatLabelColor;
+            SetAlpha(slot.threatText, alpha);
+        }
+
+        if (slot.threatIconPrimary != null)
+        {
+            SetThreatIcon(slot.threatIconPrimary, GetDisplayThreat(entry.PrimaryThreat, entry.IsAbility), alpha);
+        }
+        if (slot.threatIconSecondary != null)
+        {
+            SetThreatIcon(slot.threatIconSecondary, GetDisplayThreat(entry.SecondaryThreat, entry.IsAbility), alpha);
+        }
+
+        if (slot.abilityBoundBadge != null)
+        {
+            SetAbilityBoundBadge(slot.abilityBoundBadge, entry, alpha);
+        }
     }
 
     private void ClearSlot(IntentSlot slot)
@@ -1144,6 +1205,22 @@ public class EnemyCombatDisplay : MonoBehaviour
         SetSlotActive(slot, true);
         if (slot.text != null) slot.text.text = string.Empty;
         if (slot.value != null) slot.value.text = string.Empty;
+        if (slot.threatText != null) slot.threatText.text = string.Empty;
+        if (slot.threatIconPrimary != null)
+        {
+            slot.threatIconPrimary.sprite = null;
+            slot.threatIconPrimary.enabled = false;
+        }
+        if (slot.threatIconSecondary != null)
+        {
+            slot.threatIconSecondary.sprite = null;
+            slot.threatIconSecondary.enabled = false;
+        }
+        if (slot.abilityBoundBadge != null)
+        {
+            slot.abilityBoundBadge.sprite = null;
+            slot.abilityBoundBadge.enabled = false;
+        }
         if (slot.icon != null)
         {
             slot.icon.sprite = null;
@@ -1249,6 +1326,26 @@ public class EnemyCombatDisplay : MonoBehaviour
             slot.icon.gameObject.SetActive(active);
             slot.icon.enabled = active;
         }
+        if (slot.threatText != null)
+        {
+            slot.threatText.gameObject.SetActive(active);
+            slot.threatText.enabled = active;
+        }
+        if (slot.threatIconPrimary != null)
+        {
+            slot.threatIconPrimary.gameObject.SetActive(active);
+            slot.threatIconPrimary.enabled = active;
+        }
+        if (slot.threatIconSecondary != null)
+        {
+            slot.threatIconSecondary.gameObject.SetActive(active);
+            slot.threatIconSecondary.enabled = active;
+        }
+        if (slot.abilityBoundBadge != null)
+        {
+            slot.abilityBoundBadge.gameObject.SetActive(active);
+            slot.abilityBoundBadge.enabled = active;
+        }
     }
 
     private void SetSlotAlpha(IntentSlot slot, float alpha)
@@ -1257,6 +1354,10 @@ public class EnemyCombatDisplay : MonoBehaviour
         SetAlpha(slot.text, alpha);
         SetAlpha(slot.value, alpha);
         SetAlpha(slot.icon, alpha);
+        SetAlpha(slot.threatText, alpha);
+        SetAlpha(slot.threatIconPrimary, alpha);
+        SetAlpha(slot.threatIconSecondary, alpha);
+        SetAlpha(slot.abilityBoundBadge, alpha);
     }
 
     private Color GetIntentTextColor(EnemyIntentEntry entry)
@@ -1273,6 +1374,211 @@ public class EnemyCombatDisplay : MonoBehaviour
             default:
                 return Color.white;
         }
+    }
+
+    private string GetThreatLabel(EnemyIntentEntry entry)
+    {
+        ThreatWord primaryWord = GetDisplayThreat(entry.PrimaryThreat, entry.IsAbility);
+        ThreatWord secondaryWord = GetDisplayThreat(entry.SecondaryThreat, entry.IsAbility);
+        string primary = primaryWord != ThreatWord.None ? primaryWord.ToString() : string.Empty;
+        string secondary = secondaryWord != ThreatWord.None ? secondaryWord.ToString() : string.Empty;
+
+        if (string.IsNullOrEmpty(primary))
+            return secondary;
+        if (string.IsNullOrEmpty(secondary))
+            return primary;
+        return $"{primary} + {secondary}";
+    }
+
+    [Serializable]
+    public class ThreatIconMapping
+    {
+        public ThreatWord word;
+        public Sprite icon;
+    }
+
+    [Header("Threat Icons")]
+    public List<ThreatIconMapping> threatIcons = new List<ThreatIconMapping>();
+
+    private Dictionary<ThreatWord, Sprite> threatIconLookup;
+
+    private Image FindThreatIcon(Transform parent, int index, bool primary)
+    {
+        string suffix = primary ? "Primary" : "Secondary";
+        Transform t = parent.Find($"Intent{index}ThreatIcon{suffix}");
+        if (t == null) t = parent.Find($"Intent{index}ThreatIcon{(primary ? "1" : "2")}");
+        if (t == null) t = parent.Find($"Intent{index}ThreatIcon{(primary ? "A" : "B")}");
+        if (t == null) t = parent.Find(primary ? "ThreatIconPrimary" : "ThreatIconSecondary");
+        if (t == null) t = parent.Find(primary ? "ThreatIcon1" : "ThreatIcon2");
+        return t != null ? t.GetComponent<Image>() : null;
+    }
+
+    private Image FindAbilityBoundBadge(Transform parent, int index)
+    {
+        Transform t = parent.Find($"Intent{index}AbilityBoundBadge");
+        if (t == null) t = parent.Find("AbilityBoundBadge");
+        if (t == null) t = parent.Find("AbilityBound");
+        return t != null ? t.GetComponent<Image>() : null;
+    }
+
+    private void EnsureThreatIconLookup()
+    {
+        if (threatIconLookup != null) return;
+        threatIconLookup = new Dictionary<ThreatWord, Sprite>();
+        foreach (var mapping in threatIcons)
+        {
+            if (mapping == null || mapping.word == ThreatWord.None || mapping.icon == null)
+                continue;
+            threatIconLookup[mapping.word] = mapping.icon;
+        }
+
+        // Auto-load from Resources/ThreatIcons/<ThreatWord> if missing.
+        foreach (ThreatWord word in Enum.GetValues(typeof(ThreatWord)))
+        {
+            if (word == ThreatWord.None || threatIconLookup.ContainsKey(word))
+                continue;
+            Sprite sprite = Resources.Load<Sprite>($"ThreatIcons/{word}");
+            if (sprite != null)
+                threatIconLookup[word] = sprite;
+        }
+    }
+
+    private void SetThreatIcon(Image icon, ThreatWord word, float alpha)
+    {
+        if (icon == null) return;
+        EnsureThreatIconLookup();
+        if (word == ThreatWord.None || threatIconLookup == null || !threatIconLookup.TryGetValue(word, out var sprite) || sprite == null)
+        {
+            icon.sprite = null;
+            icon.enabled = false;
+            return;
+        }
+
+        icon.sprite = sprite;
+        icon.color = Color.white;
+        icon.enabled = true;
+        SetAlpha(icon, alpha);
+    }
+
+    private void SetAbilityBoundBadge(Image icon, EnemyIntentEntry entry, float alpha)
+    {
+        if (icon == null)
+            return;
+
+        if (!entry.IsAbility)
+        {
+            icon.sprite = null;
+            icon.enabled = false;
+            return;
+        }
+
+        ThreatWord primary = GetDisplayThreat(entry.PrimaryThreat, true);
+        ThreatWord secondary = GetDisplayThreat(entry.SecondaryThreat, true);
+        ThreatWord badgeWord = primary != ThreatWord.None ? primary : secondary;
+        if (badgeWord == ThreatWord.None)
+        {
+            icon.sprite = null;
+            icon.enabled = false;
+            return;
+        }
+
+        EnsureThreatIconLookup();
+        if (threatIconLookup == null || !threatIconLookup.TryGetValue(badgeWord, out var sprite) || sprite == null)
+        {
+            icon.sprite = null;
+            icon.enabled = false;
+            return;
+        }
+
+        icon.sprite = sprite;
+        icon.color = Color.white;
+        icon.enabled = true;
+        SetAlpha(icon, alpha);
+    }
+
+    private void UpdateEnemyThreatIcons()
+    {
+        if (currentEnemy == null)
+            return;
+
+        ThreatWord primary = GetDisplayThreat(currentEnemy.primaryThreat, isAbility: false);
+        ThreatWord secondary = GetDisplayThreat(currentEnemy.secondaryThreat, isAbility: false);
+
+        if (primary == ThreatWord.None && secondary != ThreatWord.None)
+        {
+            primary = secondary;
+            secondary = ThreatWord.None;
+        }
+
+        SetThreatIcon(enemyThreatIconPrimary, primary, 1f);
+        SetThreatIcon(enemyThreatIconSecondary, secondary, 1f);
+    }
+
+    public void FlashThreatIcons(float duration = 0.12f)
+    {
+        StartCoroutine(FlashThreatIconsRoutine(duration));
+    }
+
+    private IEnumerator FlashThreatIconsRoutine(float duration)
+    {
+        var icons = new List<Image>
+        {
+            enemyThreatIconPrimary,
+            enemyThreatIconSecondary
+        };
+
+        foreach (var slot in intentSlots)
+        {
+            if (slot == null) continue;
+            if (slot.threatIconPrimary != null) icons.Add(slot.threatIconPrimary);
+            if (slot.threatIconSecondary != null) icons.Add(slot.threatIconSecondary);
+        }
+
+        var originals = new List<Color>(icons.Count);
+        foreach (var icon in icons)
+        {
+            if (icon == null || !icon.enabled)
+            {
+                originals.Add(Color.clear);
+                continue;
+            }
+            originals.Add(icon.color);
+            Color c = icon.color;
+            c.a = 1f;
+            icon.color = c;
+        }
+
+        yield return new WaitForSeconds(duration);
+
+        for (int i = 0; i < icons.Count; i++)
+        {
+            var icon = icons[i];
+            if (icon == null) continue;
+            icon.color = originals[i];
+        }
+    }
+
+    private ThreatWord GetDisplayThreat(ThreatWord word, bool isAbility)
+    {
+        if (word == ThreatWord.None)
+            return ThreatWord.None;
+
+        var def = ThreatBehaviorTable.Get(word);
+        if (def.Binding == ThreatBindingScope.Removed)
+            return ThreatWord.None;
+
+        if (isAbility)
+        {
+            if (def.Binding == ThreatBindingScope.EnemyBound)
+                return ThreatWord.None;
+        }
+        else
+        {
+            if (def.Binding == ThreatBindingScope.AbilityBound)
+                return ThreatWord.None;
+        }
+
+        return word;
     }
 
     private void SetAbilityIntentVisible(bool visible)
@@ -2054,6 +2360,16 @@ public class EnemyCombatDisplay : MonoBehaviour
     {
         if (currentEnemy != null)
         {
+            var combatManager = UnityEngine.Object.FindFirstObjectByType<CombatDisplayManager>();
+            if (combatManager != null && !combatManager.IsAnchoringShareInProgress() &&
+                (currentEnemy.primaryThreat == ThreatWord.Anchoring || currentEnemy.secondaryThreat == ThreatWord.Anchoring
+                 || combatManager.HasActiveEnemyThreat(ThreatWord.Anchoring)))
+            {
+                combatManager.ApplyAnchoringSharedDamage(this, damage, ignoreGuardArmor);
+                return;
+            }
+
+            float preGuard = currentEnemy.currentGuard;
             // Check for DamageReflection status effect BEFORE taking damage
             var statusManager = GetStatusEffectManager();
             if (statusManager != null && statusManager.HasStatusEffect(StatusEffectType.DamageReflection))
@@ -2092,9 +2408,24 @@ public class EnemyCombatDisplay : MonoBehaviour
             
             currentEnemy.TakeDamage(damage, ignoreGuardArmor);
             abilityRunner?.OnDamaged();
+            bool threatChanged = ThreatBehaviorProcessor.OnDamaged(currentEnemy, damage, preGuard);
+            if (currentEnemy.HasThreat(ThreatWord.Shielded) && preGuard > 0f && currentEnemy.currentGuard <= 0f)
+            {
+                int stunTurns = Mathf.Max(0, currentEnemy.shieldedStunTurns);
+                if (stunTurns > 0)
+                {
+                    var stun = new StatusEffect(StatusEffectType.Stun, "Stunned", 1f, stunTurns, true);
+                    AddStatusEffect(stun);
+                }
+                FlashThreatIcons(0.2f);
+            }
             UpdateHealthDisplay();
             UpdateStaggerDisplay(); // Update stagger when damage is taken (stagger may have been applied)
             UpdateGuardDisplay(); // Update guard display when damage is taken (guard may have been reduced)
+            if (threatChanged)
+            {
+                UpdateIntent();
+            }
             PlayDamageAnimation();
             
             // Check if enemy died and notify combat manager to handle death properly

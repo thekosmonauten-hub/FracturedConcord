@@ -83,24 +83,25 @@ Use this checklist to track implementation progress. Check off items as you comp
   - [ ] Shock Inquisitor (Suppressing + Charging)
 
 ### 2.3 Intent-to-Threat Mapping
-- [ ] Map intent types to threat words
+- [x] Map intent types to threat words
 - [x] Ensure intents reflect assigned threat words
 - [x] Add threat word tags to intents
-- [ ] Create visual indicators for threat words
+- [x] Create visual indicators for threat words
 
 ### 2.4 Threat Behavior Hooks (Source of Truth)
 - [x] Create `ThreatBehaviorTable` with effects, hooks, counters
-- [ ] Add `ThreatBehaviorProcessor` to call hooks at runtime:
-  - [ ] On intent generation (apply Charging/Escalating flags)
-  - [ ] On turn start (tick Escalating/Channeling timers)
-  - [ ] On damaged (queue Retaliating)
-  - [ ] On execute (apply Suppressing/Leeching/Converting)
-- [ ] Wire hook calls into `Enemy` / `CombatManager`
+- [x] Add `ThreatBehaviorProcessor` to call hooks at runtime:
+  - [x] On intent generation (apply Charging/Escalating flags)
+  - [x] On turn start (tick Escalating/Channeling timers)
+  - [x] On damaged (queue Retaliating)
+  - [x] On execute (apply Suppressing/Leeching/Converting)
+- [x] Wire hook calls into `Enemy` / `CombatManager`
 - [ ] Define default counters in UI (tooltip/help)
+- [ ] Expand Primed trigger conditions (extensible ruleset)
 
 ### 2.5 Threat Visuals (UI)
-- [ ] Show primary/secondary threat words on intent slots
-- [ ] Show charged/escalating state with icon or badge
+- [x] Show primary/secondary threat words on intent slots
+- [x] Show charged/escalating state with icon or badge
 
 ### 2.4 Wave Composition Rules
 - [ ] Implement wave composition validation:

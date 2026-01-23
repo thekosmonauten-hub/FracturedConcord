@@ -75,6 +75,9 @@ public class ComboSystem : MonoBehaviour
 	public ComboApplication BuildComboApplication(CardDataExtended cardData, Character player)
 	{
 		if (cardData == null) return null;
+		var combatManager = FindFirstObjectByType<CombatDisplayManager>();
+		if (combatManager != null && combatManager.HasActiveEnemyThreat(ThreatWord.Suppressing))
+			return null;
 		// Respect per-card combo toggle
 		if (!cardData.enableCombo) return null;
 		
@@ -163,6 +166,9 @@ public class ComboSystem : MonoBehaviour
 	public void OnCardPlayed(Card playedCard)
 	{
 		if (playedCard == null) return;
+		var combatManager = FindFirstObjectByType<CombatDisplayManager>();
+		if (combatManager != null && combatManager.HasActiveEnemyThreat(ThreatWord.Suppressing))
+			return;
 		
 		// Add to combo history
 		comboHistory.Add(playedCard);

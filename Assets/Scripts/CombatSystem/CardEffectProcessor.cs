@@ -1143,6 +1143,11 @@ public class CardEffectProcessor : MonoBehaviour
                 float speedMultiplier = 1f + (statsData.attackSpeed / 100f);
                 float gainMultiplier = 1f + (statsData.aggressionGainIncreased / 100f);
                 float finalGain = baseGain * speedMultiplier * gainMultiplier;
+                float suppressingMultiplier = 1f;
+                var combatManager = FindFirstObjectByType<CombatDisplayManager>();
+                if (combatManager != null)
+                    suppressingMultiplier = Mathf.Clamp01(combatManager.GetSuppressingChargeGainMultiplier());
+                finalGain *= suppressingMultiplier;
                 int aggressionGain = Mathf.RoundToInt(finalGain);
                 
                 if (aggressionGain > 0)
@@ -1965,7 +1970,12 @@ public class CardEffectProcessor : MonoBehaviour
             {
                 bool isDualWielding = ThiefCardEffects.IsDualWielding(player);
                 int advanceAmount = isDualWielding ? 2 : 1;
-                ThiefCardEffects.AdvancePreparedCardCharges(advanceAmount);
+                var combatManager = FindFirstObjectByType<CombatDisplayManager>();
+                bool suppressPrepared = combatManager != null && combatManager.ArePreparedChargesSuppressed();
+                if (!suppressPrepared)
+                {
+                    ThiefCardEffects.AdvancePreparedCardCharges(advanceAmount);
+                }
             }
             
             // Poisoned Blade: Apply +1 Poison per prepared card
@@ -2042,6 +2052,11 @@ public class CardEffectProcessor : MonoBehaviour
             float speedMultiplier = 1f + (statsData.castSpeed / 100f);
             float gainMultiplier = 1f + (statsData.focusGainIncreased / 100f);
             float finalGain = baseGain * speedMultiplier * gainMultiplier;
+            float suppressingMultiplier = 1f;
+            var combatManager = FindFirstObjectByType<CombatDisplayManager>();
+            if (combatManager != null)
+                suppressingMultiplier = Mathf.Clamp01(combatManager.GetSuppressingChargeGainMultiplier());
+            finalGain *= suppressingMultiplier;
             int focusGain = Mathf.RoundToInt(finalGain);
             
             if (focusGain > 0)

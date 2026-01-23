@@ -398,6 +398,7 @@ public class CombatDeckManager : MonoBehaviour
     // Combat Manager Integration
     private CombatDisplayManager combatDisplayManager;
     private ComboSystem comboSystem;
+    private int suppressingDisabledHandIndex = -1;
     
     #region Initialization
     
@@ -1008,6 +1009,30 @@ public class CombatDeckManager : MonoBehaviour
     {
         cardsPlayedThisTurn = 0;
         Debug.Log($"<color=cyan>[CombatDeckManager] Turn counters reset</color>");
+    }
+
+    public void ApplySuppressingHandDisruption()
+    {
+        suppressingDisabledHandIndex = -1;
+        var combatManager = FindFirstObjectByType<CombatDisplayManager>();
+        if (combatManager == null || !combatManager.HasActiveEnemyThreat(ThreatWord.Suppressing))
+        {
+            UpdateCardUsability();
+            UpdateComboHighlights();
+            return;
+        }
+
+        int count = Mathf.Min(hand.Count, handVisuals.Count);
+        if (count <= 0)
+        {
+            UpdateCardUsability();
+            UpdateComboHighlights();
+            return;
+        }
+
+        suppressingDisabledHandIndex = UnityEngine.Random.Range(0, count);
+        UpdateCardUsability();
+        UpdateComboHighlights();
     }
     
     /// <summary>
@@ -3843,7 +3868,8 @@ public class CombatDeckManager : MonoBehaviour
                 if (button != null)
                 {
                     bool canAfford = player.mana >= card.playCost;
-                    button.interactable = canAfford;
+                    bool suppressed = i == suppressingDisabledHandIndex;
+                    button.interactable = canAfford && !suppressed;
                     
                     // Debug logging for high-index cards
                     int siblingIndex = cardObj.transform.GetSiblingIndex();

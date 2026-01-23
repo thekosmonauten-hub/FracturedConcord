@@ -16,12 +16,14 @@ public class EnemyAbilityRunner : MonoBehaviour
     private string lastExecutedAbilityName;
     private bool lastExecutionConsumedTurn;
     private int lastPreviewDamage;
+    private bool lastExecutionWasChanneling;
 
     public int LastPreviewDamage => lastPreviewDamage;
 
     public bool HasQueuedAbility => queuedAbility != null;
     public string QueuedAbilityId => queuedAbility != null ? queuedAbility.id : null;
     public bool LastExecutionConsumedTurn => lastExecutionConsumedTurn;
+    public bool LastExecutionWasChanneling => lastExecutionWasChanneling;
     public string GetLastExecutedAbilityName() => lastExecutedAbilityName;
 
     private void Awake()
@@ -121,7 +123,11 @@ public class EnemyAbilityRunner : MonoBehaviour
             return;
         }
 
-        CastAbility(a, true, 1f, false);
+        GetThreatOverrides(a, out ThreatWord primary, out ThreatWord secondary);
+        bool isVolatile = HasThreat(primary, secondary, ThreatWord.Volatile);
+        bool isTerminal = HasThreat(primary, secondary, ThreatWord.Terminal);
+        DamageType overrideType = isVolatile ? GetRandomVolatileDamageType() : DamageType.Physical;
+        CastAbility(a, true, GetTerminalMultiplier(isTerminal), false, isVolatile, overrideType, isTerminal);
     }
 
     private void QueueAbility(EnemyAbility a)
@@ -167,7 +173,14 @@ public class EnemyAbilityRunner : MonoBehaviour
         return false;
     }
 
-    private void CastAbility(EnemyAbility a, bool showIntent, float effectMultiplier, bool isCharged)
+    private void CastAbility(
+        EnemyAbility a,
+        bool showIntent,
+        float effectMultiplier,
+        bool isCharged,
+        bool isVolatile,
+        DamageType overrideType,
+        bool isTerminal)
     {
         var ctx = new AbilityContext
         {
@@ -179,7 +192,11 @@ public class EnemyAbilityRunner : MonoBehaviour
             display = display,
             target = a.target,
             effectMultiplier = effectMultiplier,
-            isCharged = isCharged
+            isCharged = isCharged,
+            isVolatile = isVolatile,
+            isTerminal = isTerminal,
+            hasOverrideDamageType = isVolatile,
+            overrideDamageType = overrideType
         };
 
         ApplyAbilityIntentPreview(a, showIntent);
@@ -224,11 +241,59 @@ public class EnemyAbilityRunner : MonoBehaviour
             return null;
         }
 
+        EnemyIntentEntry? executedEntry = null;
+        if (runtimeEnemy != null && runtimeEnemy.intentQueue != null)
+        {
+            var head = runtimeEnemy.intentQueue.Peek();
+            if (head.HasValue && head.Value.IsAbility && head.Value.AbilityId == ability.id)
+                executedEntry = head.Value;
+        }
+
         queuedAbility = null;
+        lastExecutionWasChanneling = false;
         float effectMultiplier = GetChargedMultiplierForQueuedAbility(ability, out bool isCharged);
-        CastAbility(ability, false, effectMultiplier, isCharged);
+        if (runtimeEnemy != null)
+            effectMultiplier *= runtimeEnemy.GetEscalatingMultiplier();
+
+        bool isVolatile = executedEntry.HasValue && HasThreat(executedEntry.Value, ThreatWord.Volatile);
+        bool isTerminal = executedEntry.HasValue && HasThreat(executedEntry.Value, ThreatWord.Terminal);
+        bool isChanneling = executedEntry.HasValue && HasThreat(executedEntry.Value, ThreatWord.Channeling);
+        if (runtimeEnemy != null && isTerminal)
+            effectMultiplier *= runtimeEnemy.terminalDamageMultiplier;
+
+        if (runtimeEnemy != null && isChanneling)
+        {
+            int channelStacks = runtimeEnemy.GetChannelingStacks(ability.id);
+            effectMultiplier *= 1f + channelStacks * runtimeEnemy.channelingDamageMultiplierPerUse;
+        }
+
+        DamageType overrideType = isVolatile ? GetRandomVolatileDamageType() : DamageType.Physical;
+        CastAbility(ability, false, effectMultiplier, isCharged, isVolatile, overrideType, isTerminal);
         if (runtimeEnemy != null)
             runtimeEnemy.RemoveAbilityIntent(ability.id);
+        if (runtimeEnemy != null && executedEntry.HasValue)
+            ThreatBehaviorProcessor.OnExecuteIntent(runtimeEnemy, executedEntry.Value);
+
+        if (runtimeEnemy != null && isChanneling)
+        {
+            runtimeEnemy.IncrementChannelingStacks(ability.id);
+            if (runtimeEnemy.intentQueue != null)
+                runtimeEnemy.intentQueue.Clear();
+            GetThreatOverrides(ability, out ThreatWord primaryThreat, out ThreatWord secondaryThreat);
+            int nextStacks = runtimeEnemy.GetChannelingStacks(ability.id);
+            float nextMultiplier = 1f + nextStacks * runtimeEnemy.channelingDamageMultiplierPerUse;
+            int preview = Mathf.RoundToInt(CalculatePlayerDamagePreview(ability) * nextMultiplier);
+            Sprite icon = display != null ? display.abilityIcon : null;
+            runtimeEnemy.UpsertAbilityIntent(ability.id, ability.displayName, preview, icon, 0, primaryThreat, secondaryThreat);
+            queuedAbility = ability;
+            cooldowns[ability.id] = 0;
+            lastExecutionConsumedTurn = true;
+            lastExecutionWasChanneling = true;
+        }
+        else if (runtimeEnemy != null)
+        {
+            runtimeEnemy.ResetChannelingStacks();
+        }
         lastExecutionConsumedTurn = ability.consumesTurn;
         lastExecutedAbilityName = ability.displayName;
         if (runtimeEnemy != null)
@@ -336,6 +401,35 @@ public class EnemyAbilityRunner : MonoBehaviour
             primary = ability.primaryThreatOverride;
             secondary = ability.secondaryThreatOverride;
         }
+    }
+
+    private bool HasThreat(ThreatWord primary, ThreatWord secondary, ThreatWord target)
+    {
+        return primary == target || secondary == target;
+    }
+
+    private bool HasThreat(EnemyIntentEntry entry, ThreatWord target)
+    {
+        return entry.PrimaryThreat == target || entry.SecondaryThreat == target;
+    }
+
+    private DamageType GetRandomVolatileDamageType()
+    {
+        int roll = UnityEngine.Random.Range(0, 4);
+        switch (roll)
+        {
+            case 0: return DamageType.Fire;
+            case 1: return DamageType.Cold;
+            case 2: return DamageType.Lightning;
+            default: return DamageType.Chaos;
+        }
+    }
+
+    private float GetTerminalMultiplier(bool isTerminal)
+    {
+        if (!isTerminal || runtimeEnemy == null)
+            return 1f;
+        return Mathf.Max(1f, runtimeEnemy.terminalDamageMultiplier);
     }
 
     private float GetChargedMultiplierForQueuedAbility(EnemyAbility ability, out bool isCharged)

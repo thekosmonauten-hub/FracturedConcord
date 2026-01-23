@@ -35,6 +35,7 @@ public class CombatDisplayManager : MonoBehaviour
 	private bool isWaveTransitioning = false; // Prevent multiple wave transitions
 	private Coroutine collectEnemiesCoroutine; // Track the collect coroutine
 	private bool isAoEAttackInProgress = false; // Prevent cascading wave completion checks during AoE
+    private bool isAnchoringShareInProgress = false;
     
     [Header("Test Configuration")]
     public bool createTestEnemies = true;
@@ -645,6 +646,7 @@ public class CombatDisplayManager : MonoBehaviour
         if (combatDeckMgr != null)
         {
             combatDeckMgr.ResetTurnCounters();
+            combatDeckMgr.ApplySuppressingHandDisruption();
         }
         
         // Check if player is frozen or stunned - if so, skip their turn
@@ -691,7 +693,11 @@ public class CombatDisplayManager : MonoBehaviour
         var prepManager = PreparationManager.Instance;
         if (prepManager != null)
         {
-            prepManager.OnTurnEnd(); // This increments charges for all prepared cards
+            bool suppressPrepared = ArePreparedChargesSuppressed();
+            if (!suppressPrepared)
+            {
+                prepManager.OnTurnEnd(); // This increments charges for all prepared cards
+            }
         }
         
         // Decay player stagger and momentum
@@ -818,7 +824,10 @@ public class CombatDisplayManager : MonoBehaviour
                     }
                     
                     // Decay guard
-                    enemy.DecayGuard();
+                    if (!(enemy.HasThreat(ThreatWord.Shielded) && enemy.shieldedNoGuardDecay))
+                    {
+                        enemy.DecayGuard();
+                    }
                     // Update guard display after decay
                     if (display != null)
                     {
@@ -833,9 +842,17 @@ public class CombatDisplayManager : MonoBehaviour
                     
                     // Process modifier turn-start effects (e.g., Grant Tolerance stacks)
                     ModifierEffectHandler.ProcessOnTurnStartEffects(enemy, display);
+
+                    bool threatChanged = ThreatBehaviorProcessor.OnTurnStart(enemy);
+                    if (threatChanged && display != null)
+                    {
+                        display.UpdateIntent();
+                    }
                 }
             }
         }
+
+        ApplyAnchoringAuraGuard();
         
         RefreshAllDisplays();
         
@@ -987,8 +1004,11 @@ public class CombatDisplayManager : MonoBehaviour
                 if (executed != null && executed.consumesTurn)
                 {
                     yield return new WaitForSeconds(turnDelay);
-                    enemy.SetIntent();
-                    enemyDisplay?.UpdateIntent();
+                    if (!abilityRunner.LastExecutionWasChanneling)
+                    {
+                        enemy.SetIntent();
+                        enemyDisplay?.UpdateIntent();
+                    }
                     yield break;
                 }
             }
@@ -1072,6 +1092,30 @@ public class CombatDisplayManager : MonoBehaviour
                     {
                         floatingDamageManager.ShowDamage(damage, false, playerDisplay.transform);
                     }
+
+                    if (damage > 0 && (enemy.primaryThreat == ThreatWord.Leeching || enemy.secondaryThreat == ThreatWord.Leeching))
+                    {
+                        int healAmount = Mathf.RoundToInt(damage * Mathf.Clamp01(enemy.leechingLifestealPercent));
+                        if (healAmount > 0)
+                        {
+                            if (enemyDisplay != null)
+                                enemyDisplay.Heal(healAmount);
+                            else
+                                enemy.Heal(healAmount);
+                        }
+
+                        if (StackSystem.Instance != null)
+                        {
+                            enemy.SetStacks(StackType.Agitate, StackSystem.Instance.GetStacks(StackType.Agitate));
+                            enemy.SetStacks(StackType.Tolerance, StackSystem.Instance.GetStacks(StackType.Tolerance));
+                            enemy.SetStacks(StackType.Potential, StackSystem.Instance.GetStacks(StackType.Potential));
+                        }
+                    }
+                }
+
+                if (enemy.TryGetNextNonAbilityIntent(out var executedEntry))
+                {
+                    ThreatBehaviorProcessor.OnExecuteIntent(enemy, executedEntry);
                 }
                 break;
                 
@@ -1105,6 +1149,24 @@ public class CombatDisplayManager : MonoBehaviour
                 {
                     enemyDisplay.UpdateIntent();
                     enemyDisplay.UpdateGuardDisplay(); // Update guard display when enemy defends
+                }
+
+                if (enemy.primaryThreat == ThreatWord.Anchoring || enemy.secondaryThreat == ThreatWord.Anchoring)
+                {
+                    var activeDisplays = GetActiveEnemyDisplays();
+                    foreach (var display in activeDisplays)
+                    {
+                        if (display == null || display == enemyDisplay) continue;
+                        var ally = display.GetEnemy();
+                        if (ally == null || !ally.IsAlive()) continue;
+                        ally.AddGuard(guardAmount);
+                        display.UpdateGuardDisplay();
+                    }
+                }
+
+                if (enemy.TryGetNextNonAbilityIntent(out var defendEntry))
+                {
+                    ThreatBehaviorProcessor.OnExecuteIntent(enemy, defendEntry);
                 }
                 break;
         }
@@ -1781,6 +1843,13 @@ public class CombatDisplayManager : MonoBehaviour
         OnEnemyDefeated?.Invoke(enemy);
         activeEnemies.Remove(enemy);
         Debug.Log($"[Enemy Death] Removed {enemy.enemyName} from active enemies. Remaining: {activeEnemies.Count}");
+
+        // Clear any player-affecting threat effects immediately (e.g., Suppressing)
+        CombatDeckManager combatDeckMgr = CombatDeckManager.Instance;
+        if (combatDeckMgr != null)
+        {
+            combatDeckMgr.ApplySuppressingHandDisruption();
+        }
         
         // Despawn callback
         System.Action despawnEnemy = () => {
@@ -2800,6 +2869,109 @@ public class CombatDisplayManager : MonoBehaviour
             return enemySpawner.GetActiveEnemies();
         }
         return new List<EnemyCombatDisplay>();
+    }
+
+    public void ApplyAnchoringAuraGuard()
+    {
+        float auraGuard = 0f;
+        foreach (var enemy in activeEnemies)
+        {
+            if (enemy == null || !enemy.IsAlive()) continue;
+            if (enemy.primaryThreat == ThreatWord.Anchoring || enemy.secondaryThreat == ThreatWord.Anchoring)
+            {
+                float percent = Mathf.Clamp01(enemy.anchoringAuraGuardPercent);
+                if (percent > 0f)
+                    auraGuard += enemy.maxHealth * percent;
+            }
+        }
+
+        if (auraGuard <= 0f)
+            return;
+
+        var displays = GetActiveEnemyDisplays();
+        foreach (var display in displays)
+        {
+            if (display == null) continue;
+            var enemy = display.GetEnemy();
+            if (enemy == null || !enemy.IsAlive()) continue;
+            enemy.AddGuard(auraGuard);
+            display.UpdateGuardDisplay();
+        }
+    }
+
+    public void ApplyAnchoringSharedDamage(EnemyCombatDisplay source, float damage, bool ignoreGuardArmor)
+    {
+        if (isAnchoringShareInProgress)
+            return;
+
+        if (!HasActiveEnemyThreat(ThreatWord.Anchoring))
+            return;
+
+        var activeDisplays = GetActiveEnemyDisplays();
+        int count = 0;
+        foreach (var d in activeDisplays)
+        {
+            if (d != null && d.GetEnemy() != null && d.GetEnemy().IsAlive())
+                count++;
+        }
+        if (count <= 1)
+            return;
+
+        isAnchoringShareInProgress = true;
+        float split = damage / count;
+        foreach (var d in activeDisplays)
+        {
+            if (d == null) continue;
+            var enemy = d.GetEnemy();
+            if (enemy == null || !enemy.IsAlive()) continue;
+            d.TakeDamage(split, ignoreGuardArmor);
+            d.FlashThreatIcons(0.12f);
+        }
+        isAnchoringShareInProgress = false;
+    }
+
+    public bool IsAnchoringShareInProgress()
+    {
+        return isAnchoringShareInProgress;
+    }
+
+    public bool HasActiveEnemyThreat(ThreatWord word)
+    {
+        foreach (var enemy in activeEnemies)
+        {
+            if (enemy == null) continue;
+            if (enemy.primaryThreat == word || enemy.secondaryThreat == word)
+                return true;
+        }
+        return false;
+    }
+
+    public float GetSuppressingChargeGainMultiplier()
+    {
+        float multiplier = 1f;
+        foreach (var enemy in activeEnemies)
+        {
+            if (enemy == null) continue;
+            if (enemy.primaryThreat == ThreatWord.Suppressing || enemy.secondaryThreat == ThreatWord.Suppressing)
+            {
+                multiplier = Mathf.Min(multiplier, Mathf.Clamp01(enemy.suppressingChargeGainMultiplier));
+            }
+        }
+        return multiplier;
+    }
+
+    public bool ArePreparedChargesSuppressed()
+    {
+        foreach (var enemy in activeEnemies)
+        {
+            if (enemy == null) continue;
+            if ((enemy.primaryThreat == ThreatWord.Suppressing || enemy.secondaryThreat == ThreatWord.Suppressing)
+                && enemy.suppressingBlocksPreparedCharges)
+            {
+                return true;
+            }
+        }
+        return false;
     }
     
     public bool IsPlayerTurn()

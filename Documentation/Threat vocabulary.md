@@ -160,13 +160,15 @@ Will unleash a stronger effect next turn(s)
 Stack-based countdown
 Interruptible
 Escalates visibly
+Refocus - Attack or Ability gets stronger 
 
-2. Primed
+2. Primed 
 Axis: Volatility
 Something bad happens when condition is met
 Examples:
 “Primed: at 5 Poison”
 “Primed: on death”
+Refocus - More conditions will have to be added in order to make this work
 
 3. Anchoring
 Axis: Protection
@@ -175,6 +177,8 @@ Examples:
 Shared armor
 Reduced damage taken
 Stack redirection
+Refocus - "Aura" enemy that grants armour or resistances, shared damage between all enemies and guards all enemies when guarding
+
 
 4. Leeching
 Axis: Punishment
@@ -183,6 +187,11 @@ Examples:
 Steal Focus
 Convert your stacks
 Heal on debuff
+Refocus - 
+Aggitate stacks - Grants the enemy the same buffs as the player
+Potential stacks - Grants the enemy the same buffs as the player
+Tolerance stacks - Grants the enemy the same buffs as the player
+Enemy attacks has lifesteal.
 
 5. Suppressing
 Axis: Disruption
@@ -190,7 +199,11 @@ Limits how you can play
 Examples:
 Skill costs more
 Preparation reduced
-Card draw locked
+Refocus - 
+Reduced focus and aggression charge gain
+Disables random card in hand each turn
+Prepared cards do not gain a charge
+Player cards cannot combo when enemy is alive
 
 6. Escalating
 Axis: Time Pressure
@@ -199,6 +212,9 @@ Examples:
 Damage +X per turn
 Stack growth
 Area corruption
+Refocus - 
++5% increased damage dealt and taken per turn
+Area of effect damage each turn 
 
 7. Volatile
 Axis: Volatility
@@ -207,6 +223,8 @@ Examples:
 Explodes
 Chains
 Random targets
+Refocus - 
+Damage dealt is converted to a random element (Cold/Fire/Lightning/Chaos)
 
 8. Retaliating
 Axis: Punishment
@@ -215,6 +233,12 @@ Examples:
 Thorns
 Counter stacks
 Reverse damage
+Refocus - 
+Only applied to "Defensive enemies"
+Effects only apply when enemy guard is active 
+Attacking gives the enemy 10% of damage as guard
+Thorns damage is based on 50% of current guard
+
 
 9. Channeling
 Axis: Time Pressure + Disruption
@@ -223,6 +247,8 @@ Examples:
 Summoning zones
 Locking cards
 Charging AoE
+Refocus - 
+Intent is locked to 1 action, dealing increased damage each time it's used.
 
 10. Converting
 Axis: Disruption
@@ -231,6 +257,8 @@ Examples:
 Poison → Damage
 Crumble → Shield
 Focus → Enemy buff
+Refocus - 
+This is probably too hard to balance, we should remove this.
 
 11. Shielded
 Axis: Protection
@@ -238,7 +266,10 @@ Requires a specific answer
 Examples:
 Only breaks on release
 Element-locked
-Stack-gated
+Refocus - 
+A singular high resistance stat (capped at 75%(Cold/Fire/Lightning/Chaos))
+Starts with 75% guard and does not have any guard decay.
+Stunned for 2 turns when guard breaks.
 
 12. Terminal
 Axis: Time Pressure + Volatility
@@ -248,6 +279,24 @@ Executes
 Board wipe
 Permanent corruption
 Use sparingly.
+Refocus - looks good.
+
+Refocus final:
+Enemies should NEVER lock a player out of being able to finish the encounter, they should just have a harder time.
+Players should never feel like "Oh, I'm playing a Fire build and this "shielded" enemy cannot take Fire damage, so I have to reset the encounter"
+
+Refocus summary (direction lock-in):
+Threat words must be readable verbs, not abstract labels.
+Some threats are ability-bound (ex: Charging), others are enemy-wide behaviors.
+Nothing is allowed to hard-lock the player out of finishing an encounter.
+Shielded must be a high-resistance + guard identity (not immunity).
+Converting is removed for now due to balance/clarity risk.
+Terminal stays, but must remain interruptible or survivable.
+
+Binding summary (ability vs enemy):
+Ability-bound: Charging, Volatile, Channeling, Terminal
+Enemy-bound: Primed, Anchoring, Leeching, Suppressing, Escalating, Retaliating, Shielded
+Removed: Converting
 
 Enemy Construction Rule (VERY IMPORTANT)
 Each enemy:
@@ -262,8 +311,8 @@ Shares Crumble stacks among enemies, gains armor per turn
 
 Venom Seer
 Primary: Primed
-Secondary: Converting
-At 6 Poison, converts Poison into AoE damage
+Secondary: Escalating
+At 6 Poison, primes a payoff; damage escalates over time
 
 Shock Inquisitor
 Primary: Suppressing

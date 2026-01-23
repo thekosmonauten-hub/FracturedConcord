@@ -10,6 +10,20 @@ public enum ThreatHook
     OnAbilityQueued
 }
 
+public enum ThreatBindingScope
+{
+    EnemyBound,
+    AbilityBound,
+    Either,
+    Removed
+}
+
+public enum PrimedTriggerType
+{
+    PlayerStatusStacks,
+    EnemyHealthPercent
+}
+
 public enum ThreatCounterType
 {
     CardTag,
@@ -37,6 +51,7 @@ public struct ThreatCounter
 public sealed class ThreatBehaviorDefinition
 {
     public ThreatWord Word;
+    public ThreatBindingScope Binding;
     public string EffectSummary;
     public EnemyIntent[] AppliesTo;
     public ThreatHook[] Hooks;
@@ -44,12 +59,14 @@ public sealed class ThreatBehaviorDefinition
 
     public ThreatBehaviorDefinition(
         ThreatWord word,
+        ThreatBindingScope binding,
         string effectSummary,
         EnemyIntent[] appliesTo,
         ThreatHook[] hooks,
         ThreatCounter[] counters)
     {
         Word = word;
+        Binding = binding;
         EffectSummary = effectSummary;
         AppliesTo = appliesTo;
         Hooks = hooks;
@@ -63,6 +80,7 @@ public static class ThreatBehaviorTable
     {
         new ThreatBehaviorDefinition(
             ThreatWord.Charging,
+            ThreatBindingScope.AbilityBound,
             "Delay intent and boost its damage/effect.",
             new[] { EnemyIntent.Attack },
             new[] { ThreatHook.OnIntentGenerated, ThreatHook.OnTurnStart },
@@ -73,6 +91,7 @@ public static class ThreatBehaviorTable
             }),
         new ThreatBehaviorDefinition(
             ThreatWord.Primed,
+            ThreatBindingScope.EnemyBound,
             "Arms a payoff that triggers once a condition is met.",
             new[] { EnemyIntent.Attack, EnemyIntent.Defend },
             new[] { ThreatHook.OnTurnStart, ThreatHook.OnDamaged },
@@ -83,6 +102,7 @@ public static class ThreatBehaviorTable
             }),
         new ThreatBehaviorDefinition(
             ThreatWord.Anchoring,
+            ThreatBindingScope.EnemyBound,
             "Protects allies or redirects damage while alive.",
             new[] { EnemyIntent.Defend },
             new[] { ThreatHook.OnTurnStart, ThreatHook.OnDamaged },
@@ -93,6 +113,7 @@ public static class ThreatBehaviorTable
             }),
         new ThreatBehaviorDefinition(
             ThreatWord.Leeching,
+            ThreatBindingScope.EnemyBound,
             "Converts your gains into their resources.",
             new[] { EnemyIntent.Attack },
             new[] { ThreatHook.OnExecuteIntent },
@@ -103,6 +124,7 @@ public static class ThreatBehaviorTable
             }),
         new ThreatBehaviorDefinition(
             ThreatWord.Suppressing,
+            ThreatBindingScope.EnemyBound,
             "Applies play restrictions or debuffs on hit.",
             new[] { EnemyIntent.Attack },
             new[] { ThreatHook.OnExecuteIntent },
@@ -113,6 +135,7 @@ public static class ThreatBehaviorTable
             }),
         new ThreatBehaviorDefinition(
             ThreatWord.Escalating,
+            ThreatBindingScope.EnemyBound,
             "Intent grows stronger each turn it remains queued.",
             new[] { EnemyIntent.Attack },
             new[] { ThreatHook.OnTurnStart },
@@ -123,6 +146,7 @@ public static class ThreatBehaviorTable
             }),
         new ThreatBehaviorDefinition(
             ThreatWord.Volatile,
+            ThreatBindingScope.AbilityBound,
             "Unstable, with splash or random targeting.",
             new[] { EnemyIntent.Attack },
             new[] { ThreatHook.OnExecuteIntent },
@@ -133,6 +157,7 @@ public static class ThreatBehaviorTable
             }),
         new ThreatBehaviorDefinition(
             ThreatWord.Retaliating,
+            ThreatBindingScope.EnemyBound,
             "Queues a counter-attack when damaged.",
             new[] { EnemyIntent.Attack },
             new[] { ThreatHook.OnDamaged },
@@ -143,6 +168,7 @@ public static class ThreatBehaviorTable
             }),
         new ThreatBehaviorDefinition(
             ThreatWord.Channeling,
+            ThreatBindingScope.AbilityBound,
             "Locks into a delayed, board-warping effect.",
             new[] { EnemyIntent.Attack },
             new[] { ThreatHook.OnIntentGenerated, ThreatHook.OnTurnStart, ThreatHook.OnExecuteIntent },
@@ -153,16 +179,14 @@ public static class ThreatBehaviorTable
             }),
         new ThreatBehaviorDefinition(
             ThreatWord.Converting,
-            "Transforms one resource or stack into another.",
-            new[] { EnemyIntent.Attack, EnemyIntent.Defend },
-            new[] { ThreatHook.OnExecuteIntent },
-            new[]
-            {
-                new ThreatCounter(ThreatCounterType.StackConsume, "ConsumeStacks", "Spend stacks before conversion."),
-                new ThreatCounter(ThreatCounterType.Action, "Dispel", "Remove conversion state.")
-            }),
+            ThreatBindingScope.Removed,
+            "Removed (refocus).",
+            new EnemyIntent[0],
+            new ThreatHook[0],
+            new ThreatCounter[0]),
         new ThreatBehaviorDefinition(
             ThreatWord.Shielded,
+            ThreatBindingScope.EnemyBound,
             "Protected until a condition is met.",
             new[] { EnemyIntent.Defend },
             new[] { ThreatHook.OnIntentGenerated, ThreatHook.OnDamaged },
@@ -173,6 +197,7 @@ public static class ThreatBehaviorTable
             }),
         new ThreatBehaviorDefinition(
             ThreatWord.Terminal,
+            ThreatBindingScope.AbilityBound,
             "If unanswered, ends the fight or causes catastrophic effect.",
             new[] { EnemyIntent.Attack },
             new[] { ThreatHook.OnIntentGenerated, ThreatHook.OnExecuteIntent },
@@ -200,7 +225,7 @@ public static class ThreatBehaviorTable
     {
         if (DefinitionLookup.TryGetValue(word, out var def))
             return def;
-        return new ThreatBehaviorDefinition(word, string.Empty, new EnemyIntent[0], new ThreatHook[0], new ThreatCounter[0]);
+        return new ThreatBehaviorDefinition(word, ThreatBindingScope.Either, string.Empty, new EnemyIntent[0], new ThreatHook[0], new ThreatCounter[0]);
     }
 
     public static IEnumerable<ThreatBehaviorDefinition> All => Definitions;

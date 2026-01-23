@@ -24,6 +24,8 @@ public class DamageEffect : AbilityEffect
             damage = Mathf.RoundToInt(damage * ctx.effectMultiplier);
         }
 
+        DamageType resolvedType = ctx.hasOverrideDamageType ? ctx.overrideDamageType : damageType;
+
         switch (ctx.target)
         {
             case AbilityTarget.Self:
@@ -41,7 +43,7 @@ public class DamageEffect : AbilityEffect
             case AbilityTarget.Player:
             case AbilityTarget.AllPlayers:
             default:
-                DamagePlayer(characterManager, damage, ctx);
+                DamagePlayer(characterManager, damage, ctx, resolvedType);
                 break;
         }
     }
@@ -62,12 +64,12 @@ public class DamageEffect : AbilityEffect
         return dmg;
     }
 
-    private void DamagePlayer(CharacterManager cm, int damage, AbilityContext ctx)
+    private void DamagePlayer(CharacterManager cm, int damage, AbilityContext ctx, DamageType resolvedType)
     {
         cm.TakeDamage(damage);
         if (ctx.effects != null && ctx.display != null)
         {
-            ctx.effects.PlayElementalDamageEffectOnTarget(ctx.display.transform, damageType);
+            ctx.effects.PlayElementalDamageEffectOnTarget(ctx.display.transform, resolvedType);
         }
     }
 

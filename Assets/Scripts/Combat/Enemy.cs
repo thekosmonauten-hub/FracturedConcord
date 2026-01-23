@@ -50,6 +50,31 @@ public class Enemy
     [Range(0f, 1f)] public float chargingChance = 0.35f;
     [Min(1f)] public float chargingDamageMultiplier = 1.5f;
     [Min(1)] public int chargingDelayTurns = 1;
+    [Min(0)] public int escalatingDamagePerTurn = 2;
+    [Range(0f, 0.5f)] public float escalatingDamagePercentPerTurn = 0.05f;
+    [Min(0)] public int escalatingAoEDamagePerTurn = 0;
+    public int escalatingTurns = 0;
+    [Range(0f, 1f)] public float retaliateChance = 0.35f;
+    [Min(0f)] public float retaliateDamageMultiplier = 0.5f;
+    [Range(0f, 1f)] public float retaliateGuardGainPercent = 0.1f;
+    [Range(0f, 1f)] public float retaliateThornsPercent = 0.5f;
+    [Range(0f, 1f)] public float suppressingChargeGainMultiplier = 0.5f;
+    public bool suppressingBlocksPreparedCharges = true;
+    [Range(0f, 1f)] public float anchoringAuraGuardPercent = 0.05f;
+    [Range(0f, 1f)] public float leechingLifestealPercent = 0.2f;
+    [Range(0f, 1f)] public float shieldedGuardPercent = 0.75f;
+    [Range(0f, 1f)] public float shieldedDamageReductionPercent = 0.75f;
+    [Min(0)] public int shieldedStunTurns = 2;
+    public bool shieldedNoGuardDecay = true;
+    [Range(0f, 1f)] public float channelingDamageMultiplierPerUse = 0.2f;
+    [Min(0)] public int channelingMaxStacks = 0;
+    [Min(1f)] public float terminalDamageMultiplier = 2f;
+    public PrimedTriggerType primedTriggerType = PrimedTriggerType.PlayerStatusStacks;
+    public StatusEffectType primedStatusType = StatusEffectType.Poison;
+    [Min(1)] public int primedStatusThreshold = 5;
+    [Range(0f, 1f)] public float primedHealthThreshold = 0.5f;
+    [Min(1f)] public float primedDamageMultiplier = 1.5f;
+    public bool primedTriggered = false;
     
     [Header("Intent Queue")]
     [Tooltip("1–3 upcoming intents. Source of truth; currentIntent/intentDamage mirror head.")]
@@ -57,6 +82,11 @@ public class Enemy
     
     /// <summary>Raised whenever the intent queue changes (SetIntent, dequeue, etc.). Use for immediate UI refresh (Intent Accuracy).</summary>
     public event Action OnIntentChanged;
+
+    public void NotifyIntentChanged()
+    {
+        OnIntentChanged?.Invoke();
+    }
     
     [Header("Delayed Actions")]
     [Tooltip("Actions queued for future turns (for Time-Lagged modifier, etc.)")]
@@ -232,6 +262,7 @@ public class Enemy
     private float strengthStacks;
     private float dexterityStacks;
     private float intelligenceStacks;
+    private readonly Dictionary<string, int> channelingStacks = new Dictionary<string, int>();
 
     private const float BolsterDamageReductionPerStack = 0.02f;
     private const float BolsterStacksCap = 10f;
@@ -467,6 +498,10 @@ public class Enemy
     public void TakeDamage(float damage, bool ignoreGuardArmor = false)
     {
         float adjustedDamage = damage * stackCollection.GetToleranceDamageMultiplier();
+        if (HasThreat(ThreatWord.Shielded))
+        {
+            adjustedDamage *= Mathf.Clamp01(1f - Mathf.Clamp01(shieldedDamageReductionPercent));
+        }
         
         // Apply guard first (if not ignoring guard/armor)
         if (!ignoreGuardArmor && currentGuard > 0f)
@@ -488,6 +523,11 @@ public class Enemy
         {
             float reduction = Mathf.Clamp01(bolsterStacks * BolsterDamageReductionPerStack);
             adjustedDamage *= 1f - reduction;
+        }
+
+        if (HasThreat(ThreatWord.Escalating))
+        {
+            adjustedDamage *= GetEscalatingMultiplier();
         }
         
         currentHealth = Mathf.Max(0, currentHealth - Mathf.RoundToInt(adjustedDamage));
@@ -536,6 +576,8 @@ public class Enemy
         bool isCritical = UnityEngine.Random.Range(0f, 1f) < critChance;
         float damage = baseDamage * stackCollection.GetDamageMoreMultiplier();
         damage *= 1f + Mathf.Max(0f, strengthStacks) * StrengthDamagePerStack;
+        if (HasThreat(ThreatWord.Escalating))
+            damage *= GetEscalatingMultiplier();
         
         // Apply damage bonus from delayed actions (Time-Lagged modifier)
         float delayedActionBonus = ModifierEffectHandler.GetDelayedActionDamageBonus(this);
@@ -579,6 +621,24 @@ public class Enemy
 
         currentIntent = EnemyIntent.Defend;
         intentDamage = 0;
+    }
+
+    public bool TryGetNextNonAbilityIntent(out EnemyIntentEntry entry)
+    {
+        entry = default;
+        if (intentQueue == null || intentQueue.IsEmpty)
+            return false;
+
+        foreach (var queued in intentQueue.All)
+        {
+            if (!queued.IsAbility)
+            {
+                entry = queued;
+                return true;
+            }
+        }
+
+        return false;
     }
     
     /// <summary>Remove executed intent from queue and refill. Call after executing current intent.</summary>
@@ -650,7 +710,7 @@ public class Enemy
         intentQueue.RemoveFirst(entry => !entry.IsAbility);
         GenerateOneIntent(out var type, out var damage);
         var entry = new EnemyIntentEntry(type, damage, 0, ThreatTier.Minor, primaryThreat, secondaryThreat);
-        ApplyChargingIfEligible(ref entry);
+        ThreatBehaviorProcessor.OnIntentGenerated(this, ref entry);
         intentQueue.Enqueue(entry);
         SyncFromQueue();
         OnIntentChanged?.Invoke();
@@ -681,7 +741,7 @@ public class Enemy
         {
             GenerateOneIntent(out var type, out var damage);
             var entry = new EnemyIntentEntry(type, damage, 0, ThreatTier.Minor, primaryThreat, secondaryThreat);
-            ApplyChargingIfEligible(ref entry);
+            ThreatBehaviorProcessor.OnIntentGenerated(this, ref entry);
             intentQueue.Enqueue(entry);
         }
         SyncFromQueue();
@@ -777,42 +837,12 @@ public class Enemy
         }
         else
         {
-            ApplyChargingIfEligible(ref entryData);
+            ThreatBehaviorProcessor.OnIntentGenerated(this, ref entryData);
         }
         intentQueue.InsertAt(insertIndex, entryData);
         SyncFromQueue();
         OnIntentChanged?.Invoke();
         Debug.Log($"[AbilityIntent] Upserted '{abilityName}' into queue at index {insertIndex}. Queue={GetIntentQueueBoxPlain()}");
-    }
-
-    private void ApplyChargingIfEligible(ref EnemyIntentEntry entry)
-    {
-        if (entry.IsCharged)
-            return;
-        if (entry.Type != EnemyIntent.Attack && !entry.IsAbility)
-            return;
-        if (chargingDelayTurns <= 0 || chargingChance <= 0f || chargingDamageMultiplier <= 1f)
-            return;
-
-        bool hasChargingThreat = entry.PrimaryThreat == ThreatWord.Charging || entry.SecondaryThreat == ThreatWord.Charging;
-        if (!hasChargingThreat)
-            return;
-
-        if (UnityEngine.Random.value > chargingChance)
-            return;
-
-        entry.IsCharged = true;
-        entry.ChargedMultiplier = chargingDamageMultiplier;
-        entry.ChargedDelayTurns = chargingDelayTurns;
-        entry.Timing = Mathf.Max(entry.Timing, chargingDelayTurns);
-        if (entry.IsAbility)
-        {
-            entry.AbilityValue = Mathf.RoundToInt(entry.AbilityValue * chargingDamageMultiplier);
-        }
-        else
-        {
-            entry.Damage = Mathf.RoundToInt(entry.Damage * chargingDamageMultiplier);
-        }
     }
 
     public void RemoveAbilityIntent(string abilityId)
@@ -1089,6 +1119,54 @@ public class Enemy
     public float GetPotentialCritChanceBonus() => stackCollection.GetCritChanceBonus();
 
     public float GetPotentialCritMultiplierBonus() => stackCollection.GetCritMultiplierBonus();
+
+    public bool HasThreat(ThreatWord word)
+    {
+        return primaryThreat == word || secondaryThreat == word;
+    }
+
+    public float GetEscalatingMultiplier()
+    {
+        if (!HasThreat(ThreatWord.Escalating))
+            return 1f;
+        return 1f + Mathf.Max(0, escalatingTurns) * Mathf.Max(0f, escalatingDamagePercentPerTurn);
+    }
+
+    public int GetChannelingStacks(string abilityId)
+    {
+        if (string.IsNullOrEmpty(abilityId)) return 0;
+        return channelingStacks.TryGetValue(abilityId, out var value) ? value : 0;
+    }
+
+    public int IncrementChannelingStacks(string abilityId)
+    {
+        if (string.IsNullOrEmpty(abilityId)) return 0;
+        int current = GetChannelingStacks(abilityId);
+        int next = current + 1;
+        if (channelingMaxStacks > 0)
+            next = Mathf.Min(next, channelingMaxStacks);
+        channelingStacks[abilityId] = next;
+        return next;
+    }
+
+    public void ResetChannelingStacks()
+    {
+        channelingStacks.Clear();
+    }
+
+    public void SetStacks(StackType type, int amount)
+    {
+        int target = Mathf.Max(0, amount);
+        int current = stackCollection.GetStacks(type);
+        if (target > current)
+        {
+            stackCollection.AddStacks(type, target - current);
+        }
+        else if (target < current)
+        {
+            stackCollection.RemoveStacks(type, current - target);
+        }
+    }
 
     #endregion
 

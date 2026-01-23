@@ -44,7 +44,8 @@ public class ScalingDamageEffect : AbilityEffect
             totalDamage = Mathf.RoundToInt(totalDamage * ctx.effectMultiplier);
         }
         
-        Debug.Log($"[ScalingDamage] Base: {baseDamage}, Scaling: {scalingBonus} ({scalingValue} × {damagePerUnit}), Total: {totalDamage}");
+        DamageType resolvedType = ctx.hasOverrideDamageType ? ctx.overrideDamageType : damageType;
+        Debug.Log($"[ScalingDamage] Base: {baseDamage}, Scaling: {scalingBonus} ({scalingValue} × {damagePerUnit}), Total: {totalDamage}, Type: {resolvedType}");
         
         // Apply damage to player (most scaling abilities target player)
         if (ctx.target == AbilityTarget.Player || ctx.target == AbilityTarget.AllPlayers)

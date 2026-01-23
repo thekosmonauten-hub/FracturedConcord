@@ -16,6 +16,10 @@ public class AbilityContext
     public AbilityTarget target;
     public float effectMultiplier = 1f;
     public bool isCharged = false;
+    public bool hasOverrideDamageType = false;
+    public DamageType overrideDamageType = DamageType.Physical;
+    public bool isVolatile = false;
+    public bool isTerminal = false;
 }
 
 
