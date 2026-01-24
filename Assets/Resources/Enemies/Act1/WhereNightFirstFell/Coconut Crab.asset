@@ -33,7 +33,7 @@ MonoBehaviour:
   lightningResistance: 0
   chaosResistance: 0
   displayScale: 0.5
-  basePanelHeight: 140
+  basePanelHeight: 280
   enableEnergy: 1
   baseMaxEnergy: 100
   energyRegenPerTurn: 25
@@ -47,9 +47,37 @@ MonoBehaviour:
   specialAbilities: []
   abilities:
   - {fileID: 11400000, guid: 6de790291995467478a2eae175f39b47, type: 2}
+  bossAbilities: 
   summonPool: []
   spiritTags: 0400000006000000
   guaranteedSpiritDrop: 0
+  primaryThreat: 11
+  secondaryThreat: 0
+  randomizeThreats: 0
+  randomPrimaryThreats: 
+  randomSecondaryThreats: 
+  allowSecondaryNone: 1
+  chargingChance: 0.35
+  chargingDamageMultiplier: 1.5
+  chargingDelayTurns: 1
+  escalatingDamagePerTurn: 2
+  escalatingDamagePercentPerTurn: 0.05
+  escalatingAoEDamagePerTurn: 0
+  channelingDamageMultiplierPerUse: 0.2
+  channelingMaxStacks: 0
+  terminalDamageMultiplier: 5
+  retaliateChance: 0.35
+  retaliateDamageMultiplier: 0.5
+  retaliateGuardGainPercent: 0.1
+  retaliateThornsPercent: 0.5
+  suppressingChargeGainMultiplier: 0.5
+  suppressingBlocksPreparedCharges: 1
+  anchoringAuraGuardPercent: 0.05
+  leechingLifestealPercent: 0.2
+  shieldedGuardPercent: 0.75
+  shieldedDamageReductionPercent: 0.75
+  shieldedStunTurns: 2
+  shieldedNoGuardDecay: 1
   minGoldDrop: 5
   maxGoldDrop: 15
   experienceReward: 5

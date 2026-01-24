@@ -984,6 +984,11 @@ public class CombatEffectManager : MonoBehaviour
             Debug.LogError($"[CombatEffectManager] Could not get effect point '{effectPointName}' from {target?.name}! Using target transform as fallback.");
             effectPoint = target;
         }
+
+        if (effectData.sfx != null)
+        {
+            SFXManager.Instance?.Play(effectData.sfx, effectPoint.position);
+        }
         
         RectTransform targetRect = effectPoint.GetComponent<RectTransform>();
         
@@ -1462,6 +1467,12 @@ public class CombatEffectManager : MonoBehaviour
         Transform endPoint = GetEffectPointFromTarget(endTransform, endPointName);
         
         Debug.Log($"[CombatEffectManager] Effect points - start: {(startPoint != null ? startPoint.name : "NULL")} (requested: '{startPointName}'), end: {(endPoint != null ? endPoint.name : "NULL")} (requested: '{endPointName}', forced to 'Default' for enemy: {IsEnemyTarget(endTransform)})");
+
+        if (projectileData.sfx != null)
+        {
+            Vector3 sfxPos = startPoint != null ? startPoint.position : (startTransform != null ? startTransform.position : Vector3.zero);
+            SFXManager.Instance?.Play(projectileData.sfx, sfxPos);
+        }
         
         // Validate that enemy end point is actually "Default"
         if (IsEnemyTarget(endTransform) && endPoint != null)

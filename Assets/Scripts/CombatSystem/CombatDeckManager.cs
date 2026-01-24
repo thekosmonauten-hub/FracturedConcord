@@ -81,6 +81,12 @@ public class CombatDeckManager : MonoBehaviour
     // Action Queue System (Phase 1: Best Practice Architecture)
     private Queue<CardAction> actionQueue = new Queue<CardAction>();
     private bool isProcessingQueue = false;
+    private Coroutine actionQueueCoroutine;
+
+    [Header("Combat Juice")]
+    [Tooltip("Brief pause after each card action resolves.")]
+    [Range(0f, 0.25f)]
+    public float microPauseSeconds = 0.08f;
     
     // Phase 2: Micro Input Lock - prevents visual chaos from rapid clicking
     [Header("Phase 2: Input Handling")]
@@ -1266,19 +1272,27 @@ public class CombatDeckManager : MonoBehaviour
     {
         if (isProcessingQueue || actionQueue.Count == 0)
             return;
-        
+        actionQueueCoroutine = StartCoroutine(ProcessActionQueueCoroutine());
+    }
+
+    private IEnumerator ProcessActionQueueCoroutine()
+    {
         isProcessingQueue = true;
-        
+
         while (actionQueue.Count > 0)
         {
             CardAction action = actionQueue.Dequeue();
             if (action.resolved)
                 continue; // Skip already resolved actions (safety check)
-            
+
             ResolveCardAction(action);
+
+            if (microPauseSeconds > 0f)
+                yield return new WaitForSeconds(microPauseSeconds);
         }
-        
+
         isProcessingQueue = false;
+        actionQueueCoroutine = null;
     }
     
     /// <summary>

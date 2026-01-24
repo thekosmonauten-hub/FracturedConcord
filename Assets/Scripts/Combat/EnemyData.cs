@@ -127,16 +127,6 @@ public class EnemyData : ScriptableObject
     [Min(0)] public int channelingMaxStacks = 0;
     [Tooltip("Damage multiplier applied to Terminal abilities.")]
     [Min(1f)] public float terminalDamageMultiplier = 5f;
-    [Tooltip("Primed trigger type.")]
-    public PrimedTriggerType primedTriggerType = PrimedTriggerType.PlayerStatusStacks;
-    [Tooltip("Status effect to check on player when using PlayerStatusStacks trigger.")]
-    public StatusEffectType primedStatusType = StatusEffectType.Poison;
-    [Tooltip("Required status stacks/magnitude to trigger Primed.")]
-    [Min(1)] public int primedStatusThreshold = 5;
-    [Tooltip("Enemy health percent threshold (0-1) to trigger Primed when using EnemyHealthPercent trigger.")]
-    [Range(0f, 1f)] public float primedHealthThreshold = 0.5f;
-    [Tooltip("Damage multiplier applied to the Primed attack intent.")]
-    [Min(1f)] public float primedDamageMultiplier = 1.5f;
     [Tooltip("Chance to queue a retaliation intent when damaged.")]
     [Range(0f, 1f)] public float retaliateChance = 0.35f;
     [Tooltip("Multiplier applied to base attack damage for retaliation intents.")]
@@ -212,6 +202,7 @@ public class EnemyData : ScriptableObject
         enemy.criticalMultiplier = criticalMultiplier;
         enemy.accuracyRating = accuracyRating;
         enemy.evasionRating = evasionRating;
+        enemy.aiPattern = aiPattern;
 
         // Threat vocabulary assignment (optional randomization)
         ThreatWord effectivePrimary = primaryThreat;
@@ -241,11 +232,6 @@ public class EnemyData : ScriptableObject
         enemy.channelingDamageMultiplierPerUse = channelingDamageMultiplierPerUse;
         enemy.channelingMaxStacks = channelingMaxStacks;
         enemy.terminalDamageMultiplier = terminalDamageMultiplier;
-        enemy.primedTriggerType = primedTriggerType;
-        enemy.primedStatusType = primedStatusType;
-        enemy.primedStatusThreshold = primedStatusThreshold;
-        enemy.primedHealthThreshold = primedHealthThreshold;
-        enemy.primedDamageMultiplier = primedDamageMultiplier;
         enemy.retaliateChance = retaliateChance;
         enemy.retaliateDamageMultiplier = retaliateDamageMultiplier;
         enemy.retaliateGuardGainPercent = retaliateGuardGainPercent;

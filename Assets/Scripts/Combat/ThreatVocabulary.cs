@@ -11,19 +11,17 @@ public enum ThreatAxis
 
 public enum ThreatWord
 {
-    None,
-    Charging,
-    Primed,
-    Anchoring,
-    Leeching,
-    Suppressing,
-    Escalating,
-    Volatile,
-    Retaliating,
-    Channeling,
-    Converting,
-    Shielded,
-    Terminal
+    None = 0,
+    Charging = 1,
+    Anchoring = 3,
+    Leeching = 4,
+    Suppressing = 5,
+    Escalating = 6,
+    Volatile = 7,
+    Retaliating = 8,
+    Channeling = 9,
+    Shielded = 11,
+    Terminal = 12
 }
 
 public static class ThreatVocabulary
@@ -31,7 +29,6 @@ public static class ThreatVocabulary
     private static readonly Dictionary<ThreatWord, ThreatAxis[]> WordAxes = new Dictionary<ThreatWord, ThreatAxis[]>
     {
         { ThreatWord.Charging, new[] { ThreatAxis.TimePressure } },
-        { ThreatWord.Primed, new[] { ThreatAxis.Volatility } },
         { ThreatWord.Anchoring, new[] { ThreatAxis.Protection } },
         { ThreatWord.Leeching, new[] { ThreatAxis.Punishment } },
         { ThreatWord.Suppressing, new[] { ThreatAxis.Disruption } },
@@ -39,7 +36,6 @@ public static class ThreatVocabulary
         { ThreatWord.Volatile, new[] { ThreatAxis.Volatility } },
         { ThreatWord.Retaliating, new[] { ThreatAxis.Punishment } },
         { ThreatWord.Channeling, new[] { ThreatAxis.TimePressure, ThreatAxis.Disruption } },
-        { ThreatWord.Converting, new[] { ThreatAxis.Disruption } },
         { ThreatWord.Shielded, new[] { ThreatAxis.Protection } },
         { ThreatWord.Terminal, new[] { ThreatAxis.TimePressure, ThreatAxis.Volatility } }
     };

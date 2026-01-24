@@ -40,6 +40,11 @@ public class StackDisplayManager : MonoBehaviour
     // Cache for stack GameObjects and sprites
     private Dictionary<StackType, GameObject> stackGameObjectLookup = new Dictionary<StackType, GameObject>();
     private Dictionary<StackType, Sprite> stackSpriteCache = new Dictionary<StackType, Sprite>();
+    private readonly Dictionary<StackType, int> lastStackCounts = new Dictionary<StackType, int>();
+
+    [Header("Pulse Settings")]
+    [Range(1f, 1.4f)] public float stackPulseScale = 1.15f;
+    [Range(0.02f, 0.2f)] public float stackPulseDuration = 0.08f;
     
     private void Awake()
     {
@@ -196,6 +201,12 @@ public class StackDisplayManager : MonoBehaviour
             
             // Update the stack GameObject
             UpdateStackIcon(stackObj, stackType, currentStacks);
+
+            if (lastStackCounts.TryGetValue(stackType, out int lastCount) && lastCount != currentStacks && currentStacks > 0)
+            {
+                PulseStackIcon(stackObj);
+            }
+            lastStackCounts[stackType] = currentStacks;
             
             // Show/hide based on stack count
             if (hideZeroStacks)
@@ -207,6 +218,17 @@ public class StackDisplayManager : MonoBehaviour
                 stackObj.SetActive(true); // Always show, even at 0
             }
         }
+    }
+
+    private void PulseStackIcon(GameObject stackObj)
+    {
+        if (stackObj == null) return;
+        var t = stackObj.transform;
+        Vector3 baseScale = t.localScale;
+        LeanTween.cancel(stackObj);
+        LeanTween.scale(stackObj, baseScale * stackPulseScale, stackPulseDuration)
+            .setEaseOutQuad()
+            .setLoopPingPong(1);
     }
     
     /// <summary>

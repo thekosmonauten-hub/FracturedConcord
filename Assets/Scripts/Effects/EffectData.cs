@@ -26,6 +26,10 @@ public class EffectData : ScriptableObject
     [Header("Effect Prefab")]
     [Tooltip("The prefab containing ParticleSystem and/or other visual components")]
     public GameObject effectPrefab;
+
+    [Header("Sound")]
+    [Tooltip("Optional sound to play when this effect is triggered.")]
+    public SoundEvent sfx;
     
     [Header("UI Particle Settings")]
     [Tooltip("If true, automatically adds UIParticle component to prefab")]

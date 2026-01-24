@@ -16,10 +16,6 @@ public static class ThreatBehaviorProcessor
             return false;
 
         bool changed = false;
-        if (HasThreat(enemy, ThreatWord.Primed))
-        {
-            changed |= TryTriggerPrimed(enemy);
-        }
         if (HasThreat(enemy, ThreatWord.Escalating))
         {
             enemy.escalatingTurns = Mathf.Max(0, enemy.escalatingTurns + 1);
@@ -90,6 +86,9 @@ public static class ThreatBehaviorProcessor
         if (preGuard <= 0f)
             return false;
 
+        if (UnityEngine.Random.value > Mathf.Clamp01(enemy.retaliateChance))
+            return false;
+
         // Convert incoming damage into guard (10% default).
         float guardGain = incomingDamage * Mathf.Max(0f, enemy.retaliateGuardGainPercent);
         if (guardGain > 0f)
@@ -121,72 +120,7 @@ public static class ThreatBehaviorProcessor
         if (enemy == null)
             return;
 
-        // Reserved for Suppressing/Leeching/Converting hooks.
-    }
-
-    private static bool TryTriggerPrimed(Enemy enemy)
-    {
-        if (enemy == null || enemy.primedTriggered)
-            return false;
-
-        bool conditionMet = false;
-        switch (enemy.primedTriggerType)
-        {
-            case PrimedTriggerType.PlayerStatusStacks:
-            {
-                var playerDisplay = UnityEngine.Object.FindFirstObjectByType<PlayerCombatDisplay>();
-                if (playerDisplay != null)
-                {
-                    var status = playerDisplay.GetStatusEffectManager();
-                    if (status != null)
-                    {
-                        float total = status.GetTotalMagnitude(enemy.primedStatusType);
-                        conditionMet = total >= enemy.primedStatusThreshold;
-                    }
-                }
-                break;
-            }
-            case PrimedTriggerType.EnemyHealthPercent:
-            {
-                conditionMet = enemy.GetHealthPercentage() <= Mathf.Clamp01(enemy.primedHealthThreshold);
-                break;
-            }
-        }
-
-        if (!conditionMet)
-            return false;
-
-        int damage = Mathf.RoundToInt(enemy.GetAttackDamage() * Mathf.Max(1f, enemy.primedDamageMultiplier));
-        var primedEntry = new EnemyIntentEntry(
-            EnemyIntent.Attack,
-            damage,
-            0,
-            ThreatTier.Major,
-            ThreatWord.Primed,
-            ThreatWord.None);
-
-        enemy.intentQueue.InsertAt(0, primedEntry);
-        enemy.primedTriggered = true;
-        enemy.SyncFromQueue();
-        enemy.NotifyIntentChanged();
-        FlashPrimed(enemy);
-        return true;
-    }
-
-    private static void FlashPrimed(Enemy enemy)
-    {
-        if (enemy == null)
-            return;
-
-        var displays = UnityEngine.Object.FindObjectsByType<EnemyCombatDisplay>(FindObjectsSortMode.None);
-        foreach (var display in displays)
-        {
-            if (display != null && display.GetEnemy() == enemy)
-            {
-                display.FlashThreatIcons(0.2f);
-                break;
-            }
-        }
+        // Reserved for Suppressing/Leeching hooks.
     }
 
     private static void ApplyCharging(Enemy enemy, ref EnemyIntentEntry entry)
@@ -239,8 +173,9 @@ public static class ThreatBehaviorProcessor
 
     private static bool IsDefensiveEnemy(Enemy enemy)
     {
-        if (enemy == null) return false;
-        return enemy.aiPattern == EnemyAIPattern.Defensive || enemy.category == EnemyCategory.Tank;
+        if (enemy == null)
+            return false;
+        return enemy.aiPattern == EnemyAIPattern.Defensive;
     }
 
     private static bool HasThreat(EnemyIntentEntry entry, ThreatWord word)

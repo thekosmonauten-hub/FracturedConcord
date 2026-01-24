@@ -82,6 +82,13 @@ public class EnemyCombatDisplay : MonoBehaviour
     [Header("Animation")]
     public Animator enemyAnimator; // Animator for enemy sprite animations
     private RuntimeAnimatorController enemyAnimatorController; // Store the enemy's specific animator controller
+    [Range(2f, 20f)] public float attackNudgeDistance = 8f;
+    [Range(0.04f, 0.2f)] public float attackNudgeDuration = 0.08f;
+    [Range(0.05f, 0.25f)] public float guardSheenDuration = 0.12f;
+    public Color guardSheenColor = new Color(0.7f, 0.9f, 1f, 1f);
+    [Header("SFX")]
+    public SoundEvent attackSfx;
+    public SoundEvent guardSfx;
     
     private Enemy currentEnemy;
     private EnemyData enemyData; // Reference to the data used to create this enemy
@@ -113,6 +120,7 @@ public class EnemyCombatDisplay : MonoBehaviour
         public Image threatIconPrimary;
         public Image threatIconSecondary;
         public Image abilityBoundBadge;
+        public int lastTiming = -1;
     }
 
     private readonly List<IntentSlot> intentSlots = new List<IntentSlot>(3);
@@ -129,6 +137,7 @@ public class EnemyCombatDisplay : MonoBehaviour
 
     private readonly Dictionary<StackType, StackIconElements> stackIconLookup = new Dictionary<StackType, StackIconElements>();
     private readonly Dictionary<StackType, Sprite> stackSpriteCache = new Dictionary<StackType, Sprite>();
+    private readonly Dictionary<StackType, int> lastEnemyStackCounts = new Dictionary<StackType, int>();
     
     /// <summary>
     /// Get the current Enemy instance
@@ -1151,6 +1160,13 @@ public class EnemyCombatDisplay : MonoBehaviour
         float alpha = index == 0 ? 1f : (index == 1 ? 0.6f : 0.3f);
         string label = GetIntentLabel(entry);
         string value = GetIntentValue(entry, currentEnemy);
+        string valueWithTiming = value;
+        if (entry.Timing > 0)
+        {
+            valueWithTiming = string.IsNullOrEmpty(value)
+                ? $"({entry.Timing})"
+                : $"{value} ({entry.Timing})";
+        }
         Sprite icon = GetIntentIcon(entry, out Color iconColor);
         Color textColor = GetIntentTextColor(entry);
 
@@ -1165,10 +1181,16 @@ public class EnemyCombatDisplay : MonoBehaviour
 
         if (slot.value != null)
         {
-            slot.value.text = value;
+            slot.value.text = valueWithTiming;
             slot.value.color = textColor;
             SetAlpha(slot.value, alpha);
+
+            if (entry.Timing > 0 && slot.lastTiming >= 0 && entry.Timing < slot.lastTiming)
+            {
+                PulseIntentValue(slot.value);
+            }
         }
+        slot.lastTiming = entry.Timing;
 
         if (slot.icon != null)
         {
@@ -1226,6 +1248,19 @@ public class EnemyCombatDisplay : MonoBehaviour
             slot.icon.sprite = null;
             slot.icon.enabled = false;
         }
+        slot.lastTiming = -1;
+    }
+
+    private void PulseIntentValue(TextMeshProUGUI valueText)
+    {
+        if (valueText == null) return;
+        var go = valueText.gameObject;
+        var t = valueText.transform;
+        Vector3 baseScale = t.localScale;
+        LeanTween.cancel(go);
+        LeanTween.scale(go, baseScale * 1.15f, 0.12f)
+            .setEaseOutQuad()
+            .setLoopPingPong(1);
     }
 
     private void ClearIntentSlotsFromIndex(int startIndex)
@@ -2064,6 +2099,7 @@ public class EnemyCombatDisplay : MonoBehaviour
     private void HandleIntentChanged()
     {
         RefreshIntentDisplay();
+        FlashThreatIcons(0.12f);
     }
 
     /// <summary>Refresh intent UI only (no SetIntent). Use when intent changed externally, e.g. OnIntentChanged.</summary>
@@ -2229,7 +2265,24 @@ public class EnemyCombatDisplay : MonoBehaviour
 
             bool shouldShow = hideZeroStacks ? stackCount > 0 : true;
             elements.root.SetActive(shouldShow);
+
+            if (shouldShow && lastEnemyStackCounts.TryGetValue(type, out int lastCount) && lastCount != stackCount)
+            {
+                PulseStackRoot(elements.root);
+            }
+            lastEnemyStackCounts[type] = stackCount;
         }
+    }
+
+    private void PulseStackRoot(GameObject root)
+    {
+        if (root == null) return;
+        var t = root.transform;
+        Vector3 baseScale = t.localScale;
+        LeanTween.cancel(root);
+        LeanTween.scale(root, baseScale * 1.15f, 0.08f)
+            .setEaseOutQuad()
+            .setLoopPingPong(1);
     }
 
     private void ClearStackDisplay()
@@ -2436,11 +2489,11 @@ public class EnemyCombatDisplay : MonoBehaviour
                 
                 // Notify combat manager to handle death (if not already handled)
                 // This catches cases where TakeDamage is called directly (e.g., from status effects)
-                var combatManager = UnityEngine.Object.FindFirstObjectByType<CombatDisplayManager>();
-                if (combatManager != null && combatManager.IsEnemyStillActive(currentEnemy))
+                var combatManagerForDeath = UnityEngine.Object.FindFirstObjectByType<CombatDisplayManager>();
+                if (combatManagerForDeath != null && combatManagerForDeath.IsEnemyStillActive(currentEnemy))
                 {
                     // Let combat manager find the display index - it has access to the spawner
-                    combatManager.HandleEnemyDeathIfNeeded(this, currentEnemy, -1);
+                    combatManagerForDeath.HandleEnemyDeathIfNeeded(this, currentEnemy, -1);
                 }
             }
         }
@@ -2751,6 +2804,41 @@ public class EnemyCombatDisplay : MonoBehaviour
         
         // Check if animator is actually playing
         StartCoroutine(CheckAnimationState());
+
+        NudgeAttack();
+        SFXManager.Instance?.Play(attackSfx, transform.position);
+    }
+
+    public void PlayGuardSheen()
+    {
+        if (guardFillImage != null)
+        {
+            var go = guardFillImage.gameObject;
+            LeanTween.cancel(go);
+            LeanTween.alpha(guardFillImage.rectTransform, 1f, guardSheenDuration)
+                .setFrom(0.3f)
+                .setEaseOutQuad()
+                .setLoopPingPong(1);
+        }
+        StartCoroutine(FlashColor(guardSheenColor, guardSheenDuration));
+        SFXManager.Instance?.Play(guardSfx, transform.position);
+    }
+
+    private void NudgeAttack()
+    {
+        if (enemyPortrait == null)
+            return;
+        var rect = enemyPortrait.rectTransform;
+        if (rect == null)
+            return;
+
+        Vector3 basePos = rect.localPosition;
+        float direction = transform.localScale.x >= 0f ? 1f : -1f;
+        Vector3 target = basePos + new Vector3(attackNudgeDistance * direction, 0f, 0f);
+        LeanTween.cancel(rect);
+        LeanTween.moveLocal(rect.gameObject, target, attackNudgeDuration)
+            .setEaseOutQuad()
+            .setLoopPingPong(1);
     }
     
     /// <summary>

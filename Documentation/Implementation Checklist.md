@@ -46,9 +46,8 @@ Use this checklist to track implementation progress. Check off items as you comp
 ## Phase 2: Threat Vocabulary Integration
 
 ### 2.1 Threat Word System
-- [x] Create `ThreatWord` enum/class with 12 core words:
+- [x] Create `ThreatWord` enum/class with 10 core words:
   - [x] Charging
-  - [x] Primed
   - [x] Anchoring
   - [x] Leeching
   - [x] Suppressing
@@ -56,7 +55,6 @@ Use this checklist to track implementation progress. Check off items as you comp
   - [x] Volatile
   - [x] Retaliating
   - [x] Channeling
-  - [x] Converting
   - [x] Shielded
   - [x] Terminal
 
@@ -79,7 +77,7 @@ Use this checklist to track implementation progress. Check off items as you comp
 - [ ] Ensure no enemy has more than 2 threat words
 - [ ] Create example enemies with threat combinations:
   - [ ] Crumble Warden (Anchoring + Escalating)
-  - [ ] Venom Seer (Primed + Converting)
+  - [ ] Venom Seer (Leeching + Escalating)
   - [ ] Shock Inquisitor (Suppressing + Charging)
 
 ### 2.3 Intent-to-Threat Mapping
@@ -94,10 +92,9 @@ Use this checklist to track implementation progress. Check off items as you comp
   - [x] On intent generation (apply Charging/Escalating flags)
   - [x] On turn start (tick Escalating/Channeling timers)
   - [x] On damaged (queue Retaliating)
-  - [x] On execute (apply Suppressing/Leeching/Converting)
+  - [x] On execute (apply Suppressing/Leeching)
 - [x] Wire hook calls into `Enemy` / `CombatManager`
 - [ ] Define default counters in UI (tooltip/help)
-- [ ] Expand Primed trigger conditions (extensible ruleset)
 
 ### 2.5 Threat Visuals (UI)
 - [x] Show primary/secondary threat words on intent slots

@@ -19,6 +19,7 @@ MonoBehaviour:
   category: 2
   damageType: 2
   effectPrefab: {fileID: 6512324265042727825, guid: 4dccfdaf80e9c274284aa0d0675e0381, type: 3}
+  sfx: {fileID: 11400000, guid: aa44bb0464637e9448ea11e90f2ea56c, type: 2}
   useUIParticle: 0
   uiParticleScale: 150
   isProjectile: 1

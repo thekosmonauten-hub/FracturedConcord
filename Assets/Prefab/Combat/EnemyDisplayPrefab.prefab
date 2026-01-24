@@ -3006,6 +3006,12 @@ MonoBehaviour:
   enemyThreatIconPrimary: {fileID: 8604627928799638908}
   enemyThreatIconSecondary: {fileID: 5555320084971509545}
   enemyAnimator: {fileID: 8425320866775357997}
+  attackNudgeDistance: 8
+  attackNudgeDuration: 0.08
+  guardSheenDuration: 0.12
+  guardSheenColor: {r: 0.7, g: 0.9, b: 1, a: 1}
+  attackSfx: {fileID: 0}
+  guardSfx: {fileID: 0}
   threatIcons: []
 --- !u!114 &8211334788345577784
 MonoBehaviour:

@@ -18,12 +18,6 @@ public enum ThreatBindingScope
     Removed
 }
 
-public enum PrimedTriggerType
-{
-    PlayerStatusStacks,
-    EnemyHealthPercent
-}
-
 public enum ThreatCounterType
 {
     CardTag,
@@ -88,17 +82,6 @@ public static class ThreatBehaviorTable
             {
                 new ThreatCounter(ThreatCounterType.Action, "Interrupt", "Interrupt or force early execution to prevent the charge."),
                 new ThreatCounter(ThreatCounterType.Status, "Freeze/Stun", "Disable the enemy while charging to skip the action.")
-            }),
-        new ThreatBehaviorDefinition(
-            ThreatWord.Primed,
-            ThreatBindingScope.EnemyBound,
-            "Arms a payoff that triggers once a condition is met.",
-            new[] { EnemyIntent.Attack, EnemyIntent.Defend },
-            new[] { ThreatHook.OnTurnStart, ThreatHook.OnDamaged },
-            new[]
-            {
-                new ThreatCounter(ThreatCounterType.StackConsume, "ReduceStacks", "Lower the triggering stacks/condition."),
-                new ThreatCounter(ThreatCounterType.Action, "Dispel", "Remove the primed state before it fires.")
             }),
         new ThreatBehaviorDefinition(
             ThreatWord.Anchoring,
@@ -177,13 +160,6 @@ public static class ThreatBehaviorTable
                 new ThreatCounter(ThreatCounterType.Action, "Interrupt", "Break the channel."),
                 new ThreatCounter(ThreatCounterType.Status, "Silence", "Prevent channel effects.")
             }),
-        new ThreatBehaviorDefinition(
-            ThreatWord.Converting,
-            ThreatBindingScope.Removed,
-            "Removed (refocus).",
-            new EnemyIntent[0],
-            new ThreatHook[0],
-            new ThreatCounter[0]),
         new ThreatBehaviorDefinition(
             ThreatWord.Shielded,
             ThreatBindingScope.EnemyBound,

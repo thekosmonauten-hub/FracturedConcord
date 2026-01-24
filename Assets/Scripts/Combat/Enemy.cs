@@ -38,6 +38,8 @@ public class Enemy
     public float defendGuardPercent = 0.1f; // Percentage of max health gained as guard when defending (default 10%)
     
     [Header("AI Behavior")]
+[Tooltip("Copied from EnemyData.aiPattern at spawn.")]
+public EnemyAIPattern aiPattern = EnemyAIPattern.Aggressive;
     [Tooltip("Synced from IntentQueue head. Overwritten temporarily during delayed-action execution.")]
     public EnemyIntent currentIntent;
     public int intentDamage;
@@ -69,12 +71,6 @@ public class Enemy
     [Range(0f, 1f)] public float channelingDamageMultiplierPerUse = 0.2f;
     [Min(0)] public int channelingMaxStacks = 0;
     [Min(1f)] public float terminalDamageMultiplier = 2f;
-    public PrimedTriggerType primedTriggerType = PrimedTriggerType.PlayerStatusStacks;
-    public StatusEffectType primedStatusType = StatusEffectType.Poison;
-    [Min(1)] public int primedStatusThreshold = 5;
-    [Range(0f, 1f)] public float primedHealthThreshold = 0.5f;
-    [Min(1f)] public float primedDamageMultiplier = 1.5f;
-    public bool primedTriggered = false;
     
     [Header("Intent Queue")]
     [Tooltip("1–3 upcoming intents. Source of truth; currentIntent/intentDamage mirror head.")]

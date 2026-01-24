@@ -21,6 +21,9 @@ public class CombatDisplayManager : MonoBehaviour
     public bool autoStartCombat = true;
     public float turnDelay = 1f;
     public float waveTransitionDelay = 2f; // Delay before spawning next wave
+    [Tooltip("Brief pause after enemy actions resolve.")]
+    [Range(0f, 0.25f)]
+    public float microPauseSeconds = 0.08f;
     
     [Header("Combat State")]
     public CombatState currentState = CombatState.Setup;
@@ -1149,12 +1152,13 @@ public class CombatDisplayManager : MonoBehaviour
                 {
                     enemyDisplay.UpdateIntent();
                     enemyDisplay.UpdateGuardDisplay(); // Update guard display when enemy defends
+                    enemyDisplay.PlayGuardSheen();
                 }
 
                 if (enemy.primaryThreat == ThreatWord.Anchoring || enemy.secondaryThreat == ThreatWord.Anchoring)
                 {
-                    var activeDisplays = GetActiveEnemyDisplays();
-                    foreach (var display in activeDisplays)
+                    var anchoringDisplays = GetActiveEnemyDisplays();
+                    foreach (var display in anchoringDisplays)
                     {
                         if (display == null || display == enemyDisplay) continue;
                         var ally = display.GetEnemy();
@@ -1179,7 +1183,9 @@ public class CombatDisplayManager : MonoBehaviour
         }
         
         BossAbilityHandler.OnEnemyTurnEnd(enemy, enemyDisplay);
-        
+        if (microPauseSeconds > 0f)
+            yield return new WaitForSeconds(microPauseSeconds);
+
         yield return null;
     }
     

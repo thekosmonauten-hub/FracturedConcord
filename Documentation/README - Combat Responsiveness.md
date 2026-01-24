@@ -41,7 +41,7 @@ Detailed, actionable checklist organized by phase:
 
 Complete design document for the threat vocabulary system:
 - 5 Threat Axes (Time Pressure, Punishment, Disruption, Protection, Volatility)
-- 12 Core Threat Words (Charging, Primed, Anchoring, etc.)
+- 10 Core Threat Words (Charging, Anchoring, Leeching, etc.)
 - Enemy construction rules
 - Wave composition rules
 - Visual language guidelines

@@ -21,7 +21,7 @@ Checklist
 
 ☐ Brief screen-space text or icon flash (“Crumble +2”, “Shock!”)
 
-☐ Enemy intent icons react (shake / dim / update)
+☑ Enemy intent icons react (shake / dim / update)
 
 Rule:
 
@@ -32,11 +32,11 @@ If the player can blink and miss confirmation, it’s not enough.
 The board must clearly show state change, not just numbers.
 
 ### Checklist
-- [ ] Status stacks visibly increment (count + pulse)
+- [x] Status stacks visibly increment (count + pulse)
 - [ ] Threat countdowns update with emphasis
 - [ ] Affected enemies get a 0.2–0.3s glow or outline
 - [ ] Buffs/debuffs float from source to target
-- [ ] Board quiets for ~100ms after resolution (micro-pause)
+- [x] Board quiets for ~100ms after resolution (micro-pause)
 
 **Rule:** Damage without state change is forgettable.
 
