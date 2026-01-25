@@ -1679,13 +1679,14 @@ public class CombatDisplayManager : MonoBehaviour
             if (enemyIndex < activeDisplays.Count)
             {
                 activeDisplays[enemyIndex].TakeDamage(damage, ignoreGuardArmor);
+                float actualDamage = activeDisplays[enemyIndex].LastDamageTaken;
                 activeDisplays[enemyIndex].PlayDamageAnimation();
                 
                 // Show floating damage number or status effect name
                 if (floatingDamageManager != null)
                 {
                     // If damage is 0 and card applies status effects, show status effect name instead
-                    if (damage <= 0.01f && playedCard != null && playedCard.effects != null && playedCard.effects.Count > 0)
+                    if (actualDamage <= 0.01f && playedCard != null && playedCard.effects != null && playedCard.effects.Count > 0)
                     {
                         // Find the first ApplyStatus effect
                         string statusEffectName = null;
@@ -1709,13 +1710,13 @@ public class CombatDisplayManager : MonoBehaviour
                         else
                         {
                             // No status effect found, show 0 damage
-                            floatingDamageManager.ShowDamage(damage, wasCritical, activeDisplays[enemyIndex].transform);
+                            floatingDamageManager.ShowDamage(actualDamage, wasCritical, activeDisplays[enemyIndex].transform);
                         }
                     }
                     else
                     {
                         // Normal damage display
-                        floatingDamageManager.ShowDamage(damage, wasCritical, activeDisplays[enemyIndex].transform);
+                        floatingDamageManager.ShowDamage(actualDamage, wasCritical, activeDisplays[enemyIndex].transform);
                     }
                 }
                 
@@ -1724,7 +1725,7 @@ public class CombatDisplayManager : MonoBehaviour
                 {
                     DamageType damageType = playedCard.primaryDamageType;
                     Dexiled.CombatSystem.Embossing.EmbossingModifierEventProcessor.Instance.OnDamageDealt(
-                        playedCard, player, targetEnemy, damage, damageType
+                        playedCard, player, targetEnemy, actualDamage, damageType
                     );
                 }
             }

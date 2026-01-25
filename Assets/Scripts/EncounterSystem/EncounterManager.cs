@@ -65,6 +65,7 @@ public partial class EncounterManager : MonoBehaviour
     // Track initialization state
     private bool isInitialized = false;
     public bool IsInitialized => isInitialized;
+    private bool isInitializing = false;
     
     // Legacy support (for backwards compatibility)
     [Header("Legacy Support (Editor Only)")]
@@ -108,8 +109,16 @@ public partial class EncounterManager : MonoBehaviour
     /// </summary>
     private void InitializeSystem()
     {
+        if (isInitialized || isInitializing)
+            return;
+        isInitializing = true;
         // Defer heavy initialization to prevent blocking
         StartCoroutine(InitializeSystemCoroutine());
+    }
+
+    public void EnsureInitialized()
+    {
+        InitializeSystem();
     }
     
     /// <summary>
@@ -117,6 +126,7 @@ public partial class EncounterManager : MonoBehaviour
     /// </summary>
     private IEnumerator InitializeSystemCoroutine()
     {
+        EncounterEvents.InvokeLoadingProgress(0.05f, "Preparing encounters...");
         EnsureEnemyDatabase();
         yield return null; // Wait one frame
         
@@ -124,18 +134,22 @@ public partial class EncounterManager : MonoBehaviour
         graphBuilder = new EncounterGraphBuilder();
         stateManager = new EncounterStateManager(graphBuilder);
         progressionManager = new EncounterProgressionManager(graphBuilder, stateManager);
+        EncounterEvents.InvokeLoadingProgress(0.2f, "Initializing systems...");
         yield return null; // Wait one frame
         
         // Load encounters (this can be heavy with Resources.Load)
         LoadEncounters();
+        EncounterEvents.InvokeLoadingProgress(0.55f, "Loading encounters...");
         yield return null; // Wait one frame
         
         // Build graph
         BuildEncounterGraph();
+        EncounterEvents.InvokeLoadingProgress(0.7f, "Building encounter graph...");
         yield return null; // Wait one frame
         
         // Apply character progression (this ensures encounter 1 is unlocked)
         ApplyCharacterProgression();
+        EncounterEvents.InvokeLoadingProgress(0.85f, "Applying progression...");
         yield return null; // Wait one frame
         
         // Double-check: Ensure encounter 1 is unlocked after progression is applied
@@ -182,7 +196,9 @@ public partial class EncounterManager : MonoBehaviour
             ApplyCharacterProgression();
         }
         
+        EncounterEvents.InvokeLoadingProgress(1f, "Encounters ready");
         isInitialized = true;
+        isInitializing = false;
         EncounterEvents.InvokeSystemInitialized();
         Debug.Log($"[EncounterManager] System initialized - Encounter 1 is always available. Loaded {allEncounters.Count} encounters.");
     }

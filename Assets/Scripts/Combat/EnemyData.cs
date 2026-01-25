@@ -147,6 +147,10 @@ public class EnemyData : ScriptableObject
     [Range(0f, 1f)] public float shieldedGuardPercent = 0.75f;
     [Tooltip("Percent damage reduction while Shielded is active (capped by design).")]
     [Range(0f, 1f)] public float shieldedDamageReductionPercent = 0.75f;
+    [Tooltip("Minimum Shielded damage reduction at area level 1.")]
+    [Range(0f, 1f)] public float shieldedDamageReductionMin = 0.25f;
+    [Tooltip("Area level at which Shielded reaches its max damage reduction.")]
+    [Min(1)] public int shieldedDamageReductionMaxLevel = 10;
     [Tooltip("Turns of stun applied when Shielded guard breaks.")]
     [Min(0)] public int shieldedStunTurns = 2;
     [Tooltip("If true, shielded enemies do not decay guard each turn.")]
@@ -241,7 +245,12 @@ public class EnemyData : ScriptableObject
         enemy.anchoringAuraGuardPercent = anchoringAuraGuardPercent;
         enemy.leechingLifestealPercent = leechingLifestealPercent;
         enemy.shieldedGuardPercent = shieldedGuardPercent;
-        enemy.shieldedDamageReductionPercent = shieldedDamageReductionPercent;
+        float shieldedReduction = shieldedDamageReductionPercent;
+        float reductionMin = Mathf.Clamp01(shieldedDamageReductionMin);
+        int maxLevel = Mathf.Max(1, shieldedDamageReductionMaxLevel);
+        float t = Mathf.InverseLerp(1f, maxLevel, areaLevel);
+        shieldedReduction = Mathf.Lerp(reductionMin, shieldedDamageReductionPercent, t);
+        enemy.shieldedDamageReductionPercent = Mathf.Clamp01(shieldedReduction);
         enemy.shieldedStunTurns = shieldedStunTurns;
         enemy.shieldedNoGuardDecay = shieldedNoGuardDecay;
         

@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 03dbe9832d2ff494895973bfe6bbdb4c, type: 3}
-  m_Name: CombatMusic
+  m_Name: BGM_CombatMusic
   m_EditorClassIdentifier: Assembly-CSharp::MusicTrack
-  clip: {fileID: 0}
+  clip: {fileID: 8300000, guid: a8f8b1971459314479cbfa3fed6b1c4f, type: 3}
   volume: 1
   loop: 1

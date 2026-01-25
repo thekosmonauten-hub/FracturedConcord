@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 03dbe9832d2ff494895973bfe6bbdb4c, type: 3}
-  m_Name: MainMenu
+  m_Name: BGM_MainMenu
   m_EditorClassIdentifier: Assembly-CSharp::MusicTrack
   clip: {fileID: 8300000, guid: 0437a4eb3e345f64aa82034f52df4a7a, type: 3}
   volume: 1

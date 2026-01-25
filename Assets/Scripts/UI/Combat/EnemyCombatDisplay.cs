@@ -4,8 +4,9 @@ using TMPro;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
-public class EnemyCombatDisplay : MonoBehaviour
+public class EnemyCombatDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("UI References")]
     public Image enemyPortrait;
@@ -89,6 +90,10 @@ public class EnemyCombatDisplay : MonoBehaviour
     [Header("SFX")]
     public SoundEvent attackSfx;
     public SoundEvent guardSfx;
+
+    [Header("Tooltip")]
+    public bool enableEnemyTooltip = true;
+    public EnemyTooltipUI tooltipUI;
     
     private Enemy currentEnemy;
     private EnemyData enemyData; // Reference to the data used to create this enemy
@@ -101,6 +106,9 @@ public class EnemyCombatDisplay : MonoBehaviour
     private Coroutine intentSlideRoutine;
     private Coroutine intentScrollRoutine;
     private bool isAnimatingQueue = false;
+
+    private float lastDamageTaken = 0f;
+    public float LastDamageTaken => lastDamageTaken;
     
     private Vector2 baseHealthAnchoredPos;
     private Vector2 baseIntentAnchoredPos;
@@ -2459,7 +2467,9 @@ public class EnemyCombatDisplay : MonoBehaviour
                 }
             }
             
+            int preHealth = currentEnemy.currentHealth;
             currentEnemy.TakeDamage(damage, ignoreGuardArmor);
+            lastDamageTaken = Mathf.Max(0f, preHealth - currentEnemy.currentHealth);
             abilityRunner?.OnDamaged();
             bool threatChanged = ThreatBehaviorProcessor.OnDamaged(currentEnemy, damage, preGuard);
             if (currentEnemy.HasThreat(ThreatWord.Shielded) && preGuard > 0f && currentEnemy.currentGuard <= 0f)
@@ -2497,6 +2507,22 @@ public class EnemyCombatDisplay : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (!enableEnemyTooltip)
+            return;
+        if (tooltipUI == null)
+            tooltipUI = EnemyTooltipUI.Instance;
+        if (tooltipUI != null)
+            tooltipUI.Show(this);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (tooltipUI != null)
+            tooltipUI.Hide();
     }
     
     public void Heal(int amount)

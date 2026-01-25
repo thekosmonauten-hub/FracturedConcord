@@ -25,6 +25,7 @@ public static class EncounterEvents
     // System Events
     public static event Action OnEncounterSystemInitialized;
     public static event Action OnEncounterSystemReset;
+    public static event Action<float, string> OnEncounterSystemLoading;
 
     /// <summary>
     /// Invoke when an encounter is unlocked.
@@ -123,6 +124,14 @@ public static class EncounterEvents
     }
 
     /// <summary>
+    /// Invoke when encounter system is loading (progress 0-1).
+    /// </summary>
+    public static void InvokeLoadingProgress(float progress, string message)
+    {
+        OnEncounterSystemLoading?.Invoke(progress, message);
+    }
+
+    /// <summary>
     /// Clear all event subscriptions. Useful for cleanup.
     /// </summary>
     public static void ClearAllEvents()
@@ -139,6 +148,7 @@ public static class EncounterEvents
         OnEncounterDataLoaded = null;
         OnEncounterSystemInitialized = null;
         OnEncounterSystemReset = null;
+        OnEncounterSystemLoading = null;
     }
 }
 

@@ -309,6 +309,10 @@ MonoBehaviour:
   sceneMusic:
   - sceneName: MainMenu
     track: {fileID: 11400000, guid: 286bac70f787104408b3be65b5b39c51, type: 2}
+  - sceneName: CombatScene
+    track: {fileID: 11400000, guid: 6a7d5e74e02cda24c860e0497e91a0ba, type: 2}
+  - sceneName: MainGameUi
+    track: {fileID: 11400000, guid: 286bac70f787104408b3be65b5b39c51, type: 2}
   fadeDuration: 0.75
   dontDestroyOnLoad: 1
 --- !u!4 &453109597

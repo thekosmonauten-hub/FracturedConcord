@@ -811,12 +811,14 @@ public class EncounterButton : MonoBehaviour, IPointerClickHandler, IPointerDown
         // Subscribe to encounter system events to sync when data becomes available
         EncounterEvents.OnEncounterSystemInitialized += HandleSystemInitialized;
         EncounterEvents.OnEncounterDataLoaded += HandleDataLoaded;
+        EncounterEvents.OnProgressionApplied += HandleProgressionApplied;
     }
 
     private void UnhookEncounterEvents()
     {
         EncounterEvents.OnEncounterSystemInitialized -= HandleSystemInitialized;
         EncounterEvents.OnEncounterDataLoaded -= HandleDataLoaded;
+        EncounterEvents.OnProgressionApplied -= HandleProgressionApplied;
     }
 
     private void HandleSystemInitialized()
@@ -845,6 +847,11 @@ public class EncounterButton : MonoBehaviour, IPointerClickHandler, IPointerDown
             ResolveEncounterFromManager();
             RefreshVisuals();
         }
+    }
+
+    private void HandleProgressionApplied()
+    {
+        RefreshVisuals();
     }
 
     private void HandleDeckChanged(DeckPreset deck)
