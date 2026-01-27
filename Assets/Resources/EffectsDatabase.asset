@@ -18,6 +18,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ce7520ca85352da438db52c61749e6e1, type: 2}
   - {fileID: 11400000, guid: c44bc57412ae4da468c31431da08fb5e, type: 2}
   - {fileID: 11400000, guid: 11f815931045b7944be792d36f691279, type: 2}
+  - {fileID: 11400000, guid: 1271dfccb0febc949b26d8accafca951, type: 2}
+  - {fileID: 11400000, guid: 45f520ff2a0628a408901ec8c2e61b37, type: 2}
   impactEffects:
   - {fileID: 11400000, guid: 3f5236241b7509d4faff6a1872beafdd, type: 2}
   - {fileID: 11400000, guid: ce7520ca85352da438db52c61749e6e1, type: 2}
@@ -36,3 +38,5 @@ MonoBehaviour:
   physicalEffects:
   - {fileID: 11400000, guid: 3f5236241b7509d4faff6a1872beafdd, type: 2}
   - {fileID: 11400000, guid: 11f815931045b7944be792d36f691279, type: 2}
+  - {fileID: 11400000, guid: 1271dfccb0febc949b26d8accafca951, type: 2}
+  - {fileID: 11400000, guid: 45f520ff2a0628a408901ec8c2e61b37, type: 2}

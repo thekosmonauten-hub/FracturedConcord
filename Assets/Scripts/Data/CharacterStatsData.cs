@@ -458,7 +458,7 @@ public class CharacterStatsData
         
         cardsDrawnPerTurn = 1;
         cardsDrawnPerWave = 1;
-        maxHandSize = 10;
+        maxHandSize = 8;
         discardPileSize = 0;
         exhaustPileSize = 0;
         cardDrawChance = 0f;

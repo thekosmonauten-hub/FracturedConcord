@@ -1649,8 +1649,17 @@ public class CombatDisplayManager : MonoBehaviour
             // Play damage impact effect
             if (combatEffectManager != null && enemyIndex < activeDisplays.Count)
             {
-                // Use physical damage as default for direct attacks
-                combatEffectManager.PlayElementalDamageEffectOnTarget(activeDisplays[enemyIndex].transform, DamageType.Physical, wasCritical);
+                bool skipImpact = playedCard != null && playedCard.isAoE &&
+                    combatEffectManager.HasCardSpecificAreaEffect(playedCard.cardName);
+                if (!skipImpact)
+                {
+                    // Use physical damage as default for direct attacks
+                    combatEffectManager.PlayElementalDamageEffectOnTarget(activeDisplays[enemyIndex].transform, DamageType.Physical, wasCritical);
+                }
+                else
+                {
+                    Debug.Log($"[CombatManager] Skipping physical impact for AoE card '{playedCard.cardName}' (card-specific Area effect already plays).");
+                }
             }
             
             // Boss Ability Handler - check for evasion (Empty Footfalls)

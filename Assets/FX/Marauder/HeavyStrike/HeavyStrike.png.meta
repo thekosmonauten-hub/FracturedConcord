@@ -1,0 +1,1391 @@
+fileFormatVersion: 2
+guid: b553ead2f493b094a8fb36ac6c38e6fe
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2400653049297235265
+    second: HeavyStrike_0
+  - first:
+      213: 7458082804492319133
+    second: HeavyStrike_1
+  - first:
+      213: 5022379483784295220
+    second: HeavyStrike_2
+  - first:
+      213: -5975238819086789403
+    second: HeavyStrike_3
+  - first:
+      213: -1153359095127306335
+    second: HeavyStrike_4
+  - first:
+      213: -7826561905188831801
+    second: HeavyStrike_5
+  - first:
+      213: -4761352864819136524
+    second: HeavyStrike_6
+  - first:
+      213: 5805777487162637119
+    second: HeavyStrike_7
+  - first:
+      213: 4608843845883940416
+    second: HeavyStrike_8
+  - first:
+      213: -4983488106308263461
+    second: HeavyStrike_9
+  - first:
+      213: 4556572195585707899
+    second: HeavyStrike_10
+  - first:
+      213: 5571516074160675730
+    second: HeavyStrike_11
+  - first:
+      213: -8386578744255801868
+    second: HeavyStrike_12
+  - first:
+      213: 8861586076399417956
+    second: HeavyStrike_13
+  - first:
+      213: -6651181685360584692
+    second: HeavyStrike_14
+  - first:
+      213: -5648644490120062371
+    second: HeavyStrike_15
+  - first:
+      213: -469706236133870190
+    second: HeavyStrike_16
+  - first:
+      213: -1126958603736873449
+    second: HeavyStrike_17
+  - first:
+      213: 7591124451688978399
+    second: HeavyStrike_18
+  - first:
+      213: -4000490022053383679
+    second: HeavyStrike_19
+  - first:
+      213: 5194124931173573664
+    second: HeavyStrike_20
+  - first:
+      213: -5105772058905432075
+    second: HeavyStrike_21
+  - first:
+      213: 1302959146089720014
+    second: HeavyStrike_22
+  - first:
+      213: 5075761153057043095
+    second: HeavyStrike_23
+  - first:
+      213: -675405258047119588
+    second: HeavyStrike_24
+  - first:
+      213: 2105228949888487576
+    second: HeavyStrike_25
+  - first:
+      213: -4431686040727143436
+    second: HeavyStrike_26
+  - first:
+      213: -994413088506920095
+    second: HeavyStrike_27
+  - first:
+      213: -7161423465585853070
+    second: HeavyStrike_28
+  - first:
+      213: -6464891947310920466
+    second: HeavyStrike_29
+  - first:
+      213: -3244941344785238078
+    second: HeavyStrike_30
+  - first:
+      213: -6266612683331744501
+    second: HeavyStrike_31
+  - first:
+      213: -2196382290674048042
+    second: HeavyStrike_32
+  - first:
+      213: 1461829281631853943
+    second: HeavyStrike_33
+  - first:
+      213: 2720275148376470008
+    second: HeavyStrike_34
+  - first:
+      213: 2345330329355665565
+    second: HeavyStrike_35
+  - first:
+      213: 4803207177939962640
+    second: HeavyStrike_36
+  - first:
+      213: -120465098276658137
+    second: HeavyStrike_37
+  - first:
+      213: -3814890762097485151
+    second: HeavyStrike_38
+  - first:
+      213: -5165964882030178881
+    second: HeavyStrike_39
+  - first:
+      213: -7650921999304791969
+    second: HeavyStrike_40
+  - first:
+      213: -3124070046415636954
+    second: HeavyStrike_41
+  - first:
+      213: -5186953391999513847
+    second: HeavyStrike_42
+  - first:
+      213: 1149335233809012384
+    second: HeavyStrike_43
+  - first:
+      213: 5470100800151087406
+    second: HeavyStrike_44
+  - first:
+      213: -3910303764138475027
+    second: HeavyStrike_45
+  - first:
+      213: 6724180073413520774
+    second: HeavyStrike_46
+  - first:
+      213: 2331482947909056599
+    second: HeavyStrike_47
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: HeavyStrike_0
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 7417
+        width: 172
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb21ea755ca2faed0800000000000000
+      internalID: -2400653049297235265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_1
+      rect:
+        serializedVersion: 2
+        x: 1344
+        y: 7417
+        width: 172
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d99b63bcbce608760800000000000000
+      internalID: 7458082804492319133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_2
+      rect:
+        serializedVersion: 2
+        x: 1856
+        y: 7418
+        width: 172
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4333c22e78313b540800000000000000
+      internalID: 5022379483784295220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_3
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 6906
+        width: 164
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e41534c3ffa31da0800000000000000
+      internalID: -5975238819086789403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_4
+      rect:
+        serializedVersion: 2
+        x: 834
+        y: 6907
+        width: 163
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1af887483027effe0800000000000000
+      internalID: -1153359095127306335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_5
+      rect:
+        serializedVersion: 2
+        x: 1345
+        y: 6907
+        width: 160
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cd7d940a67726390800000000000000
+      internalID: -7826561905188831801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_6
+      rect:
+        serializedVersion: 2
+        x: 1857
+        y: 6907
+        width: 156
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f7ba22dbc64cedb0800000000000000
+      internalID: -4761352864819136524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_7
+      rect:
+        serializedVersion: 2
+        x: 321
+        y: 6401
+        width: 152
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3bf94f3dd3429050800000000000000
+      internalID: 5805777487162637119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_8
+      rect:
+        serializedVersion: 2
+        x: 832
+        y: 6402
+        width: 150
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04e48232f07e5ff30800000000000000
+      internalID: 4608843845883940416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_9
+      rect:
+        serializedVersion: 2
+        x: 1343
+        y: 6402
+        width: 143
+        height: 120
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd1ac1198f717dab0800000000000000
+      internalID: -4983488106308263461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_10
+      rect:
+        serializedVersion: 2
+        x: 1852
+        y: 6403
+        width: 141
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7fce4725423c3f30800000000000000
+      internalID: 4556572195585707899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_11
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 5891
+        width: 141
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29bd9bca950025d40800000000000000
+      internalID: 5571516074160675730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_12
+      rect:
+        serializedVersion: 2
+        x: 818
+        y: 5897
+        width: 145
+        height: 141
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f59acbe013ec9b80800000000000000
+      internalID: -8386578744255801868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_13
+      rect:
+        serializedVersion: 2
+        x: 1322
+        y: 5898
+        width: 149
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46ab556f59daafa70800000000000000
+      internalID: 8861586076399417956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_14
+      rect:
+        serializedVersion: 2
+        x: 1823
+        y: 5898
+        width: 156
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c089f732f7142b3a0800000000000000
+      internalID: -6651181685360584692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_15
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 5395
+        width: 157
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5a1de793cbfb91b0800000000000000
+      internalID: -5648644490120062371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_16
+      rect:
+        serializedVersion: 2
+        x: 774
+        y: 5398
+        width: 154
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2957476baa44b79f0800000000000000
+      internalID: -469706236133870190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_17
+      rect:
+        serializedVersion: 2
+        x: 1273
+        y: 5400
+        width: 149
+        height: 165
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71681bbee1d3c50f0800000000000000
+      internalID: -1126958603736873449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_18
+      rect:
+        serializedVersion: 2
+        x: 1759
+        y: 5402
+        width: 154
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd714b42877195960800000000000000
+      internalID: 7591124451688978399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_19
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 4889
+        width: 158
+        height: 167
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 102730c35876b78c0800000000000000
+      internalID: -4000490022053383679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_20
+      rect:
+        serializedVersion: 2
+        x: 683
+        y: 4885
+        width: 165
+        height: 167
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 024e991fa1d351840800000000000000
+      internalID: 5194124931173573664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_21
+      rect:
+        serializedVersion: 2
+        x: 1187
+        y: 4883
+        width: 163
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ffa3dc2d57a429b0800000000000000
+      internalID: -5105772058905432075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_22
+      rect:
+        serializedVersion: 2
+        x: 1691
+        y: 4878
+        width: 161
+        height: 164
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec82683a07a051210800000000000000
+      internalID: 1302959146089720014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_23
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 4361
+        width: 161
+        height: 161
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79231bc40e9b07640800000000000000
+      internalID: 5075761153057043095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_24
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 4360
+        width: 157
+        height: 156
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1f9baa0f7a70a6f0800000000000000
+      internalID: -675405258047119588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_25
+      rect:
+        serializedVersion: 2
+        x: 1163
+        y: 4359
+        width: 150
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 890d8f07396473d10800000000000000
+      internalID: 2105228949888487576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_26
+      rect:
+        serializedVersion: 2
+        x: 1670
+        y: 4356
+        width: 145
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fbb66aa60d7f72c0800000000000000
+      internalID: -4431686040727143436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_27
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 3844
+        width: 141
+        height: 131
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 163cb8b80922332f0800000000000000
+      internalID: -994413088506920095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_28
+      rect:
+        serializedVersion: 2
+        x: 633
+        y: 3840
+        width: 147
+        height: 123
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27dbb970d438d9c90800000000000000
+      internalID: -7161423465585853070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_29
+      rect:
+        serializedVersion: 2
+        x: 1042
+        y: 3732
+        width: 248
+        height: 210
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eeccf31c6071846a0800000000000000
+      internalID: -6464891947310920466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_30
+      rect:
+        serializedVersion: 2
+        x: 1577
+        y: 3754
+        width: 223
+        height: 170
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c7f8131a07a7f2d0800000000000000
+      internalID: -3244941344785238078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_31
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 3261
+        width: 205
+        height: 132
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0dcd0967f48809a0800000000000000
+      internalID: -6266612683331744501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_32
+      rect:
+        serializedVersion: 2
+        x: 585
+        y: 3275
+        width: 190
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d32a6d81f1e481e0800000000000000
+      internalID: -2196382290674048042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_33
+      rect:
+        serializedVersion: 2
+        x: 1106
+        y: 3286
+        width: 181
+        height: 72
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77d5eed8cf5794410800000000000000
+      internalID: 1461829281631853943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_34
+      rect:
+        serializedVersion: 2
+        x: 1618
+        y: 3294
+        width: 77
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f17d46b5db50c520800000000000000
+      internalID: 2720275148376470008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_35
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 2768
+        width: 77
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d90c13a22894c8020800000000000000
+      internalID: 2345330329355665565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_36
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 2768
+        width: 99
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01bc7b7da7b68a240800000000000000
+      internalID: 4803207177939962640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_37
+      rect:
+        serializedVersion: 2
+        x: 1095
+        y: 2765
+        width: 99
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7242361a1a5045ef0800000000000000
+      internalID: -120465098276658137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_38
+      rect:
+        serializedVersion: 2
+        x: 1607
+        y: 2765
+        width: 99
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1aa92446019ce0bc0800000000000000
+      internalID: -3814890762097485151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_39
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 2253
+        width: 99
+        height: 89
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbdc27c6f4ece48b0800000000000000
+      internalID: -5165964882030178881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_40
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 2250
+        width: 98
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f58673b5af672d590800000000000000
+      internalID: -7650921999304791969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_41
+      rect:
+        serializedVersion: 2
+        x: 1096
+        y: 2250
+        width: 98
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62635f548d215a4d0800000000000000
+      internalID: -3124070046415636954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_42
+      rect:
+        serializedVersion: 2
+        x: 1605
+        y: 2250
+        width: 103
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90b8c532f5d3408b0800000000000000
+      internalID: -5186953391999513847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_43
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 1738
+        width: 117
+        height: 95
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a6d6034e4243ff00800000000000000
+      internalID: 1149335233809012384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_44
+      rect:
+        serializedVersion: 2
+        x: 574
+        y: 1753
+        width: 117
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e29e59622b3b9eb40800000000000000
+      internalID: 5470100800151087406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_45
+      rect:
+        serializedVersion: 2
+        x: 1086
+        y: 1774
+        width: 117
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de147a6b17fcbb9c0800000000000000
+      internalID: -3910303764138475027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_46
+      rect:
+        serializedVersion: 2
+        x: 1598
+        y: 1774
+        width: 117
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68da2998626115d50800000000000000
+      internalID: 6724180073413520774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HeavyStrike_47
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 1262
+        width: 111
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 758fffd63671b5020800000000000000
+      internalID: 2331482947909056599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      HeavyStrike_0: -2400653049297235265
+      HeavyStrike_1: 7458082804492319133
+      HeavyStrike_10: 4556572195585707899
+      HeavyStrike_11: 5571516074160675730
+      HeavyStrike_12: -8386578744255801868
+      HeavyStrike_13: 8861586076399417956
+      HeavyStrike_14: -6651181685360584692
+      HeavyStrike_15: -5648644490120062371
+      HeavyStrike_16: -469706236133870190
+      HeavyStrike_17: -1126958603736873449
+      HeavyStrike_18: 7591124451688978399
+      HeavyStrike_19: -4000490022053383679
+      HeavyStrike_2: 5022379483784295220
+      HeavyStrike_20: 5194124931173573664
+      HeavyStrike_21: -5105772058905432075
+      HeavyStrike_22: 1302959146089720014
+      HeavyStrike_23: 5075761153057043095
+      HeavyStrike_24: -675405258047119588
+      HeavyStrike_25: 2105228949888487576
+      HeavyStrike_26: -4431686040727143436
+      HeavyStrike_27: -994413088506920095
+      HeavyStrike_28: -7161423465585853070
+      HeavyStrike_29: -6464891947310920466
+      HeavyStrike_3: -5975238819086789403
+      HeavyStrike_30: -3244941344785238078
+      HeavyStrike_31: -6266612683331744501
+      HeavyStrike_32: -2196382290674048042
+      HeavyStrike_33: 1461829281631853943
+      HeavyStrike_34: 2720275148376470008
+      HeavyStrike_35: 2345330329355665565
+      HeavyStrike_36: 4803207177939962640
+      HeavyStrike_37: -120465098276658137
+      HeavyStrike_38: -3814890762097485151
+      HeavyStrike_39: -5165964882030178881
+      HeavyStrike_4: -1153359095127306335
+      HeavyStrike_40: -7650921999304791969
+      HeavyStrike_41: -3124070046415636954
+      HeavyStrike_42: -5186953391999513847
+      HeavyStrike_43: 1149335233809012384
+      HeavyStrike_44: 5470100800151087406
+      HeavyStrike_45: -3910303764138475027
+      HeavyStrike_46: 6724180073413520774
+      HeavyStrike_47: 2331482947909056599
+      HeavyStrike_5: -7826561905188831801
+      HeavyStrike_6: -4761352864819136524
+      HeavyStrike_7: 5805777487162637119
+      HeavyStrike_8: 4608843845883940416
+      HeavyStrike_9: -4983488106308263461
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

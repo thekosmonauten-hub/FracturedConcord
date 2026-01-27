@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 using Debug = Dexiled.Debugging.DevNullDebug;
+using Effekseer;
 
 /// <summary>
 /// Manages visual effects for combat actions like damage, healing, guard gain, etc.
@@ -38,6 +39,11 @@ public class CombatEffectManager : MonoBehaviour
     [SerializeField] private Canvas fxCanvas;
     [Tooltip("If true, automatically find and use the main combat canvas")]
     [SerializeField] private bool autoFindCanvas = true;
+    
+    [Header("FX Islands (World FX)")]
+    [SerializeField] private Transform fxWorldRoot;
+    [SerializeField] private Camera fxWorldCamera;
+    [SerializeField] private float fxWorldDistance = 10f;
     [Tooltip("If true, automatically find FxCanvas by name")]
     [SerializeField] private bool autoFindFxCanvas = true;
     
@@ -1071,6 +1077,10 @@ public class CombatEffectManager : MonoBehaviour
             
             Debug.Log($"[CombatEffectManager] Positioned impact effect at: {targetPos}");
         }
+        else
+        {
+            SetupWorldFxFollower(effect, targetRect);
+        }
         
         // Play effect
         effect.SetActive(true);
@@ -1081,11 +1091,64 @@ public class CombatEffectManager : MonoBehaviour
             particles.Play();
             Debug.Log($"[CombatEffectManager] Started ParticleSystem for impact effect");
         }
+
+        EffekseerEmitter effekseerEmitter = effect.GetComponentInChildren<EffekseerEmitter>(true);
+        if (effekseerEmitter != null)
+        {
+            effekseerEmitter.Play();
+            UnityEngine.Debug.Log($"[CombatEffectManager] Started EffekseerEmitter for effect '{effectData.effectName}'");
+        }
         
         // Auto-destroy
         if (effectData.duration > 0)
         {
             Destroy(effect, effectData.duration);
+        }
+    }
+
+    private void SetupWorldFxFollower(GameObject effect, RectTransform targetRect)
+    {
+        if (effect == null || targetRect == null)
+        {
+            return;
+        }
+        
+        if (fxWorldRoot != null)
+        {
+            effect.transform.SetParent(fxWorldRoot, false);
+            SetLayerRecursive(effect, fxWorldRoot.gameObject.layer);
+        }
+        
+        UIFxFollower follower = effect.GetComponent<UIFxFollower>();
+        if (follower == null)
+        {
+            follower = effect.AddComponent<UIFxFollower>();
+        }
+        
+        follower.SetTarget(targetRect);
+        if (fxWorldCamera != null)
+        {
+            follower.SetWorldCamera(fxWorldCamera);
+        }
+        follower.SetWorldDistance(fxWorldDistance);
+        follower.SnapToTarget();
+    }
+
+    private void SetLayerRecursive(GameObject root, int layer)
+    {
+        if (root == null)
+        {
+            return;
+        }
+        
+        root.layer = layer;
+        for (int i = 0; i < root.transform.childCount; i++)
+        {
+            var child = root.transform.GetChild(i);
+            if (child != null)
+            {
+                SetLayerRecursive(child.gameObject, layer);
+            }
         }
     }
     
@@ -1185,10 +1248,13 @@ public class CombatEffectManager : MonoBehaviour
             return;
         }
         
+        UnityEngine.Debug.Log($"[CombatEffectManager] Area effect lookup for '{card.cardName}' using database '{effectsDatabase.name}' ({effectsDatabase.allEffects.Count(e => e != null)} effects)");
+        
         // Priority 1: Check for card-specific Area effect (associatedCardName matches)
         EffectData cardAreaEffect = effectsDatabase.FindEffectByCardName(card.cardName);
         if (cardAreaEffect != null && cardAreaEffect.effectType == VisualEffectType.Area)
         {
+            UnityEngine.Debug.Log($"[CombatEffectManager] Using card-specific Area effect '{cardAreaEffect.effectName}' for {card.cardName}");
             // Check if this is a Warcry effect (should play from player HEAD)
             bool isWarcry = cardAreaEffect.tags != null && cardAreaEffect.tags.Contains("Warcry", System.StringComparer.OrdinalIgnoreCase);
             if (isWarcry)
@@ -1211,6 +1277,10 @@ public class CombatEffectManager : MonoBehaviour
                 PlayEffectFromData(cardAreaEffect, targetEnemy, "Default");
             }
             return;
+        }
+        if (cardAreaEffect != null)
+        {
+            UnityEngine.Debug.Log($"[CombatEffectManager] Card-specific effect '{cardAreaEffect.effectName}' found but type is {cardAreaEffect.effectType} (expected Area).");
         }
         
         // Priority 2: Check for tag-based Area effect (card has tag that matches effect tag)
@@ -1248,6 +1318,27 @@ public class CombatEffectManager : MonoBehaviour
         }
         
         Debug.Log($"[CombatEffectManager] No Area effect found for '{card.cardName}'. Checked card-specific (associatedCardName) and tag-based effects.");
+    }
+
+    public bool HasCardSpecificAreaEffect(string cardName)
+    {
+        if (string.IsNullOrWhiteSpace(cardName))
+        {
+            return false;
+        }
+        
+        if (effectsDatabase == null)
+        {
+            effectsDatabase = EffectsDatabase.Instance;
+        }
+        
+        if (effectsDatabase == null)
+        {
+            return false;
+        }
+        
+        EffectData effect = effectsDatabase.FindEffectByCardName(cardName);
+        return effect != null && effect.effectType == VisualEffectType.Area;
     }
     
     /// <summary>

@@ -196,6 +196,18 @@ PrefabInstance:
       propertyPath: m_fontColor32.rgba
       value: 4294967295
       objectReference: {fileID: 0}
+    - target: {fileID: 3772963574035955128, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3772963574035955128, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3772963574035955128, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 4225449930609888585, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
@@ -356,6 +368,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5716679749656953558, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: m_Alpha
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5735449002138400541, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -417,6 +433,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6016745940568680375, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: hoverSfx
+      value: 
+      objectReference: {fileID: 11400000, guid: 0651a9bdb2336c2459ad4d983396f59c, type: 2}
+    - target: {fileID: 6016745940568680375, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
       propertyPath: categoryText
       value: 
       objectReference: {fileID: 0}
@@ -463,6 +483,10 @@ PrefabInstance:
     - target: {fileID: 6946804094341970883, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7031848618293981573, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
+      propertyPath: worldOffset.y
+      value: 110
       objectReference: {fileID: 0}
     - target: {fileID: 7167695235861022892, guid: d9493ee9e32bb564abd6b3277d0e023f, type: 3}
       propertyPath: m_Name

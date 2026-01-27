@@ -1,0 +1,1105 @@
+fileFormatVersion: 2
+guid: 6b9e57096ab0dcc47b716a7aff5f4124
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3329322690525412906
+    second: TwinStrike_0
+  - first:
+      213: -8384241804157238500
+    second: TwinStrike_1
+  - first:
+      213: 839544414964775598
+    second: TwinStrike_2
+  - first:
+      213: -338509369684300359
+    second: TwinStrike_3
+  - first:
+      213: 2088049961672796913
+    second: TwinStrike_4
+  - first:
+      213: 82026392867258371
+    second: TwinStrike_5
+  - first:
+      213: -5709873263715850071
+    second: TwinStrike_6
+  - first:
+      213: -7696440588455410673
+    second: TwinStrike_7
+  - first:
+      213: -8910980459697049523
+    second: TwinStrike_8
+  - first:
+      213: -726503229083008110
+    second: TwinStrike_9
+  - first:
+      213: 4691402703258133827
+    second: TwinStrike_10
+  - first:
+      213: -8792765572988164862
+    second: TwinStrike_11
+  - first:
+      213: 4718986725543020662
+    second: TwinStrike_12
+  - first:
+      213: -5333830705738587257
+    second: TwinStrike_13
+  - first:
+      213: 7491691472579922439
+    second: TwinStrike_14
+  - first:
+      213: -6715250830495026750
+    second: TwinStrike_15
+  - first:
+      213: -548416696975701961
+    second: TwinStrike_16
+  - first:
+      213: -5602328437231540130
+    second: TwinStrike_17
+  - first:
+      213: 3694600357058598616
+    second: TwinStrike_18
+  - first:
+      213: 6500319642407404710
+    second: TwinStrike_19
+  - first:
+      213: 1636016772515425162
+    second: TwinStrike_20
+  - first:
+      213: 3458209709239560181
+    second: TwinStrike_21
+  - first:
+      213: -5888813982404844334
+    second: TwinStrike_22
+  - first:
+      213: -5208593351614076834
+    second: TwinStrike_23
+  - first:
+      213: -6214594720165233142
+    second: TwinStrike_24
+  - first:
+      213: -5002220377901179565
+    second: TwinStrike_25
+  - first:
+      213: 2141673456857555801
+    second: TwinStrike_26
+  - first:
+      213: 2070326876769506112
+    second: TwinStrike_27
+  - first:
+      213: 551958316230860062
+    second: TwinStrike_28
+  - first:
+      213: -8612173778065999718
+    second: TwinStrike_29
+  - first:
+      213: 8020304116372927821
+    second: TwinStrike_30
+  - first:
+      213: -3992649909642979332
+    second: TwinStrike_31
+  - first:
+      213: 1724303287082624180
+    second: TwinStrike_32
+  - first:
+      213: 5829668442694810797
+    second: TwinStrike_33
+  - first:
+      213: 3572060249577353294
+    second: TwinStrike_34
+  - first:
+      213: -2992378554297932871
+    second: TwinStrike_35
+  - first:
+      213: -658934277411468993
+    second: TwinStrike_36
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: TwinStrike_0
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 3805
+        width: 72
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d1c59807aedbc1d0800000000000000
+      internalID: -3329322690525412906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_1
+      rect:
+        serializedVersion: 2
+        x: 715
+        y: 3785
+        width: 111
+        height: 111
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c134a30308035ab80800000000000000
+      internalID: -8384241804157238500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_2
+      rect:
+        serializedVersion: 2
+        x: 1202
+        y: 3760
+        width: 161
+        height: 160
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eaa73238239a6ab00800000000000000
+      internalID: 839544414964775598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_3
+      rect:
+        serializedVersion: 2
+        x: 1691
+        y: 3737
+        width: 207
+        height: 204
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bd63d2958f5d4bf0800000000000000
+      internalID: -338509369684300359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_4
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 3205
+        width: 247
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fa66ce806e3afc10800000000000000
+      internalID: 2088049961672796913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_5
+      rect:
+        serializedVersion: 2
+        x: 631
+        y: 3189
+        width: 279
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3004f09d19a632100800000000000000
+      internalID: 82026392867258371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_6
+      rect:
+        serializedVersion: 2
+        x: 1131
+        y: 3177
+        width: 303
+        height: 302
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a867b3d48472c0b0800000000000000
+      internalID: -5709873263715850071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_7
+      rect:
+        serializedVersion: 2
+        x: 1631
+        y: 3165
+        width: 326
+        height: 325
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f048732ff00c03590800000000000000
+      internalID: -7696440588455410673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_8
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 2644
+        width: 344
+        height: 343
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d407f4bfb76d55480800000000000000
+      internalID: -8910980459697049523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_9
+      rect:
+        serializedVersion: 2
+        x: 591
+        y: 2636
+        width: 358
+        height: 358
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 293455e8921fae5f0800000000000000
+      internalID: -726503229083008110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_10
+      rect:
+        serializedVersion: 2
+        x: 1097
+        y: 2631
+        width: 369
+        height: 368
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 345220a07e53b1140800000000000000
+      internalID: 4691402703258133827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_11
+      rect:
+        serializedVersion: 2
+        x: 1605
+        y: 2627
+        width: 387
+        height: 385
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 205a1c42c42d9f580800000000000000
+      internalID: -8792765572988164862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_12
+      rect:
+        serializedVersion: 2
+        x: 1090
+        y: 2624
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67886c3bc653d7140800000000000000
+      internalID: 4718986725543020662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_13
+      rect:
+        serializedVersion: 2
+        x: 1598
+        y: 2620
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7836164ab3d6af5b0800000000000000
+      internalID: -5333830705738587257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_14
+      rect:
+        serializedVersion: 2
+        x: 963
+        y: 2497
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70a03fd93b5d7f760800000000000000
+      internalID: 7491691472579922439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_15
+      rect:
+        serializedVersion: 2
+        x: 1601
+        y: 2111
+        width: 393
+        height: 395
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c172b6d2f2aec2a0800000000000000
+      internalID: -6715250830495026750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_16
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 2113
+        width: 381
+        height: 380
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 738ced37be1a368f0800000000000000
+      internalID: -548416696975701961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_17
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 2104
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e58aebff7f78042b0800000000000000
+      internalID: -5602328437231540130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_18
+      rect:
+        serializedVersion: 2
+        x: 577
+        y: 2111
+        width: 384
+        height: 383
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d6528d237bd54330800000000000000
+      internalID: 3694600357058598616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_19
+      rect:
+        serializedVersion: 2
+        x: 1082
+        y: 2104
+        width: 392
+        height: 391
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a4003c4646c53a50800000000000000
+      internalID: 6500319642407404710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_20
+      rect:
+        serializedVersion: 2
+        x: 1593
+        y: 2103
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8bec5c269c44b610800000000000000
+      internalID: 1636016772515425162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_21
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 1599
+        width: 393
+        height: 393
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f7e70e78670eff20800000000000000
+      internalID: 3458209709239560181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_22
+      rect:
+        serializedVersion: 2
+        x: 965
+        y: 1987
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d4e76e12eab64ea0800000000000000
+      internalID: -5888813982404844334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_23
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 1600
+        width: 392
+        height: 382
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e58e49961fb57b7b0800000000000000
+      internalID: -5208593351614076834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_24
+      rect:
+        serializedVersion: 2
+        x: 1080
+        y: 1601
+        width: 408
+        height: 380
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0e7881470351c9a0800000000000000
+      internalID: -6214594720165233142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_25
+      rect:
+        serializedVersion: 2
+        x: 1586
+        y: 1604
+        width: 420
+        height: 373
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35ddaf6b11b849ab0800000000000000
+      internalID: -5002220377901179565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_26
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 1127
+        width: 439
+        height: 313
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 953a0e479a0c8bd10800000000000000
+      internalID: 2141673456857555801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_27
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 1125
+        width: 447
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0435aca43574bbc10800000000000000
+      internalID: 2070326876769506112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_28
+      rect:
+        serializedVersion: 2
+        x: 1053
+        y: 1117
+        width: 459
+        height: 326
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1d53c90a23f8a700800000000000000
+      internalID: 551958316230860062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_29
+      rect:
+        serializedVersion: 2
+        x: 1565
+        y: 1437
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a98317ef3996b7880800000000000000
+      internalID: -8612173778065999718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_30
+      rect:
+        serializedVersion: 2
+        x: 1575
+        y: 1122
+        width: 442
+        height: 314
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d45f207b918dd4f60800000000000000
+      internalID: 8020304116372927821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_31
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 603
+        width: 463
+        height: 329
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf71c37af024798c0800000000000000
+      internalID: -3992649909642979332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_32
+      rect:
+        serializedVersion: 2
+        x: 538
+        y: 610
+        width: 456
+        height: 321
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b4299f24b4fde710800000000000000
+      internalID: 1724303287082624180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_33
+      rect:
+        serializedVersion: 2
+        x: 1050
+        y: 604
+        width: 463
+        height: 327
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dacf02dcf8427e050800000000000000
+      internalID: 5829668442694810797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_34
+      rect:
+        serializedVersion: 2
+        x: 1565
+        y: 605
+        width: 459
+        height: 326
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e40f9541fd1829130800000000000000
+      internalID: 3572060249577353294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_35
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 99
+        width: 453
+        height: 321
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b323952f8fe876d0800000000000000
+      internalID: -2992378554297932871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TwinStrike_36
+      rect:
+        serializedVersion: 2
+        x: 554
+        y: 100
+        width: 437
+        height: 310
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f398f8014cefad6f0800000000000000
+      internalID: -658934277411468993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      TwinStrike_0: -3329322690525412906
+      TwinStrike_1: -8384241804157238500
+      TwinStrike_10: 4691402703258133827
+      TwinStrike_11: -8792765572988164862
+      TwinStrike_12: 4718986725543020662
+      TwinStrike_13: -5333830705738587257
+      TwinStrike_14: 7491691472579922439
+      TwinStrike_15: -6715250830495026750
+      TwinStrike_16: -548416696975701961
+      TwinStrike_17: -5602328437231540130
+      TwinStrike_18: 3694600357058598616
+      TwinStrike_19: 6500319642407404710
+      TwinStrike_2: 839544414964775598
+      TwinStrike_20: 1636016772515425162
+      TwinStrike_21: 3458209709239560181
+      TwinStrike_22: -5888813982404844334
+      TwinStrike_23: -5208593351614076834
+      TwinStrike_24: -6214594720165233142
+      TwinStrike_25: -5002220377901179565
+      TwinStrike_26: 2141673456857555801
+      TwinStrike_27: 2070326876769506112
+      TwinStrike_28: 551958316230860062
+      TwinStrike_29: -8612173778065999718
+      TwinStrike_3: -338509369684300359
+      TwinStrike_30: 8020304116372927821
+      TwinStrike_31: -3992649909642979332
+      TwinStrike_32: 1724303287082624180
+      TwinStrike_33: 5829668442694810797
+      TwinStrike_34: 3572060249577353294
+      TwinStrike_35: -2992378554297932871
+      TwinStrike_36: -658934277411468993
+      TwinStrike_4: 2088049961672796913
+      TwinStrike_5: 82026392867258371
+      TwinStrike_6: -5709873263715850071
+      TwinStrike_7: -7696440588455410673
+      TwinStrike_8: -8910980459697049523
+      TwinStrike_9: -726503229083008110
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

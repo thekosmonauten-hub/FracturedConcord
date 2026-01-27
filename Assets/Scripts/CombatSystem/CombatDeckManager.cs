@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 /// <summary>
@@ -20,6 +21,15 @@ public class CombatDeckManager : MonoBehaviour
     [SerializeField] private int initialHandSize = 5;
     private bool hasDrawnInitialHand = false; // Track if initial hand has been drawn
     [SerializeField] private bool autoShuffleOnStart = true;
+    
+    [Header("Hand Limits")]
+    [SerializeField] private int defaultMaxHandSize = 8;
+    [SerializeField] private int absoluteMaxHandSize = 12;
+    
+    [Header("Overflow Draw Fade")]
+    [SerializeField] private float overflowFadeSeconds = 0.2f;
+    [SerializeField] private float overflowFadeTargetAlpha = 0.7f;
+    [SerializeField] private float overflowCenterHoldSeconds = 0.15f;
     
     [Header("Testing (Quick Test Mode)")]
     [SerializeField] private bool testLoadMarauderDeckOnStart = false;
@@ -77,6 +87,7 @@ public class CombatDeckManager : MonoBehaviour
     // Track cards currently being played (to prevent interference)
     private HashSet<GameObject> cardsBeingPlayed = new HashSet<GameObject>();
     private Dictionary<GameObject, CardPlayState> cardPlayStates = new Dictionary<GameObject, CardPlayState>();
+    private const float MinOverflowVfxHoldSeconds = 0.01f;
     
     // Action Queue System (Phase 1: Best Practice Architecture)
     private Queue<CardAction> actionQueue = new Queue<CardAction>();
@@ -1109,6 +1120,8 @@ public class CombatDeckManager : MonoBehaviour
             Debug.LogWarning("No character found! Cards will show without character-specific values.");
         }
         
+        int maxHandSize = GetCurrentMaxHandSize(player);
+        
         for (int i = 0; i < count; i++)
         {
             if (drawPile.Count == 0)
@@ -1155,12 +1168,34 @@ public class CombatDeckManager : MonoBehaviour
                 // Draw card from deck - NOW USING CardDataExtended!
                 CardDataExtended drawnCard = drawPile[0];
                 drawPile.RemoveAt(0);
-                hand.Add(drawnCard);
                 
                 if (logCardDraws)
                 {
                     Debug.Log($"<color=cyan>Drawing card #{i+1}: {drawnCard.cardName}</color>");
                 }
+                
+                bool exceedsHandCap = hand.Count >= maxHandSize;
+                if (exceedsHandCap)
+                {
+                    if (logCardDraws)
+                    {
+                        Debug.Log($"<color=orange>[Hand Cap] Burning drawn card (cap {maxHandSize}): {drawnCard.cardName}</color>");
+                    }
+                    
+                    // Create visual card with draw animation to center, then discard
+                    GameObject burnCardObj = CreateBurnedCard(drawnCard, player, i);
+                    
+                    if (burnCardObj == null && logCriticalErrors)
+                    {
+                        Debug.LogError($"<color=red>✗ Failed to create burn visual for: {drawnCard.cardName}</color>");
+                    }
+                    
+                    // Still count as drawn for listeners
+                    OnCardDrawn?.Invoke(drawnCard);
+                    continue;
+                }
+                
+                hand.Add(drawnCard);
                 
                 // Create visual card with draw animation - NO CONVERSION!
                 GameObject cardObj = CreateAnimatedCard(drawnCard, player, i);
@@ -2717,6 +2752,19 @@ public class CombatDeckManager : MonoBehaviour
     
     #region Helper Methods
     
+    private int GetCurrentMaxHandSize(Character player)
+    {
+        if (player == null)
+        {
+            return Mathf.Clamp(defaultMaxHandSize, 1, absoluteMaxHandSize);
+        }
+        
+        var statsData = new CharacterStatsData(player);
+        int baseMax = statsData.maxHandSize > 0 ? statsData.maxHandSize : defaultMaxHandSize;
+        int total = baseMax + statsData.handSizeIncreased;
+        return Mathf.Clamp(total, 1, absoluteMaxHandSize);
+    }
+    
     /// <summary>
     /// Create a card with draw animation from deck pile.
     /// </summary>
@@ -2785,6 +2833,55 @@ public class CombatDeckManager : MonoBehaviour
     }
     
     /// <summary>
+    /// Create a card with draw animation to screen center, then discard it.
+    /// Used when the hand is at its maximum size.
+    /// </summary>
+    private GameObject CreateBurnedCard(CardDataExtended cardData, Character player, int cardIndex)
+    {
+        GameObject cardObj = cardRuntimeManager.CreateCardFromCardDataExtended(cardData, player);
+        if (cardObj == null) return null;
+        
+        // Ensure no interaction during burn animation
+        SetCardInteractable(cardObj, false);
+        LeanTween.cancel(cardObj);
+        
+        if (animationManager != null && deckPileTransform != null)
+        {
+            Vector3 startPos = deckPileTransform.position;
+            Vector3 endPos = GetScreenCenterPosition(cardObj);
+            float delay = cardIndex * 0.15f;
+            Vector3 targetScale = cardObj.transform.localScale;
+            
+            cardObj.transform.position = startPos;
+            cardObj.transform.localScale = targetScale * 0.3f;
+            cardObj.transform.rotation = Quaternion.Euler(0, 0, Random.Range(-15f, 15f));
+            
+            System.Action onComplete = () =>
+            {
+                HandleOverflowDiscard(cardObj, cardData);
+            };
+            
+            if (delay > 0f)
+            {
+                LeanTween.delayedCall(delay, () =>
+                {
+                    animationManager.AnimateCardDraw(cardObj, startPos, endPos, targetScale, onComplete);
+                });
+            }
+            else
+            {
+                animationManager.AnimateCardDraw(cardObj, startPos, endPos, targetScale, onComplete);
+            }
+        }
+        else
+        {
+            HandleOverflowDiscard(cardObj, cardData);
+        }
+        
+        return cardObj;
+    }
+    
+    /// <summary>
     /// Calculate the final position for a card in hand.
     /// Uses CardRuntimeManager's calculation directly to ensure perfect match!
     /// </summary>
@@ -2797,6 +2894,120 @@ public class CombatDeckManager : MonoBehaviour
         
         // Use CardRuntimeManager's calculation directly - guaranteed to match!
         return cardRuntimeManager.CalculateCardPosition(cardIndex, totalCards);
+    }
+    
+    private Vector3 GetScreenCenterPosition(GameObject cardObj)
+    {
+        RectTransform cardRect = cardObj != null ? cardObj.GetComponent<RectTransform>() : null;
+        if (cardRect == null)
+        {
+            return new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
+        }
+        
+        Canvas canvas = cardObj.GetComponentInParent<Canvas>();
+        if (canvas == null)
+        {
+            return new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
+        }
+        
+        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+        if (canvasRect == null)
+        {
+            return new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0f);
+        }
+        
+        Vector3[] corners = new Vector3[4];
+        canvasRect.GetWorldCorners(corners);
+        Vector3 centerWorld = (corners[0] + corners[2]) * 0.5f;
+        
+        Camera eventCamera = canvas.worldCamera;
+        if (eventCamera == null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+        {
+            eventCamera = Camera.main;
+        }
+        
+        Vector3 screenPoint = RectTransformUtility.WorldToScreenPoint(eventCamera, centerWorld);
+        RectTransformUtility.ScreenPointToWorldPointInRectangle(cardRect, screenPoint, eventCamera, out Vector3 worldPoint);
+        return worldPoint;
+    }
+
+    private void HandleOverflowDiscard(GameObject cardObj, CardDataExtended cardData)
+    {
+        if (cardObj == null)
+        {
+            return;
+        }
+
+        EnableDisabledOverlay(cardObj);
+        CanvasGroup canvasGroup = cardObj.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = cardObj.AddComponent<CanvasGroup>();
+        }
+        
+        float duration = Mathf.Max(MinOverflowVfxHoldSeconds, overflowFadeSeconds);
+        float holdSeconds = Mathf.Max(0f, overflowCenterHoldSeconds);
+        float targetAlpha = Mathf.Clamp01(overflowFadeTargetAlpha);
+        Vector3 discardPos = discardPileTransform != null ? discardPileTransform.position : cardObj.transform.position;
+        
+        LeanTween.delayedCall(cardObj, holdSeconds, () =>
+        {
+            LeanTween.move(cardObj, discardPos, duration)
+                .setEase(LeanTweenType.easeInQuad);
+            
+            LeanTween.value(cardObj, canvasGroup.alpha, targetAlpha, duration)
+                .setOnUpdate((float value) =>
+                {
+                    if (canvasGroup != null)
+                    {
+                        canvasGroup.alpha = value;
+                    }
+                })
+                .setOnComplete(() =>
+                {
+                    AddCardToDiscardPile(cardData);
+                    if (cardRuntimeManager != null)
+                    {
+                        cardRuntimeManager.RemoveCard(cardObj);
+                    }
+                    else
+                    {
+                        Destroy(cardObj);
+                    }
+                });
+        });
+    }
+
+    private void EnableDisabledOverlay(GameObject cardObj)
+    {
+        if (cardObj == null)
+        {
+            return;
+        }
+        
+        CardDisabledOverlay overlay = cardObj.GetComponentInChildren<CardDisabledOverlay>(true);
+        if (overlay != null)
+        {
+            overlay.enabled = false;
+            Image image = overlay.GetComponent<Image>();
+            if (image != null)
+            {
+                image.enabled = true;
+            }
+            return;
+        }
+        
+        var images = cardObj.GetComponentsInChildren<Image>(true);
+        for (int i = 0; i < images.Length; i++)
+        {
+            Image image = images[i];
+            if (image == null) continue;
+            if (string.Equals(image.gameObject.name, "DisabledOverlay", StringComparison.OrdinalIgnoreCase))
+            {
+                image.enabled = true;
+                return;
+            }
+        }
     }
     
     /// <summary>
@@ -4596,6 +4807,17 @@ public class CombatDeckManager : MonoBehaviour
                     bool isProjectile = IsProjectileCard(card);
                     if (!isProjectile)
                     {
+                    bool hasAreaEffect = card.isAoE && combatEffectManager != null &&
+                        combatEffectManager.HasCardSpecificAreaEffect(card.cardName);
+                    if (hasAreaEffect)
+                    {
+                        if (showDebugLogs)
+                        {
+                            Debug.Log($"[CombatDeckManager] Skipping elemental impact for AoE card '{card.cardName}' (card-specific Area effect already plays).");
+                        }
+                    }
+                    else
+                    {
                     // Check for critical hit (10% chance)
                     bool isCritical = Random.Range(0f, 1f) < 0.1f;
                     
@@ -4604,6 +4826,7 @@ public class CombatDeckManager : MonoBehaviour
                     
                         // Play elemental damage effect (only for non-projectile cards)
                     combatEffectManager.PlayElementalDamageEffectOnTarget(targetDisplay.transform, damageType, isCritical);
+                    }
                     }
                 }
                 break;

@@ -54,6 +54,7 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
     [Header("Hover Settings")]
     [SerializeField] private float hoverScale = 1.15f;
     [SerializeField] private float animationDuration = 0.2f;
+    [SerializeField] private SoundEvent hoverSfx;
     
     private CardData cardData;
     private DeckBuilderUI deckBuilder;
@@ -1092,6 +1093,10 @@ public class DeckBuilderCardUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
         if (!isInteractable) return;
         
         isHovering = true;
+        if (hoverSfx != null)
+        {
+            SFXManager.Instance?.Play(hoverSfx, transform.position);
+        }
         
         // Scale up animation on visual root only (keeps layout root stable)
         LeanTween.cancel(scaleTarget.gameObject);

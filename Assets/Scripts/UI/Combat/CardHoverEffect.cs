@@ -9,17 +9,26 @@ using UnityEngine.EventSystems;
 /// </summary>
 public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+	private static CardHoverEffect activeHover;
     [Header("Ordering")]
     [SerializeField] private bool raiseBySibling = true; // Use sibling index for hover (safest method for cards in layouts)
     [SerializeField] private bool raiseByCanvas = false;   // Disabled - Canvas sorting causes raycast blocking issues
     [SerializeField] private bool stayWithinMask = false;  // when false, allows canvas override for hover (set true only if mask clipping required)
     [SerializeField] private bool forceRaiseOnHover = false; // Disabled to prevent Canvas-related issues
+	[SerializeField] private bool allowSiblingReorderInLayout = false; // Avoid layout churn for grids/carousels
 	[HideInInspector]
 	public CombatAnimationManager animationManager;
 	
 	[Header("Debug Logging")]
 	[Tooltip("Log card hover operations (can be verbose)")]
 	[SerializeField] private bool logHoverOperations = false;
+	
+	[Header("Hover Stability")]
+	[SerializeField] private float hoverExitGraceSeconds = 0.05f;
+	
+	private Coroutine pendingExitCoroutine;
+	private Vector2 lastPointerPosition;
+	private Camera lastEventCamera;
 	
 	private bool isHovering = false;
 	private Vector3 originalPosition;
@@ -131,8 +140,16 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		// IMPORTANT: Don't process hover if component is disabled
 		if (!enabled) return;
 		
+		if (activeHover != null && activeHover != this)
+		{
+			activeHover.ForceExit();
+		}
+
         // Guard against re-entrancy while already hovering
         if (isHovering) return;
+		
+		CancelPendingExit();
+		StorePointerContext(eventData);
 
 		if (!hasStoredPosition)
 		{
@@ -146,6 +163,7 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		{
 			animationManager.AnimateCardHover(gameObject, originalPosition, true);
 			isHovering = true;
+			activeHover = this;
 		}
 		
 		// Show tooltips if available
@@ -162,6 +180,15 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		if (!enabled) return;
 		
         if (!isHovering) return;
+		
+		StorePointerContext(eventData);
+		
+		if (hoverExitGraceSeconds > 0f)
+		{
+			CancelPendingExit();
+			pendingExitCoroutine = StartCoroutine(DelayedExit());
+			return;
+		}
 
 		if (animationManager != null)
 		{
@@ -179,6 +206,11 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 		if (hoverTooltip != null)
 		{
 			hoverTooltip.Hide();
+		}
+		
+		if (activeHover == this)
+		{
+			activeHover = null;
 		}
 	}
 	
@@ -217,6 +249,11 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 	
 	private void OnDisable()
 	{
+		CancelPendingExit();
+		if (activeHover == this)
+		{
+			activeHover = null;
+		}
 		// Reset hover state when disabled
         if (isHovering)
         {
@@ -234,18 +271,117 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 			hoverTooltip.Hide();
 		}
 	}
+
+	private void ForceExit()
+	{
+		CancelPendingExit();
+		if (!isHovering)
+		{
+			return;
+		}
+		
+		if (animationManager != null)
+		{
+			animationManager.AnimateCardHover(gameObject, originalPosition, false);
+			isHovering = false;
+		}
+		
+		RestoreLayerOrder();
+		RequestHandReposition();
+		
+		if (hoverTooltip != null)
+		{
+			hoverTooltip.Hide();
+		}
+	}
+	
+	private System.Collections.IEnumerator DelayedExit()
+	{
+		yield return new WaitForSeconds(hoverExitGraceSeconds);
+		pendingExitCoroutine = null;
+		
+		if (IsPointerStillOverCard())
+		{
+			yield break;
+		}
+		
+		if (animationManager != null)
+		{
+			animationManager.AnimateCardHover(gameObject, originalPosition, false);
+			isHovering = false;
+		}
+		
+		// Restore original order
+		RestoreLayerOrder();
+		
+		// Request hand reposition to ensure proper layout after hover
+		RequestHandReposition();
+		
+		// Hide tooltips if present
+		if (hoverTooltip != null)
+		{
+			hoverTooltip.Hide();
+		}
+	}
+	
+	private void CancelPendingExit()
+	{
+		if (pendingExitCoroutine != null)
+		{
+			StopCoroutine(pendingExitCoroutine);
+			pendingExitCoroutine = null;
+		}
+	}
+	
+	private void StorePointerContext(PointerEventData eventData)
+	{
+		if (eventData == null)
+		{
+			return;
+		}
+		
+		lastPointerPosition = eventData.position;
+		lastEventCamera = eventData.enterEventCamera != null ? eventData.enterEventCamera : eventData.pressEventCamera;
+	}
+	
+	private bool IsPointerStillOverCard()
+	{
+		var rectTransform = transform as RectTransform;
+		if (rectTransform == null)
+		{
+			return false;
+		}
+
+		Vector2 pointerPosition = lastPointerPosition;
+		if (UnityEngine.InputSystem.Mouse.current != null)
+		{
+			pointerPosition = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
+		}
+		
+		return RectTransformUtility.RectangleContainsScreenPoint(rectTransform, pointerPosition, lastEventCamera);
+	}
 	
 	private void RaiseToTopLayer()
 	{
         // Optionally bring to top within parent (can cause layout re-ordering)
         if (raiseBySibling && transform.parent != null)
         {
+			if (!allowSiblingReorderInLayout && HasLayoutGroup(transform.parent))
+			{
+				if (logHoverOperations)
+				{
+					Debug.Log($"[CardHover] {gameObject.name}: Skipping sibling reorder (layout managed parent)");
+				}
+			}
+			else
+			{
             originalSiblingIndex = transform.GetSiblingIndex();
             transform.SetAsLastSibling();
             if (logHoverOperations)
             {
                 Debug.Log($"[CardHover] {gameObject.name}: Raised to last sibling (index {originalSiblingIndex} → {transform.GetSiblingIndex()})");
             }
+			}
         }
 
         // Prefer raising via canvas sorting which doesn't alter layout order
@@ -903,6 +1039,12 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
         // IMPORTANT: Use current position in hand, not original index, in case cards were removed
         if (raiseBySibling && transform.parent != null)
 		{
+			if (!allowSiblingReorderInLayout && HasLayoutGroup(transform.parent))
+			{
+				originalSiblingIndex = -1;
+			}
+			else
+			{
 			// Find the card's current index in the hand by checking CardRuntimeManager or CombatDeckManager
 			int currentIndex = GetCurrentHandIndex();
 			
@@ -928,6 +1070,7 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
 					Debug.Log($"[CardHover] {gameObject.name}: Restored sibling index to {target} (using original index)");
 				}
 			}
+		}
 		}
 		originalSiblingIndex = -1;
 
@@ -956,6 +1099,11 @@ public class CardHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExit
                 }
             }
         }
+	}
+
+	private bool HasLayoutGroup(Transform parent)
+	{
+		return parent.GetComponent<UnityEngine.UI.LayoutGroup>() != null;
 	}
 	
 	/// <summary>
